@@ -6,12 +6,14 @@
 #include "Agent.h"
 #include "Player.h"
 #include "Piece.h"
+#include "PieceStand.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
 bool Player::Init()
 {
     __super::Init();
+    stand_ = Scene::Object::Create<PieceStand>();    // ピーススタンドを作成
     SetName("Player");
     return true;
 }
@@ -22,7 +24,9 @@ bool Player::Init()
 void Player::Update()
 {
     if(IsKeyDown(KEY_INPUT_SPACE)) {
-        Scene::Object::Create<Piece>();
+        if(auto stand = stand_.lock()) {
+            stand->PieceInit();    // ピースの初期化
+        }
     }
     __super::Update();
 }

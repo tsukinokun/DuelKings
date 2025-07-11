@@ -6,6 +6,8 @@
 #pragma once
 #include <System/Scene.h>
 USING_PTR(Player);
+USING_PTR(Piece);
+USING_PTR(PieceStand);
 class Player : public Agent
 {
 public:
@@ -18,4 +20,7 @@ public:
     void GUI() override;       //!< GUI表示
 
     //@}
+private:
+    std::vector<PieceWeakPtr> pieces_;    // プレイヤーのピースリスト
+    PieceStandWeakPtr         stand_;     // プレイヤーのピーススタンド
 };

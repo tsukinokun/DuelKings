@@ -10,6 +10,7 @@
 bool Piece::Init()
 {
     __super::Init();
+    SetTranslate(float3(0.0f, 0.5f, 0.0f));    // 初期位置を設定
     SetName("Piece");
     return true;
 }
