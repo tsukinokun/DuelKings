@@ -1,39 +1,36 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	InGameScene.cpp
-//! @brief	オートチェスのインゲームシーン
+//!	@file	Player.cpp
+//! @brief	インゲームシーンのプレイヤークラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "InGameScene.h"
-#include "Camera.h"
-#include "ChessBoard.h"
-#include "PieceStand.h"
 #include "Agent.h"
 #include "Player.h"
+#include "Piece.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool InGameScene::Init()
+bool Player::Init()
 {
     __super::Init();
-    Scene::Object::Create<Camera>();        //カメラ
-    Scene::Object::Create<ChessBoard>();    //チェスボード
-    Scene::Object::Create<PieceStand>();    //ピース置き場
-    Scene::Object::Create<Player>();        //プレイヤー
+    SetName("Player");
     return true;
 }
 
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
-void InGameScene::Update()
+void Player::Update()
 {
+    if(IsKeyDown(KEY_INPUT_SPACE)) {
+        Scene::Object::Create<Piece>();
+    }
     __super::Update();
 }
 
 //---------------------------------------------------------------------------------
 //!	描画
 //---------------------------------------------------------------------------------
-void InGameScene::Draw()
+void Player::Draw()
 {
     __super::Draw();
 }
@@ -41,7 +38,7 @@ void InGameScene::Draw()
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
-void InGameScene::Exit()
+void Player::Exit()
 {
     __super::Exit();
 }
@@ -49,7 +46,7 @@ void InGameScene::Exit()
 //---------------------------------------------------------------------------------
 //!	GUI表示
 //---------------------------------------------------------------------------------
-void InGameScene::GUI()
+void Player::GUI()
 {
     __super::GUI();
 }
