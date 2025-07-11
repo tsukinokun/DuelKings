@@ -17,7 +17,11 @@ public:
     void Exit() override;      //!< 終了
     void GUI() override;       //!< GUI表示
 
+    //選択状態の設定
+    //! @param [in] is_selected 選択状態
+    void SetSelect(bool is_selected);
     //@}
 private:
-    float RADIUS_ = 0.4f;
+    float RADIUS_      = 0.4f;
+    bool  is_selected_ = false;    //!< 選択されているかどうか
 };

@@ -5,6 +5,8 @@
 //---------------------------------------------------------------------------
 #include "PieceStand.h"
 #include "Piece.h"
+#include "GameConst.h"
+
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -37,9 +39,9 @@ void PieceStand::Draw()
             color = GetColor(0, 255, 255);
         }
         float3 curr_translate = GetTranslate();    //現在のポジションを取得
-        float  z              = (s * SQUARE_SIZE_) - STAND_SQUARE_HALF_ * (SQUARE_SIZE_);
-        float3 p1             = float3(-SQUARE_HALF_, -0.1f, z + -SQUARE_HALF_) + curr_translate;
-        float3 p2             = float3(SQUARE_HALF_, 0.1f, z + SQUARE_HALF_) + curr_translate;
+        float  z              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
+        float3 p1             = float3(-SQUARE_HALF, -0.1f, z + -SQUARE_HALF) + curr_translate;
+        float3 p2             = float3(SQUARE_HALF, 0.1f, z + SQUARE_HALF) + curr_translate;
         DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
     }
 }
@@ -69,10 +71,10 @@ void PieceStand::PieceInit()
     for(int i = 0; i < pieces_.size(); i++) {
         //ヌルポインタなら
         if(pieces_[i].expired()) {
-            auto piece = Scene::Object::Create<Piece>();                                                                           //ピースを生成
-            piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE_) - STAND_SQUARE_HALF_ * (SQUARE_SIZE_)) + GetTranslate());    //位置を設定
-            pieces_[i] = piece;                                                                                                    //バッファにポインタを登録
-            return;                                                                                                                //一度生成したらリターンする
+            auto piece = Scene::Object::Create<Piece>();                                                                         //ピースを生成
+            piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE)) + GetTranslate());    //位置を設定
+            pieces_[i] = piece;                                                                                                  //バッファにポインタを登録
+            return;                                                                                                              //一度生成したらリターンする
         }
     }
 }

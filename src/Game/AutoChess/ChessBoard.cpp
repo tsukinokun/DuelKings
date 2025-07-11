@@ -4,6 +4,7 @@
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include "ChessBoard.h"
+#include "GameConst.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -36,10 +37,10 @@ void ChessBoard::Draw()
             if(((f + r) % 2) == 0) {
                 color = GetColor(255, 255, 255);
             }
-            float  x  = (r * SQUARE_SIZE_) - RANK_HALF_ * (SQUARE_SIZE_);
-            float  z  = (f * SQUARE_SIZE_) - (FILE_HALF_ * SQUARE_SIZE_);
-            float3 p1 = float3(x + -SQUARE_HALF_, -0.1f, z + -SQUARE_HALF_);
-            float3 p2 = float3(x + SQUARE_HALF_, 0.1f, z + SQUARE_HALF_);
+            float  x  = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
+            float  z  = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
+            float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
+            float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
             DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
         }
     }

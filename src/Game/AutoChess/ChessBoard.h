@@ -19,10 +19,8 @@ public:
 
     //@}
 private:
-    const int   FILE_MAX_    = 8;    //ファイルの数
-    const int   FILE_HALF_   = FILE_MAX_ / 2;
-    const int   RANK_MAX_    = 8;    //ランクの数
-    const int   RANK_HALF_   = RANK_MAX_ / 2;
-    const float SQUARE_SIZE_ = 1.0f;    //マスのxz軸の大きさ
-    const float SQUARE_HALF_ = 0.5f;
+    const int FILE_MAX_  = 8;    //ファイルの数
+    const int FILE_HALF_ = FILE_MAX_ / 2;
+    const int RANK_MAX_  = 8;    //ランクの数
+    const int RANK_HALF_ = RANK_MAX_ / 2;
 };

@@ -4,6 +4,7 @@
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include "Piece.h"
+#include "GameConst.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -31,6 +32,17 @@ void Piece::Draw()
     __super::Draw();
     float3 pos = GetTranslate();
     DrawSphere3D(cast(pos), RADIUS_, 16, GetColor(255, 0, 255), GetColor(255, 0, 255), TRUE);
+    //選択中なら
+    if(is_selected_) {
+        //位置を取得
+        pos       = GetTranslate();
+        pos.y     = 0.0f;    //y座標を0にする
+        float3 p1 = float3(-SQUARE_HALF, -0.1f, -SQUARE_HALF) + pos;
+        float3 p2 = float3(SQUARE_HALF, 0.1f, SQUARE_HALF) + pos;
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 200);
+        DrawCube3D(cast(p1), cast(p2), GetColor(255, 0, 255), GetColor(255, 0, 255), TRUE);
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255);
+    }
 }
 
 //---------------------------------------------------------------------------------
@@ -47,4 +59,12 @@ void Piece::Exit()
 void Piece::GUI()
 {
     __super::GUI();
+}
+
+//---------------------------------------------------------------------------------
+//!	選択状態の設定
+//---------------------------------------------------------------------------------
+void Piece::SetSelect(bool is_selected)
+{
+    is_selected_ = is_selected;
 }
