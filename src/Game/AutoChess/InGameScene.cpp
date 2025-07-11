@@ -5,13 +5,15 @@
 //---------------------------------------------------------------------------
 #include "InGameScene.h"
 #include "Camera.h"
+#include "ChessBoard.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
 bool InGameScene::Init()
 {
     __super::Init();
-    Scene::Object::Create<Camera>();    //カメラ
+    Scene::Object::Create<Camera>();        //カメラ
+    Scene::Object::Create<ChessBoard>();    //チェスボード
     return true;
 }
 

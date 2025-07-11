@@ -1,25 +1,24 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	Camera.cpp
-//! @brief	インゲームシーンのカメラ
+//!	@file	ChessBoard.cpp
+//! @brief	インゲームシーンのチェスボード
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "Camera.h"
+#include "ChessBoard.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool Camera::Init()
+bool ChessBoard::Init()
 {
     __super::Init();
-    auto com_comp = AddComponent<ComponentCamera>();
-    com_comp->SetPositionAndTarget({0.1, 20, 0}, {0, 0, 0});
-    SetName("Camera");
+
+    SetName("ChessBoard");
     return true;
 }
 
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
-void Camera::Update()
+void ChessBoard::Update()
 {
     __super::Update();
 }
@@ -27,15 +26,29 @@ void Camera::Update()
 //---------------------------------------------------------------------------------
 //!	描画
 //---------------------------------------------------------------------------------
-void Camera::Draw()
+void ChessBoard::Draw()
 {
     __super::Draw();
+    for(int f = 0; f < FILE_MAX_; f++) {
+        for(int r = 0; r < RANK_MAX_; r++) {
+            int color = GetColor(0, 0, 0);
+            //ファイルとランクの合計値が偶数なら白に
+            if(((f + r) % 2) == 0) {
+                color = GetColor(255, 255, 255);
+            }
+            float  x  = (r * SQUARE_SIZE_) - RANK_HALF_ * (SQUARE_SIZE_);
+            float  z  = (f * SQUARE_SIZE_) - (FILE_HALF_ * SQUARE_SIZE_);
+            float3 p1 = float3(x + -SQUARE_HALF_, -0.1f, z + -SQUARE_HALF_);
+            float3 p2 = float3(x + SQUARE_HALF_, 0.1f, z + SQUARE_HALF_);
+            DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+        }
+    }
 }
 
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
-void Camera::Exit()
+void ChessBoard::Exit()
 {
     __super::Exit();
 }
@@ -43,7 +56,7 @@ void Camera::Exit()
 //---------------------------------------------------------------------------------
 //!	GUI表示
 //---------------------------------------------------------------------------------
-void Camera::GUI()
+void ChessBoard::GUI()
 {
     __super::GUI();
 }
