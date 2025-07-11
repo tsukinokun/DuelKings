@@ -11,7 +11,7 @@ bool Camera::Init()
 {
     __super::Init();
     auto com_comp = AddComponent<ComponentCamera>();
-    com_comp->SetPositionAndTarget({0.1, 20, 0}, {0, 0, 0});
+    com_comp->SetPositionAndTarget({10.0f, 10.0f, 0.0f}, {0.0f, 0.0f, 0.0f});
     SetName("Camera");
     return true;
 }

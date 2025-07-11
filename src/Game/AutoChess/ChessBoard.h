@@ -9,7 +9,7 @@ USING_PTR(ChessBoard);
 class ChessBoard : public Object
 {
 public:
-    BP_OBJECT_DECL(ChessBoard, u8"インゲームシーンのカメラ")
+    BP_OBJECT_DECL(ChessBoard, u8"インゲームシーンのチェスボード")
     //@{
     bool Init() override;      //!< 初期化
     void Update() override;    //!< 更新

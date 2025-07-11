@@ -1,28 +1,24 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	InGameScene.cpp
-//! @brief	オートチェスのインゲームシーン
+//!	@file	PieceStand.cpp
+//! @brief	インゲームシーンのピース置き場
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "InGameScene.h"
-#include "Camera.h"
-#include "ChessBoard.h"
 #include "PieceStand.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool InGameScene::Init()
+bool PieceStand::Init()
 {
     __super::Init();
-    Scene::Object::Create<Camera>();        //カメラ
-    Scene::Object::Create<ChessBoard>();    //チェスボード
-    Scene::Object::Create<PieceStand>();    //ピース置き場
+    SetTranslate(float3(5.0f, 0.0f, 0.0f));
+    SetName("PieceStand");
     return true;
 }
 
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
-void InGameScene::Update()
+void PieceStand::Update()
 {
     __super::Update();
 }
@@ -30,15 +26,27 @@ void InGameScene::Update()
 //---------------------------------------------------------------------------------
 //!	描画
 //---------------------------------------------------------------------------------
-void InGameScene::Draw()
+void PieceStand::Draw()
 {
     __super::Draw();
+    for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
+        int color = GetColor(0, 255, 0);
+        //ファイルとランクの合計値が偶数なら白に
+        if((s % 2) == 0) {
+            color = GetColor(0, 255, 255);
+        }
+        float3 curr_translate = GetTranslate();    //現在のポジションを取得
+        float  z              = (s * SQUARE_SIZE_) - STAND_SQUARE_HALF_ * (SQUARE_SIZE_);
+        float3 p1             = float3(-SQUARE_HALF_, -0.1f, z + -SQUARE_HALF_) + curr_translate;
+        float3 p2             = float3(SQUARE_HALF_, 0.1f, z + SQUARE_HALF_) + curr_translate;
+        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+    }
 }
 
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
-void InGameScene::Exit()
+void PieceStand::Exit()
 {
     __super::Exit();
 }
@@ -46,7 +54,7 @@ void InGameScene::Exit()
 //---------------------------------------------------------------------------------
 //!	GUI表示
 //---------------------------------------------------------------------------------
-void InGameScene::GUI()
+void PieceStand::GUI()
 {
     __super::GUI();
 }
