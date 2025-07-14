@@ -9,6 +9,7 @@
 #include "PieceStand.h"
 #include "Agent.h"
 #include "Player.h"
+#include <Game/AutoChess/system/MouseRay.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -19,6 +20,7 @@ bool InGameScene::Init()
     Scene::Object::Create<ChessBoard>();    //チェスボード
     Scene::Object::Create<PieceStand>();    //ピース置き場
     Scene::Object::Create<Player>();        //プレイヤー
+    Scene::Object::Create<MouseRay>();      //マウス光線
     return true;
 }
 
