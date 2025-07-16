@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+class Square;    //前方宣言
 USING_PTR(ChessBoard);
 class ChessBoard : public Object
 {
@@ -19,8 +20,9 @@ public:
 
     //@}
 private:
-    const int FILE_MAX_  = 8;    //ファイルの数
-    const int FILE_HALF_ = FILE_MAX_ / 2;
-    const int RANK_MAX_  = 8;    //ランクの数
-    const int RANK_HALF_ = RANK_MAX_ / 2;
+    const int                                           FILE_MAX_  = 8;    //ファイルの数
+    const int                                           FILE_HALF_ = FILE_MAX_ / 2;
+    const int                                           RANK_MAX_  = 8;    //ランクの数
+    const int                                           RANK_HALF_ = RANK_MAX_ / 2;
+    std::array<std::array<std::weak_ptr<Square>, 8>, 8> squares_;    //ボードのマス管理
 };
