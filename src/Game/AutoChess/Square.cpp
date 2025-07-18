@@ -5,6 +5,8 @@
 //---------------------------------------------------------------------------
 #include "Square.h"
 #include <System/Component/ComponentModel.h>
+#include <System/Component/ComponentCollisionModel.h>
+
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -14,6 +16,7 @@ bool Square::Init()
     SetName("Square");
     SetScaleAxisXYZ(float3(0.05f, 0.05f, 0.05f));
     AddComponent<ComponentModel>("data/AutoChess/Square.mv1");
+    AddComponent<ComponentCollisionModel>()->AttachToModel();
     return true;
 }
 
@@ -23,6 +26,7 @@ bool Square::Init()
 void Square::Update()
 {
     __super::Update();
+    is_ray_hit_ = false;
 }
 
 //---------------------------------------------------------------------------------
@@ -47,4 +51,24 @@ void Square::Exit()
 void Square::GUI()
 {
     __super::GUI();
+}
+
+//---------------------------------------------------------------------------------
+//!	当たり時処理
+//---------------------------------------------------------------------------------
+void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
+{
+    __super::OnHit(hitInfo);
+    auto hit_owner_ = hitInfo.hit_collision_->GetOwner();
+    if(hit_owner_->GetNameDefault() == "MouseRay") {
+        is_ray_hit_ = true;
+    }
+}
+
+//---------------------------------------------------------------------------------
+//!	マウスから出る光線にあたっているかを返す
+//---------------------------------------------------------------------------------
+bool Square::IsRayHit()
+{
+    return is_ray_hit_;
 }

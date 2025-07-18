@@ -47,6 +47,12 @@ void ChessBoard::Draw()
             if(((f + r) % 2) == 0) {
                 color = GetColor(255, 255, 255);
             }
+            //レイに当たっていたら緑にしておく
+            if(auto square = squares_[f][r].lock()) {
+                if(square->IsRayHit()) {
+                    color = GetColor(0, 255, 0);
+                }
+            }
             float  x  = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
             float  z  = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
             float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
