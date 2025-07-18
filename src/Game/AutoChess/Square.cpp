@@ -65,9 +65,39 @@ void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
     if(hit_owner_->GetNameDefault() == "MouseRay") {
         is_ray_hit_ = true;
         if(auto owner = dynamic_pointer_cast<Agent>(owner_.lock())) {
+            //選択
             if(owner->IsShouldSelectPiece()) {
                 if(auto piece = piece_.lock()) {
                     piece->SetSelect(true);
+                }
+            }
+            //ドロップ
+            if(owner->IsShouldDropPiece()) {
+                for(auto square : Scene::Object::GetArray<Square>()) {
+                    //ピースを取得
+                    if(auto piece = square->GetPutPiece().lock()) {
+                        //選択中なら
+                        if(piece->IsSelect()) {
+                            float3 pos = GetTranslate();    //現在のポジションを取得
+                            pos.y      = 0.5f;              //y座標を0.5にする
+                            piece->SetTranslate(pos);       //ピースの位置を設定
+                            //ピースのポインタを取得
+                            if(auto tmp = piece_.lock()) {
+                                float3 other_pos = square->GetTranslate();    //置くピースの位置を取得
+                                tmp->SetTranslate(float3(
+                                    other_pos.x,
+                                    0.5f,
+                                    other_pos
+                                        .z));    //置くピースの位置を初期化                                                                                              //ピースを交換
+                                piece_ = piece;    //置くピースに設定
+                                square->SetPutPiece(tmp);
+                            }
+                            else {
+                                piece_ = piece;    //置くピースに設定
+                                square->ResetPutPiece();
+                            }
+                        }
+                    }
                 }
             }
         }

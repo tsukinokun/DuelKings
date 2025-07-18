@@ -27,6 +27,7 @@ bool Player::Init()
 //---------------------------------------------------------------------------------
 void Player::Update()
 {
+    __super::Update();
     if(IsKeyDown(KEY_INPUT_SPACE)) {
         if(auto stand = stand_.lock()) {
             stand->PieceInit();    // ピースの初期化
@@ -48,7 +49,23 @@ void Player::Update()
         }
         should_select_piece_ = true;
     }
-    __super::Update();
+
+    //ドロップ操作
+    should_drop_piece_ = false;    //ドロップするかをリセット
+    if(IsMouseUp(MOUSE_INPUT_LEFT)) {
+        if(auto stand = stand_.lock()) {
+            auto stand_squares_ = stand->GetSquarePtrArray();
+            for(int i = 0; i < stand_squares_.size(); i++) {
+                if(auto square = stand_squares_[i].lock()) {
+                    if(auto piece = square->GetPutPiece().lock()) {
+                        if(piece->IsSelect()) {
+                            should_drop_piece_ = true;    //ドロップする
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 //---------------------------------------------------------------------------------

@@ -34,8 +34,11 @@ public:
     void SetPutPiece(std::weak_ptr<Piece> piece);
 
     //置いてあるピースを取得
-    //! retval 置いてあるピースのウィークポインタ
+    //! @retval 置いてあるピースのウィークポインタ
     std::weak_ptr<Piece> GetPutPiece();
+
+    //ピースのポインタを解除
+    void ResetPutPiece() { piece_.reset(); }
     //@}
 private:
     bool                  is_ray_hit_;    //マウスから出る光線に当たっているかを保持する変数
