@@ -6,6 +6,7 @@
 #include "Agent.h"
 #include "Player.h"
 #include "Piece.h"
+#include "Square.h"
 #include "PieceStand.h"
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -13,8 +14,11 @@
 bool Player::Init()
 {
     __super::Init();
-    stand_ = Scene::Object::Create<PieceStand>();    // ピーススタンドを作成
     SetName("Player");
+    auto stand = Scene::Object::Create<PieceStand>();    // ピーススタンドを作成
+    stand->SetOwner(shared_from_this());
+    stand->CreateSquare();
+    stand_ = stand;
     return true;
 }
 
@@ -27,6 +31,22 @@ void Player::Update()
         if(auto stand = stand_.lock()) {
             stand->PieceInit();    // ピースの初期化
         }
+    }
+
+    should_select_piece_ = false;    //選択するかをリセット
+    //左クリックで選択
+    if(IsMouseDown(MOUSE_INPUT_LEFT)) {
+        if(auto stand = stand_.lock()) {
+            auto stand_squares_ = stand->GetSquarePtrArray();
+            for(int i = 0; i < stand_squares_.size(); i++) {
+                if(auto square = stand_squares_[i].lock()) {
+                    if(auto piece = square->GetPutPiece().lock()) {
+                        piece->SetSelect(false);
+                    }
+                }
+            }
+        }
+        should_select_piece_ = true;
     }
     __super::Update();
 }

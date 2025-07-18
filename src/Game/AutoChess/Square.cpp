@@ -4,6 +4,8 @@
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include "Square.h"
+#include "Piece.h"
+#include "Agent.h"
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
 
@@ -62,6 +64,13 @@ void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
     auto hit_owner_ = hitInfo.hit_collision_->GetOwner();
     if(hit_owner_->GetNameDefault() == "MouseRay") {
         is_ray_hit_ = true;
+        if(auto owner = dynamic_pointer_cast<Agent>(owner_.lock())) {
+            if(owner->IsShouldSelectPiece()) {
+                if(auto piece = piece_.lock()) {
+                    piece->SetSelect(true);
+                }
+            }
+        }
     }
 }
 
@@ -71,4 +80,28 @@ void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
 bool Square::IsRayHit()
 {
     return is_ray_hit_;
+}
+
+//---------------------------------------------------------------------------------
+//!	オーナーを設定
+//---------------------------------------------------------------------------------
+void Square::SetOwner(std::weak_ptr<Object> owner)
+{
+    owner_ = owner;
+}
+
+//---------------------------------------------------------------------------------
+//!	ピースを置く
+//---------------------------------------------------------------------------------
+void Square::SetPutPiece(std::weak_ptr<Piece> piece)
+{
+    piece_ = piece;
+}
+
+//---------------------------------------------------------------------------------
+//!	置いてあるピースのポインタを取得
+//---------------------------------------------------------------------------------
+std::weak_ptr<Piece> Square::GetPutPiece()
+{
+    return piece_;
 }

@@ -20,6 +20,10 @@ public:
     //選択状態の設定
     //! @param [in] is_selected 選択状態
     void SetSelect(bool is_selected);
+
+    //選択状態の取得
+    //! @retval 選択状態
+    bool IsSelect();
     //@}
 private:
     float RADIUS_      = 0.4f;

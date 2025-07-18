@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include "PieceStand.h"
 #include "Piece.h"
+#include "Square.h"
 #include <Game/AutoChess/system/GameConst.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -67,13 +68,46 @@ void PieceStand::GUI()
 void PieceStand::PieceInit()
 {
     //バッファを確認
-    for(int i = 0; i < pieces_.size(); i++) {
+    for(int i = 0; i < squares_.size(); i++) {
         //ヌルポインタなら
-        if(pieces_[i].expired()) {
-            auto piece = Scene::Object::Create<Piece>();                                                                         //ピースを生成
-            piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE)) + GetTranslate());    //位置を設定
-            pieces_[i] = piece;                                                                                                  //バッファにポインタを登録
-            return;                                                                                                              //一度生成したらリターンする
+        if(auto square = squares_[i].lock()) {
+            if(square->GetPutPiece().expired()) {
+                auto piece = Scene::Object::Create<Piece>();                                                                         //ピースを生成
+                piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE)) + GetTranslate());    //位置を設定
+                square->SetPutPiece(piece);                                                                                          //バッファにポインタを登録
+                return;
+            }    //一度生成したらリターンする
         }
     }
+}
+
+//---------------------------------------------------------------------------------
+//!	オーナーを設定
+//---------------------------------------------------------------------------------
+void PieceStand::SetOwner(std::weak_ptr<Object> owner)
+{
+    owner_ = owner;
+}
+
+//---------------------------------------------------------------------------------
+//!	マスの生成
+//---------------------------------------------------------------------------------
+void PieceStand::CreateSquare()
+{
+    for(int i = 0; i < STAND_SQUARE_MAX_; i++) {
+        auto square = Scene::Object::Create<Square>();
+        square->SetOwner(owner_);
+        float  z = (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
+        float3 p = float3(5.0f, -0.1f, z);
+        square->SetTranslate(p);
+        squares_[i] = square;
+    }
+}
+
+//---------------------------------------------------------------------------------
+//!	マスのウィークポインタを取得
+//---------------------------------------------------------------------------------
+std::array<std::weak_ptr<Square>, 8> PieceStand::GetSquarePtrArray()
+{
+    return squares_;
 }
