@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+class ChessBoard;
 USING_PTR(Player);
 USING_PTR(PieceStand);
 class Player : public Agent
@@ -19,5 +20,6 @@ public:
     void GUI() override;       //!< GUI表示
     //@}
 private:
-    PieceStandWeakPtr stand_;    // プレイヤーのピーススタンド
+    PieceStandWeakPtr         stand_;    // プレイヤーのピーススタンド
+    std::weak_ptr<ChessBoard> board_;
 };

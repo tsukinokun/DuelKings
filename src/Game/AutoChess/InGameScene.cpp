@@ -16,11 +16,10 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    Scene::Object::Create<Camera>();        //カメラ
-    Scene::Object::Create<ChessBoard>();    //チェスボード
-    Scene::Object::Create<PieceStand>();    //ピース置き場
-    Scene::Object::Create<Player>();        //プレイヤー
-    Scene::Object::Create<MouseRay>();      //マウス光線
+    Scene::Object::Create<Camera>();    //カメラ
+    //Scene::Object::Create<ChessBoard>();    //チェスボード
+    Scene::Object::Create<Player>();      //プレイヤー
+    Scene::Object::Create<MouseRay>();    //マウス光線
     return true;
 }
 

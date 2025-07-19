@@ -12,16 +12,6 @@
 bool ChessBoard::Init()
 {
     __super::Init();
-    for(int f = 0; f < FILE_MAX_; f++) {
-        for(int r = 0; r < RANK_MAX_; r++) {
-            auto   square = Scene::Object::Create<Square>();
-            float  x      = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
-            float  z      = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
-            float3 p      = float3(x, -0.1f, z);
-            square->SetTranslate(p);
-            squares_[f][r] = square;
-        }
-    }
     SetName("ChessBoard");
     return true;
 }
@@ -76,4 +66,38 @@ void ChessBoard::Exit()
 void ChessBoard::GUI()
 {
     __super::GUI();
+}
+
+//---------------------------------------------------------------------------------
+//!	オーナーを設定
+//---------------------------------------------------------------------------------
+void ChessBoard::SetOwner(std::weak_ptr<Object> owner)
+{
+    owner_ = owner;
+}
+
+//---------------------------------------------------------------------------------
+//!	マスの生成
+//---------------------------------------------------------------------------------
+void ChessBoard::CreateSquare()
+{
+    for(int f = 0; f < FILE_MAX_; f++) {
+        for(int r = 0; r < RANK_MAX_; r++) {
+            auto square = Scene::Object::Create<Square>();
+            square->SetOwner(owner_);
+            float  x = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
+            float  z = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
+            float3 p = float3(x, -0.1f, z);
+            square->SetTranslate(p);
+            squares_[f][r] = square;
+        }
+    }
+}
+
+//---------------------------------------------------------------------------------
+//!	マスのウィークポインタを取得
+//---------------------------------------------------------------------------------
+std::array<std::array<std::weak_ptr<Square>, 8>, 8> ChessBoard::GetSquarePtrArray()
+{
+    return squares_;
 }

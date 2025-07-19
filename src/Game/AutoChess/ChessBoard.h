@@ -18,11 +18,22 @@ public:
     void Exit() override;      //!< 終了
     void GUI() override;       //!< GUI表示
 
+    //マスの生成
+    void CreateSquare();
+
+    //オーナーの名前を設定
+    //! @param owner [in] オーナー
+    void SetOwner(std::weak_ptr<Object> owner);
+
+    //マスのウィークポインタを取得
+    //! @retval マスのウィークポインタ
+    std::array<std::array<std::weak_ptr<Square>, 8>, 8> GetSquarePtrArray();
     //@}
 private:
     const int                                           FILE_MAX_  = 8;    //ファイルの数
     const int                                           FILE_HALF_ = FILE_MAX_ / 2;
     const int                                           RANK_MAX_  = 8;    //ランクの数
     const int                                           RANK_HALF_ = RANK_MAX_ / 2;
+    std::weak_ptr<Object>                               owner_;      //オーナーのウィークポインタ
     std::array<std::array<std::weak_ptr<Square>, 8>, 8> squares_;    //ボードのマス管理
 };
