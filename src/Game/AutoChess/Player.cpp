@@ -52,6 +52,18 @@ void Player::Update()
                 }
             }
         }
+        if(auto board = board_.lock()) {
+            auto board_squares_ = board->GetSquarePtrArray();
+            for(int f = 0; f < board_squares_.size(); f++) {
+                for(int r = 0; r < board_squares_[f].size(); r++) {
+                    if(auto square = board_squares_[f][r].lock()) {
+                        if(auto piece = square->GetPutPiece().lock()) {
+                            piece->SetSelect(false);
+                        }
+                    }
+                }
+            }
+        }
         should_select_piece_ = true;
     }
 
@@ -64,6 +76,18 @@ void Player::Update()
                 if(auto square = stand_squares_[i].lock()) {
                     if(auto piece = square->GetPutPiece().lock()) {
                         if(piece->IsSelect()) {
+                            should_drop_piece_ = true;    //ドロップする
+                        }
+                    }
+                }
+            }
+        }
+        if(auto board = board_.lock()) {
+            auto board_squares_ = board->GetSquarePtrArray();
+            for(int f = 0; f < board_squares_.size(); f++) {
+                for(int r = 0; r < board_squares_[f].size(); r++) {
+                    if(auto square = board_squares_[f][r].lock()) {
+                        if(auto piece = square->GetPutPiece().lock()) {
                             should_drop_piece_ = true;    //ドロップする
                         }
                     }
