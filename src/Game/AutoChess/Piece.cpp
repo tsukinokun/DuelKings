@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include "Piece.h"
 #include <Game/AutoChess/system/GameConst.h>
+#include <System/Component/ComponentModel.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -13,6 +14,7 @@ bool Piece::Init()
     __super::Init();
     SetTranslate(float3(0.0f, 0.5f, 0.0f));    // 初期位置を設定
     SetName("Piece");
+    AddComponent<ComponentModel>("data/AutoChess/Piece/King.mv1");
     return true;
 }
 
