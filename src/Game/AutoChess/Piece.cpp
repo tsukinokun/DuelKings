@@ -14,7 +14,8 @@ bool Piece::Init()
     __super::Init();
     SetTranslate(float3(0.0f, 0.5f, 0.0f));    // 初期位置を設定
     SetName("Piece");
-    AddComponent<ComponentModel>("data/AutoChess/Piece/King.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/King.mv1");
+    model->SetScaleAxisXYZ(0.005f);
     return true;
 }
 
@@ -33,7 +34,7 @@ void Piece::Draw()
 {
     __super::Draw();
     float3 pos = GetTranslate();
-    DrawSphere3D(cast(pos), RADIUS_, 16, GetColor(255, 0, 255), GetColor(255, 0, 255), TRUE);
+    //DrawSphere3D(cast(pos), RADIUS_, 16, GetColor(255, 0, 255), GetColor(255, 0, 255), TRUE);
     //選択中なら
     if(is_selected_) {
         //位置を取得
