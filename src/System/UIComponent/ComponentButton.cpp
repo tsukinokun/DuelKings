@@ -24,7 +24,7 @@ void ComponentButton::GUI()
     ImGui::Begin(GetOwner()->GetName().data());
     {
         ImGui::Separator();
-        if(ImGui::TreeNode(u8"画像コンポーネント")) {
+        if(ImGui::TreeNode(u8"ボタンコンポーネント")) {
             if(ImGui::Button(u8"削除"))
                 GetOwner()->RemoveComponent(shared_from_this());
 
@@ -38,6 +38,7 @@ void ComponentButton::GUI()
 //---------------------------------------------------------------------------
 bool ComponentButton::IsClick() const
 {
+    return false;
 }
 
 CEREAL_REGISTER_TYPE(ComponentButton)

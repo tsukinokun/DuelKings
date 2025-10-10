@@ -5,13 +5,15 @@
 //---------------------------------------------------------------------------
 #include "ComponentImage.h"
 #include "ComponentTransformUI.h"
-
+#include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------
 //! @brief	初期化関数
 //---------------------------------------------------------------------------
 void ComponentImage::Init()
 {    // 初期化処理
     __super::Init();
+    // デフォルト画像を設定
+    image_ = ImageBuffer::GetImageHandle("deff");
 }
 
 //---------------------------------------------------------------------------
@@ -90,6 +92,16 @@ std::shared_ptr<ComponentImage> ComponentImage::SetImage(int image)
 {
     image_ = image;    // 画像ハンドルを設定
     return dynamic_pointer_cast<ComponentImage>(shared_from_this());
+}
+//---------------------------------------------------------------------------
+//! @brief	画像のサイズを取得する関数
+//---------------------------------------------------------------------------
+float2 ComponentImage::GetImageSize() const
+{
+    float width = 0;                          // 幅
+    float hight = 0;                          //高さ
+    GetGraphSizeF(image_, &width, &hight);    // 画像のサイズを取得
+    return float2(width, hight);              // 画像のサイズをfloat2で返す
 }
 
 CEREAL_REGISTER_TYPE(ComponentImage)

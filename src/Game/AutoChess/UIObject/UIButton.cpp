@@ -1,15 +1,15 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	UIImage.cpp
-//! @brief	UIの画像オブジェクト
+//!	@file	UIButton.cpp
+//! @brief	UIのボタンオブジェクト
 //! @author	山﨑愛
 //---------------------------------------------------------------------------
-#include "UIImage.h"
+#include "UIButton.h"
 #include <System/UIComponent/ComponentImage.h>
 
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool UIImage::Init()
+bool UIButton::Init()
 {
     __super::Init();
     //---------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ bool UIImage::Init()
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
-void UIImage::Update()
+void UIButton::Update()
 {
     __super::Update();
 }
@@ -31,7 +31,7 @@ void UIImage::Update()
 //---------------------------------------------------------------------------------
 //!	描画
 //---------------------------------------------------------------------------------
-void UIImage::Draw()
+void UIButton::Draw()
 {
     __super::Draw();
 }
@@ -39,13 +39,13 @@ void UIImage::Draw()
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
-void UIImage::Exit()
+void UIButton::Exit()
 {
     __super::Exit();
 }
 
 //!GUI表示
-void UIImage::GUI()
+void UIButton::GUI()
 {
     __super::GUI();
 }
@@ -53,10 +53,10 @@ void UIImage::GUI()
 //---------------------------------------------------------------------------
 //! @brief	画像の設定
 //---------------------------------------------------------------------------
-std::shared_ptr<UIImage> UIImage::SetImage(int image)
+std::shared_ptr<UIButton> UIButton::SetImage(int image)
 {
     if(auto image_comp = image_component_.lock()) {
         image_comp->SetImage(image);    // 画像コンポーネントに画像を設定
     }
-    return dynamic_pointer_cast<UIImage>(shared_from_this());
+    return dynamic_pointer_cast<UIButton>(shared_from_this());
 }
