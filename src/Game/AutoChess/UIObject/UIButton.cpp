@@ -73,3 +73,14 @@ bool UIButton::IsClick() const
     }
     return false;
 }
+//---------------------------------------------------------------------------
+//  マウスがボタンに触れているかを返す関数
+//! @return マウスがボタンに触れているか
+//---------------------------------------------------------------------------
+bool UIButton::IsMouseOver() const
+{
+    if(auto button_comp = button_component_.lock()) {
+        return button_comp->IsMouseOver();    // ボタンコンポーネントにマウスが触れているかを問い合わせる
+    }
+    return false;
+}

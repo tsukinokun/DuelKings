@@ -12,8 +12,6 @@
 void ComponentImage::Init()
 {    // 初期化処理
     __super::Init();
-    // デフォルト画像を設定
-    image_ = ImageBuffer::GetImageHandle("deff");
 }
 
 //---------------------------------------------------------------------------

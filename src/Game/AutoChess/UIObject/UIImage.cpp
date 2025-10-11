@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 #include "UIImage.h"
 #include <System/UIComponent/ComponentImage.h>
-
+#include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -13,10 +13,12 @@ bool UIImage::Init()
 {
     __super::Init();
     //---------------------------------------------------------------------------------
-    //	文字列機能コンポーネントの追加
+    //	画像機能コンポーネントの追加
     //---------------------------------------------------------------------------------
-    auto img_comp    = AddComponent<ComponentImage>();    // 文字列機能コンポーネントを追加
-    image_component_ = img_comp;                          // weak_ptrとして保持
+    auto img_comp = AddComponent<ComponentImage>();    // 画像機能コンポーネントを追加
+    //デフォルト画像を設定
+    img_comp->SetImage(ImageBuffer::GetImageHandle("deff"));    // 画像コンポーネントに画像を設定
+    image_component_ = img_comp;                                // weak_ptrとして保持
     return true;
 }
 
