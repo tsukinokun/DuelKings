@@ -5,7 +5,8 @@
 //---------------------------------------------------------------------------
 #include "ComponentButton.h"
 #include "ComponentTransformUI.h"
-
+#include "ComponentImage.h"
+#include <Game/AutoChess/system/HlslppUseful.h>
 //---------------------------------------------------------------------------
 //! @brief	初期化関数
 //---------------------------------------------------------------------------
@@ -38,6 +39,25 @@ void ComponentButton::GUI()
 //---------------------------------------------------------------------------
 bool ComponentButton::IsClick() const
 {
+    //左クリックされていれば
+    if(IsMouseDown(MOUSE_INPUT_LEFT)) {
+        // とりあえずオーナーを取得
+        auto owner = GetOwner();
+        //ComponentImageがあることを確認
+        if(auto image_comp = owner->GetComponent<ComponentImage>()) {
+            //マウス座標を取得
+            float2 mouse_pos = GetMouseFloat2();
+            //オーナー(UI)座標を取得
+            float3 translate = owner->GetTranslate() + image_comp->GetAdjustment();
+            float2 ui_pos    = float2(translate.x, translate.y);
+            //UIサイズを取得
+            float2 ui_size = float2(0.0f, 0.0f);                  //とりあえず宣言
+            ui_size        = image_comp->GetScreenImageSize();    //サイズ取得
+            if(CheckBoxPointHit(ui_pos, ui_size, mouse_pos)) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 

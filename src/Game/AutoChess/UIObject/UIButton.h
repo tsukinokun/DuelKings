@@ -6,7 +6,9 @@
 #pragma once
 #include <System/Scene.h>
 #include "UIObject.h"
-class ComponentImage;    //ポインタとして使用するための前方宣言
+//ポインタとして使用するための前方宣言
+class ComponentImage;
+class ComponentButton;
 USING_PTR(UIButton);
 
 class UIButton : public UIObject
@@ -26,7 +28,13 @@ public:
     //! @retval 自身のポインタ
     std::shared_ptr<UIButton> SetImage(int image);
 
+    // ボタンがクリックされたかを返す関数
+    //! @retval クリックされたか
+    bool IsClick() const;
+
 private:
     std::weak_ptr<ComponentImage>
         image_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく
+    std::weak_ptr<ComponentButton>
+        button_component_;    // ボタンコンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく
 };

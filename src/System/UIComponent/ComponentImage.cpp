@@ -22,41 +22,11 @@ void ComponentImage::Init()
 void ComponentImage::LateDraw()
 {
     __super::LateDraw();
-    auto   owner      = GetOwner();                  //オーナーを取得
-    float3 adjustment = float3(0.0f, 0.0f, 0.0f);    // 調整値(Alignmentに合わせて)
-    if(auto comp_transform = owner->GetComponent<ComponentTransformUI>()) {
-        ComponentTransformUI::Alignment alignment = comp_transform->GetAlignment();
-        float                           width     = 0;    // 幅
-        float                           hight     = 0;    //高さ
-        GetGraphSizeF(image_, &width, &hight);
-        //配置位置(縦)
-        switch(static_cast<int>(alignment) / 3) {
-        case 0:
-            adjustment.y = (-hight * 0.5f);
-            break;    // 上寄せ
-        case 1:
-            adjustment.y = 0.0f;
-            break;    // 中央寄せ
-        case 2:
-            adjustment.y = (hight * 0.5f);
-            break;    // 下寄せ
-        }
-        //配置位置(横)
-        switch(static_cast<int>(alignment) % 3) {
-        case 0:
-            adjustment.x = (-width * 0.5f);
-            break;    // 左寄せ
-        case 1:
-            adjustment.x = 0.0f;
-            break;    // 中央寄せ
-        case 2:
-            adjustment.x = (width * 0.5f);
-            break;    // 右寄せ
-        }
-    }
-    float3 pos   = float3(0.0f, 0.0f, 0.0f);
-    pos          = owner->GetTranslate() + adjustment;
-    float3 scale = owner->GetScaleAxisXYZ();
+    auto   owner      = GetOwner();         //オーナーを取得
+    float3 adjustment = GetAdjustment();    // 調整値
+    float3 pos        = float3(0.0f, 0.0f, 0.0f);
+    pos               = owner->GetTranslate() + adjustment;
+    float3 scale      = owner->GetScaleAxisXYZ();
     //サイズは、Transformの平均
     float size = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
     //角度はx軸の角度から取る
@@ -102,6 +72,62 @@ float2 ComponentImage::GetImageSize() const
     float hight = 0;                          //高さ
     GetGraphSizeF(image_, &width, &hight);    // 画像のサイズを取得
     return float2(width, hight);              // 画像のサイズをfloat2で返す
+}
+//---------------------------------------------------------------------------
+//! @brief	画面にうつる画像のサイズを取得する関数
+//---------------------------------------------------------------------------
+float2 ComponentImage::GetScreenImageSize()
+{
+    float width = 0;                          // 幅
+    float hight = 0;                          //高さ
+    GetGraphSizeF(image_, &width, &hight);    // 画像のサイズを取得
+    auto   owner = GetOwner();                //オーナーを取得
+    float3 scale = owner->GetScaleAxisXYZ();
+    //サイズは、Transformの平均
+    float size  = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
+    width      *= size;                                    // 幅にサイズをかける
+    hight      *= size;                                    // 高さにサイズをかける
+    return float2(width, hight);                           // 画像のサイズをfloat2で返す
+}
+//---------------------------------------------------------------------------
+//! @brief  画像座標の補正値を取得する関数
+//! @retval 画像座標の補正値
+//---------------------------------------------------------------------------
+float3 ComponentImage::GetAdjustment() const
+{
+    auto   owner      = GetOwner();                  //オーナーを取得
+    float3 adjustment = float3(0.0f, 0.0f, 0.0f);    // 調整値(Alignmentに合わせて)
+    if(auto comp_transform = owner->GetComponent<ComponentTransformUI>()) {
+        ComponentTransformUI::Alignment alignment = comp_transform->GetAlignment();
+        float                           width     = 0;    // 幅
+        float                           hight     = 0;    //高さ
+        GetGraphSizeF(image_, &width, &hight);
+        //配置位置(縦)
+        switch(static_cast<int>(alignment) / 3) {
+        case 0:
+            adjustment.y = (-hight * 0.5f);
+            break;    // 上寄せ
+        case 1:
+            adjustment.y = 0.0f;
+            break;    // 中央寄せ
+        case 2:
+            adjustment.y = (hight * 0.5f);
+            break;    // 下寄せ
+        }
+        //配置位置(横)
+        switch(static_cast<int>(alignment) % 3) {
+        case 0:
+            adjustment.x = (-width * 0.5f);
+            break;    // 左寄せ
+        case 1:
+            adjustment.x = 0.0f;
+            break;    // 中央寄せ
+        case 2:
+            adjustment.x = (width * 0.5f);
+            break;    // 右寄せ
+        }
+    }
+    return adjustment;
 }
 
 CEREAL_REGISTER_TYPE(ComponentImage)

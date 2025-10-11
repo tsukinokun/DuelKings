@@ -29,8 +29,16 @@ public:
     std::shared_ptr<ComponentImage> SetImage(int image);
 
     //画像のサイズを取得する関数
-    //! @retval 画像のサイズをfloat2で返す
+    //! @retval 画像のサイズ
     float2 GetImageSize() const;
+
+    //スクリーンにうつる画像の大きさを取得する関数
+    //! @retval スクリーンにうつる画像の大きさ
+    float2 GetScreenImageSize();
+
+    //画像座標の補正値を取得する関数
+    //! @retval 画像座標の補正値
+    float3 GetAdjustment() const;
     //! @}
 
 private:

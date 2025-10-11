@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 #include "UIButton.h"
 #include <System/UIComponent/ComponentImage.h>
-
+#include <System/UIComponent/ComponentButton.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -15,8 +15,10 @@ bool UIButton::Init()
     //---------------------------------------------------------------------------------
     //	文字列機能コンポーネントの追加
     //---------------------------------------------------------------------------------
-    auto img_comp    = AddComponent<ComponentImage>();    // 文字列機能コンポーネントを追加
-    image_component_ = img_comp;                          // weak_ptrとして保持
+    auto img_comp     = AddComponent<ComponentImage>();     // 文字列機能コンポーネントを追加
+    image_component_  = img_comp;                           // weak_ptrとして保持
+    auto btn_comp     = AddComponent<ComponentButton>();    // ボタンコンポーネントを追加
+    button_component_ = btn_comp;                           // weak_ptrとして保持
     return true;
 }
 
@@ -59,4 +61,15 @@ std::shared_ptr<UIButton> UIButton::SetImage(int image)
         image_comp->SetImage(image);    // 画像コンポーネントに画像を設定
     }
     return dynamic_pointer_cast<UIButton>(shared_from_this());
+}
+//---------------------------------------------------------------------------
+// ボタンがクリックされたかを返す関数
+//! @retval クリックされたか
+//---------------------------------------------------------------------------
+bool UIButton::IsClick() const
+{
+    if(auto button_comp = button_component_.lock()) {
+        return button_comp->IsClick();    // ボタンコンポーネントにクリックされたかを問い合わせる
+    }
+    return false;
 }
