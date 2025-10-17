@@ -23,6 +23,7 @@ bool InGameScene::Init()
     Scene::Object::Create<Player>();                     //プレイヤー
     Scene::Object::Create<MouseRay>();                   //マウス光線
     Scene::Object::Create<PiecePurchaseOpenButton>();    //ピース購入画面を開けるボタン
+
     return true;
 }
 
