@@ -9,6 +9,7 @@
 #include "Square.h"
 #include "ChessBoard.h"
 #include "PieceStand.h"
+#include "ShopStand.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -16,11 +17,22 @@ bool Player::Init()
 {
     __super::Init();
     SetName("Player");
-    auto stand = Scene::Object::Create<PieceStand>();    // ピーススタンドを作成
-    stand->SetOwner(shared_from_this());
-    stand->CreateSquare();
-    stand_     = stand;
-    auto board = Scene::Object::Create<ChessBoard>();    //チェスボード
+    //---------------------------------------------------------------------------------
+    //	ピーススタンドを作成
+    //---------------------------------------------------------------------------------
+    auto piece_stand = Scene::Object::Create<PieceStand>();
+    piece_stand->SetOwner(shared_from_this());
+    piece_stand->CreateSquare();
+    stand_ = piece_stand;
+    //---------------------------------------------------------------------------------
+    //	ショップスタンドを作成
+    //---------------------------------------------------------------------------------
+    auto shop_stand = Scene::Object::Create<ShopStand>();
+    shop_stand->SetOwner(shared_from_this());
+    //---------------------------------------------------------------------------------
+    //	チェスボードを作成
+    //---------------------------------------------------------------------------------
+    auto board = Scene::Object::Create<ChessBoard>();
     board->SetOwner(shared_from_this());
     board->CreateSquare();
     board_ = board;

@@ -11,6 +11,9 @@
 //---------------------------------------------------------------------------------
 bool ShopStand::Init()
 {
+    __super::Init();
+    ReloadShopPieces();    //購入可能ピースをリロード
+    return true;
 }
 //---------------------------------------------------------------------------------
 //!	オーナーを設定
@@ -18,4 +21,18 @@ bool ShopStand::Init()
 void ShopStand::SetOwner(std::weak_ptr<Object> owner)
 {
     owner_ = owner;
+}
+//---------------------------------------------------------------------------------
+//購入可能ピースをリロードする関数
+//---------------------------------------------------------------------------------
+void ShopStand::ReloadShopPieces()
+{
+    //仮でピースの基底クラスを入れておく
+    for(int i = 0; i < shop_pieces_.size(); i++) {
+        //既にピースがある場合は消す
+        if(auto piece = shop_pieces_[i].lock()) {
+            Scene::Object::Release(piece);
+        }
+        shop_pieces_[i] = Scene::Object::Create<Piece>();
+    }
 }
