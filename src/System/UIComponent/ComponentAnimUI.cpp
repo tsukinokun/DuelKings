@@ -12,45 +12,41 @@
 void ComponentAnimUI::Init()
 {    // 初期化処理
     __super::Init();
+    //---------------------------------------------------------------------------
+    //  更新処理を登録
+    //---------------------------------------------------------------------------
+    auto update = [this]() {
+        if(update_frame_ <= 0)
+            return;                 //0以下が指定されていたら、アニメーションを行わない
+        ++frame_;                   //フレームをカウント
+        frame_ %= update_frame_;    //もしフレームカウントがupdate_frameと同じなら0になる。
+        if(frame_ != 0)
+            return;                    //0でない時ならここから先の更新は行わない
+        src_x_ += (int)div_size_.x;    //spriteを一枚分ずらす
+        if(src_x_ >= size_.x) {
+            Reset();    //もしずらした先が画像サイズをはみ出ていたら1毎目に戻す
+        }
+    };
+    SetProc("Update", update, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    //---------------------------------------------------------------------------
+    //  UI描画を登録
+    //---------------------------------------------------------------------------
+    auto draw_ui = [this]() {
+        auto   owner     = GetOwner();
+        float3 translate = owner->GetTranslate();
+        DrawRectRotaGraphF(translate.x,
+                           translate.y,    // 描画位置
+                           src_x_,
+                           0,    // 画像切り抜き位置
+                           (int)div_size_.x,
+                           (int)div_size_.y,    // 画像ひとつのサイズ
+                           ex_rate_,
+                           0,
+                           img_,
+                           TRUE);
+    };
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
 }
-//---------------------------------------------------------------------------
-//! @brief	更新処理関数
-//---------------------------------------------------------------------------
-void ComponentAnimUI::Update()
-{
-    __super::Update();
-
-    if(update_frame_ <= 0)
-        return;                 //0以下が指定されていたら、アニメーションを行わない
-    ++frame_;                   //フレームをカウント
-    frame_ %= update_frame_;    //もしフレームカウントがupdate_frameと同じなら0になる。
-    if(frame_ != 0)
-        return;                    //0でない時ならここから先の更新は行わない
-    src_x_ += (int)div_size_.x;    //spriteを一枚分ずらす
-    if(src_x_ >= size_.x) {
-        Reset();    //もしずらした先が画像サイズをはみ出ていたら1毎目に戻す
-    }
-}
-//---------------------------------------------------------------------------
-//! @brief	UI描画
-//---------------------------------------------------------------------------
-void ComponentAnimUI::LateDraw()
-{
-    __super::LateDraw();
-    auto   owner     = GetOwner();
-    float3 translate = owner->GetTranslate();
-    DrawRectRotaGraphF(translate.x,
-                       translate.y,    // 描画位置
-                       src_x_,
-                       0,    // 画像切り抜き位置
-                       (int)div_size_.x,
-                       (int)div_size_.y,    // 画像ひとつのサイズ
-                       ex_rate_,
-                       0,
-                       img_,
-                       TRUE);
-}
-
 //---------------------------------------------------------------------------
 //! @brief	ImGui
 //---------------------------------------------------------------------------

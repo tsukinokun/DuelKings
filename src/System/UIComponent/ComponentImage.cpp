@@ -27,7 +27,7 @@ void ComponentImage::Init()
         float angle = owner->GetRotationAxisXYZ().x;    // X軸の角度を取得0
         DrawRotaGraphF(pos.x, pos.y, static_cast<double>(size), static_cast<double>(angle), image_, TRUE);
     };
-    SetProc("Test", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
 }
 
 //---------------------------------------------------------------------------

@@ -27,9 +27,6 @@ public:
     //	初期化処理
     void Init() override;
 
-    //	描画処理
-    void LateDraw() override;
-
     //ImGui
     void GUI() override;
 
