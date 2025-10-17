@@ -12,24 +12,22 @@
 void ComponentImage::Init()
 {    // 初期化処理
     __super::Init();
-}
-
-//---------------------------------------------------------------------------
-//! @brief	UI描画
-//---------------------------------------------------------------------------
-void ComponentImage::LateDraw()
-{
-    __super::LateDraw();
-    auto   owner      = GetOwner();         //オーナーを取得
-    float3 adjustment = GetAdjustment();    // 調整値
-    float3 pos        = float3(0.0f, 0.0f, 0.0f);
-    pos               = owner->GetTranslate() + adjustment;
-    float3 scale      = owner->GetScaleAxisXYZ();
-    //サイズは、Transformの平均
-    float size = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
-    //角度はx軸の角度から取る
-    float angle = owner->GetRotationAxisXYZ().x;    // X軸の角度を取得0
-    DrawRotaGraphF(pos.x, pos.y, static_cast<double>(size), static_cast<double>(angle), image_, TRUE);
+    //---------------------------------------------------------------------------
+    //  UI描画を登録
+    //---------------------------------------------------------------------------
+    auto draw_ui = [this]() {
+        auto   owner      = GetOwner();         //オーナーを取得
+        float3 adjustment = GetAdjustment();    // 調整値
+        float3 pos        = float3(0.0f, 0.0f, 0.0f);
+        pos               = owner->GetTranslate() + adjustment;
+        float3 scale      = owner->GetScaleAxisXYZ();
+        //サイズは、Transformの平均
+        float size = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
+        //角度はx軸の角度から取る
+        float angle = owner->GetRotationAxisXYZ().x;    // X軸の角度を取得0
+        DrawRotaGraphF(pos.x, pos.y, static_cast<double>(size), static_cast<double>(angle), image_, TRUE);
+    };
+    SetProc("Test", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
 }
 
 //---------------------------------------------------------------------------
