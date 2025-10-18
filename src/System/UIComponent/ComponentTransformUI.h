@@ -41,7 +41,7 @@ public:
     //! @}
 
 private:
-    Alignment alignment_ = Alignment::UpperLeft;    //配置の設定
+    Alignment alignment_ = Alignment::MiddleCenter;    //配置の設定
 
     //--------------------------------------------------------------------
     //! @name Cereal処理

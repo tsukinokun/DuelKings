@@ -15,11 +15,7 @@ public:
     BP_OBJECT_DECL(UIText, u8"UIの文字オブジェクト")
 
     //@}
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
+    bool Init() override;    //!< 初期化
 
     //文字列の設定
     //! @param str [in] 描画する文字列の設定

@@ -12,6 +12,9 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/MouseRay.h>
 #include <Game/AutoChess/UIObject/PiecePurchaseOpenButton.h>
+#include <Game/AutoChess/UIObject/UIText.h>
+#include <System/UIComponent/ComponentTransformUI.h>
+#include <Game/AutoChess/UIObject/PieceMaxText.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -29,9 +32,15 @@ bool InGameScene::Init()
     auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
     exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
     exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
-    exp_button->SetTranslate(float3(250.0f, 750.0f, 0.0f));    //位置を画面右下あたりに設定
+    exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
     //左クリックを促す
     exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+    //---------------------------------------------------------------------------------
+    //  駒数制限UI
+    //---------------------------------------------------------------------------------
+    auto piece_max_ui = Scene::Object::Create<PieceMaxText>();
+    piece_max_ui->SetTranslate(float3(700.0f, 350.0f, 0.0f));
+    piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     return true;
 }
 

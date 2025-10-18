@@ -21,7 +21,7 @@ bool PiecePurchaseOpenButton::Init()
         image_comp->SetImage(ImageBuffer::GetImageHandle("piece_purchase_open_button"));    // 画像コンポーネントに画像を設定
     }
     SetScaleAxisXYZ(0.6f);                          //大きさを少し小さく設定
-    SetTranslate(float3(1300.0f, 750.0f, 0.0f));    //位置を画面右下あたりに設定
+    SetTranslate(float3(1150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
     //左クリックを促す
     SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
     return true;
