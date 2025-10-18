@@ -25,6 +25,10 @@ public:
 	//! @param image [in] 描画する画像ハンドル
 	//! @retval 自身のポインタ
 	std::shared_ptr<UIImage> SetImage(int image);
+
+	//画像ハンドルの取得
+    //! @retval 画像のハンドル
+    int GetImageHandle();
 private:
 	std::weak_ptr<ComponentImage>
 		image_component_;	// 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

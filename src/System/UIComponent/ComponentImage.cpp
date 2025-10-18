@@ -60,6 +60,13 @@ std::shared_ptr<ComponentImage> ComponentImage::SetImage(int image)
     return dynamic_pointer_cast<ComponentImage>(shared_from_this());
 }
 //---------------------------------------------------------------------------
+//画像ハンドルの取得
+//---------------------------------------------------------------------------
+int ComponentImage::GetImageHandle()
+{
+    return image_;
+}
+//---------------------------------------------------------------------------
 //! @brief	画像のサイズを取得する関数
 //---------------------------------------------------------------------------
 float2 ComponentImage::GetImageSize() const

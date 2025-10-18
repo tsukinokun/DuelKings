@@ -20,6 +20,10 @@ public:
     //購入可能ピースをリロードする関数
     void ReloadShopPieces();
 
+    //ショップに並んでいるピースを取得する関数
+    //! @retval ショップに並んでいるピース
+    std::array<std::weak_ptr<Piece>, 5> GetShopPieces();
+
 private:
     std::array<std::weak_ptr<Piece>, 5> shop_pieces_;    //購入可能ピースを格納した配列
     std::weak_ptr<Object>               owner_;          //オーナーのウィークポインタ

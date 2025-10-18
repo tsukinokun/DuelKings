@@ -11,6 +11,7 @@
 #include "Player.h"
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/MouseRay.h>
+#include <Game/AutoChess/ShopStand.h>
 #include <Game/AutoChess/UIObject/PiecePurchaseOpenButton.h>
 #include <Game/AutoChess/UIObject/UIText.h>
 #include <System/UIComponent/ComponentTransformUI.h>
@@ -49,6 +50,22 @@ bool InGameScene::Init()
     piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
     piece_max_ui->SetTranslate(float3(700.0f, 250.0f, 0.0f));
     piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+    //---------------------------------------------------------------------------------
+    //  購入ボタン
+    //---------------------------------------------------------------------------------
+    auto piece_purchase_button = Scene::Object::Create<UIButton>();
+    piece_purchase_button->SetImage(MakeScreen(100.0f, 200.0f, FALSE));    //スクリーンを入れ込む。
+    //ターゲットをうつす処理を入れ込む。
+    auto draw_target = [piece_purchase_button]() {
+        //とりあえずプレイヤーを取得
+        if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+            auto shop_pieces = shop_stand->GetShopPieces();
+            //SetDrawScreen(piece_purchase_button->GetImageHandle());
+            ////戻す
+            //SetDrawScreen(DX_SCREEN_BACK);
+        }
+    };
+    piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
     return true;
 }
 

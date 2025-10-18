@@ -62,3 +62,13 @@ std::shared_ptr<UIImage> UIImage::SetImage(int image)
     }
     return dynamic_pointer_cast<UIImage>(shared_from_this());
 }
+//---------------------------------------------------------------------------
+//画像ハンドルの取得
+//---------------------------------------------------------------------------
+int UIImage::GetImageHandle()
+{
+    if(auto image_comp = image_component_.lock()) {
+        return image_comp->GetImageHandle();    // 画像コンポーネントから画像ハンドルを取得
+    }
+    return -1;
+}

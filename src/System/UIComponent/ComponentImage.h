@@ -25,6 +25,10 @@ public:
     //! @retval 自身のポインタ
     std::shared_ptr<ComponentImage> SetImage(int image);
 
+    //画像ハンドルの取得
+    //! @retval 画像のハンドル
+    int GetImageHandle();
+
     //画像のサイズを取得する関数
     //! @retval 画像のサイズ
     float2 GetImageSize() const;

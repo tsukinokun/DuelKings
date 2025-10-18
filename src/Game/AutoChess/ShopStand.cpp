@@ -36,3 +36,10 @@ void ShopStand::ReloadShopPieces()
         shop_pieces_[i] = Scene::Object::Create<Piece>();
     }
 }
+//---------------------------------------------------------------------------------
+//! ショップに並んでいるピースを取得する関数
+//---------------------------------------------------------------------------------
+std::array<std::weak_ptr<Piece>, 5> ShopStand::GetShopPieces()
+{
+    return shop_pieces_;
+}
