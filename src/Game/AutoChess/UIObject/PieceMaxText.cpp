@@ -18,12 +18,11 @@ bool PieceMaxText::Init()
     //---------------------------------------------------------------------------------
     //プレイヤーからレベルを取得して表示する処理を入れ込む
     //---------------------------------------------------------------------------------
-
-    auto set_text_proc = [this]() {
-        auto player = Scene::Object::Get<Player>();
-        int  level  = player->GetAgentLevel();
-        SetText(std::to_string(level));
-    };
-    SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    //auto set_text_proc = [this]() {
+    //    auto player = Scene::Object::Get<Player>();
+    //    int  level  = player->GetAgentLevel();
+    //    SetText(std::to_string(level));
+    //};
+    //SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
     return true;
 }

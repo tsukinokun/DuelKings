@@ -14,7 +14,6 @@
 #include <Game/AutoChess/UIObject/PiecePurchaseOpenButton.h>
 #include <Game/AutoChess/UIObject/UIText.h>
 #include <System/UIComponent/ComponentTransformUI.h>
-#include <Game/AutoChess/UIObject/PieceMaxText.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -38,8 +37,17 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     //  駒数制限UI
     //---------------------------------------------------------------------------------
-    auto piece_max_ui = Scene::Object::Create<PieceMaxText>();
-    piece_max_ui->SetTranslate(float3(700.0f, 350.0f, 0.0f));
+    auto piece_max_ui = Scene::Object::Create<UIText>();
+    piece_max_ui->SetFontSize(80);                                         //フォントサイズ設定
+    piece_max_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
+    //更新処理
+    auto set_text_proc = [piece_max_ui]() {
+        auto player = Scene::Object::Get<Player>();
+        int  level  = player->GetAgentLevel();
+        piece_max_ui->SetText(std::to_string(level));
+    };
+    piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    piece_max_ui->SetTranslate(float3(700.0f, 250.0f, 0.0f));
     piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     return true;
 }
