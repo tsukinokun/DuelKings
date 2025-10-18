@@ -15,6 +15,7 @@ void ImageBuffer::Init()
     image_buffer_["deff"]                       = DxLib::LoadGraph("data/AutoChess/Image/deff.png");                       // デフォルト画像
     image_buffer_["piece_purchase_open_button"] = DxLib::LoadGraph("data/AutoChess/Image/PiecePurchaseOpenButton.png");    // ピース購入画面を開くUI画像
     image_buffer_["left_click_anim"]            = DxLib::LoadGraph("data/AutoChess/Image/LeftClickAnim.png");              // 左クリックアニメーション画像
+    image_buffer_["exp_button"]                 = DxLib::LoadGraph("data/AutoChess/Image/EXPButton.png");                  // 経験値ボタン画像
 }
 
 //---------------------------------------------------------------------------------

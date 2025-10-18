@@ -23,7 +23,15 @@ bool InGameScene::Init()
     Scene::Object::Create<Player>();                     //プレイヤー
     Scene::Object::Create<MouseRay>();                   //マウス光線
     Scene::Object::Create<PiecePurchaseOpenButton>();    //ピース購入画面を開けるボタン
-
+    //---------------------------------------------------------------------------------
+    //  経験値ボタン
+    //---------------------------------------------------------------------------------
+    auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
+    exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
+    exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
+    exp_button->SetTranslate(float3(250.0f, 750.0f, 0.0f));    //位置を画面右下あたりに設定
+    //左クリックを促す
+    exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
     return true;
 }
 

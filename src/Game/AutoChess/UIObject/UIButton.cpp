@@ -84,3 +84,14 @@ bool UIButton::IsMouseOver() const
     }
     return false;
 }
+//---------------------------------------------------------------------------
+//  マウスがボタンに触れている時に表示させる情報の設定
+//! @return 自身のポインタ
+//---------------------------------------------------------------------------
+std::shared_ptr<UIButton> UIButton::SetOverInformation(ComponentButton::OverInformation info)
+{
+    if(auto button_comp = button_component_.lock()) {
+        button_comp->SetOverInformation(info);    // ボタンコンポーネントに情報を設定
+    }
+    return dynamic_pointer_cast<UIButton>(shared_from_this());
+}

@@ -6,9 +6,9 @@
 //---------------------------------------------------------------------------
 #include <System/Scene.h>
 #include "UIObject.h"
+#include <System/UIComponent/ComponentButton.h>
 //ポインタとして使用するための前方宣言
 class ComponentImage;
-class ComponentButton;
 USING_PTR(UIButton);
 
 class UIButton : public UIObject
@@ -40,6 +40,12 @@ public:
     //! @return マウスがボタンに触れているか
     //---------------------------------------------------------------------------
     bool IsMouseOver() const;
+
+    //---------------------------------------------------------------------------
+    //  マウスがボタンに触れている時に表示させる情報の設定
+    //! @return 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<UIButton> SetOverInformation(ComponentButton::OverInformation info);
 
 protected:
     std::weak_ptr<ComponentImage>
