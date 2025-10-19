@@ -18,6 +18,4 @@ public:
     void Update() override;    //!< 更新
     //@}
 private:
-    PieceStandWeakPtr         stand_;    // プレイヤーのピーススタンド
-    std::weak_ptr<ChessBoard> board_;
 };

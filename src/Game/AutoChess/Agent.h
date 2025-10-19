@@ -5,7 +5,9 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+class ChessBoard;
 USING_PTR(Agent);
+USING_PTR(PieceStand);
 class Agent : public Object
 {
 public:
@@ -29,9 +31,15 @@ public:
     //経験値量から、レベル(置ける駒数)を判定して返す関数
     //! @retval レベル
     int GetAgentLevel();
+
+    //置かれているピースの数を取得する関数
+    //! @retval 置かれているピースの数
+    int GetPlacedPieceNum() const;
     //@}
 protected:
-    bool should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
-    bool should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
-    int  exp_                 = 0;        //エージェントのレベル
+    bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
+    bool                      should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
+    int                       exp_                 = 0;        //エージェントのレベル
+    PieceStandWeakPtr         stand_;                          // ピーススタンド
+    std::weak_ptr<ChessBoard> board_;                          // チェスボード
 };

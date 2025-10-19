@@ -15,8 +15,6 @@ public:
     bool Init() override;      //!< 初期化
     void Update() override;    //!< 更新
     void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
 
     //マスの生成
     void CreateSquare();
@@ -28,6 +26,10 @@ public:
     //マスのウィークポインタを取得
     //! @retval マスのウィークポインタ
     std::array<std::array<std::weak_ptr<Square>, 8>, 8> GetSquarePtrArray();
+
+    //マスに置かれている駒の数を取得
+    //! @retval 駒の数
+    int GetPieceNumOnSquares() const;
     //@}
 private:
     const int                                           FILE_MAX_  = 8;    //ファイルの数

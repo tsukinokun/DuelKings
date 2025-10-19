@@ -5,6 +5,10 @@
 //---------------------------------------------------------------------------
 #include "Agent.h"
 #include <Game/AutoChess/system/GameConst.h>
+#include "Square.h"
+#include "ChessBoard.h"
+#include "PieceStand.h"
+#include "ShopStand.h"
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -12,6 +16,25 @@ bool Agent::Init()
 {
     __super::Init();
     SetName("Agent");
+    //---------------------------------------------------------------------------------
+    //	ピーススタンドを作成
+    //---------------------------------------------------------------------------------
+    auto piece_stand = Scene::Object::Create<PieceStand>();
+    piece_stand->SetOwner(shared_from_this());
+    piece_stand->CreateSquare();
+    stand_ = piece_stand;
+    //---------------------------------------------------------------------------------
+    //	ショップスタンドを作成
+    //---------------------------------------------------------------------------------
+    auto shop_stand = Scene::Object::Create<ShopStand>();
+    shop_stand->SetOwner(shared_from_this());
+    //---------------------------------------------------------------------------------
+    //	チェスボードを作成
+    //---------------------------------------------------------------------------------
+    auto board = Scene::Object::Create<ChessBoard>();
+    board->SetOwner(shared_from_this());
+    board->CreateSquare();
+    board_ = board;
     return true;
 }
 //---------------------------------------------------------------------------------
@@ -38,7 +61,7 @@ std::shared_ptr<Agent> Agent::AddExp(int exp)
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
 //---------------------------------------------------------------------------------
-//経験値量から、レベル(置ける駒数)を判定して返す関数
+//! 経験値量から、レベル(置ける駒数)を判定して返す関数
 //---------------------------------------------------------------------------------
 int Agent::GetAgentLevel()
 {
@@ -53,4 +76,15 @@ int Agent::GetAgentLevel()
     }
 
     return level;
+}
+//---------------------------------------------------------------------------------
+//! 置かれているピースの数を取得する関数
+//---------------------------------------------------------------------------------
+int Agent::GetPlacedPieceNum() const
+{
+    int placed_piece_num = 0;    // 置かれているピースの数
+    if(auto board = board_.lock()) {
+        placed_piece_num = board->GetPieceNumOnSquares();
+    }
+    return placed_piece_num;
 }

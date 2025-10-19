@@ -17,25 +17,6 @@ bool Player::Init()
 {
     __super::Init();
     SetName("Player");
-    //---------------------------------------------------------------------------------
-    //	ピーススタンドを作成
-    //---------------------------------------------------------------------------------
-    auto piece_stand = Scene::Object::Create<PieceStand>();
-    piece_stand->SetOwner(shared_from_this());
-    piece_stand->CreateSquare();
-    stand_ = piece_stand;
-    //---------------------------------------------------------------------------------
-    //	ショップスタンドを作成
-    //---------------------------------------------------------------------------------
-    auto shop_stand = Scene::Object::Create<ShopStand>();
-    shop_stand->SetOwner(shared_from_this());
-    //---------------------------------------------------------------------------------
-    //	チェスボードを作成
-    //---------------------------------------------------------------------------------
-    auto board = Scene::Object::Create<ChessBoard>();
-    board->SetOwner(shared_from_this());
-    board->CreateSquare();
-    board_ = board;
     return true;
 }
 
