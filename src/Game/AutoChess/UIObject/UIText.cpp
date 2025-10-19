@@ -19,6 +19,18 @@ bool UIText::Init()
     text_component_ = text_comp;                        // weak_ptrとして保持
     return true;
 }
+
+//---------------------------------------------------------------------------------
+//!	フォントの論理名の設定
+//---------------------------------------------------------------------------------
+std::shared_ptr<UIText> UIText::SetFontName(const std::string& font_name)
+{
+    if(auto text_comp = text_component_.lock()) {
+        text_comp->SetFontName(font_name);
+    }
+    return dynamic_pointer_cast<UIText>(shared_from_this());
+}
+
 //---------------------------------------------------------------------------
 //! @brief	文字列の設定
 //---------------------------------------------------------------------------
@@ -48,6 +60,17 @@ std::shared_ptr<UIText> UIText::SetFontSize(int font_size)
 {
     if(auto text_comp = text_component_.lock()) {
         text_comp->SetFontSize(font_size);    // フォントサイズを設定
+    }
+    return dynamic_pointer_cast<UIText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief	エッジサイズの設定
+//---------------------------------------------------------------------------
+std::shared_ptr<UIText> UIText::SetEdgeSize(int edge_size)
+{
+    if(auto text_comp = text_component_.lock()) {
+        text_comp->SetEdgeSize(edge_size);    // フォントサイズを設定
     }
     return dynamic_pointer_cast<UIText>(shared_from_this());
 }

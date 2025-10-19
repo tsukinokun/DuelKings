@@ -15,6 +15,11 @@ public:
     //ImGui
     void GUI() override;
 
+    //フォントの変更
+    //! @param	font_name [in] 使用したいフォントの論理名
+    //! @retval 自身のポインタ
+    std::shared_ptr<ComponentText> SetFontName(const std::string& font_name);
+
     //文字列の設定
     //! @param str [in] 描画する文字列の設定
     //! @retval 自身のポインタ
@@ -32,13 +37,21 @@ public:
     //! @param font_size [in] フォントサイズの設定
     //! @retval 自身のポインタ
     std::shared_ptr<ComponentText> SetFontSize(int font_size);
+
+    //エッジサイズの設定
+    //! @param	edge_size [in] エッジサイズ
+    //! @retval 自身のポインタ
+    std::shared_ptr<ComponentText> SetEdgeSize(int edge_size);
+
     //! @}
 
 private:
+    std::string font_name_  = "百鬼夜行 R";         //フォントの名前
     int         font_size_  = DEFAULT_FONT_SIZE;    //フォントサイズ
     int         text_color_ = 0;                    //文字の色
     int         edge_color_ = 0;                    //文字の縁の色
-    std::string str_;                               //描画する文字列
+    int         edge_size_  = 1;                    //ふちの幅
+    std::string str_        = "";                   //描画する文字列
 
     //--------------------------------------------------------------------
     //! @name Cereal処理

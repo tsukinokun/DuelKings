@@ -17,6 +17,11 @@ public:
     //@}
     bool Init() override;    //!< 初期化
 
+    //フォントの変更
+    //! @param	font_name [in] 使用したいフォントの論理名
+    //! @retval 自身のポインタ
+    std::shared_ptr<UIText> SetFontName(const std::string& font_name);
+
     //文字列の設定
     //! @param str [in] 描画する文字列の設定
     std::shared_ptr<UIText> SetText(const std::string_view& str);
@@ -31,6 +36,11 @@ public:
     //! @param font_size [in] フォントサイズの設定
     //! @retval 自身のポインタ
     std::shared_ptr<UIText> SetFontSize(int font_size);
+
+    //エッジサイズの設定
+    //! @param	edge_size [in] エッジサイズ
+    //! @retval 自身のポインタ
+    std::shared_ptr<UIText> SetEdgeSize(int edge_size);
 
 private:
     std::weak_ptr<ComponentText>

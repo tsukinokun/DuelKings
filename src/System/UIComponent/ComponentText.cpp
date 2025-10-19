@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include "ComponentText.h"
 #include "ComponentTransformUI.h"
+#include <Game/AutoChess/system/FontBuffer.h>
 
 //---------------------------------------------------------------------------
 //! @brief	初期化関数
@@ -16,13 +17,30 @@ void ComponentText::Init()
     //  UI描画を登録
     //---------------------------------------------------------------------------
     auto draw_ui = [this]() {
-        DxLib::SetFontSize(font_size_);                  //フォントサイズに合わせる
-        auto   owner      = GetOwner();                  //オーナーを取得
-        float3 adjustment = float3(0.0f, 0.0f, 0.0f);    // 調整値(Alignmentに合わせて)
+        DxLib::SetFontSize(font_size_);                                                                                          //フォントサイズに合わせる
+        auto   owner       = GetOwner();                                                                                         //オーナーを取得
+        float3 adjustment  = float3(0.0f, 0.0f, 0.0f);                                                                           // 調整値(Alignmentに合わせて)
+        int    font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
         if(auto comp_transform = owner->GetComponent<ComponentTransformUI>()) {
             ComponentTransformUI::Alignment alignment = comp_transform->GetAlignment();
+            float                           hight     = 0;    //フォントサイズを取得(=高さ)
+            float                           width     = 0;    // 文字列の幅を取得
+            //フォントハンドルがあるかデフォルトフォントかで分岐
+            if(font_handle != -1) {
+                //フォントが存在しているなら
+                //配置位置(縦)
+                hight = static_cast<float>(GetFontSize());    //フォントサイズを取得(=高さ)
+                //配置位置(横)
+                width = static_cast<float>(GetDrawStringWidth(str_.data(), str_.size()));    // 文字列の幅を取得
+            }
+            else {
+                //存在していないなら
+                //配置位置(縦)
+                hight = static_cast<float>(GetFontSizeToHandle(font_handle));    //フォントサイズを取得(=高さ)
+                //配置位置(横)
+                width = static_cast<float>(GetDrawStringWidthToHandle(str_.data(), str_.size(), font_handle));    // 文字列の幅を取得
+            }
             //配置位置(縦)
-            float hight = static_cast<float>(GetFontSize());    //フォントサイズを取得(=高さ)
             switch(static_cast<int>(alignment) / 3) {
             case 0:
                 adjustment.y = 0.0f;
@@ -35,7 +53,6 @@ void ComponentText::Init()
                 break;    // 下寄せ
             }
             //配置位置(横)
-            float width = static_cast<float>(GetDrawStringWidth(str_.data(), str_.size()));    // 文字列の幅を取得
             switch(static_cast<int>(alignment) % 3) {
             case 0:
                 adjustment.x = 0.0f;
@@ -50,7 +67,14 @@ void ComponentText::Init()
         }
         float3 pos = float3(0.0f, 0.0f, 0.0f);
         pos        = owner->GetTranslate() + adjustment;
-        DrawString(pos.x, pos.y, str_.data(), text_color_, edge_color_);
+        //フォントが存在しているかで分岐
+        if(font_handle != -1) {
+            DrawStringToHandle(pos.x, pos.y, str_.data(), text_color_, font_handle, edge_color_);
+        }
+        else {
+            //存在しない
+            DrawString(pos.x, pos.y, str_.data(), text_color_, edge_color_);
+        }
         DxLib::SetFontSize(DEFAULT_FONT_SIZE);    //フォントサイズを元に戻す
     };
     SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
@@ -78,6 +102,15 @@ void ComponentText::GUI()
 }
 
 //---------------------------------------------------------------------------
+//! @brief	フォントの変更
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentText> ComponentText::SetFontName(const std::string& font_name)
+{
+    font_name_ = font_name;
+    return dynamic_pointer_cast<ComponentText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
 //! @brief	文字列の設定
 //---------------------------------------------------------------------------
 std::shared_ptr<ComponentText> ComponentText::SetText(const std::string_view& str)
@@ -102,6 +135,15 @@ std::shared_ptr<ComponentText> ComponentText::SetColor(int text_color, int edge_
 std::shared_ptr<ComponentText> ComponentText::SetFontSize(int font_size)
 {
     font_size_ = font_size;    // フォントサイズを設定
+    return dynamic_pointer_cast<ComponentText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//エッジサイズの設定
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentText> ComponentText::SetEdgeSize(int edge_size)
+{
+    edge_size_ = edge_size;
     return dynamic_pointer_cast<ComponentText>(shared_from_this());
 }
 

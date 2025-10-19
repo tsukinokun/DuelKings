@@ -173,11 +173,11 @@ void ShowFps(f32 delta)
     //----------------------------------------------------------
     constexpr u32 corner = 2;    // 0:左上 1:右上 2:左下 3: 右下
     {
-        constexpr f32        PADDING  = 10.0f;    // 余白部分
-        const ImGuiViewport* viewport = ImGui::GetMainViewport();
-        ImVec2 work_pos  = viewport->WorkPos;    // WorkPosを使用するとメニューバーなどの位置を考慮した位置が取得できる
-        ImVec2 work_size = viewport->WorkSize;
-        ImVec2 window_pos, window_pos_pivot;
+        constexpr f32        PADDING   = 10.0f;    // 余白部分
+        const ImGuiViewport* viewport  = ImGui::GetMainViewport();
+        ImVec2               work_pos  = viewport->WorkPos;    // WorkPosを使用するとメニューバーなどの位置を考慮した位置が取得できる
+        ImVec2               work_size = viewport->WorkSize;
+        ImVec2               window_pos, window_pos_pivot;
         window_pos.x       = (corner & 1) ? (work_pos.x + work_size.x - PADDING) : (work_pos.x + PADDING);
         window_pos.y       = (corner & 2) ? (work_pos.y + work_size.y - PADDING) : (work_pos.y + PADDING);
         window_pos_pivot.x = (corner & 1) ? 1.0f : 0.0f;
