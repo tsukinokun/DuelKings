@@ -56,17 +56,17 @@ bool InGameScene::Init()
     auto piece_purchase_button = Scene::Object::Create<UIButton>();
     piece_purchase_button->SetImage(MakeScreen(100.0f, 200.0f, FALSE));    //スクリーンを入れ込む。
 
-    //auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
+    auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
 
     //ターゲットをうつす処理を入れ込む。
-    auto draw_target = [piece_purchase_button]() {
-        ////とりあえずプレイヤーを取得
-        //if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-        //    auto shop_pieces = shop_stand->GetShopPieces();
-        //    SetRenderTarget(texture, GetDepthStencil());
-        //    ////戻す
-        //    SetRenderTarget(GetHdrBuffer(), GetDepthStencil());
-        //}
+    auto draw_target = [piece_purchase_button, texture]() {
+        //とりあえずプレイヤーを取得
+        if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+            auto shop_pieces = shop_stand->GetShopPieces();
+            SetRenderTarget(texture.get(), nullptr);
+            ////戻す
+            SetRenderTarget(GetHdrBuffer(), GetDepthStencil());
+        }
     };
     piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
     return true;
