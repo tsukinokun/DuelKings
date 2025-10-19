@@ -14,11 +14,7 @@ public:
     BP_OBJECT_DECL(UIObject, u8"UIオブジェクトの基底クラス")
 
     //@}
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
+    bool Init() override;    //!< 初期化
 
     //描画位置の設定
     //! @param alignment [in] UIの配置位置を設定する
