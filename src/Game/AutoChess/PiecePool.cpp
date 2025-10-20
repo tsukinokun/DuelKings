@@ -6,6 +6,7 @@
 #include "PiecePool.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/Piece/Piece.h>
+#include <Game/AutoChess/PieceFactory.h>
 //staticメンバ変数の定義
 std::array<std::unordered_map<std::string, int>, 5> PiecePool::piece_pool_ = {};
 //---------------------------------------------------------------------------
@@ -45,5 +46,5 @@ std::shared_ptr<Piece> PiecePool::GetRandomPiece()
     piece_pool_[0][selected]--;
 
     // ユニットインスタンスを生成して返す（RAIIによる所有権管理）
-    return Scene::Object::Create<Piece>();
+    return PieceFactory::CreatePiece("selected");
 }
