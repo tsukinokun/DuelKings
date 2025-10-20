@@ -17,8 +17,20 @@ void ComponentButton::Init()
     __super::Init();
     //---------------------------------------------------------------------------------
     //  更新処理を登録
+    //--------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
+    //マウスが重なっている際の処理
     //---------------------------------------------------------------------------------
     SetProc("Update", mouse_over_func_, ProcTiming::Update, static_cast<ProcPriority>(NONE));
+    //---------------------------------------------------------------------------------
+    //クリック時の処理
+    //---------------------------------------------------------------------------------
+    auto click_proc = [this]() {
+        if(IsClick()) {
+            click_func_();    //クリック時の関数を実行
+        }
+    };
+    SetProc("ClickProc", click_proc, ProcTiming::Update, static_cast<ProcPriority>(NONE));
 }
 //---------------------------------------------------------------------------
 //! @brief	ImGui
@@ -117,6 +129,15 @@ std::shared_ptr<ComponentButton> ComponentButton::SetOverInformation(OverInforma
         };
         break;
     }
+    return dynamic_pointer_cast<ComponentButton>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//!  マウスをクリックした時に行う処理の設定
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentButton> ComponentButton::SetClickFunc(const std::function<void()>& click_func)
+{
+    click_func_ = click_func;
     return dynamic_pointer_cast<ComponentButton>(shared_from_this());
 }
 CEREAL_REGISTER_TYPE(ComponentButton)

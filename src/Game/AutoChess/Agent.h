@@ -6,6 +6,8 @@
 #pragma once
 #include <System/Scene.h>
 class ChessBoard;
+class ShopStand;
+class Piece;
 USING_PTR(Agent);
 USING_PTR(PieceStand);
 class Agent : public Object
@@ -32,9 +34,18 @@ public:
     //! @retval レベル
     int GetAgentLevel();
 
+    //次のレベルまでに必要な経験値を取得する関数
+    //! @retval 次のレベルまでに必要な経験値
+    int GetNextLevelExp();
+
     //置かれているピースの数を取得する関数
     //! @retval 置かれているピースの数
     int GetPlacedPieceNum() const;
+
+    //ショップに並んでいるピースを取得する関数
+    //! @retval ショップに並んでいるピース
+    std::array<std::weak_ptr<Piece>, 5> GetShopPieces();
+
     //@}
 protected:
     bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
@@ -42,4 +53,5 @@ protected:
     int                       exp_                 = 0;        //エージェントのレベル
     PieceStandWeakPtr         stand_;                          // ピーススタンド
     std::weak_ptr<ChessBoard> board_;                          // チェスボード
+    std::weak_ptr<ShopStand>  shop_stand_;                     //ショップスタンド
 };

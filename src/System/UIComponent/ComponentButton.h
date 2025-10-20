@@ -42,6 +42,13 @@ public:
     //! @return 自身のポインタ
     //---------------------------------------------------------------------------
     std::shared_ptr<ComponentButton> SetOverInformation(OverInformation info);
+
+    //---------------------------------------------------------------------------
+    //  マウスをクリックした時に行う処理の設定
+    //! @param info [in] クリック時の関数
+    //! @return 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<ComponentButton> SetClickFunc(const std::function<void()>& click_func);
     //! @}
     //--------------------------------------------------------------------
     //! @name Cereal処理
@@ -50,6 +57,8 @@ public:
 private:
     //ボタンに触れた時の処理
     std::function<void()> mouse_over_func_ = []() {};
+    //ボタンをクリックしたときの処理
+    std::function<void()> click_func_ = []() {};
     //! @brief セーブ
     // @param arc アーカイバ
     // @param ver バージョン

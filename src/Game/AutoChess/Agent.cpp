@@ -65,9 +65,8 @@ std::shared_ptr<Agent> Agent::AddExp(int exp)
 //---------------------------------------------------------------------------------
 int Agent::GetAgentLevel()
 {
-    int level     = 1;
+    int level     = 0;
     int total_exp = 0;
-
     for(int i = 0; i < exp_table.size(); ++i) {
         total_exp += exp_table[i];
         if(exp_ < total_exp)
@@ -76,6 +75,26 @@ int Agent::GetAgentLevel()
     }
 
     return level;
+}
+//---------------------------------------------------------------------------------
+//次のレベルまでに必要な経験値を取得する関数
+//---------------------------------------------------------------------------------
+int Agent::GetNextLevelExp()
+{
+    int level     = 0;
+    int total_exp = 0;
+    for(int i = 0; i < exp_table.size(); ++i) {
+        total_exp += exp_table[i];
+        if(exp_ < total_exp)
+            break;
+        ++level;
+    }
+    if(level < exp_table.size()) {
+        return exp_table[level];
+    }
+    else {
+        return 0;    //最大レベルの場合は0を返す
+    }
 }
 //---------------------------------------------------------------------------------
 //! 置かれているピースの数を取得する関数
@@ -87,4 +106,15 @@ int Agent::GetPlacedPieceNum() const
         placed_piece_num = board->GetPieceNumOnSquares();
     }
     return placed_piece_num;
+}
+//---------------------------------------------------------------------------------
+//! ショップに並んでいるピースを取得する関数
+//---------------------------------------------------------------------------------
+std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
+{
+    std::array<std::weak_ptr<Piece>, 5> shop_pieces;
+    if(auto shop_stand = shop_stand_.lock()) {
+        shop_pieces = shop_stand->GetShopPieces();
+    }
+    return shop_pieces;
 }

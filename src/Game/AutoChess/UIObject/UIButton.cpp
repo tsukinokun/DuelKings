@@ -65,6 +65,20 @@ std::shared_ptr<UIButton> UIButton::SetOverInformation(ComponentButton::OverInfo
     }
     return dynamic_pointer_cast<UIButton>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//  マウスをクリックした時に行う処理の設定
+//! @param info [in] クリック時の関数
+//! @return 自身のポインタ
+//---------------------------------------------------------------------------
+std::shared_ptr<UIButton> UIButton::SetClickFunc(const std::function<void()>& click_func)
+{
+    if(auto button_comp = button_component_.lock()) {
+        button_comp->SetClickFunc(click_func);    // ボタンコンポーネントにクリック時の関数を設定
+    }
+    return dynamic_pointer_cast<UIButton>(shared_from_this());
+}
+
 //---------------------------------------------------------------------------
 //画像ハンドルの取得
 //---------------------------------------------------------------------------

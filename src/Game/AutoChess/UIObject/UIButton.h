@@ -50,6 +50,13 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<UIButton> SetOverInformation(ComponentButton::OverInformation info);
 
+    //---------------------------------------------------------------------------
+    //  マウスをクリックした時に行う処理の設定
+    //! @param info [in] クリック時の関数
+    //! @return 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<UIButton> SetClickFunc(const std::function<void()>& click_func);
+
 protected:
     std::weak_ptr<ComponentImage>
         image_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

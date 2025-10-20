@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "ChessBoard.h"
 #include "PieceStand.h"
+#include "Piece.h"
 #include "Agent.h"
 #include "Player.h"
 #include <Game/AutoChess/system/ImageBuffer.h>
@@ -15,6 +16,7 @@
 #include <Game/AutoChess/UIObject/PiecePurchaseOpenButton.h>
 #include <Game/AutoChess/UIObject/UIText.h>
 #include <System/UIComponent/ComponentTransformUI.h>
+#include <System/Component/ComponentModel.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -35,6 +37,13 @@ bool InGameScene::Init()
     exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
     //左クリックを促す
     exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+    //クリック時の処理
+    auto click_func = []() {
+        if(auto player = Scene::Object::Get<Player>()) {
+            player->AddExp(4);    //経験値を4増やす
+        }
+    };
+    exp_button->SetClickFunc(click_func);
     //---------------------------------------------------------------------------------
     //  駒数UI
     //---------------------------------------------------------------------------------
@@ -103,13 +112,18 @@ bool InGameScene::Init()
 
     //ターゲットをうつす処理を入れ込む。
     auto draw_target = [piece_purchase_button, texture]() {
-        //とりあえずプレイヤーを取得
         if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-            auto shop_pieces = shop_stand->GetShopPieces();
-            SetRenderTarget(texture.get(), nullptr);
-            piece_purchase_button->SetImage(*texture);    //スクリーンを入れ込む。
-            ////戻す
-            SetRenderTarget(GetHdrBuffer(), GetDepthStencil());
+            auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+            SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
+            //一旦ピースの一番目をうつす
+            if(auto draw_piece = shop_pieces[0].lock()) {
+                //モデルを描画
+                if(auto model = draw_piece->GetComponent<ComponentModel>()) {
+                    MV1DrawModel(model->GetModel());
+                }
+            }
+            piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
+            SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
         }
     };
     piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
