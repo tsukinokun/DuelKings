@@ -17,6 +17,7 @@
 #include <Game/AutoChess/UIObject/UIText.h>
 #include <System/UIComponent/ComponentTransformUI.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/PiecePool.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ bool InGameScene::Init()
 {
     __super::Init();
     ImageBuffer::Init();                                 //画像バッファの初期化
+    PiecePool::Init();                                   //駒プールの初期化
     Scene::Object::Create<Camera>();                     //カメラ
     Scene::Object::Create<Player>();                     //プレイヤー
     Scene::Object::Create<MouseRay>();                   //マウス光線
@@ -165,9 +167,9 @@ bool InGameScene::Init()
             //一旦ピースの一番目をうつす
             if(auto draw_piece = shop_pieces[0].lock()) {
                 //モデルを描画
-                if(auto model = draw_piece->GetComponent<ComponentModel>()) {
-                    MV1DrawModel(model->GetModel());
-                }
+                //if(auto model = draw_piece->GetComponent<ComponentModel>()) {
+                //    MV1DrawModel(model->GetModel());
+                //}
             }
             piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
             SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
