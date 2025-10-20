@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 #include "Agent.h"
 #include "Player.h"
-#include "Piece.h"
+#include <Game/AutoChess/Piece/Piece.h>
 #include "Square.h"
 #include "ChessBoard.h"
 #include "PieceStand.h"

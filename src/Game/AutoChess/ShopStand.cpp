@@ -4,7 +4,7 @@
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include "ShopStand.h"
-#include "Piece.h"
+#include <Game/AutoChess/Piece/Piece.h>
 #include <Game/AutoChess/system/GameConst.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -33,7 +33,9 @@ void ShopStand::ReloadShopPieces()
         if(auto piece = shop_pieces_[i].lock()) {
             Scene::Object::Release(piece);
         }
-        shop_pieces_[i] = Scene::Object::Create<Piece>();
+        auto shop_piece = Scene::Object::Create<Piece>();          //ピースを生成
+        shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));    //位置を初期化
+        shop_pieces_[i] = shop_piece;
     }
 }
 //---------------------------------------------------------------------------------

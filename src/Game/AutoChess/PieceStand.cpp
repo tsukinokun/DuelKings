@@ -4,7 +4,7 @@
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include "PieceStand.h"
-#include "Piece.h"
+#include <Game/AutoChess/Piece/Piece.h>
 #include "Square.h"
 #include <Game/AutoChess/system/GameConst.h>
 //---------------------------------------------------------------------------------

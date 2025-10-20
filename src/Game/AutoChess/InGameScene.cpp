@@ -7,7 +7,7 @@
 #include "Camera.h"
 #include "ChessBoard.h"
 #include "PieceStand.h"
-#include "Piece.h"
+#include <Game/AutoChess/Piece/Piece.h>
 #include "Agent.h"
 #include "Player.h"
 #include <Game/AutoChess/system/ImageBuffer.h>

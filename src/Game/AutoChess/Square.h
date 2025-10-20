@@ -16,9 +16,6 @@ public:
     //@{
     bool Init() override;                                               //!< 初期化
     void Update() override;                                             //!< 更新
-    void Draw() override;                                               //!< 描画
-    void Exit() override;                                               //!< 終了
-    void GUI() override;                                                //!< GUI表示
     void OnHit(const ComponentCollision::HitInfo& hitInfo) override;    //!<当たり時処理
 
     //マウスから出る光線にあたっているかを返す

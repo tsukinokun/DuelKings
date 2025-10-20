@@ -11,11 +11,7 @@ class Piece : public Object
 public:
     BP_OBJECT_DECL(Piece, u8"インゲームシーンのピースクラス")
     //@{
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
+    bool Init() override;    //!< 初期化
 
     //選択状態の設定
     //! @param [in] is_selected 選択状態
@@ -25,7 +21,7 @@ public:
     //! @retval 選択状態
     bool IsSelect();
     //@}
-private:
+protected:
     float RADIUS_      = 0.4f;
     bool  is_selected_ = false;    //!< 選択されているかどうか
 };
