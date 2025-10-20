@@ -31,19 +31,66 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     //  経験値ボタン
     //---------------------------------------------------------------------------------
-    auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
-    exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
-    exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
-    exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
-    //左クリックを促す
-    exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
-    //クリック時の処理
-    auto click_func = []() {
-        if(auto player = Scene::Object::Get<Player>()) {
-            player->AddExp(4);    //経験値を4増やす
+    {
+        auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
+        exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
+        exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
+        exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
+        //左クリックを促す
+        exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = []() {
+            if(auto player = Scene::Object::Get<Player>()) {
+                player->AddExp(4);    //経験値を4増やす
+            }
+        };
+        exp_button->SetClickFunc(click_func);
+        //---------------------------------------------------------------------------------
+        //  次までに必要な経験値UIを重ねる
+        //---------------------------------------------------------------------------------
+        {
+            //現在の経験値
+            {
+                auto curr_exp_ui = Scene::Object::Create<UIText>();
+                curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
+                curr_exp_ui->SetTranslate(float3(100.0f, 500.0f, 0.0f));                    //位置を設定
+                curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
+                curr_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+                //更新処理
+                auto set_text_proc = [curr_exp_ui]() {
+                    auto player      = Scene::Object::Get<Player>();
+                    int  current_exp = player->GetCurrentExp();    //現在の経験値を取得
+                    //必要な経験値を表示
+                    curr_exp_ui->SetText(std::to_string(current_exp));
+                };
+                curr_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            }
+            //割線
+            {
+                auto line_ui = Scene::Object::Create<UIText>();
+                line_ui->SetTranslate(float3(130.0f, 500.0f, 0.0f));                    //位置を設定
+                line_ui->SetFontSize(30);                                               //フォントサイズ設定
+                line_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+                line_ui->SetText("/");                                                  //割線を表示
+            }
+            //次のレベルまでに必要な経験値
+            {
+                auto next_exp_ui = Scene::Object::Create<UIText>();
+                next_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
+                next_exp_ui->SetTranslate(float3(170.0f, 500.0f, 0.0f));                    //位置を設定
+                next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
+                next_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+                //更新処理
+                auto set_text_proc = [next_exp_ui]() {
+                    auto player         = Scene::Object::Get<Player>();
+                    int  next_level_exp = player->GetNextLevelExp();    //次のレベルまでに必要な経験値を取得
+                    //必要な経験値を表示
+                    next_exp_ui->SetText(std::to_string(next_level_exp));
+                };
+                next_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            }
         }
-    };
-    exp_button->SetClickFunc(click_func);
+    }
     //---------------------------------------------------------------------------------
     //  駒数UI
     //---------------------------------------------------------------------------------
@@ -79,12 +126,12 @@ bool InGameScene::Init()
     //  割線UI
     //---------------------------------------------------------------------------------
     {
-        auto piece_num_ui = Scene::Object::Create<UIText>();
-        piece_num_ui->SetFontSize(80);                                         //フォントサイズ設定
-        piece_num_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
-        piece_num_ui->SetText("/");
-        piece_num_ui->SetTranslate(float3(550.0f, 250.0f, 0.0f));
-        piece_num_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        auto line_ui = Scene::Object::Create<UIText>();
+        line_ui->SetFontSize(80);                                         //フォントサイズ設定
+        line_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
+        line_ui->SetText("/");
+        line_ui->SetTranslate(float3(550.0f, 250.0f, 0.0f));
+        line_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
     //---------------------------------------------------------------------------------
     //  駒数制限UI

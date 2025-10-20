@@ -38,6 +38,10 @@ public:
     //! @retval 次のレベルまでに必要な経験値
     int GetNextLevelExp();
 
+    //現在の経験値(レベルアップに使用した経験値は抜いた)を取得する関数
+    //! @retval 現在の経験値
+    int GetCurrentExp() const;
+
     //置かれているピースの数を取得する関数
     //! @retval 置かれているピースの数
     int GetPlacedPieceNum() const;
