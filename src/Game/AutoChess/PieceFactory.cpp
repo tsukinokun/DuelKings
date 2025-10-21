@@ -20,27 +20,35 @@
 std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string& type)
 {
     if(type == "JapaneseChessBishop") {
+        //角行
         return Scene::Object::Create<JapaneseChessBishop>();
     }
     else if(type == "JapaneseChessGold") {
+        //金将
         return Scene::Object::Create<JapaneseChessGold>();
     }
     else if(type == "JapaneseChessKing") {
+        //王将
         return Scene::Object::Create<JapaneseChessKing>();
     }
     else if(type == "JapaneseChessKnight") {
+        //桂馬
         return Scene::Object::Create<JapaneseChessKnight>();
     }
     else if(type == "JapaneseChessLance") {
+        //香車
         return Scene::Object::Create<JapaneseChessLance>();
     }
     else if(type == "JapaneseChessPawn") {
+        //歩兵
         return Scene::Object::Create<JapaneseChessPawn>();
     }
     else if(type == "JapaneseChessRook") {
+        //飛車
         return Scene::Object::Create<JapaneseChessRook>();
     }
     else if(type == "JapaneseChessSilver") {
+        //銀将
         return Scene::Object::Create<JapaneseChessSilver>();
     }
     else {

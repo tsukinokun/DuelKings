@@ -18,6 +18,12 @@ void PiecePool::Init()
     piece_pool_[0] = {
         {  "JapaneseChessKing", piece_init_stock[0]}, //王将
         {"JapaneseChessKnight", piece_init_stock[0]}, //桂馬
+        {  "JapaneseChessPawn", piece_init_stock[0]}, //歩兵
+        { "JapaneseChessLance", piece_init_stock[0]}, //香車
+        {"JapaneseChessSilver", piece_init_stock[0]}, //銀将
+        {  "JapaneseChessGold", piece_init_stock[0]}, //金将
+        {"JapaneseChessBishop", piece_init_stock[0]}, //角行
+        {  "JapaneseChessRook", piece_init_stock[0]}  //飛車
     };
 }
 //---------------------------------------------------------------------------
@@ -46,5 +52,5 @@ std::shared_ptr<Piece> PiecePool::GetRandomPiece()
     piece_pool_[0][selected]--;
 
     // ユニットインスタンスを生成して返す（RAIIによる所有権管理）
-    return PieceFactory::CreatePiece("selected");
+    return PieceFactory::CreatePiece(selected);
 }
