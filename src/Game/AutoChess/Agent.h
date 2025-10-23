@@ -84,6 +84,7 @@ protected:
     bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
     bool                      should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
     int                       exp_                 = 0;        //エージェントのレベル
+    int                       hp_                  = 100;      //エージェントの体力
     PieceStandWeakPtr         stand_;                          // ピーススタンド
     std::weak_ptr<ChessBoard> board_;                          // チェスボード
     std::weak_ptr<ShopStand>  shop_stand_;                     //ショップスタンド

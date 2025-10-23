@@ -19,4 +19,5 @@ public:
     //@}
 private:
     bool is_purchase_open_ = true;    //ピース購入画面が開いているかどうか
+    int  turn_count_       = 0;       // 現在のターン数
 };
