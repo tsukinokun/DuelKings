@@ -18,6 +18,15 @@ public:
 
     //@}
 private:
-    bool is_purchase_open_ = true;    //ピース購入画面が開いているかどうか
-    int  turn_count_       = 0;       // 現在のターン数
+    //ゲームの状態
+    enum class GameState
+    {
+        Setup,     //!< 設置フェーズ
+        Battle,    //!< 戦闘フェーズ
+    };
+
+private:
+    GameState game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
+    bool      is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    int       turn_count_       = 0;                   // 現在のターン数
 };
