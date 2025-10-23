@@ -17,6 +17,17 @@ bool Player::Init()
 {
     __super::Init();
     SetName("Player");
+    //---------------------------------------------------------------------------------
+    // ショップにあわせて購入ボタンを作成する処理
+    //---------------------------------------------------------------------------------
+    {
+        auto create_purchase_button = [this]() {
+            //ショップを取得
+            if(auto shop_stand = shop_stand_.lock()) {
+            }
+        };
+        SetProc("Update", create_purchase_button, ProcTiming::Update, ProcPriority::NORMAL);
+    }
     return true;
 }
 

@@ -17,4 +17,6 @@ public:
     void GUI() override;       //!< GUI表示
 
     //@}
+private:
+    bool is_purchase_open_ = true;    //ピース購入画面が開いているかどうか
 };

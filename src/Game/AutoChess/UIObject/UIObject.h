@@ -1,6 +1,6 @@
 ﻿//---------------------------------------------------------------------------
 //!	@file	UIObject.h
-//! @brief	UIの文字オブジェクト
+//! @brief	UIオブジェクトの基底クラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #pragma once
@@ -16,12 +16,13 @@ public:
     //@}
     bool Init() override;    //!< 初期化
 
+    //------------------------------------------------------
     //描画位置の設定
     //! @param alignment [in] UIの配置位置を設定する
     //! @return	自分のSharedPtr
+    //------------------------------------------------------
     std::shared_ptr<ComponentTransformUI> SetAlignment(ComponentTransformUI::Alignment alignment);
 
-private:
-    std::weak_ptr<ComponentTransformUI>
-        ui_transform_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく
+protected:
+    std::weak_ptr<ComponentTransformUI> ui_transform_component_;    //UIのTransformコンポーネント
 };

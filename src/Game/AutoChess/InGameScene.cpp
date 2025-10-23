@@ -24,12 +24,69 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    ImageBuffer::Init();                                 //画像バッファの初期化
-    PiecePool::Init();                                   //駒プールの初期化
-    Scene::Object::Create<Camera>();                     //カメラ
-    Scene::Object::Create<Player>();                     //プレイヤー
-    Scene::Object::Create<MouseRay>();                   //マウス光線
-    Scene::Object::Create<PiecePurchaseOpenButton>();    //ピース購入画面を開けるボタン
+    ImageBuffer::Init();                                             //画像バッファの初期化
+    PiecePool::Init();                                               //駒プールの初期化
+    Scene::Object::Create<Camera>();                                 //カメラ
+    auto player = Scene::Object::Create<Player>();                   //プレイヤー
+    Scene::Object::Create<MouseRay>();                               //マウス光線
+    std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
+    //---------------------------------------------------------------------------------
+    //  ピース購入ボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_purchase_button = Scene::Object::Create<UIButton>();
+            piece_purchase_button->SetName("PiecePurchaseButton");
+            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            piece_purchase_button->SetTranslate(float3(x_pos, 500.0f, 0.0f));
+            auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
+            piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //一旦空の画像を設定
+            //---------------------------------------------------------------------------------
+            //  ターゲットをうつす処理を入れ込む。
+            //---------------------------------------------------------------------------------
+            auto draw_target = [piece_purchase_button, texture, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
+                    //一旦ピースの一番目をうつす
+                    //if(auto draw_piece = shop_pieces[i].lock()) {
+                    //    //モデルを描画
+                    //    //if(auto model = draw_piece->GetComponent<ComponentModel>()) {
+                    //    //    MV1DrawModel(model->GetModel());
+                    //    //}
+                    //}
+                    //piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
+                    SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
+                }
+            };
+            piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
+            purchase_window_objects.push_back(piece_purchase_button);    //購入画面のウィンドウ群に追加
+        }
+    }
+    //---------------------------------------------------------------------------------
+    //  ピース購入画面を開けるボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
+        auto click_func                 = [this, purchase_window_objects]() {
+            is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
+            //ウィンドウ群に対して開閉処理を行う
+            if(is_purchase_open_) {
+                for(auto& obj : purchase_window_objects) {
+                    obj->SetStatus(Object::StatusBit::NoDraw, false);      //描画する
+                    obj->SetStatus(Object::StatusBit::NoUpdate, false);    //更新する
+                }
+            }
+            else {
+                for(auto& obj : purchase_window_objects) {
+                    obj->SetStatus(Object::StatusBit::NoDraw, true);      //描画しない
+                    obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
+                }
+            }
+        };
+        piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
+    }
     //---------------------------------------------------------------------------------
     //  経験値ボタン
     //---------------------------------------------------------------------------------
@@ -152,30 +209,6 @@ bool InGameScene::Init()
         piece_max_ui->SetTranslate(float3(600.0f, 250.0f, 0.0f));
         piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
-    //---------------------------------------------------------------------------------
-    //  購入ボタン
-    //---------------------------------------------------------------------------------
-    auto piece_purchase_button = Scene::Object::Create<UIButton>();
-    piece_purchase_button->SetTranslate(float3(500.0f, 500.0f, 0.0f));
-    auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
-
-    //ターゲットをうつす処理を入れ込む。
-    auto draw_target = [piece_purchase_button, texture]() {
-        if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-            auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
-            SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
-            //一旦ピースの一番目をうつす
-            if(auto draw_piece = shop_pieces[0].lock()) {
-                //モデルを描画
-                //if(auto model = draw_piece->GetComponent<ComponentModel>()) {
-                //    MV1DrawModel(model->GetModel());
-                //}
-            }
-            piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
-            SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
-        }
-    };
-    piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
     return true;
 }
 
