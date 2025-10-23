@@ -13,7 +13,7 @@ bool JapaneseChessSilver::Init()
 {
     __super::Init();
     SetName("JapaneseChessSilver");
-    /*auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/King.mv1");
-    model->SetScaleAxisXYZ(0.005f);*/
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/JapaneseChessSilver.mv1");
+    model->SetScaleAxisXYZ(0.005f);
     return true;
 }
