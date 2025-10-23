@@ -28,6 +28,7 @@ bool Agent::Init()
     //---------------------------------------------------------------------------------
     auto shop_stand = Scene::Object::Create<ShopStand>();
     shop_stand->SetOwner(shared_from_this());
+    shop_stand_ = shop_stand;
     //---------------------------------------------------------------------------------
     //	チェスボードを作成
     //---------------------------------------------------------------------------------
@@ -136,4 +137,29 @@ std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
         shop_pieces = shop_stand->GetShopPieces();
     }
     return shop_pieces;
+}
+
+//-----------------------------------------------------------
+// スタンドに駒を追加する関数
+//! @param piece 追加する駒
+//! @return 自分自身のshared_ptr
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::AddPieceToStand(std::shared_ptr<Piece> piece)
+{
+    // スタンドに駒を追加
+    if(auto stand = stand_.lock()) {
+        stand->AddPiece(piece);
+    }
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+
+//-----------------------------------------------------------
+//! 指定インデックスのショップピースを無効化する関数
+//-----------------------------------------------------------
+bool Agent::InvalidateShopPiece(size_t index)
+{
+    if(auto shop = shop_stand_.lock()) {
+        return shop->InvalidateShopPiece(index);
+    }
+    return false;    // shop_stand_ が無効なら失敗
 }

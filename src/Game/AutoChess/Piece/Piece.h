@@ -22,6 +22,5 @@ public:
     bool IsSelect();
     //@}
 protected:
-    float RADIUS_      = 0.4f;
-    bool  is_selected_ = false;    //!< 選択されているかどうか
+    bool is_selected_ = false;    //!< 選択されているかどうか
 };

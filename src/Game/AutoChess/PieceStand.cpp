@@ -65,14 +65,13 @@ void PieceStand::GUI()
 //---------------------------------------------------------------------------------
 //!	ピースの初期化
 //---------------------------------------------------------------------------------
-void PieceStand::PieceInit()
+void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
 {
     //バッファを確認
     for(int i = 0; i < squares_.size(); i++) {
         //ヌルポインタなら
         if(auto square = squares_[i].lock()) {
             if(square->GetPutPiece().expired()) {
-                auto piece = Scene::Object::Create<Piece>();                                                                         //ピースを生成
                 piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE)) + GetTranslate());    //位置を設定
                 square->SetPutPiece(piece);                                                                                          //バッファにポインタを登録
                 return;

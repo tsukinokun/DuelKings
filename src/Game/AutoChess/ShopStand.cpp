@@ -46,3 +46,14 @@ std::array<std::weak_ptr<Piece>, 5> ShopStand::GetShopPieces()
 {
     return shop_pieces_;
 }
+//--------------------------------------------------------------------------
+//! 指定インデックスのピースを購入済みとして無効化する関数
+//--------------------------------------------------------------------------
+bool ShopStand::InvalidateShopPiece(size_t index)
+{
+    if(index >= shop_pieces_.size()) {
+        return false;    // 範囲外なら失敗
+    }
+    shop_pieces_[index] = std::weak_ptr<Piece>();    // 空の weak_ptr を代入
+    return true;
+}

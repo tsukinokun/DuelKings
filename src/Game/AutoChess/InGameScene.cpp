@@ -41,7 +41,19 @@ bool InGameScene::Init()
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 500.0f, 0.0f));
             auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
-            piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //一旦空の画像を設定
+            piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
+            //---------------------------------------------------------------------------------
+            //  クリック時処理の設定
+            //---------------------------------------------------------------------------------
+            auto click_func = [i]() {
+                if(auto player = Scene::Object::Get<Player>()) {
+                    if(auto purchase_piece = player->GetShopPieces()[i].lock()) {
+                        player->AddPieceToStand(std::move(purchase_piece));    //ピースを購入する
+                        player->InvalidateShopPiece(i);                        //購入したピースをショップから無効化する
+                    }
+                }
+            };
+            piece_purchase_button->SetClickFunc(click_func);    //クリック時の処理を設定
             //---------------------------------------------------------------------------------
             //  ターゲットをうつす処理を入れ込む。
             //---------------------------------------------------------------------------------
