@@ -23,7 +23,8 @@ void PiecePool::Init()
         {"JapaneseChessSilver", piece_init_stock[0]}, //銀将
         {  "JapaneseChessGold", piece_init_stock[0]}, //金将
         {"JapaneseChessBishop", piece_init_stock[0]}, //角行
-        {  "JapaneseChessRook", piece_init_stock[0]}  //飛車
+        {  "JapaneseChessRook", piece_init_stock[0]}, //飛車
+        {          "ChessPawn", piece_init_stock[0]}  //ポーン
     };
 }
 //---------------------------------------------------------------------------

@@ -14,8 +14,6 @@ bool Piece::Init()
     __super::Init();
     SetTranslate(float3(0.0f, 0.5f, 0.0f));    // 初期位置を設定
     SetName("Piece");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/King.mv1");
-    model->SetScaleAxisXYZ(0.005f);
     return true;
 }
 
