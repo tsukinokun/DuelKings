@@ -110,3 +110,18 @@ std::array<std::weak_ptr<Square>, 8> PieceStand::GetSquarePtrArray()
 {
     return squares_;
 }
+//---------------------------------------------------------------------------
+// ピースのスタンドが満タンかどうかを取得する関数
+//! @retval 満タンの場合 true、そうでない場合 false
+//---------------------------------------------------------------------------
+bool PieceStand::IsFull() const
+{
+    for(int i = 0; i < squares_.size(); i++) {
+        if(auto square = squares_[i].lock()) {
+            if(square->GetPutPiece().expired()) {
+                return false;    //空きマスがあったら false を返す
+            }
+        }
+    }
+    return true;    //全てのマスが埋まっていたら true を返す
+}

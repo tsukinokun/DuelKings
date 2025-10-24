@@ -200,3 +200,13 @@ bool Agent::IsShopLocked() const
     }
     return false;    // shop_stand_ が無効ならロックされていないとみなす
 }
+//-----------------------------------------------------------
+// ピーススタンドが満タンかどうかを取得する関数
+//-----------------------------------------------------------
+bool Agent::IsPieceStandFull() const
+{
+    if(auto stand = stand_.lock()) {
+        return stand->IsFull();
+    }
+    return false;    // stand_ が無効なら満タンではないとみなす}
+}

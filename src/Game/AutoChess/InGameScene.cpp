@@ -47,6 +47,10 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             auto click_func = [i]() {
                 if(auto player = Scene::Object::Get<Player>()) {
+                    //スタンドが満タンなら購入できないようにする
+                    if(player->IsPieceStandFull()) {
+                        return;
+                    }
                     if(auto purchase_piece = player->GetShopPieces()[i].lock()) {
                         player->AddPieceToStand(std::move(purchase_piece));    //ピースを購入する
                         player->InvalidateShopPiece(i);                        //購入したピースをショップから無効化する
