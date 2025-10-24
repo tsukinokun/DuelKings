@@ -18,6 +18,7 @@
 #include <System/UIComponent/ComponentTransformUI.h>
 #include <System/Component/ComponentModel.h>
 #include <Game/AutoChess/PiecePool.h>
+#include <Game/AutoChess/system/GameConst.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -266,6 +267,69 @@ bool InGameScene::Init()
         piece_max_ui->SetTranslate(float3(600.0f, 250.0f, 0.0f));
         piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
+    //---------------------------------------------------------------------------------
+    //  ターン数表示UI
+    //---------------------------------------------------------------------------------
+    {
+        auto turn_ui = Scene::Object::Create<UIText>();
+        turn_ui->SetFontSize(50);                                             //フォントサイズ設定
+        turn_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));        //文字色設定
+        turn_ui->SetTranslate(float3(50.0f, 50.0f, 0.0f));                    //位置を左上部に設定
+        turn_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);    //左上寄せに設定
+        //更新処理
+        auto set_text_proc = [this, turn_ui]() { turn_ui->SetText("Turn: " + std::to_string(turn_count_)); };
+        turn_ui->SetProc("set_turn", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    }
+    //---------------------------------------------------------------------------------
+    //  フェーズタイマーUI
+    //---------------------------------------------------------------------------------
+    {
+        auto phase_timer_ui = Scene::Object::Create<UIText>();
+        phase_timer_ui->SetFontSize(50);                                               //フォントサイズ設定
+        phase_timer_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));          //文字色設定
+        phase_timer_ui->SetTranslate(float3(300.0f, 50.0f, 0.0f));                     //位置を上部中央あたりに設定
+        phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::UpperCenter);    //中央寄せに設定
+        //更新処理
+        auto set_text_proc = [this, phase_timer_ui]() {
+            int time_left = 0;
+            switch(game_state_) {
+            case GameState::Setup:
+                time_left = static_cast<int>(SETUP_PHASE_DURATION - state_timer_);
+                break;
+            case GameState::Battle:
+                time_left = static_cast<int>(BATTLE_PHASE_DURATION - state_timer_);
+                break;
+            default:
+                break;
+            }
+            phase_timer_ui->SetText("Time : " + std::to_string(time_left) + "s");
+        };
+        phase_timer_ui->SetProc("set_phase_timer", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    }
+    //---------------------------------------------------------------------------------
+    //  フェーズ表示UI
+    //---------------------------------------------------------------------------------
+    {
+        auto phase_ui = Scene::Object::Create<UIText>();
+        phase_ui->SetFontSize(50);                                              //フォントサイズ設定
+        phase_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));         //文字色設定
+        phase_ui->SetTranslate(float3(600.0f, 50.0f, 0.0f));                    //位置を上部に設定
+        phase_ui->SetAlignment(ComponentTransformUI::Alignment::UpperRight);    //右上寄せに設定
+        //更新処理
+        auto set_text_proc = [this, phase_ui]() {
+            switch(game_state_) {
+            case GameState::Setup:
+                phase_ui->SetText("Setup Phase");
+                break;
+            case GameState::Battle:
+                phase_ui->SetText("Battle Phase");
+                break;
+            default:
+                break;
+            }
+        };
+        phase_ui->SetProc("set_phase", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    }
     return true;
 }
 
@@ -275,6 +339,26 @@ bool InGameScene::Init()
 void InGameScene::Update()
 {
     __super::Update();
+    // delta_time を更新
+    float delta_time = phase_timer_.Tick();    // 前回からの経過時間（秒）
+
+    // 状態経過時間に加算
+    state_timer_ += delta_time;
+
+    switch(game_state_) {
+    case GameState::Setup:
+        if(state_timer_ >= SETUP_PHASE_DURATION) {
+            TransitionTo(GameState::Battle);
+        }
+        break;
+
+    case GameState::Battle:
+        if(state_timer_ >= BATTLE_PHASE_DURATION) {
+            TransitionTo(GameState::Setup);
+            ++turn_count_;
+        }
+        break;
+    }
 }
 
 //---------------------------------------------------------------------------------
@@ -300,4 +384,13 @@ void InGameScene::Exit()
 void InGameScene::GUI()
 {
     __super::GUI();
+}
+
+//----------------------------------------------------------------------
+//! フェーズ遷移処理
+//----------------------------------------------------------------------
+void InGameScene::TransitionTo(GameState state)
+{
+    game_state_  = state;
+    state_timer_ = 0.0f;    //状態経過時間をリセット
 }

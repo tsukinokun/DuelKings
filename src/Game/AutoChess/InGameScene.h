@@ -5,8 +5,17 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+#include <Game/AutoChess/system/Timer.h>
 class InGameScene : public Scene::Base
 {
+private:
+    //ゲームの状態
+    enum class GameState
+    {
+        Setup,     //!< 設置フェーズ
+        Battle,    //!< 戦闘フェーズ
+    };
+
 public:
     BP_CLASS_DECL(InGameScene, u8"オートチェスのインゲームシーン")
     //@{
@@ -16,17 +25,18 @@ public:
     void Exit() override;      //!< 終了
     void GUI() override;       //!< GUI表示
 
+private:
+    //----------------------------------------------------------------------
+    // フェーズ遷移処理
+    //! @param state 遷移したい状態
+    //----------------------------------------------------------------------
+    void TransitionTo(GameState state);
+
     //@}
 private:
-    //ゲームの状態
-    enum class GameState
-    {
-        Setup,     //!< 設置フェーズ
-        Battle,    //!< 戦闘フェーズ
-    };
-
-private:
+    Timer     phase_timer_;
     GameState game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
+    float     state_timer_      = 0.0f;                // 状態経過時間（秒）
     bool      is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
-    int       turn_count_       = 0;                   // 現在のターン数
+    int       turn_count_       = 1;                   // 現在のターン数
 };
