@@ -355,6 +355,15 @@ void InGameScene::Update()
     case GameState::Battle:
         if(state_timer_ >= BATTLE_PHASE_DURATION) {
             TransitionTo(GameState::Setup);
+            //---------------------------------------------------------------------------------
+            //  このタイミングで無料リロール
+            //---------------------------------------------------------------------------------
+            for(auto& agent : Scene::Object::GetArray<Agent>()) {
+                //ショップがロックしてなければ
+                if(!agent->IsShopLocked()) {
+                    agent->RerollShopPieces();    //ショップのピースをリロールする
+                }
+            }
             ++turn_count_;
         }
         break;
