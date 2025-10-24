@@ -1,19 +1,19 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	ChessPawn.cpp
-//! @brief	チェスのポーンクラス
+//!	@file	ChessKing.cpp
+//! @brief	チェスのキングクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "ChessPawn.h"
+#include "ChessKing.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool ChessPawn::Init()
+bool ChessKing::Init()
 {
     __super::Init();
-    SetName("ChessPawn");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessPawn.mv1");
+    SetName("ChessKing");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessKing.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

@@ -24,7 +24,12 @@ void PiecePool::Init()
         {  "JapaneseChessGold", piece_init_stock[0]}, //金将
         {"JapaneseChessBishop", piece_init_stock[0]}, //角行
         {  "JapaneseChessRook", piece_init_stock[0]}, //飛車
-        {          "ChessPawn", piece_init_stock[0]}  //ポーン
+        {          "ChessPawn", piece_init_stock[0]}, //ポーン
+        {        "ChessKnight", piece_init_stock[0]}, //ナイト
+        {        "ChessBishop", piece_init_stock[0]}, //ビショップ
+        {          "ChessRook", piece_init_stock[0]}, //ルーク
+        {         "ChessQueen", piece_init_stock[0]}, //クイーン
+        {          "ChessKing", piece_init_stock[0]}  //キング}
     };
 }
 //---------------------------------------------------------------------------

@@ -15,6 +15,11 @@
 #include <Game/AutoChess/Piece/JapaneseChessRook.h>
 #include <Game/AutoChess/Piece/JapaneseChessSilver.h>
 #include <Game/AutoChess/Piece/ChessPawn.h>
+#include <Game/AutoChess/Piece/ChessRook.h>
+#include <Game/AutoChess/Piece/ChessKnight.h>
+#include <Game/AutoChess/Piece/ChessBishop.h>
+#include <Game/AutoChess/Piece/ChessQueen.h>
+#include <Game/AutoChess/Piece/ChessKing.h>
 //---------------------------------------------------------------------------
 //! ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
@@ -55,6 +60,21 @@ std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string& type)
     else if(type == "ChessPawn") {
         //ポーン
         return Scene::Object::Create<ChessPawn>();
+    }
+    else if(type == "ChessRook") {
+        return Scene::Object::Create<ChessRook>();
+    }
+    else if(type == "ChessKnight") {
+        return Scene::Object::Create<ChessKnight>();
+    }
+    else if(type == "ChessBishop") {
+        return Scene::Object::Create<ChessBishop>();
+    }
+    else if(type == "ChessQueen") {
+        return Scene::Object::Create<ChessQueen>();
+    }
+    else if(type == "ChessKing") {
+        return Scene::Object::Create<ChessKing>();
     }
     else {
         return nullptr;    // 未知のユニット

@@ -1,19 +1,19 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	ChessPawn.cpp
-//! @brief	チェスのポーンクラス
+//!	@file	ChessBishop.cpp
+//! @brief	チェスのビショップクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "ChessPawn.h"
+#include "ChessBishop.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
-bool ChessPawn::Init()
+bool ChessBishop::Init()
 {
     __super::Init();
-    SetName("ChessPawn");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessPawn.mv1");
+    SetName("ChessBishop");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessBishop.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }
