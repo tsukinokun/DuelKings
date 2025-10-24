@@ -13,7 +13,7 @@
 bool ShopStand::Init()
 {
     __super::Init();
-    ReloadShopPieces();    //購入可能ピースをリロード
+    RerollShopPieces();    //購入可能ピースをロール
     return true;
 }
 //---------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ void ShopStand::SetOwner(std::weak_ptr<Object> owner)
     owner_ = owner;
 }
 //---------------------------------------------------------------------------------
-//! 購入可能ピースをリロードする関数
+//! 購入可能ピースをリロールする関数
 //---------------------------------------------------------------------------------
-void ShopStand::ReloadShopPieces()
+void ShopStand::RerollShopPieces()
 {
     //仮でピースの基底クラスを入れておく
     for(int i = 0; i < shop_pieces_.size(); i++) {

@@ -77,6 +77,23 @@ bool InGameScene::Init()
         }
     }
     //---------------------------------------------------------------------------------
+    //  リロールボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto reroll_button = Scene::Object::Create<UIButton>();
+        reroll_button->SetImage(ImageBuffer::GetImageHandle("reroll_button"));
+        reroll_button->SetScaleAxisXYZ(0.5f);                          //大きさを少し小さく設定
+        reroll_button->SetTranslate(float3(1150.0f, 300.0f, 0.0f));    //位置を画面右中央あたりに設定
+        //左クリックを促す
+        reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = [player]() {
+            player->RerollShopPieces();    //ショップのピースをリロールする
+        };
+        reroll_button->SetClickFunc(click_func);
+        purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
     //  ピース購入画面を開けるボタン
     //---------------------------------------------------------------------------------
     {
@@ -106,7 +123,7 @@ bool InGameScene::Init()
         auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
         exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
         exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
-        exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面右下あたりに設定
+        exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面左下あたりに設定
         //左クリックを促す
         exp_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理

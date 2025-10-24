@@ -79,6 +79,12 @@ public:
     //-----------------------------------------------------------
     bool InvalidateShopPiece(size_t index);
 
+    //-----------------------------------------------------------
+    // ショップのピースをリロールする関数
+    //! @return 自分自身のshared_ptr
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> RerollShopPieces();
+
     //@}
 protected:
     bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数

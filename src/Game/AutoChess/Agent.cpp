@@ -163,3 +163,13 @@ bool Agent::InvalidateShopPiece(size_t index)
     }
     return false;    // shop_stand_ が無効なら失敗
 }
+//-----------------------------------------------------------
+//! ショップのピースをリロールする関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::RerollShopPieces()
+{
+    if(auto shop = shop_stand_.lock()) {
+        shop->RerollShopPieces();
+    }
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
