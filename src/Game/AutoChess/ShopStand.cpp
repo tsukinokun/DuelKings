@@ -57,3 +57,19 @@ bool ShopStand::InvalidateShopPiece(size_t index)
     shop_pieces_[index] = std::weak_ptr<Piece>();    // 空の weak_ptr を代入
     return true;
 }
+//--------------------------------------------------------------------------
+//! ショップのロック状態を設定する関数
+//--------------------------------------------------------------------------
+std::shared_ptr<ShopStand> ShopStand::SetLockState(bool is_locked)
+{
+    is_locked_ = is_locked;
+    return dynamic_pointer_cast<ShopStand>(shared_from_this());
+}
+
+//--------------------------------------------------------------------------
+//! ショップがロックされているかどうかを取得する関数
+//--------------------------------------------------------------------------
+bool ShopStand::IsLocked() const
+{
+    return is_locked_;
+}

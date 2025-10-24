@@ -173,3 +173,30 @@ std::shared_ptr<Agent> Agent::RerollShopPieces()
     }
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
+//-----------------------------------------------------------
+//! ショップのロック状態を切り替える関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::ToggleShopLockState()
+{
+    if(auto shop = shop_stand_.lock()) {
+        //ロック中かを確認して
+        if(shop->IsLocked()) {
+            shop->SetLockState(false);    // ロック解除
+        }
+        else {
+            shop->SetLockState(true);    // ロック
+        }
+    }
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+
+//-----------------------------------------------------------
+//! ショップのロック状態を取得する関数
+//-----------------------------------------------------------
+bool Agent::IsShopLocked() const
+{
+    if(auto shop = shop_stand_.lock()) {
+        return shop->IsLocked();
+    }
+    return false;    // shop_stand_ が無効ならロックされていないとみなす
+}

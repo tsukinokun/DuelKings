@@ -94,6 +94,30 @@ bool InGameScene::Init()
         purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
     }
     //---------------------------------------------------------------------------------
+    //  ロックボタンボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto lock_button = Scene::Object::Create<UIButton>();
+        lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
+        lock_button->SetScaleAxisXYZ(0.5f);                         //大きさを少し小さく設定
+        lock_button->SetTranslate(float3(150.0f, 300.0f, 0.0f));    //位置を画面左中央あたりに設定
+        //左クリックを促す
+        lock_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = [player, lock_button]() {
+            player->ToggleShopLockState();    //ショップのロックを切り替える
+            //ロック状態に応じてボタンの見た目を変える
+            if(player->IsShopLocked()) {
+                lock_button->SetImage(ImageBuffer::GetImageHandle("locked_button"));
+            }
+            else {
+                lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
+            }
+        };
+        lock_button->SetClickFunc(click_func);
+        purchase_window_objects.push_back(lock_button);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
     //  ピース購入画面を開けるボタン
     //---------------------------------------------------------------------------------
     {
