@@ -20,21 +20,21 @@ bool Agent::Init()
     //---------------------------------------------------------------------------------
     //	ピーススタンドを作成
     //---------------------------------------------------------------------------------
-    auto piece_stand = std::make_shared<PieceStandInfo>();
-    piece_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    stand_ = piece_stand;
-    //---------------------------------------------------------------------------------
-    //	ショップスタンドを作成
-    //---------------------------------------------------------------------------------
-    auto shop_stand = std::make_shared<ShopStandInfo>();
-    shop_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    shop_stand_ = shop_stand;
-    //---------------------------------------------------------------------------------
-    //	チェスボードを作成
-    //---------------------------------------------------------------------------------
-    auto board = std::make_shared<BoardInfo>();
-    board->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    board_ = board;
+    //auto piece_stand = std::make_shared<PieceStandInfo>();
+    //piece_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    //stand_ = piece_stand;
+    ////---------------------------------------------------------------------------------
+    ////	ショップスタンドを作成
+    ////---------------------------------------------------------------------------------
+    //auto shop_stand = std::make_shared<ShopStandInfo>();
+    //shop_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    //shop_stand_ = shop_stand;
+    ////---------------------------------------------------------------------------------
+    ////	チェスボードを作成
+    ////---------------------------------------------------------------------------------
+    //auto board = std::make_shared<BoardInfo>();
+    //board->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    //board_ = board;
     return true;
 }
 //---------------------------------------------------------------------------------
