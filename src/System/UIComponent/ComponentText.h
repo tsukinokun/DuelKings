@@ -46,7 +46,7 @@ public:
     //! @}
 
 private:
-    std::string font_name_  = "百鬼夜行 R";         //フォントの名前
+    std::string font_name_  = "Book Antiqua";       //フォントの名前
     int         font_size_  = DEFAULT_FONT_SIZE;    //フォントサイズ
     int         text_color_ = 0;                    //文字の色
     int         edge_color_ = 0;                    //文字の縁の色

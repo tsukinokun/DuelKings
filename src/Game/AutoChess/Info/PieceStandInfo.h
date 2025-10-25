@@ -13,7 +13,7 @@ class PieceStandInfo : public std::enable_shared_from_this<PieceInfo>
 public:
     //@{
     //---------------------------------------------------------------------------
-    //ピースの初期化
+    //  スタンドにピースを追加する関数
     //! @param piece [in] 追加するピース
     //! @retval 追加されたピースのオーナーエージェントの共有ポインタ
     //! @note 置き場が満タンなら追加されないです。
