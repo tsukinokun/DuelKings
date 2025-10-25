@@ -20,63 +20,28 @@
 #include <Game/AutoChess/Piece/ChessBishop.h>
 #include <Game/AutoChess/Piece/ChessQueen.h>
 #include <Game/AutoChess/Piece/ChessKing.h>
+//mapに、駒の名前と生成関数を登録
+const std::unordered_map<std::string, PieceFactory::PieceCreator> PieceFactory::piece_creators_ = {
+    {"JapaneseChessBishop", [] { return Scene::Object::Create<JapaneseChessBishop>(); }},
+    {  "JapaneseChessGold",   [] { return Scene::Object::Create<JapaneseChessGold>(); }},
+    {  "JapaneseChessKing",   [] { return Scene::Object::Create<JapaneseChessKing>(); }},
+    {"JapaneseChessKnight", [] { return Scene::Object::Create<JapaneseChessKnight>(); }},
+    { "JapaneseChessLance",  [] { return Scene::Object::Create<JapaneseChessLance>(); }},
+    {  "JapaneseChessPawn",   [] { return Scene::Object::Create<JapaneseChessPawn>(); }},
+    {  "JapaneseChessRook",   [] { return Scene::Object::Create<JapaneseChessRook>(); }},
+    {"JapaneseChessSilver", [] { return Scene::Object::Create<JapaneseChessSilver>(); }},
+    {          "ChessPawn",           [] { return Scene::Object::Create<ChessPawn>(); }},
+    {          "ChessRook",           [] { return Scene::Object::Create<ChessRook>(); }},
+    {        "ChessKnight",         [] { return Scene::Object::Create<ChessKnight>(); }},
+    {        "ChessBishop",         [] { return Scene::Object::Create<ChessBishop>(); }},
+    {         "ChessQueen",          [] { return Scene::Object::Create<ChessQueen>(); }},
+    {          "ChessKing",           [] { return Scene::Object::Create<ChessKing>(); }},
+};
 //---------------------------------------------------------------------------
-//! ピース名を受け取って対応する駒インスタンスを生成する
+// ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
 std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string& type)
 {
-    if(type == "JapaneseChessBishop") {
-        //角行
-        return Scene::Object::Create<JapaneseChessBishop>();
-    }
-    else if(type == "JapaneseChessGold") {
-        //金将
-        return Scene::Object::Create<JapaneseChessGold>();
-    }
-    else if(type == "JapaneseChessKing") {
-        //王将
-        return Scene::Object::Create<JapaneseChessKing>();
-    }
-    else if(type == "JapaneseChessKnight") {
-        //桂馬
-        return Scene::Object::Create<JapaneseChessKnight>();
-    }
-    else if(type == "JapaneseChessLance") {
-        //香車
-        return Scene::Object::Create<JapaneseChessLance>();
-    }
-    else if(type == "JapaneseChessPawn") {
-        //歩兵
-        return Scene::Object::Create<JapaneseChessPawn>();
-    }
-    else if(type == "JapaneseChessRook") {
-        //飛車
-        return Scene::Object::Create<JapaneseChessRook>();
-    }
-    else if(type == "JapaneseChessSilver") {
-        //銀将
-        return Scene::Object::Create<JapaneseChessSilver>();
-    }
-    else if(type == "ChessPawn") {
-        //ポーン
-        return Scene::Object::Create<ChessPawn>();
-    }
-    else if(type == "ChessRook") {
-        return Scene::Object::Create<ChessRook>();
-    }
-    else if(type == "ChessKnight") {
-        return Scene::Object::Create<ChessKnight>();
-    }
-    else if(type == "ChessBishop") {
-        return Scene::Object::Create<ChessBishop>();
-    }
-    else if(type == "ChessQueen") {
-        return Scene::Object::Create<ChessQueen>();
-    }
-    else if(type == "ChessKing") {
-        return Scene::Object::Create<ChessKing>();
-    }
-    else {
-        return nullptr;    // 未知のユニット
-    }
+    auto it = piece_creators_.find(type);
+    return (it != piece_creators_.end()) ? it->second() : nullptr;
 }
