@@ -48,7 +48,7 @@ public:
     std::shared_ptr<BoardInfo> RemovePiece(int file, int rank);
     //@}
 private:
-    std::weak_ptr<Object>                                  owner_;              //オーナーのウィークポインタ
+    std::weak_ptr<Agent>                                   owner_;              //オーナーのウィークポインタ
     std::array<std::array<std::weak_ptr<PieceInfo>, 4>, 8> squares_;            //ボードのマス管理
     int                                                    piece_count_ = 0;    //ボードに置かれている駒の数のキャッシュ
 };
