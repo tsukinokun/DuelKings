@@ -37,11 +37,6 @@ bool Player::Init()
 void Player::Update()
 {
     __super::Update();
-    //if(IsKeyDown(KEY_INPUT_SPACE)) {
-    //    if(auto stand = stand_.lock()) {
-    //        stand->PieceInit();    // ピースの初期化
-    //    }
-    //}
 
     should_select_piece_ = false;    //選択するかをリセット
     //左クリックで選択

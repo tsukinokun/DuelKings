@@ -5,7 +5,9 @@
 //---------------------------------------------------------------------------
 #pragma once
 const float SQUARE_SIZE = 1.0f;    //マスのxz軸の大きさ
-const float SQUARE_HALF = 0.5f;
+const float SQUARE_HALF = 0.5f;    //マスのxz軸の半分の大きさ
+//ゲームプレイ人数
+constexpr int AGENT_NUM = 8;    //プレイ人数
 //フェーズの長さ
 constexpr float SETUP_PHASE_DURATION  = 15.0f;    // 設置フェーズの長さ（秒）
 constexpr float BATTLE_PHASE_DURATION = 10.0f;    // 戦闘フェーズの長さ（秒）

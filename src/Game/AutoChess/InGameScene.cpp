@@ -8,8 +8,9 @@
 #include "ChessBoard.h"
 #include "PieceStand.h"
 #include <Game/AutoChess/Piece/Piece.h>
-#include "Agent.h"
-#include "Player.h"
+#include <Game/AutoChess/Agent.h>
+#include <Game/AutoChess/Player.h>
+#include <Game/AutoChess/Npc.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/MouseRay.h>
 #include <Game/AutoChess/ShopStand.h>
@@ -25,10 +26,16 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    ImageBuffer::Init();                                             //画像バッファの初期化
-    PiecePool::Init();                                               //駒プールの初期化
-    Scene::Object::Create<Camera>();                                 //カメラ
-    auto player = Scene::Object::Create<Player>();                   //プレイヤー
+    ImageBuffer::Init();                              //画像バッファの初期化
+    PiecePool::Init();                                //駒プールの初期化
+    Scene::Object::Create<Camera>();                  //カメラ
+    auto player = Scene::Object::Create<Player>();    //プレイヤー
+    //---------------------------------------------------------------------------------
+    //  NPCの生成
+    //---------------------------------------------------------------------------------
+    /* for(int i = 0; i < AGENT_NUM - 1; i++) {
+        Scene::Object::Create<Npc>();
+    }*/
     Scene::Object::Create<MouseRay>();                               //マウス光線
     std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
     //---------------------------------------------------------------------------------
@@ -329,6 +336,21 @@ bool InGameScene::Init()
             }
         };
         phase_ui->SetProc("set_phase", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    }
+    //---------------------------------------------------------------------------------
+    //  Agent表示UI
+    //---------------------------------------------------------------------------------
+    {
+        int agent_count = 0;
+        for(auto& agent : Scene::Object::GetArray<Agent>()) {
+            agent_count++;
+            auto agent_ui = Scene::Object::Create<UIText>();
+            agent_ui->SetFontSize(30);                                                       //フォントサイズ設定
+            agent_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
+            agent_ui->SetTranslate(float3(150.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            agent_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
+            agent_ui->SetText(agent->GetName());                                             //エージェント名を表示
+        }
     }
     return true;
 }
