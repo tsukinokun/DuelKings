@@ -16,7 +16,7 @@ public:
     //! @param owner [in] オーナー
     //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<BoardInfo> SetOwner(std::weak_ptr<Object> owner);
+    std::shared_ptr<BoardInfo> SetOwner(std::weak_ptr<Agent> owner);
 
     //---------------------------------------------------------------------------
     //マスのウィークポインタを取得

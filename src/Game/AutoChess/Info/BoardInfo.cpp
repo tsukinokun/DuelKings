@@ -11,7 +11,7 @@
 //! @param owner [in] オーナー
 //! @retval 自身のポインタ
 //---------------------------------------------------------------------------
-std::shared_ptr<BoardInfo> BoardInfo::SetOwner(std::weak_ptr<Object> owner)
+std::shared_ptr<BoardInfo> BoardInfo::SetOwner(std::weak_ptr<Agent> owner)
 {
     owner_ = owner;
     return shared_from_this();

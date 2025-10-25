@@ -5,28 +5,17 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
-class ChessBoard;
-class ShopStand;
-class Piece;
+class BoardInfo;
+class PieceStandInfo;
+class ShopStandInfo;
+class PieceInfo;
 USING_PTR(Agent);
-USING_PTR(PieceStand);
 class Agent : public Object
 {
 public:
     BP_OBJECT_DECL(Agent, u8"インゲームシーンのエージェントクラス")
     //@{
     bool Init() override;    //!< 初期化
-    //-----------------------------------------------------------
-    //Onhit時に選択を行うかを返す関数
-    //! @retval OnHit時に選択を行うか
-    //-----------------------------------------------------------
-    bool IsShouldSelectPiece();
-
-    //-----------------------------------------------------------
-    //Onhit時にドロップを行うかを返す関数
-    //! @retval OnHit時にドロップを行うか
-    //-----------------------------------------------------------
-    bool IsShouldDropPiece();
 
     //-----------------------------------------------------------
     //経験値を増やす関数
@@ -63,14 +52,14 @@ public:
     //ショップに並んでいるピースを取得する関数
     //! @retval ショップに並んでいるピース
     //-----------------------------------------------------------
-    std::array<std::weak_ptr<Piece>, 5> GetShopPieces();
+    std::array<std::weak_ptr<PieceInfo>, 5> GetShopPieces();
 
     //-----------------------------------------------------------
     // スタンドに駒を追加する関数
     //! @param piece 追加する駒
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
-    std::shared_ptr<Agent> AddPieceToStand(std::shared_ptr<Piece> piece);
+    std::shared_ptr<Agent> AddPieceToStand(std::shared_ptr<PieceInfo> piece);
 
     //-----------------------------------------------------------
     // 指定インデックスのショップピースを無効化する関数
@@ -103,11 +92,9 @@ public:
 
     //@}
 protected:
-    bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
-    bool                      should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
-    int                       exp_                 = 0;        //エージェントのレベル
-    int                       hp_                  = 100;      //エージェントの体力
-    PieceStandWeakPtr         stand_;                          // ピーススタンド
-    std::weak_ptr<ChessBoard> board_;                          // チェスボード
-    std::weak_ptr<ShopStand>  shop_stand_;                     //ショップスタンド
+    int                           exp_ = 0;       //エージェントのレベル
+    int                           hp_  = 100;     //エージェントの体力
+    std::weak_ptr<PieceStandInfo> stand_;         // ピーススタンド
+    std::weak_ptr<BoardInfo>      board_;         // チェスボード
+    std::weak_ptr<ShopStandInfo>  shop_stand_;    //ショップスタンド
 };

@@ -7,9 +7,10 @@
 #include "Player.h"
 #include <Game/AutoChess/Piece/Piece.h>
 #include "Square.h"
-#include "ChessBoard.h"
-#include "PieceStand.h"
-#include "ShopStand.h"
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
+#include <Game/AutoChess/Info/PieceInfo.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -29,6 +30,22 @@ bool Player::Init()
         SetProc("Update", create_purchase_button, ProcTiming::Update, ProcPriority::NORMAL);
     }
     return true;
+}
+
+//---------------------------------------------------------------------------------
+//!	OnHit時に選択を行うかを返す関数
+//---------------------------------------------------------------------------------
+bool Player::IsShouldSelectPiece()
+{
+    return should_select_piece_;
+}
+
+//---------------------------------------------------------------------------------
+//!	OnHit時にドロップを行うかを返す関数
+//---------------------------------------------------------------------------------
+bool Player::IsShouldDropPiece()
+{
+    return should_drop_piece_;
 }
 
 //---------------------------------------------------------------------------------

@@ -6,9 +6,10 @@
 #include "Agent.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include "Square.h"
-#include "ChessBoard.h"
-#include "PieceStand.h"
-#include "ShopStand.h"
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
+#include <Game/AutoChess/Info/PieceInfo.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -19,39 +20,22 @@ bool Agent::Init()
     //---------------------------------------------------------------------------------
     //	ピーススタンドを作成
     //---------------------------------------------------------------------------------
-    auto piece_stand = Scene::Object::Create<PieceStand>();
-    piece_stand->SetOwner(shared_from_this());
-    piece_stand->CreateSquare();
+    auto piece_stand = std::make_shared<PieceStandInfo>();
+    piece_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
     stand_ = piece_stand;
     //---------------------------------------------------------------------------------
     //	ショップスタンドを作成
     //---------------------------------------------------------------------------------
-    auto shop_stand = Scene::Object::Create<ShopStand>();
-    shop_stand->SetOwner(shared_from_this());
+    auto shop_stand = std::make_shared<ShopStandInfo>();
+    shop_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
     shop_stand_ = shop_stand;
     //---------------------------------------------------------------------------------
     //	チェスボードを作成
     //---------------------------------------------------------------------------------
-    auto board = Scene::Object::Create<ChessBoard>();
-    board->SetOwner(shared_from_this());
-    board->CreateSquare();
+    auto board = std::make_shared<BoardInfo>();
+    board->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
     board_ = board;
     return true;
-}
-//---------------------------------------------------------------------------------
-//!	OnHit時に選択を行うかを返す関数
-//---------------------------------------------------------------------------------
-bool Agent::IsShouldSelectPiece()
-{
-    return should_select_piece_;
-}
-
-//---------------------------------------------------------------------------------
-//!	OnHit時にドロップを行うかを返す関数
-//---------------------------------------------------------------------------------
-bool Agent::IsShouldDropPiece()
-{
-    return should_drop_piece_;
 }
 //---------------------------------------------------------------------------------
 //!	経験値を増やす関数
@@ -130,9 +114,9 @@ int Agent::GetPlacedPieceNum() const
 //---------------------------------------------------------------------------------
 //! ショップに並んでいるピースを取得する関数
 //---------------------------------------------------------------------------------
-std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
+std::array<std::weak_ptr<PieceInfo>, 5> Agent::GetShopPieces()
 {
-    std::array<std::weak_ptr<Piece>, 5> shop_pieces;
+    std::array<std::weak_ptr<PieceInfo>, 5> shop_pieces;
     if(auto shop_stand = shop_stand_.lock()) {
         shop_pieces = shop_stand->GetShopPieces();
     }
@@ -144,7 +128,7 @@ std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
 //! @param piece 追加する駒
 //! @return 自分自身のshared_ptr
 //-----------------------------------------------------------
-std::shared_ptr<Agent> Agent::AddPieceToStand(std::shared_ptr<Piece> piece)
+std::shared_ptr<Agent> Agent::AddPieceToStand(std::shared_ptr<PieceInfo> piece)
 {
     // スタンドに駒を追加
     if(auto stand = stand_.lock()) {
