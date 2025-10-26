@@ -20,9 +20,9 @@ bool Agent::Init()
     //---------------------------------------------------------------------------------
     //	ピーススタンドを作成
     //---------------------------------------------------------------------------------
-    //auto piece_stand = std::make_shared<PieceStandInfo>();
-    //piece_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    //stand_ = piece_stand;
+    auto piece_stand = std::make_shared<PieceStandInfo>();
+    piece_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    stand_ = piece_stand;
     ////---------------------------------------------------------------------------------
     ////	ショップスタンドを作成
     ////---------------------------------------------------------------------------------

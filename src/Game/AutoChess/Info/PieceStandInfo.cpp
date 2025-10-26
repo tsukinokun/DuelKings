@@ -6,10 +6,16 @@
 #include "PieceStandInfo.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+//----------------------------------------------------------------------------
+// デフォルトコンストラクタ
+//----------------------------------------------------------------------------
+PieceStandInfo::PieceStandInfo()
+{
+}
 //---------------------------------------------------------------------------
 //! ピースの初期化
 //---------------------------------------------------------------------------
-std::shared_ptr<Agent> PieceStandInfo::AddPiece(std::shared_ptr<PieceInfo> piece)
+std::shared_ptr<PieceStandInfo> PieceStandInfo::AddPiece(std::shared_ptr<PieceInfo> piece)
 {
     // ピースを確認
     for(auto& piece_wp : pieces_) {
@@ -20,22 +26,22 @@ std::shared_ptr<Agent> PieceStandInfo::AddPiece(std::shared_ptr<PieceInfo> piece
         }
     }
     // 置き場が満タンなら追加されないです。
-    return owner_agent_.lock();
+    return shared_from_this();
 }
 
 //---------------------------------------------------------------------------
 //! オーナーのを設定
 //---------------------------------------------------------------------------
-std::shared_ptr<Agent> PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
+std::shared_ptr<PieceStandInfo> PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
 {
     owner_agent_ = owner_agent;
-    return owner_agent.lock();
+    return shared_from_this();
 }
 
 //---------------------------------------------------------------------------
 //! マスのウィークポインタを取得
 //---------------------------------------------------------------------------
-std::array<std::weak_ptr<PieceInfo>, 8> PieceStandInfo::GetStandPieces()
+std::array<std::weak_ptr<PieceInfo>, 8> PieceStandInfo::GetStandPieces() const
 {
     return pieces_;
 }

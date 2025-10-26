@@ -17,10 +17,10 @@ void ComponentText::Init()
     //  UI描画を登録
     //---------------------------------------------------------------------------
     auto draw_ui = [this]() {
-        DxLib::SetFontSize(font_size_);                  //フォントサイズに合わせる
-        auto   owner      = GetOwner();                  //オーナーを取得
-        float3 adjustment = float3(0.0f, 0.0f, 0.0f);    // 調整値(Alignmentに合わせて)
-        int font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
+        DxLib::SetFontSize(font_size_);                                                                                          //フォントサイズに合わせる
+        auto   owner       = GetOwner();                                                                                         //オーナーを取得
+        float3 adjustment  = float3(0.0f, 0.0f, 0.0f);                                                                           // 調整値(Alignmentに合わせて)
+        int    font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
         if(auto comp_transform = owner->GetComponent<ComponentTransformUI>()) {
             ComponentTransformUI::Alignment alignment = comp_transform->GetAlignment();
             float                           hight     = 0;    //フォントサイズを取得(=高さ)

@@ -8,30 +8,35 @@
 // 前方宣言
 class PieceInfo;
 class Agent;
-class PieceStandInfo : public std::enable_shared_from_this<PieceInfo>
+class PieceStandInfo : public std::enable_shared_from_this<PieceStandInfo>
 {
 public:
     //@{
+    //----------------------------------------------------------------------------
+    // デフォルトコンストラクタ
+    //----------------------------------------------------------------------------
+    PieceStandInfo();
+
     //---------------------------------------------------------------------------
     //  スタンドにピースを追加する関数
     //! @param piece [in] 追加するピース
-    //! @retval 追加されたピースのオーナーエージェントの共有ポインタ
+    //! @retval 自身のポインタ
     //! @note 置き場が満タンなら追加されないです。
     //---------------------------------------------------------------------------
-    std::shared_ptr<Agent> AddPiece(std::shared_ptr<PieceInfo> piece);
+    std::shared_ptr<PieceStandInfo> AddPiece(std::shared_ptr<PieceInfo> piece);
 
     //---------------------------------------------------------------------------
     //  オーナーのを設定
     //! @param owner [in] オーナー
-    //! @retval オーナーエージェントの共有ポインタ
+    //! @retval 自身の共有ポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<Agent> SetOwner(std::weak_ptr<Agent> owner_agent);
+    std::shared_ptr<PieceStandInfo> SetOwner(std::weak_ptr<Agent> owner_agent);
 
     //---------------------------------------------------------------------------
     //マスのウィークポインタを取得
     //! @retval マスのウィークポインタ
     //---------------------------------------------------------------------------
-    std::array<std::weak_ptr<PieceInfo>, 8> GetStandPieces();
+    std::array<std::weak_ptr<PieceInfo>, 8> GetStandPieces() const;
 
     //---------------------------------------------------------------------------
     // ピースのスタンドが満タンかどうかを取得する関数
@@ -40,6 +45,6 @@ public:
     bool IsFull() const;
     //@}
 private:
-    std::array<std::weak_ptr<PieceInfo>, 8> pieces_;         //ピース置き場ピースのウィークポインタ
+    std::array<std::weak_ptr<PieceInfo>, 8> pieces_{};       //ピース置き場ピースのウィークポインタ
     std::weak_ptr<Agent>                    owner_agent_;    //オーナーのウィークポインタ
 };
