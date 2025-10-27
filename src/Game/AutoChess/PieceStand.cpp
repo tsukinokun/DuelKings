@@ -7,24 +7,40 @@
 #include <Game/AutoChess/Piece/Piece.h>
 #include "Square.h"
 #include <Game/AutoChess/system/GameConst.h>
+#include <Game/AutoChess/Player.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
 bool PieceStand::Init()
 {
     __super::Init();
-    SetTranslate(float3(5.0f, 0.0f, 0.0f));
+    SetTranslate(float3(0.0f, 0.0f, -6.0f));
     SetName("PieceStand");
     CreateSquare();
+    //---------------------------------------------------------------------------------
+    //  更新処理を追加
+    //---------------------------------------------------------------------------------
+    auto update = [this]() {
+        //ピースが変更されたかを確認
+        for(int i = 0; i < STAND_SQUARE_MAX_; i++) {
+            if(auto square = squares_[i].lock()) {
+                if(square->IsChanged()) {
+                    if(auto player = Scene::Object::Get<Player>()) {
+                        PieceInfo piece_info;    //空のピース情報
+                        //マスに中身があれば
+                        auto piece_wp = square->GetPutPiece();
+                        if(auto piece = piece_wp.lock()) {
+                            piece_info.SetTypeName(piece->GetNameDefault().data());
+                            piece_info.SetOwner(player);
+                        }
+                        player->SetPieceStandInfo(i, piece_info);
+                    }
+                }
+            }
+        }
+    };
+    SetProc("Update", update, ProcTiming::Update, ProcPriority::NONE);
     return true;
-}
-
-//---------------------------------------------------------------------------------
-//!	更新
-//---------------------------------------------------------------------------------
-void PieceStand::Update()
-{
-    __super::Update();
 }
 
 //---------------------------------------------------------------------------------
@@ -40,9 +56,9 @@ void PieceStand::Draw()
             color = GetColor(0, 255, 255);
         }
         float3 curr_translate = GetTranslate();    //現在のポジションを取得
-        float  z              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
-        float3 p1             = float3(-SQUARE_HALF, -0.1f, z + -SQUARE_HALF) + curr_translate;
-        float3 p2             = float3(SQUARE_HALF, 0.1f, z + SQUARE_HALF) + curr_translate;
+        float  x              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
+        float3 p1             = float3(x + -SQUARE_HALF, -0.1f, -SQUARE_HALF) + curr_translate;
+        float3 p2             = float3(x + SQUARE_HALF, 0.1f, SQUARE_HALF) + curr_translate;
         DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
     }
 }
@@ -73,7 +89,7 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
         //ヌルポインタなら
         if(auto square = squares_[i].lock()) {
             if(square->GetPutPiece().expired()) {
-                piece->SetTranslate(float3(0.0f, 0.5f, (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE)) + GetTranslate());    //位置を設定
+                piece->SetTranslate(float3((i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE), 0.5f, 0.0f) + GetTranslate());    //位置を設定
                 square->SetPutPiece(piece);                                                                                          //バッファにポインタを登録
                 return;
             }    //一度生成したらリターンする
@@ -97,9 +113,7 @@ void PieceStand::CreateSquare()
     for(int i = 0; i < STAND_SQUARE_MAX_; i++) {
         auto square = Scene::Object::Create<Square>();
         square->SetOwner(owner_);
-        float  z = (i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
-        float3 p = float3(5.0f, -0.1f, z);
-        square->SetTranslate(p);
+        square->SetTranslate(float3((i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE), 0.0f, 0.0f) + GetTranslate());
         squares_[i] = square;
     }
 }

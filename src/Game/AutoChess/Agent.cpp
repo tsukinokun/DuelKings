@@ -170,3 +170,30 @@ bool Agent::IsPieceStandFull() const
 {
     return stand_info_.IsFull();
 }
+//-----------------------------------------------------------
+//! ピーススタンドの駒情報を設定する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::SetPieceStandInfo(size_t index, const PieceInfo& piece_info)
+{
+    // ピーススタンド情報を設定
+    stand_info_.GetStandPieces()[index] = piece_info;
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+//! 自陣のチェスボードの駒情報を設定する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& piece_info)
+{
+    // チェスボード情報を設定
+    board_info_.AddPiece(file, rank, piece_info);
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+//! 自陣のチェスボードの駒情報を削除する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::RemoveBoardInfo(int file, int rank)
+{
+    // チェスボード情報を削除
+    board_info_.RemovePiece(file, rank);
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}

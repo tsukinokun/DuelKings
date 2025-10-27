@@ -12,9 +12,8 @@ class ChessBoard : public Object
 public:
     BP_OBJECT_DECL(ChessBoard, u8"インゲームシーンのチェスボード")
     //@{
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
+    bool Init() override;    //!< 初期化
+    void Draw() override;    //!< 描画
 
     //マスの生成
     void CreateSquare();
@@ -25,7 +24,7 @@ public:
 
     //マスのウィークポインタを取得
     //! @retval マスのウィークポインタ
-    std::array<std::array<std::weak_ptr<Square>, 8>, 8> GetSquarePtrArray();
+    std::array<std::array<std::weak_ptr<Square>, 8>, 4> GetSquarePtrArray();
 
     //マスに置かれている駒の数を取得
     //! @retval 駒の数
@@ -37,5 +36,5 @@ private:
     const int                                           RANK_MAX_  = 8;    //ランクの数
     const int                                           RANK_HALF_ = RANK_MAX_ / 2;
     std::weak_ptr<Object>                               owner_;      //オーナーのウィークポインタ
-    std::array<std::array<std::weak_ptr<Square>, 8>, 8> squares_;    //ボードのマス管理
+    std::array<std::array<std::weak_ptr<Square>, 8>, 4> squares_;    //ボードのマス管理
 };

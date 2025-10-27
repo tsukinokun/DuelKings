@@ -21,7 +21,7 @@ public:
     //マスのウィーク情報を取得
     //! @retval マスの情報
     //---------------------------------------------------------------------------
-    std::array<std::array<PieceInfo, 4>, 8> GetSquarePtrArray() const;
+    std::array<std::array<PieceInfo, 8>, 4> GetSquarePtrArray() const;
 
     //---------------------------------------------------------------------------
     // マスに置かれている駒の数を取得
@@ -38,14 +38,13 @@ public:
     void AddPiece(int file, int rank, PieceInfo piece);
 
     //---------------------------------------------------------------------------
-    // 駒をマスに追加
+    // マスのを削除
     //! @param file [in] ファイル（列）
     //! @param rank [in] ランク（行）
     //---------------------------------------------------------------------------
     void RemovePiece(int file, int rank);
     //@}
 private:
-    std::weak_ptr<Agent>                    owner_;              //オーナーのウィークポインタ
-    std::array<std::array<PieceInfo, 4>, 8> squares_;            //ボードのマス管理
-    int                                     piece_count_ = 0;    //ボードに置かれている駒の数のキャッシュ
+    std::weak_ptr<Agent>                    owner_;      //オーナーのウィークポインタ
+    std::array<std::array<PieceInfo, 8>, 4> squares_;    //ボードのマス管理
 };

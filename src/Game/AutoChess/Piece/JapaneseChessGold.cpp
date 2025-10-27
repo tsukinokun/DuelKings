@@ -15,5 +15,7 @@ bool JapaneseChessGold::Init()
     SetName("JapaneseChessGold");
     auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/JapaneseChessGold.mv1");
     model->SetScaleAxisXYZ(0.005f);
+    model->SetRotationAxisXYZ(float3(0.0f, 90.0f, 0.0f));
+
     return true;
 }

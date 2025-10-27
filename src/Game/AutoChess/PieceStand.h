@@ -14,11 +14,10 @@ class PieceStand : public Object
 public:
     BP_OBJECT_DECL(PieceStand, u8"インゲームシーンのピース置き場")
     //@{
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
+    bool Init() override;    //!< 初期化
+    void Draw() override;    //!< 描画
+    void Exit() override;    //!< 終了
+    void GUI() override;     //!< GUI表示
 
     //---------------------------------------------------------------------------
     //  マスの生成

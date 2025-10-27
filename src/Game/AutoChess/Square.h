@@ -36,9 +36,19 @@ public:
 
     //ピースのポインタを解除
     void ResetPutPiece() { piece_.reset(); }
+
+    //状態が変化したかを取得
+    //! @retval 状態が変化したかどうか
+    bool IsChanged() const { return is_changed_; }
+
+    //状態が変化したことを記録
+    //! @param is_changed [in] 状態が変化したかどうか
+    void SetChanged(bool is_changed = true) { is_changed_ = is_changed; }
+
     //@}
 private:
-    bool                  is_ray_hit_;    //マウスから出る光線に当たっているかを保持する変数
-    std::weak_ptr<Piece>  piece_;         // おいてあるピース
-    std::weak_ptr<Object> owner_;         //オーナーの名前を保持する変数
+    bool                  is_changed_ = false;    //状態が変化したかを保持する変数
+    bool                  is_ray_hit_ = false;    //マウスから出る光線に当たっているかを保持する変数
+    std::weak_ptr<Piece>  piece_;                 // おいてあるピース
+    std::weak_ptr<Object> owner_;                 //オーナーの名前を保持する変数
 };

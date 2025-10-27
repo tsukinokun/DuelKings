@@ -90,6 +90,31 @@ public:
     //-----------------------------------------------------------
     bool IsPieceStandFull() const;
 
+    //-----------------------------------------------------------
+    // ピーススタンドの駒情報を設定する関数
+    //! @param index  駒情報を設定するインデックス
+    //! @param piece_info 追加する駒情報
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> SetPieceStandInfo(size_t index, const PieceInfo& piece_info);
+
+    //-----------------------------------------------------------
+    // 自陣のチェスボードの駒情報を設定する関数
+    //! @param file  駒情報を設定するファイル（列）
+    //! @param rank  駒情報を設定するランク（行）
+    //! @param piece_info 追加する駒情報
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> SetBoardInfo(int file, int rank, const PieceInfo& piece_info);
+
+    //-----------------------------------------------------------
+    // 自陣のチェスボードの駒情報を削除する関数
+    //! @param file  駒情報を削除するファイル（列）
+    //! @param rank  駒情報を削除するランク（行）
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> RemoveBoardInfo(int file, int rank);
+
     //@}
 protected:
     int            exp_ = 0;            //エージェントのレベル

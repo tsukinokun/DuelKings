@@ -37,14 +37,14 @@ bool ShopStand::Init()
                             Scene::Object::Release(shop_piece);
                             shop_pieces_[i] = std::weak_ptr<Piece>();                                                 // 空の weak_ptr を代入
                             auto shop_piece = PieceFactory::CreatePiece(shop_pieces_info[i].GetTypeName().data());    //実体を生成
-                            shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                                   //位置を初期化
+                            shop_piece->SetTranslate(float3(i * 1.0f, 1.0f, 0.0f));                                   //位置を初期化
                             shop_pieces_[i] = shop_piece;
                         }
                     }
                     else {
                         //なければ生成
                         auto piece = PieceFactory::CreatePiece(shop_pieces_info[i].GetTypeName().data());    //実体を生成
-                        piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                                   //位置を初期化
+                        piece->SetTranslate(float3(i * 1.0f, 1.0f, 0.0f));                                   //位置を初期化
                         shop_pieces_[i] = piece;
                     }
                 }
