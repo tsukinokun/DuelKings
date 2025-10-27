@@ -13,6 +13,7 @@ bool ChessBoard::Init()
 {
     __super::Init();
     SetName("ChessBoard");
+    CreateSquare();
     return true;
 }
 

@@ -15,6 +15,7 @@ bool PieceStand::Init()
     __super::Init();
     SetTranslate(float3(5.0f, 0.0f, 0.0f));
     SetName("PieceStand");
+    CreateSquare();
     return true;
 }
 
