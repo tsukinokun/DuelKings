@@ -115,9 +115,7 @@ std::array<PieceInfo, 5> Agent::GetShopPieces()
 }
 
 //-----------------------------------------------------------
-// スタンドに駒を追加する関数
-//! @param piece 追加する駒
-//! @return 自分自身のshared_ptr
+//! スタンドに駒を追加する関数
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::AddPieceToStand(PieceInfo piece)
 {
@@ -196,4 +194,10 @@ std::shared_ptr<Agent> Agent::RemoveBoardInfo(int file, int rank)
     // チェスボード情報を削除
     board_info_.RemovePiece(file, rank);
     return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+// ピース制限を強制する関数
+//-----------------------------------------------------------
+void Agent::EnforcePieceLimit()
+{
 }

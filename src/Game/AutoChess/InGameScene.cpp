@@ -400,6 +400,10 @@ void InGameScene::Update()
     case GameState::Setup:
         if(state_timer_ >= SETUP_PHASE_DURATION) {
             TransitionTo(GameState::Battle);
+            //駒数が上限を超えている場合、ピーススタンドに戻す、もしもピーススタンドが満タンなら強制的に破棄する。
+            for(auto& agent : Scene::Object::GetArray<Agent>()) {
+                agent->EnforcePieceLimit();    //駒数制限を強制適用
+            }
         }
         break;
 

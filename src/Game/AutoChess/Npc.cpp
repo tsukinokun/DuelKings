@@ -17,5 +17,10 @@ bool Npc::Init()
 {
     __super::Init();
     SetName("Npc");
+    //テストで自陣に飛車を置いておく
+    PieceInfo piece_info;
+    piece_info.SetTypeName("ChessRook");
+    piece_info.SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    SetBoardInfo(1, 1, piece_info);
     return true;
 }
