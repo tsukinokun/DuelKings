@@ -7,11 +7,25 @@
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
 //---------------------------------------------------------------------------
+//! デフォルトコンストラクタ
+//---------------------------------------------------------------------------
+PieceInfo::PieceInfo()
+{
+}
+//---------------------------------------------------------------------------
 //! @brief 駒の種類を取得
 //---------------------------------------------------------------------------
 std::string PieceInfo::GetTypeName() const
 {
     return type_name_;
+}
+
+//---------------------------------------------------------------------------
+//! @brief 駒の種類を設定
+//---------------------------------------------------------------------------
+void PieceInfo::SetTypeName(const std::string& type_name)
+{
+    type_name_ = type_name;
 }
 
 //---------------------------------------------------------------------------
@@ -25,8 +39,7 @@ std::shared_ptr<Agent> PieceInfo::GetOwner() const
 //---------------------------------------------------------------------------
 //! @brief 所属エージェントを設定
 //---------------------------------------------------------------------------
-std::shared_ptr<PieceInfo> PieceInfo::SetOwner(std::weak_ptr<Agent> agent)
+void PieceInfo::SetOwner(std::weak_ptr<Agent> agent)
 {
     owner_agent_ = agent;
-    return shared_from_this();
 }

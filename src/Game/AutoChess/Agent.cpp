@@ -6,9 +6,10 @@
 #include "Agent.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include "Square.h"
-#include "ChessBoard.h"
-#include "PieceStand.h"
-#include "ShopStand.h"
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
+#include <Game/AutoChess/Info/PieceInfo.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -19,39 +20,17 @@ bool Agent::Init()
     //---------------------------------------------------------------------------------
     //	ピーススタンドを作成
     //---------------------------------------------------------------------------------
-    auto piece_stand = Scene::Object::Create<PieceStand>();
-    piece_stand->SetOwner(shared_from_this());
-    piece_stand->CreateSquare();
-    stand_ = piece_stand;
+    stand_info_.SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
     //---------------------------------------------------------------------------------
     //	ショップスタンドを作成
     //---------------------------------------------------------------------------------
-    auto shop_stand = Scene::Object::Create<ShopStand>();
-    shop_stand->SetOwner(shared_from_this());
-    shop_stand_ = shop_stand;
+    shop_stand_info_.SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    shop_stand_info_.RerollShopPieces();    //初期ピースをリロール
     //---------------------------------------------------------------------------------
     //	チェスボードを作成
     //---------------------------------------------------------------------------------
-    auto board = Scene::Object::Create<ChessBoard>();
-    board->SetOwner(shared_from_this());
-    board->CreateSquare();
-    board_ = board;
+    board_info_.SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
     return true;
-}
-//---------------------------------------------------------------------------------
-//!	OnHit時に選択を行うかを返す関数
-//---------------------------------------------------------------------------------
-bool Agent::IsShouldSelectPiece()
-{
-    return should_select_piece_;
-}
-
-//---------------------------------------------------------------------------------
-//!	OnHit時にドロップを行うかを返す関数
-//---------------------------------------------------------------------------------
-bool Agent::IsShouldDropPiece()
-{
-    return should_drop_piece_;
 }
 //---------------------------------------------------------------------------------
 //!	経験値を増やす関数
@@ -122,20 +101,16 @@ int Agent::GetCurrentExp() const
 int Agent::GetPlacedPieceNum() const
 {
     int placed_piece_num = 0;    // 置かれているピースの数
-    if(auto board = board_.lock()) {
-        placed_piece_num = board->GetPieceNumOnSquares();
-    }
+    placed_piece_num     = board_info_.GetPieceNumOnSquares();
     return placed_piece_num;
 }
 //---------------------------------------------------------------------------------
 //! ショップに並んでいるピースを取得する関数
 //---------------------------------------------------------------------------------
-std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
+std::array<PieceInfo, 5> Agent::GetShopPieces()
 {
-    std::array<std::weak_ptr<Piece>, 5> shop_pieces;
-    if(auto shop_stand = shop_stand_.lock()) {
-        shop_pieces = shop_stand->GetShopPieces();
-    }
+    std::array<PieceInfo, 5> shop_pieces;
+    shop_pieces = shop_stand_info_.GetShopPieces();
     return shop_pieces;
 }
 
@@ -144,12 +119,10 @@ std::array<std::weak_ptr<Piece>, 5> Agent::GetShopPieces()
 //! @param piece 追加する駒
 //! @return 自分自身のshared_ptr
 //-----------------------------------------------------------
-std::shared_ptr<Agent> Agent::AddPieceToStand(std::shared_ptr<Piece> piece)
+std::shared_ptr<Agent> Agent::AddPieceToStand(PieceInfo piece)
 {
     // スタンドに駒を追加
-    if(auto stand = stand_.lock()) {
-        stand->AddPiece(piece);
-    }
+    stand_info_.AddPiece(piece);
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
 
@@ -158,19 +131,14 @@ std::shared_ptr<Agent> Agent::AddPieceToStand(std::shared_ptr<Piece> piece)
 //-----------------------------------------------------------
 bool Agent::InvalidateShopPiece(size_t index)
 {
-    if(auto shop = shop_stand_.lock()) {
-        return shop->InvalidateShopPiece(index);
-    }
-    return false;    // shop_stand_ が無効なら失敗
+    return shop_stand_info_.InvalidateShopPiece(index);
 }
 //-----------------------------------------------------------
 //! ショップのピースをリロールする関数
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::RerollShopPieces()
 {
-    if(auto shop = shop_stand_.lock()) {
-        shop->RerollShopPieces();
-    }
+    shop_stand_info_.RerollShopPieces();
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
 //-----------------------------------------------------------
@@ -178,14 +146,12 @@ std::shared_ptr<Agent> Agent::RerollShopPieces()
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::ToggleShopLockState()
 {
-    if(auto shop = shop_stand_.lock()) {
-        //ロック中かを確認して
-        if(shop->IsLocked()) {
-            shop->SetLockState(false);    // ロック解除
-        }
-        else {
-            shop->SetLockState(true);    // ロック
-        }
+    //ロック中かを確認して
+    if(shop_stand_info_.IsLocked()) {
+        shop_stand_info_.SetLockState(false);    // ロック解除
+    }
+    else {
+        shop_stand_info_.SetLockState(true);    // ロック
     }
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
@@ -195,18 +161,39 @@ std::shared_ptr<Agent> Agent::ToggleShopLockState()
 //-----------------------------------------------------------
 bool Agent::IsShopLocked() const
 {
-    if(auto shop = shop_stand_.lock()) {
-        return shop->IsLocked();
-    }
-    return false;    // shop_stand_ が無効ならロックされていないとみなす
+    return shop_stand_info_.IsLocked();
 }
 //-----------------------------------------------------------
 // ピーススタンドが満タンかどうかを取得する関数
 //-----------------------------------------------------------
 bool Agent::IsPieceStandFull() const
 {
-    if(auto stand = stand_.lock()) {
-        return stand->IsFull();
-    }
-    return false;    // stand_ が無効なら満タンではないとみなす}
+    return stand_info_.IsFull();
+}
+//-----------------------------------------------------------
+//! ピーススタンドの駒情報を設定する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::SetPieceStandInfo(size_t index, const PieceInfo& piece_info)
+{
+    // ピーススタンド情報を設定
+    stand_info_.GetStandPieces()[index] = piece_info;
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+//! 自陣のチェスボードの駒情報を設定する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& piece_info)
+{
+    // チェスボード情報を設定
+    board_info_.AddPiece(file, rank, piece_info);
+    return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+//! 自陣のチェスボードの駒情報を削除する関数
+//-----------------------------------------------------------
+std::shared_ptr<Agent> Agent::RemoveBoardInfo(int file, int rank)
+{
+    // チェスボード情報を削除
+    board_info_.RemovePiece(file, rank);
+    return dynamic_pointer_cast<Agent>(shared_from_this());
 }

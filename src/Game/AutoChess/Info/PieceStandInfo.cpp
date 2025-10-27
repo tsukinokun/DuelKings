@@ -6,36 +6,41 @@
 #include "PieceStandInfo.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+//----------------------------------------------------------------------------
+// デフォルトコンストラクタ
+//----------------------------------------------------------------------------
+PieceStandInfo::PieceStandInfo()
+{
+}
 //---------------------------------------------------------------------------
 //! ピースの初期化
 //---------------------------------------------------------------------------
-std::shared_ptr<Agent> PieceStandInfo::AddPiece(std::shared_ptr<PieceInfo> piece)
+bool PieceStandInfo::AddPiece(PieceInfo piece)
 {
     // ピースを確認
-    for(auto& piece_wp : pieces_) {
+    for(auto& pieces : pieces_) {
         // 空きがある場合、ピースを追加
-        if(piece_wp.expired()) {
-            piece_wp = piece;
-            break;
+        if(pieces.GetTypeName() == "") {
+            pieces = piece;
+            return true;
         }
     }
     // 置き場が満タンなら追加されないです。
-    return owner_agent_.lock();
+    return false;
 }
 
 //---------------------------------------------------------------------------
 //! オーナーのを設定
 //---------------------------------------------------------------------------
-std::shared_ptr<Agent> PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
+void PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
 {
     owner_agent_ = owner_agent;
-    return owner_agent.lock();
 }
 
 //---------------------------------------------------------------------------
-//! マスのウィークポインタを取得
+//! マスの情報を取得
 //---------------------------------------------------------------------------
-std::array<std::weak_ptr<PieceInfo>, 8> PieceStandInfo::GetStandPieces()
+std::array<PieceInfo, 8> PieceStandInfo::GetStandPieces() const
 {
     return pieces_;
 }
@@ -44,8 +49,8 @@ std::array<std::weak_ptr<PieceInfo>, 8> PieceStandInfo::GetStandPieces()
 //---------------------------------------------------------------------------
 bool PieceStandInfo::IsFull() const
 {
-    for(const auto& piece_wp : pieces_) {
-        if(piece_wp.expired()) {
+    for(const auto& pieces : pieces_) {
+        if(pieces.GetTypeName() == "") {
             return false;    // 空きがある場合、満タンではない
         }
     }

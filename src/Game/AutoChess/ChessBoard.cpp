@@ -6,6 +6,8 @@
 #include "ChessBoard.h"
 #include "Square.h"
 #include <Game/AutoChess/system/GameConst.h>
+#include <Game/AutoChess/Player.h>
+#include <Game/AutoChess/Piece/Piece.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -13,24 +15,45 @@ bool ChessBoard::Init()
 {
     __super::Init();
     SetName("ChessBoard");
+    CreateSquare();
+    //---------------------------------------------------------------------------------
+    // 更新処理を登録
+    //---------------------------------------------------------------------------------
+    auto update = [this]() {
+        //マスが変更されたかを取得
+        for(int f = 0; f < FILE_HALF_; f++) {
+            for(int r = 0; r < RANK_MAX_; r++) {
+                if(auto square = squares_[f][r].lock()) {
+                    if(square->IsChanged()) {
+                        if(auto player = Scene::Object::Get<Player>()) {
+                            //マスに中身があれば
+                            auto piece_wp = square->GetPutPiece();
+                            if(auto piece = piece_wp.lock()) {
+                                PieceInfo piece_info;    //空のピース情報
+                                piece_info.SetTypeName(piece->GetNameDefault().data());
+                                piece_info.SetOwner(player);
+                                player->SetBoardInfo(f, r, piece_info);
+                            }
+                            else {
+                                //なければ消す
+                                player->RemoveBoardInfo(f, r);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    SetProc("Update", update, ProcTiming::Update, ProcPriority::NONE);
     return true;
 }
-
-//---------------------------------------------------------------------------------
-//!	更新
-//---------------------------------------------------------------------------------
-void ChessBoard::Update()
-{
-    __super::Update();
-}
-
 //---------------------------------------------------------------------------------
 //!	描画
 //---------------------------------------------------------------------------------
 void ChessBoard::Draw()
 {
     __super::Draw();
-    for(int f = 0; f < FILE_MAX_; f++) {
+    for(int f = 0; f < FILE_HALF_; f++) {
         for(int r = 0; r < RANK_MAX_; r++) {
             int color = GetColor(0, 0, 0);
             //ファイルとランクの合計値が偶数なら白に
@@ -65,7 +88,7 @@ void ChessBoard::SetOwner(std::weak_ptr<Object> owner)
 //---------------------------------------------------------------------------------
 void ChessBoard::CreateSquare()
 {
-    for(int f = 0; f < FILE_MAX_; f++) {
+    for(int f = 0; f < FILE_HALF_; f++) {
         for(int r = 0; r < RANK_MAX_; r++) {
             auto square = Scene::Object::Create<Square>();
             square->SetOwner(owner_);
@@ -81,7 +104,7 @@ void ChessBoard::CreateSquare()
 //---------------------------------------------------------------------------------
 //!	マスのウィークポインタを取得
 //---------------------------------------------------------------------------------
-std::array<std::array<std::weak_ptr<Square>, 8>, 8> ChessBoard::GetSquarePtrArray()
+std::array<std::array<std::weak_ptr<Square>, 8>, 4> ChessBoard::GetSquarePtrArray()
 {
     return squares_;
 }

@@ -5,28 +5,17 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
-class ChessBoard;
-class ShopStand;
-class Piece;
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
+class PieceInfo;
 USING_PTR(Agent);
-USING_PTR(PieceStand);
 class Agent : public Object
 {
 public:
     BP_OBJECT_DECL(Agent, u8"インゲームシーンのエージェントクラス")
     //@{
     bool Init() override;    //!< 初期化
-    //-----------------------------------------------------------
-    //Onhit時に選択を行うかを返す関数
-    //! @retval OnHit時に選択を行うか
-    //-----------------------------------------------------------
-    bool IsShouldSelectPiece();
-
-    //-----------------------------------------------------------
-    //Onhit時にドロップを行うかを返す関数
-    //! @retval OnHit時にドロップを行うか
-    //-----------------------------------------------------------
-    bool IsShouldDropPiece();
 
     //-----------------------------------------------------------
     //経験値を増やす関数
@@ -63,14 +52,14 @@ public:
     //ショップに並んでいるピースを取得する関数
     //! @retval ショップに並んでいるピース
     //-----------------------------------------------------------
-    std::array<std::weak_ptr<Piece>, 5> GetShopPieces();
+    std::array<PieceInfo, 5> GetShopPieces();
 
     //-----------------------------------------------------------
     // スタンドに駒を追加する関数
     //! @param piece 追加する駒
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
-    std::shared_ptr<Agent> AddPieceToStand(std::shared_ptr<Piece> piece);
+    std::shared_ptr<Agent> AddPieceToStand(PieceInfo piece);
 
     //-----------------------------------------------------------
     // 指定インデックスのショップピースを無効化する関数
@@ -101,13 +90,36 @@ public:
     //-----------------------------------------------------------
     bool IsPieceStandFull() const;
 
+    //-----------------------------------------------------------
+    // ピーススタンドの駒情報を設定する関数
+    //! @param index  駒情報を設定するインデックス
+    //! @param piece_info 追加する駒情報
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> SetPieceStandInfo(size_t index, const PieceInfo& piece_info);
+
+    //-----------------------------------------------------------
+    // 自陣のチェスボードの駒情報を設定する関数
+    //! @param file  駒情報を設定するファイル（列）
+    //! @param rank  駒情報を設定するランク（行）
+    //! @param piece_info 追加する駒情報
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> SetBoardInfo(int file, int rank, const PieceInfo& piece_info);
+
+    //-----------------------------------------------------------
+    // 自陣のチェスボードの駒情報を削除する関数
+    //! @param file  駒情報を削除するファイル（列）
+    //! @param rank  駒情報を削除するランク（行）
+    //! @return 自身のポインタ
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> RemoveBoardInfo(int file, int rank);
+
     //@}
 protected:
-    bool                      should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
-    bool                      should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
-    int                       exp_                 = 0;        //エージェントのレベル
-    int                       hp_                  = 100;      //エージェントの体力
-    PieceStandWeakPtr         stand_;                          // ピーススタンド
-    std::weak_ptr<ChessBoard> board_;                          // チェスボード
-    std::weak_ptr<ShopStand>  shop_stand_;                     //ショップスタンド
+    int            exp_ = 0;            //エージェントのレベル
+    int            hp_  = 100;          //エージェントの体力
+    PieceStandInfo stand_info_;         // ピーススタンド
+    BoardInfo      board_info_;         // チェスボード
+    ShopStandInfo  shop_stand_info_;    //ショップスタンド
 };

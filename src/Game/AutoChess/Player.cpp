@@ -7,9 +7,12 @@
 #include "Player.h"
 #include <Game/AutoChess/Piece/Piece.h>
 #include "Square.h"
-#include "ChessBoard.h"
-#include "PieceStand.h"
-#include "ShopStand.h"
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
+#include <Game/AutoChess/ChessBoard.h>
+#include <Game/AutoChess/PieceStand.h>
+#include <Game/AutoChess/Info/PieceInfo.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -18,17 +21,31 @@ bool Player::Init()
     __super::Init();
     SetName("Player");
     //---------------------------------------------------------------------------------
-    // ショップにあわせて購入ボタンを作成する処理
+    // 更新処理
     //---------------------------------------------------------------------------------
     {
         auto create_purchase_button = [this]() {
-            //ショップを取得
-            if(auto shop_stand = shop_stand_.lock()) {
-            }
+
         };
         SetProc("Update", create_purchase_button, ProcTiming::Update, ProcPriority::NORMAL);
     }
     return true;
+}
+
+//---------------------------------------------------------------------------------
+//!	OnHit時に選択を行うかを返す関数
+//---------------------------------------------------------------------------------
+bool Player::IsShouldSelectPiece()
+{
+    return should_select_piece_;
+}
+
+//---------------------------------------------------------------------------------
+//!	OnHit時にドロップを行うかを返す関数
+//---------------------------------------------------------------------------------
+bool Player::IsShouldDropPiece()
+{
+    return should_drop_piece_;
 }
 
 //---------------------------------------------------------------------------------
@@ -41,7 +58,7 @@ void Player::Update()
     should_select_piece_ = false;    //選択するかをリセット
     //左クリックで選択
     if(IsMouseDown(MOUSE_INPUT_LEFT)) {
-        if(auto stand = stand_.lock()) {
+        if(auto stand = Scene::Object::Get<PieceStand>()) {
             auto stand_squares_ = stand->GetSquarePtrArray();
             for(int i = 0; i < stand_squares_.size(); i++) {
                 if(auto square = stand_squares_[i].lock()) {
@@ -51,9 +68,9 @@ void Player::Update()
                 }
             }
         }
-        if(auto board = board_.lock()) {
+        if(auto board = Scene::Object::Get<ChessBoard>()) {
             auto board_squares_ = board->GetSquarePtrArray();
-            for(int f = 0; f < board_squares_.size(); f++) {
+            for(int f = 0; f < 4; f++) {
                 for(int r = 0; r < board_squares_[f].size(); r++) {
                     if(auto square = board_squares_[f][r].lock()) {
                         if(auto piece = square->GetPutPiece().lock()) {
@@ -69,7 +86,7 @@ void Player::Update()
     //ドロップ操作
     should_drop_piece_ = false;    //ドロップするかをリセット
     if(IsMouseUp(MOUSE_INPUT_LEFT)) {
-        if(auto stand = stand_.lock()) {
+        if(auto stand = Scene::Object::Get<PieceStand>()) {
             auto stand_squares_ = stand->GetSquarePtrArray();
             for(int i = 0; i < stand_squares_.size(); i++) {
                 if(auto square = stand_squares_[i].lock()) {
@@ -81,9 +98,9 @@ void Player::Update()
                 }
             }
         }
-        if(auto board = board_.lock()) {
+        if(auto board = Scene::Object::Get<ChessBoard>()) {
             auto board_squares_ = board->GetSquarePtrArray();
-            for(int f = 0; f < board_squares_.size(); f++) {
+            for(int f = 0; f < 4; f++) {
                 for(int r = 0; r < board_squares_[f].size(); r++) {
                     if(auto square = board_squares_[f][r].lock()) {
                         if(auto piece = square->GetPutPiece().lock()) {

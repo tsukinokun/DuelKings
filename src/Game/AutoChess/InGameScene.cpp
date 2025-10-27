@@ -33,6 +33,32 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     //  NPCの生成
     //---------------------------------------------------------------------------------
+    for(int i = 0; i < AGENT_NUM; i++) {
+        Scene::Object::Create<Npc>();
+    }
+    //---------------------------------------------------------------------------------
+    //  ピーススタンドの生成
+    //---------------------------------------------------------------------------------
+    {
+        auto piece_stand = Scene::Object::Create<PieceStand>();
+        piece_stand->SetOwner(player);
+    }
+    //---------------------------------------------------------------------------------
+    //  ショップスタンドの生成
+    //---------------------------------------------------------------------------------
+    {
+        auto shop = Scene::Object::Create<ShopStand>();
+        shop->SetOwner(player);
+    }
+    //---------------------------------------------------------------------------------
+    //  ボードの生成
+    //---------------------------------------------------------------------------------
+    {
+        auto board = Scene::Object::Create<ChessBoard>();
+    }
+    //---------------------------------------------------------------------------------
+    //  NPCの生成
+    //---------------------------------------------------------------------------------
     /* for(int i = 0; i < AGENT_NUM - 1; i++) {
         Scene::Object::Create<Npc>();
     }*/
@@ -53,15 +79,18 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             //  クリック時処理の設定
             //---------------------------------------------------------------------------------
-            auto click_func = [i]() {
-                if(auto player = Scene::Object::Get<Player>()) {
-                    //スタンドが満タンなら購入できないようにする
-                    if(player->IsPieceStandFull()) {
+            auto click_func = [i, player]() {
+                //ピーズスタンドが満タンなら購入できないようにする
+                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                    if(piece_stand->IsFull()) {
                         return;
                     }
-                    if(auto purchase_piece = player->GetShopPieces()[i].lock()) {
-                        player->AddPieceToStand(std::move(purchase_piece));    //ピースを購入する
-                        player->InvalidateShopPiece(i);                        //購入したピースをショップから無効化する
+                    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                        if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
+                            piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
+                            shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
+                            player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
+                        }
                     }
                 }
             };

@@ -5,7 +5,7 @@
 //---------------------------------------------------------------------------
 #include "PiecePool.h"
 #include <Game/AutoChess/system/GameConst.h>
-#include <Game/AutoChess/Piece/Piece.h>
+#include <Game/AutoChess/Info/PieceInfo.h>
 #include <Game/AutoChess/PieceFactory.h>
 //staticメンバ変数の定義
 std::array<std::unordered_map<std::string, int>, 5> PiecePool::piece_pool_ = {};
@@ -35,7 +35,7 @@ void PiecePool::Init()
 //---------------------------------------------------------------------------
 //!	プールから抽選を行って、駒を1体取得する
 //---------------------------------------------------------------------------
-std::shared_ptr<Piece> PiecePool::GetRandomPiece()
+PieceInfo PiecePool::GetRandomPiece()
 {
     std::vector<std::string> available;
 
@@ -45,9 +45,9 @@ std::shared_ptr<Piece> PiecePool::GetRandomPiece()
             available.push_back(name);
     }
 
-    // 抽選可能なユニットが存在しない場合は nullptr を返す
+    // 抽選可能なユニットが存在しない場合は空の情報を返す
     if(available.empty())
-        return nullptr;
+        return PieceInfo();
 
     // 抽選対象からランダムに1体選択
     std::uniform_int_distribution<size_t> dist(0, available.size() - 1);
@@ -57,6 +57,9 @@ std::shared_ptr<Piece> PiecePool::GetRandomPiece()
     // 選ばれたユニットの在庫数を1減らす
     piece_pool_[0][selected]--;
 
-    // ユニットインスタンスを生成して返す（RAIIによる所有権管理）
-    return PieceFactory::CreatePiece(selected);
+    PieceInfo piece;
+    piece.SetTypeName(selected);
+
+    // ピース情報のポインタを返す（RAIIによる所有権管理）
+    return piece;
 }

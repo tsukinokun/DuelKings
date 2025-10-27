@@ -5,32 +5,30 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+#include "PieceInfo.h"
 // 前方宣言
-class PieceInfo;
 class Agent;
-class ShopStandInfo : public std::enable_shared_from_this<ShopStandInfo>
+class ShopStandInfo
 {
 public:
     //@{
     //---------------------------------------------------------------------------
     //  オーナーのを設定
     //! @param owner [in] オーナー
-    //! @retval オーナーエージェントの共有ポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<Agent> SetOwner(std::weak_ptr<Agent> owner_agent);
+    void SetOwner(std::weak_ptr<Agent> owner_agent);
 
     //---------------------------------------------------------------------------
     //  購入可能ピースをリロールする関数
-    //! @retval 自身のポインタ
     //! @note ショップがロックされていない場合にのみ実行されます。
     //---------------------------------------------------------------------------
-    std::shared_ptr<ShopStandInfo> RerollShopPieces();
+    void RerollShopPieces();
 
     //---------------------------------------------------------------------------
     //ショップに並んでいるピースを取得する関数
     //! @retval ショップに並んでいるピース
     //---------------------------------------------------------------------------
-    std::array<std::weak_ptr<PieceInfo>, 5> GetShopPieces();
+    std::array<PieceInfo, 5> GetShopPieces();
 
     //--------------------------------------------------------------------------
     // 指定インデックスのピースを購入済みとして無効化する関数
@@ -42,9 +40,8 @@ public:
     //--------------------------------------------------------------------------
     //  ショップのロック状態を設定する関数
     //! @param is_locked [in] ロック状態（ロックする場合 true、解除する場合 false）
-    //! @retval 自身のポインタ
     //--------------------------------------------------------------------------
-    std::shared_ptr<ShopStandInfo> SetLockState(bool is_locked);
+    void SetLockState(bool is_locked);
 
     //--------------------------------------------------------------------------
     // ショップがロックされているかどうかを取得する関数
@@ -54,7 +51,7 @@ public:
     //@}
 
 private:
-    std::array<std::weak_ptr<PieceInfo>, 5> shop_pieces_;          //購入可能ピースを格納した配列
-    std::weak_ptr<Agent>                    owner_agent_;          //オーナーのウィークポインタ
-    bool                                    is_locked_ = false;    //ショップがロックされているかどうか};
+    std::array<PieceInfo, 5> shop_pieces_;          //購入可能ピースを格納した配列
+    std::weak_ptr<Agent>     owner_agent_;          //オーナーのウィークポインタ
+    bool                     is_locked_ = false;    //ショップがロックされているかどうか};
 };

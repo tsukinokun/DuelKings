@@ -5,24 +5,23 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
-class Agent;        // 前方宣言
-class PieceInfo;    // 前方宣言
-class BoardInfo : public std::enable_shared_from_this<BoardInfo>
+#include "PieceInfo.h"
+class Agent;    // 前方宣言
+class BoardInfo
 {
 public:
     //@{
     //---------------------------------------------------------------------------
     //オーナーの名前を設定
     //! @param owner [in] オーナー
-    //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<BoardInfo> SetOwner(std::weak_ptr<Object> owner);
+    void SetOwner(std::weak_ptr<Agent> owner);
 
     //---------------------------------------------------------------------------
-    //マスのウィークポインタを取得
-    //! @retval マスのウィークポインタ
+    //マスのウィーク情報を取得
+    //! @retval マスの情報
     //---------------------------------------------------------------------------
-    std::array<std::array<std::weak_ptr<PieceInfo>, 4>, 8> GetSquarePtrArray() const;
+    std::array<std::array<PieceInfo, 8>, 4> GetSquarePtrArray() const;
 
     //---------------------------------------------------------------------------
     // マスに置かれている駒の数を取得
@@ -34,21 +33,18 @@ public:
     // 駒をマスに追加
     //! @param file [in] ファイル（列）
     //! @param rank [in] ランク（行）
-    //! @param piece [in] 追加する駒の共有ポインタ
-    //! @retval 自身のポインタ
+    //! @param piece [in] 追加する駒の情報
     //---------------------------------------------------------------------------
-    std::shared_ptr<BoardInfo> AddPiece(int file, int rank, std::shared_ptr<PieceInfo> piece);
+    void AddPiece(int file, int rank, PieceInfo piece);
 
     //---------------------------------------------------------------------------
-    // 駒をマスに追加
+    // マスのを削除
     //! @param file [in] ファイル（列）
     //! @param rank [in] ランク（行）
-    //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<BoardInfo> RemovePiece(int file, int rank);
+    void RemovePiece(int file, int rank);
     //@}
 private:
-    std::weak_ptr<Object>                                  owner_;              //オーナーのウィークポインタ
-    std::array<std::array<std::weak_ptr<PieceInfo>, 4>, 8> squares_;            //ボードのマス管理
-    int                                                    piece_count_ = 0;    //ボードに置かれている駒の数のキャッシュ
+    std::weak_ptr<Agent>                    owner_;      //オーナーのウィークポインタ
+    std::array<std::array<PieceInfo, 8>, 4> squares_;    //ボードのマス管理
 };

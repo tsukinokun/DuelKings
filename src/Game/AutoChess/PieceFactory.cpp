@@ -21,7 +21,7 @@
 #include <Game/AutoChess/Piece/ChessQueen.h>
 #include <Game/AutoChess/Piece/ChessKing.h>
 //mapに、駒の名前と生成関数を登録
-const std::unordered_map<std::string, PieceFactory::PieceCreator> PieceFactory::piece_creators_ = {
+const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFactory::piece_creators_ = {
     {"JapaneseChessBishop", [] { return Scene::Object::Create<JapaneseChessBishop>(); }},
     {  "JapaneseChessGold",   [] { return Scene::Object::Create<JapaneseChessGold>(); }},
     {  "JapaneseChessKing",   [] { return Scene::Object::Create<JapaneseChessKing>(); }},
@@ -40,7 +40,7 @@ const std::unordered_map<std::string, PieceFactory::PieceCreator> PieceFactory::
 //---------------------------------------------------------------------------
 // ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
-std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string& type)
+std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type)
 {
     auto it = piece_creators_.find(type);
     return (it != piece_creators_.end()) ? it->second() : nullptr;
