@@ -5,9 +5,9 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
-class BoardInfo;
-class PieceStandInfo;
-class ShopStandInfo;
+#include <Game/AutoChess/Info/BoardInfo.h>
+#include <Game/AutoChess/Info/ShopStandInfo.h>
+#include <Game/AutoChess/Info/PieceStandInfo.h>
 class PieceInfo;
 USING_PTR(Agent);
 class Agent : public Object
@@ -52,14 +52,14 @@ public:
     //ショップに並んでいるピースを取得する関数
     //! @retval ショップに並んでいるピース
     //-----------------------------------------------------------
-    std::array<std::weak_ptr<PieceInfo>, 5> GetShopPieces();
+    std::array<PieceInfo, 5> GetShopPieces();
 
     //-----------------------------------------------------------
     // スタンドに駒を追加する関数
     //! @param piece 追加する駒
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
-    std::shared_ptr<Agent> AddPieceToStand(std::shared_ptr<PieceInfo> piece);
+    std::shared_ptr<Agent> AddPieceToStand(PieceInfo piece);
 
     //-----------------------------------------------------------
     // 指定インデックスのショップピースを無効化する関数
@@ -92,9 +92,9 @@ public:
 
     //@}
 protected:
-    int                           exp_ = 0;       //エージェントのレベル
-    int                           hp_  = 100;     //エージェントの体力
-    std::weak_ptr<PieceStandInfo> stand_;         // ピーススタンド
-    std::weak_ptr<BoardInfo>      board_;         // チェスボード
-    std::weak_ptr<ShopStandInfo>  shop_stand_;    //ショップスタンド
+    int            exp_ = 0;            //エージェントのレベル
+    int            hp_  = 100;          //エージェントの体力
+    PieceStandInfo stand_info_;         // ピーススタンド
+    BoardInfo      board_info_;         // チェスボード
+    ShopStandInfo  shop_stand_info_;    //ショップスタンド
 };

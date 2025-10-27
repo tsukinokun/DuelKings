@@ -35,7 +35,7 @@ void PiecePool::Init()
 //---------------------------------------------------------------------------
 //!	プールから抽選を行って、駒を1体取得する
 //---------------------------------------------------------------------------
-std::shared_ptr<PieceInfo> PiecePool::GetRandomPiece()
+PieceInfo PiecePool::GetRandomPiece()
 {
     std::vector<std::string> available;
 
@@ -45,9 +45,9 @@ std::shared_ptr<PieceInfo> PiecePool::GetRandomPiece()
             available.push_back(name);
     }
 
-    // 抽選可能なユニットが存在しない場合は nullptr を返す
+    // 抽選可能なユニットが存在しない場合は空の情報を返す
     if(available.empty())
-        return nullptr;
+        return PieceInfo();
 
     // 抽選対象からランダムに1体選択
     std::uniform_int_distribution<size_t> dist(0, available.size() - 1);
@@ -57,8 +57,8 @@ std::shared_ptr<PieceInfo> PiecePool::GetRandomPiece()
     // 選ばれたユニットの在庫数を1減らす
     piece_pool_[0][selected]--;
 
-    std::shared_ptr<PieceInfo> piece = std::make_shared<PieceInfo>();
-    piece->SetTypeName(selected);
+    PieceInfo piece;
+    piece.SetTypeName(selected);
 
     // ピース情報のポインタを返す（RAIIによる所有権管理）
     return piece;

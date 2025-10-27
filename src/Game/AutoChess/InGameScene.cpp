@@ -74,14 +74,16 @@ bool InGameScene::Init()
             //  クリック時処理の設定
             //---------------------------------------------------------------------------------
             auto click_func = [i]() {
-                if(auto player = Scene::Object::Get<Player>()) {
-                    //スタンドが満タンなら購入できないようにする
-                    if(player->IsPieceStandFull()) {
+                //ピーズスタンドが満タンなら購入できないようにする
+                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                    if(piece_stand->IsFull()) {
                         return;
                     }
-                    if(auto purchase_piece = player->GetShopPieces()[i].lock()) {
-                        player->AddPieceToStand(std::move(purchase_piece));    //ピースを購入する
-                        player->InvalidateShopPiece(i);                        //購入したピースをショップから無効化する
+                    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                        if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
+                            piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
+                            shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
+                        }
                     }
                 }
             };

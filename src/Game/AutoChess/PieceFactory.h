@@ -15,9 +15,9 @@ public:
     //! @param[in] type 駒の種類名（文字列）
     //! @return 生成された駒のインスタンス（nullptr の場合は未定義）
     //---------------------------------------------------------------------------
-    static std::shared_ptr<Piece> CreatePiece(const std::string& type);
+    static std::shared_ptr<Piece> CreatePiece(const std::string_view& type);
 
 private:
-    using PieceCreator = std::function<std::shared_ptr<Piece>()>;                  // 駒生成関数の型定義
-    static const std::unordered_map<std::string, PieceCreator> piece_creators_;    // 駒生成関数のマップ
+    using PieceCreator = std::function<std::shared_ptr<Piece>()>;                       // 駒生成関数の型定義
+    static const std::unordered_map<std::string_view, PieceCreator> piece_creators_;    // 駒生成関数のマップ
 };

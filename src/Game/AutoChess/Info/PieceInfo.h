@@ -6,7 +6,7 @@
 #pragma once
 #include <System/Scene.h>
 class Agent;    // 前方宣言
-class PieceInfo : public std::enable_shared_from_this<PieceInfo>
+class PieceInfo
 {
 public:
     //@{
@@ -24,22 +24,20 @@ public:
     //---------------------------------------------------------------------------
     // 駒の種類を設定
     //! @param 駒の種類名
-    //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<PieceInfo> SetTypeName(const std::string& type_name);
+    void SetTypeName(const std::string& type_name);
 
     //---------------------------------------------------------------------------
     // 所属エージェントを取得（有効なら）
-    //! @retval 自身のポインタ
+    //! @retval 所属エージェントのポインタ
     //---------------------------------------------------------------------------
     std::shared_ptr<Agent> GetOwner() const;
 
     //---------------------------------------------------------------------------
     // 所属エージェントを設定
     //! @param agent [in] 所属エージェントのウィークポインタ
-    //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<PieceInfo> SetOwner(std::weak_ptr<Agent> agent);
+    void SetOwner(std::weak_ptr<Agent> agent);
 
     //@}
 private:

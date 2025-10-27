@@ -5,10 +5,10 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+#include "PieceInfo.h"
 // 前方宣言
-class PieceInfo;
 class Agent;
-class PieceStandInfo : public std::enable_shared_from_this<PieceStandInfo>
+class PieceStandInfo
 {
 public:
     //@{
@@ -20,23 +20,22 @@ public:
     //---------------------------------------------------------------------------
     //  スタンドにピースを追加する関数
     //! @param piece [in] 追加するピース
-    //! @retval 自身のポインタ
+    //! @retval ピースを追加できたかどうか
     //! @note 置き場が満タンなら追加されないです。
     //---------------------------------------------------------------------------
-    std::shared_ptr<PieceStandInfo> AddPiece(std::shared_ptr<PieceInfo> piece);
+    bool AddPiece(PieceInfo piece);
 
     //---------------------------------------------------------------------------
     //  オーナーのを設定
     //! @param owner [in] オーナー
-    //! @retval 自身の共有ポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<PieceStandInfo> SetOwner(std::weak_ptr<Agent> owner_agent);
+    void SetOwner(std::weak_ptr<Agent> owner_agent);
 
     //---------------------------------------------------------------------------
-    //マスのウィークポインタを取得
-    //! @retval マスのウィークポインタ
+    //  マスのピース情報を取得
+    //! @retval マスのピース情報
     //---------------------------------------------------------------------------
-    std::array<std::weak_ptr<PieceInfo>, 8> GetStandPieces() const;
+    std::array<PieceInfo, 8> GetStandPieces() const;
 
     //---------------------------------------------------------------------------
     // ピースのスタンドが満タンかどうかを取得する関数
@@ -45,6 +44,6 @@ public:
     bool IsFull() const;
     //@}
 private:
-    std::array<std::weak_ptr<PieceInfo>, 8> pieces_{};       //ピース置き場ピースのウィークポインタ
-    std::weak_ptr<Agent>                    owner_agent_;    //オーナーのウィークポインタ
+    std::array<PieceInfo, 8> pieces_{};       //ピース置き場ピースのウィークポインタ
+    std::weak_ptr<Agent>     owner_agent_;    //オーナーのウィークポインタ
 };

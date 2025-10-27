@@ -24,26 +24,28 @@ bool ShopStand::Init()
         //オーナーをロック
         if(auto owner = owner_.lock()) {
             //ショップ情報を取得する
-            auto shop_pieces = owner->GetShopPieces();
+            auto shop_pieces_info = owner->GetShopPieces();
             //ループで中身を見ていく
-            for(int i = 0; i < shop_pieces.size(); i++) {
-                //ピース情報があれば
-                if(auto piece_info = shop_pieces[i].lock()) {
-                    //実体があるかを確認
-                    if(auto piece = shop_pieces_[i].lock()) {
-                        //あれば、名前を確認
-                        if(piece_info->GetTypeName() == piece->GetNameDefault()) {
-                            //違ったら生成
-                            auto shop_piece = PieceFactory::CreatePiece(piece_info->GetTypeName());    //実体を生成
-                            shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                    //位置を初期化
+            for(int i = 0; i < shop_pieces_info.size(); i++) {
+                //情報があれば
+                if(shop_pieces_info[i].GetTypeName() != "") {
+                    //ピースがあれば
+                    if(auto shop_piece = shop_pieces_[i].lock()) {
+                        //名前を確認
+                        if(shop_pieces_info[i].GetTypeName() != shop_piece->GetNameDefault()) {
+                            //違ったら削除して生成
+                            Scene::Object::Release(shop_piece);
+                            shop_pieces_[i] = std::weak_ptr<Piece>();                                                 // 空の weak_ptr を代入
+                            auto shop_piece = PieceFactory::CreatePiece(shop_pieces_info[i].GetTypeName().data());    //実体を生成
+                            shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                                   //位置を初期化
                             shop_pieces_[i] = shop_piece;
                         }
                     }
                     else {
                         //なければ生成
-                        auto shop_piece = PieceFactory::CreatePiece(piece_info->GetTypeName());    //実体を生成
-                        shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                    //位置を初期化
-                        shop_pieces_[i] = shop_piece;
+                        auto piece = PieceFactory::CreatePiece(shop_pieces_info[i].GetTypeName().data());    //実体を生成
+                        piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));                                   //位置を初期化
+                        shop_pieces_[i] = piece;
                     }
                 }
             }
