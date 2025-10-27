@@ -26,15 +26,16 @@ bool Agent::Init()
     ////---------------------------------------------------------------------------------
     ////	ショップスタンドを作成
     ////---------------------------------------------------------------------------------
-    //auto shop_stand = std::make_shared<ShopStandInfo>();
-    //shop_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    //shop_stand_ = shop_stand;
+    auto shop_stand = std::make_shared<ShopStandInfo>();
+    shop_stand->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    shop_stand->RerollShopPieces();    //ロールしておく
+    shop_stand_ = shop_stand;
     ////---------------------------------------------------------------------------------
     ////	チェスボードを作成
     ////---------------------------------------------------------------------------------
-    //auto board = std::make_shared<BoardInfo>();
-    //board->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
-    //board_ = board;
+    auto board = std::make_shared<BoardInfo>();
+    board->SetOwner(dynamic_pointer_cast<Agent>(shared_from_this()));
+    board_ = board;
     return true;
 }
 //---------------------------------------------------------------------------------

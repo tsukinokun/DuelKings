@@ -21,6 +21,15 @@ std::string PieceInfo::GetTypeName() const
 }
 
 //---------------------------------------------------------------------------
+//! @brief 駒の種類を設定
+//---------------------------------------------------------------------------
+std::shared_ptr<PieceInfo> PieceInfo::SetTypeName(const std::string& type_name)
+{
+    type_name_ = type_name;
+    return shared_from_this();
+}
+
+//---------------------------------------------------------------------------
 //! @brief 所属エージェントを取得（有効なら）
 //---------------------------------------------------------------------------
 std::shared_ptr<Agent> PieceInfo::GetOwner() const

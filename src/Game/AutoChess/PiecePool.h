@@ -6,7 +6,7 @@
 #pragma once
 #include <System/Scene.h>
 //前方宣言
-class Piece;
+class PieceInfo;
 class PiecePool
 {
 public:
@@ -19,7 +19,7 @@ public:
     //  プールから抽選を行って、駒を1体取得する
     //! @retval 抽選で得られた駒のポインタ
     //---------------------------------------------------------------------------
-    static std::shared_ptr<Piece> GetRandomPiece();
+    static std::shared_ptr<PieceInfo> GetRandomPiece();
 
 private:
     //五段階の各レアリティごとに、在庫数と駒の名前を管理したmapを配置

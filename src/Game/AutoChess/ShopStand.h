@@ -6,6 +6,7 @@
 #pragma once
 #include <System/Scene.h>
 class Piece;    //前方宣言
+class Agent;
 USING_PTR(PieceStand);
 class ShopStand : public Object
 {
@@ -17,12 +18,7 @@ public:
     //オーナーの名前を設定
     //! @param owner [in] オーナー
     //---------------------------------------------------------------------------
-    void SetOwner(std::weak_ptr<Object> owner);
-
-    //---------------------------------------------------------------------------
-    //購入可能ピースをリロールする関数
-    //---------------------------------------------------------------------------
-    void RerollShopPieces();
+    void SetOwner(std::weak_ptr<Agent> owner);
 
     //---------------------------------------------------------------------------
     //ショップに並んでいるピースを取得する関数
@@ -52,6 +48,6 @@ public:
 
 private:
     std::array<std::weak_ptr<Piece>, 5> shop_pieces_;          //購入可能ピースを格納した配列
-    std::weak_ptr<Object>               owner_;                //オーナーのウィークポインタ
+    std::weak_ptr<Agent>                owner_;                //オーナーのウィークポインタ
     bool                                is_locked_ = false;    //ショップがロックされているかどうか
 };

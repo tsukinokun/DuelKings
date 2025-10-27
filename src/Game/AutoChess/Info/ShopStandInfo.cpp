@@ -35,8 +35,7 @@ std::shared_ptr<ShopStandInfo> ShopStandInfo::RerollShopPieces()
             shop_pieces_[i].reset();
         }
         auto shop_piece = PiecePool::GetRandomPiece();    //ピースを生成
-        //shop_piece->SetTranslate(float3(0.0f, 1.0f, i * 1.0f));    //位置を初期化
-        //shop_pieces_[i] = shop_piece;
+        shop_pieces_[i] = shop_piece;
     }
     return shared_from_this();
 }
