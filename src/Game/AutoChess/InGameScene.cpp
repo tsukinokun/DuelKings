@@ -500,7 +500,9 @@ void InGameScene::TransitionTo(GameState state)
 //----------------------------------------------------------------------
 void InGameScene::CreatePiecesForBattlePhase()
 {
+    //----------------------------------------------------------------------
     //まずはプレイヤーの駒を生成
+    //----------------------------------------------------------------------
     if(auto player = Scene::Object::Get<Player>()) {
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
@@ -511,7 +513,34 @@ void InGameScene::CreatePiecesForBattlePhase()
                 if(type_name != "") {
                     //駒を生成
                     auto piece = PieceFactory::CreatePiece(type_name);
+                    //駒の位置を設定(左手前から)
+                    float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+                    float z_pos = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+                    piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
+                }
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    //次にNPCの駒を生成
+    //----------------------------------------------------------------------
+    //とりあえずテストで抽選ナシの一人分
+    for(auto& npc : Scene::Object::GetArray<Npc>()) {
+        //ボードの位置に駒を生成
+        for(int f = 0; f < 4; f++) {
+            for(int r = 0; r < 8; r++) {
+                auto piece_info = npc->GetBoardInfo(f, r);
+                //駒情報が有効なら
+                std::string type_name = piece_info.GetTypeName();
+                if(type_name != "") {
+                    //駒を生成
+                    auto piece = PieceFactory::CreatePiece(type_name);
+                    //駒の位置を設定(右奥から)
+                    float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+                    float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+                    piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
+                    piece->SetOwner(npc);    //オーナーを設定
                 }
             }
         }
