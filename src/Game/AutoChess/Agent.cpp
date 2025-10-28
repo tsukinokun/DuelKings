@@ -186,6 +186,19 @@ std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& 
     board_info_.AddPiece(file, rank, piece_info);
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
+
+//-----------------------------------------------------------
+// 自陣チェスボードの駒情報を取得する関数
+//! @param file [in] 駒情報を取得するファイル
+//! @param rank [in] 駒情報を取得するランク
+//! @retval 駒情報
+//-----------------------------------------------------------
+PieceInfo Agent::GetBoardInfo(int file, int rank) const
+{
+    auto info = board_info_.GetSquarePtrArray();
+    return info[file][rank];
+}
+
 //-----------------------------------------------------------
 //! 自陣のチェスボードの駒情報を削除する関数
 //-----------------------------------------------------------

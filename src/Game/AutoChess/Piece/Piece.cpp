@@ -32,3 +32,10 @@ bool Piece::IsSelect()
 {
     return is_selected_;
 }
+//----------------------------------------------------------
+//! 所有者エージェントの設定
+//----------------------------------------------------------
+void Piece::SetOwner(const std::shared_ptr<Agent>& owner)
+{
+    owner_ = owner;
+}

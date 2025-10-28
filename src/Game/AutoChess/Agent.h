@@ -108,6 +108,14 @@ public:
     std::shared_ptr<Agent> SetBoardInfo(int file, int rank, const PieceInfo& piece_info);
 
     //-----------------------------------------------------------
+    // 自陣チェスボードの駒情報を取得する関数
+    //! @param file [in] 駒情報を取得するファイル
+    //! @param rank [in] 駒情報を取得するランク
+    //! @retval 駒情報
+    //-----------------------------------------------------------
+    PieceInfo GetBoardInfo(int file, int rank) const;
+
+    //-----------------------------------------------------------
     // 自陣のチェスボードの駒情報を削除する関数
     //! @param file [in] 駒情報を削除するファイル（列）
     //! @param rank [in] 駒情報を削除するランク（行）
