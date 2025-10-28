@@ -39,7 +39,7 @@ std::shared_ptr<Agent> PieceInfo::GetOwner() const
 //---------------------------------------------------------------------------
 //! @brief 所属エージェントを設定
 //---------------------------------------------------------------------------
-void PieceInfo::SetOwner(std::weak_ptr<Agent> agent)
+void PieceInfo::SetOwner(const std::weak_ptr<Agent>& agent)
 {
     owner_agent_ = agent;
 }

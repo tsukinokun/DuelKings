@@ -20,6 +20,8 @@
 #include <System/Component/ComponentModel.h>
 #include <Game/AutoChess/PiecePool.h>
 #include <Game/AutoChess/system/GameConst.h>
+#include <Game/AutoChess/PieceFactory.h>
+#include <Game/AutoChess/Square.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -59,9 +61,9 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     //  NPCの生成
     //---------------------------------------------------------------------------------
-    /* for(int i = 0; i < AGENT_NUM - 1; i++) {
+    for(int i = 0; i < AGENT_NUM - 1; i++) {
         Scene::Object::Create<Npc>();
-    }*/
+    }
     Scene::Object::Create<MouseRay>();                               //マウス光線
     std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
     //---------------------------------------------------------------------------------
@@ -87,6 +89,10 @@ bool InGameScene::Init()
                     }
                     if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                         if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
+                            PieceInfo piece_info;
+                            piece_info.SetTypeName(purchase_piece->GetNameDefault().data());
+                            piece_info.SetOwner(player);    //ピースのオーナーをプレイヤーに設定
+                            player->AddPieceToStand(piece_info);
                             piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
                             shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
                             player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
@@ -400,12 +406,24 @@ void InGameScene::Update()
     case GameState::Setup:
         if(state_timer_ >= SETUP_PHASE_DURATION) {
             TransitionTo(GameState::Battle);
+            //駒数が上限を超えている場合、ピーススタンドに戻す、もしもピーススタンドが満タンなら強制的に破棄する。
+            for(auto& agent : Scene::Object::GetArray<Agent>()) {
+                agent->EnforcePieceLimit();    //駒数制限を強制適用
+            }
+            //---------------------------------------------------------------------------------
+            // ボードと、ボードに配置されているピースの更新をoffにする
+            //---------------------------------------------------------------------------------
+            if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                chess_board->SetBoardProcessEnable(false);
+            }
+            CreatePiecesForBattlePhase();    //バトルフェーズ用に駒を生成する
         }
         break;
 
     case GameState::Battle:
         if(state_timer_ >= BATTLE_PHASE_DURATION) {
             TransitionTo(GameState::Setup);
+            DestroyPiecesAfterBattlePhase();    //バトルフェーズ用に生成した駒を破棄する
             //---------------------------------------------------------------------------------
             //  このタイミングで無料リロール
             //---------------------------------------------------------------------------------
@@ -414,6 +432,12 @@ void InGameScene::Update()
                 if(!agent->IsShopLocked()) {
                     agent->RerollShopPieces();    //ショップのピースをリロールする
                 }
+            }
+            //---------------------------------------------------------------------------------
+            // ボードと、ボードに配置されているピースの更新をonにする
+            //---------------------------------------------------------------------------------
+            if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                chess_board->SetBoardProcessEnable(true);
             }
             ++turn_count_;
         }
@@ -427,8 +451,25 @@ void InGameScene::Update()
 void InGameScene::Draw()
 {
     __super::Draw();
+    //バトルフェーズはバトル用の描画処理を行う
+    if(game_state_ == GameState::Battle) {
+        //ボードを描画
+        for(int f = 0; f < 8; f++) {
+            for(int r = 0; r < 8; r++) {
+                int color = GetColor(0, 0, 0);
+                //ファイルとランクの合計値が偶数なら白に
+                if(((f + r) % 2) == 0) {
+                    color = GetColor(255, 255, 255);
+                }
+                float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+                float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+                float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
+                float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
+                DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+            }
+        }
+    }
 }
-
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
@@ -453,4 +494,127 @@ void InGameScene::TransitionTo(GameState state)
 {
     game_state_  = state;
     state_timer_ = 0.0f;    //状態経過時間をリセット
+}
+//----------------------------------------------------------------------
+// バトルフェーズ開始時に、駒を生成する関数
+//----------------------------------------------------------------------
+void InGameScene::CreatePiecesForBattlePhase()
+{
+    //----------------------------------------------------------------------
+    //まずはプレイヤーの駒を生成
+    //----------------------------------------------------------------------
+    if(auto player = Scene::Object::Get<Player>()) {
+        //ボードの位置に駒を生成
+        for(int f = 0; f < 4; f++) {
+            for(int r = 0; r < 8; r++) {
+                auto piece_info = player->GetBoardInfo(f, r);
+                //駒情報が有効なら
+                std::string type_name = piece_info.GetTypeName();
+                if(type_name != "") {
+                    //駒を生成
+                    auto piece = PieceFactory::CreatePiece(type_name);
+                    //駒の位置を設定(左手前から)
+                    float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+                    float z_pos = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+                    piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
+                    piece->SetOwner(player);    //オーナーを設定
+                }
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    //次にNPCの駒を生成
+    //----------------------------------------------------------------------
+    //とりあえずテストで抽選ナシの一人分
+    for(auto& npc : Scene::Object::GetArray<Npc>()) {
+        //ボードの位置に駒を生成
+        for(int f = 0; f < 4; f++) {
+            for(int r = 0; r < 8; r++) {
+                auto piece_info = npc->GetBoardInfo(f, r);
+                //駒情報が有効なら
+                std::string type_name = piece_info.GetTypeName();
+                if(type_name != "") {
+                    //駒を生成
+                    auto piece = PieceFactory::CreatePiece(type_name);
+                    //駒の位置を設定(右奥から)
+                    float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+                    float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+                    piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
+                    piece->SetOwner(npc);    //オーナーを設定
+                }
+            }
+        }
+    }
+}
+//----------------------------------------------------------------------
+// バトルフェーズ終了時に、駒を破棄する関数
+//----------------------------------------------------------------------
+void InGameScene::DestroyPiecesAfterBattlePhase()
+{
+    //----------------------------------------------------------------------
+    //ショップの駒をマスク
+    //----------------------------------------------------------------------
+    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+        auto shop_pieces = shop_stand->GetShopPieces();
+        //マスク
+        for(auto& weak_piece : shop_pieces) {
+            if(auto piece = weak_piece.lock()) {
+                piece->SetStatus(Object::StatusBit::NoUpdate, true);    //更新不可に設定
+                piece->SetStatus(Object::StatusBit::NoDraw, true);      //描画不可に設定
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    // スタンドの駒をマスク
+    //----------------------------------------------------------------------
+    if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+        auto stand_square = piece_stand->GetSquarePtrArray();
+        //マスク
+        for(auto& weak_stand : stand_square) {
+            if(auto square = weak_stand.lock()) {
+                auto piece_weak = square->GetPutPiece();
+                if(auto piece = piece_weak.lock()) {
+                    piece->SetStatus(Object::StatusBit::NoUpdate, true);    //更新不可に設定
+                    piece->SetStatus(Object::StatusBit::NoDraw, true);      //描画不可に設定
+                }
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    //シーン内の、update可能な駒オブジェクトをすべて破棄する
+    //----------------------------------------------------------------------
+    for(auto& piece : Scene::Object::GetArray<Piece>()) {
+        if(!piece->GetStatus(Object::StatusBit::NoUpdate)) {
+            Scene::Object::Release(piece);
+        }
+    }
+    //----------------------------------------------------------------------
+    //ショップの駒を戻す
+    //----------------------------------------------------------------------
+    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+        auto shop_pieces = shop_stand->GetShopPieces();
+        //戻す
+        for(auto& weak_piece : shop_pieces) {
+            if(auto piece = weak_piece.lock()) {
+                piece->SetStatus(Object::StatusBit::NoUpdate, false);
+                piece->SetStatus(Object::StatusBit::NoDraw, false);
+            }
+        }
+    }
+    //----------------------------------------------------------------------
+    // スタンドの駒を戻す
+    //----------------------------------------------------------------------
+    if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+        auto stand_square = piece_stand->GetSquarePtrArray();
+        //戻す
+        for(auto& weak_stand : stand_square) {
+            if(auto square = weak_stand.lock()) {
+                auto piece_weak = square->GetPutPiece();
+                if(auto piece = piece_weak.lock()) {
+                    piece->SetStatus(Object::StatusBit::NoUpdate, false);
+                    piece->SetStatus(Object::StatusBit::NoDraw, false);
+                }
+            }
+        }
+    }
 }

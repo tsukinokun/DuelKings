@@ -116,3 +116,43 @@ std::weak_ptr<Piece> Square::GetPutPiece()
 {
     return piece_;
 }
+//----------------------------------------------------------
+// 別のマスとピースを交換する関数
+//! @param piece [in,out] 移動させるマスのウィークポインタ
+//----------------------------------------------------------
+void Square::ExchangePiece(std::weak_ptr<Square> other_square_wp)
+{
+    //移動させるマスのピースを取得
+    if(auto other_square = other_square_wp.lock()) {
+        //場所を適切な位置に移動
+        if(auto piece = piece_.lock()) {
+            float3 other_transform = other_square->GetTranslate();
+            piece->SetTranslate(float3(other_transform.x, 0.5f, other_transform.z));
+        }
+        auto temp_piece = other_square->GetPutPiece();    //移動させるマスのピースを一時保存
+        other_square->SetPutPiece(piece_);                //移動させるマスに自分のピースを設定
+        piece_ = temp_piece;                              //自分に移動させるマスのピースを設定
+        //とってきたピースも適切な位置へ変更
+        if(auto piece = piece_.lock()) {
+            float3 transform = GetTranslate();
+            piece->SetTranslate(float3(transform.x, 0.5f, transform.z));
+        }
+        //お互いに変更されたことを設定
+        SetChanged();
+        other_square->SetChanged();
+    }
+}
+
+//----------------------------------------------------------
+// ピースを削除する関数
+//----------------------------------------------------------
+void Square::RemovePiece()
+{
+    //ピースが存在するなら
+    if(auto piece = piece_.lock()) {
+        piece->SetSelect(false);    //選択を解除
+        piece->Exit();              //ピースを終了
+        piece_.reset();             //ピースのポインタをリセット
+        SetChanged();               //状態が変化したことを記録
+    }
+}

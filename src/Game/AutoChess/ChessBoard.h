@@ -29,6 +29,13 @@ public:
     //マスに置かれている駒の数を取得
     //! @retval 駒の数
     int GetPieceNumOnSquares() const;
+
+    //-----------------------------------------------------------
+    // ボード、マス、駒の描画と更新処理を行うかを設定する関数
+    //! @param enable [in] 有効にするかどうか
+    //-----------------------------------------------------------
+    void SetBoardProcessEnable(bool enable);
+
     //@}
 private:
     const int                                           FILE_MAX_  = 8;    //ファイルの数

@@ -29,6 +29,28 @@ public:
     //-----------------------------------------------------------
     bool IsShouldDropPiece();
 
+    //-----------------------------------------------------------
+    // ピース制限を強制する関数(オーバーライド)
+    //-----------------------------------------------------------
+    void EnforcePieceLimit() override;
+
+    //-----------------------------------------------------------
+    // ピーススタンドとチェスボードの情報を交換する関数
+    //! @param piece_stand_index [in] ピーススタンドのインデックス
+    //! @param board_file [in] チェスボードのファイル（列）
+    //! @param board_rank [in] チェスボードのランク（行）
+    //-----------------------------------------------------------
+    void SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file, int board_rank) override;
+
+    //-----------------------------------------------------------
+    // チェスボードの駒をスタンドに移動する関数
+    //! @param board_file [in] チェスボードのファイル（列
+    //! @param board_rank [in] チェスボードのランク（行）
+    //! @retval 成功した場合 true 、失敗した場合 false
+    //! @note スタンドの左側から空いている場所に移動する
+    //-----------------------------------------------------------
+    bool MoveBoardPieceToStand(int board_file, int board_rank) override;
+
     //@}
 private:
     bool should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数

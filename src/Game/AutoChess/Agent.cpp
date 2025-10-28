@@ -115,11 +115,9 @@ std::array<PieceInfo, 5> Agent::GetShopPieces()
 }
 
 //-----------------------------------------------------------
-// スタンドに駒を追加する関数
-//! @param piece 追加する駒
-//! @return 自分自身のshared_ptr
+//! スタンドに駒を追加する関数
 //-----------------------------------------------------------
-std::shared_ptr<Agent> Agent::AddPieceToStand(PieceInfo piece)
+std::shared_ptr<Agent> Agent::AddPieceToStand(const PieceInfo& piece)
 {
     // スタンドに駒を追加
     stand_info_.AddPiece(piece);
@@ -188,6 +186,19 @@ std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& 
     board_info_.AddPiece(file, rank, piece_info);
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
+
+//-----------------------------------------------------------
+// 自陣チェスボードの駒情報を取得する関数
+//! @param file [in] 駒情報を取得するファイル
+//! @param rank [in] 駒情報を取得するランク
+//! @retval 駒情報
+//-----------------------------------------------------------
+PieceInfo Agent::GetBoardInfo(int file, int rank) const
+{
+    auto info = board_info_.GetSquarePtrArray();
+    return info[file][rank];
+}
+
 //-----------------------------------------------------------
 //! 自陣のチェスボードの駒情報を削除する関数
 //-----------------------------------------------------------
@@ -196,4 +207,63 @@ std::shared_ptr<Agent> Agent::RemoveBoardInfo(int file, int rank)
     // チェスボード情報を削除
     board_info_.RemovePiece(file, rank);
     return dynamic_pointer_cast<Agent>(shared_from_this());
+}
+//-----------------------------------------------------------
+// ピース制限を強制する関数
+//-----------------------------------------------------------
+void Agent::EnforcePieceLimit()
+{
+    int level              = GetAgentLevel();        // エージェントのレベルを取得
+    int placed_piece_count = GetPlacedPieceNum();    // 置かれているピースの数を取得
+    if(placed_piece_count <= level) {
+        return;    // レベル以内なら何もしない
+    }
+    // レベルを超えている場合、超過分のピースを削除
+    int pieces_to_remove = placed_piece_count - level;
+    for(int file = 0; file < 4 && pieces_to_remove > 0; ++file) {
+        for(int rank = 0; rank < 8 && pieces_to_remove > 0; ++rank) {
+            PieceInfo piece = board_info_.GetSquarePtrArray()[file][rank];
+            if(piece.GetTypeName() != "") {
+                board_info_.RemovePiece(file, rank);
+                --pieces_to_remove;
+            }
+        }
+    }
+}
+
+//-----------------------------------------------------------
+//! ピーススタンドとチェスボードの情報を交換する関数
+//-----------------------------------------------------------
+void Agent::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file, int board_rank)
+{
+    auto agent = shared_from_this();
+    //一時変数にピース情報を保存
+    auto stand_piece = stand_info_.GetStandPieces()[piece_stand_index];
+    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    // ピーススタンドのピースをチェスボードに移動
+    board_info_.AddPiece(board_file, board_rank, stand_piece);
+    // チェスボードのピースをピーススタンドに移動
+    stand_info_.SetPieceAt(piece_stand_index, board_piece);
+}
+//-----------------------------------------------------------
+//! チェスボードの駒をスタンドに移動する関数
+//-----------------------------------------------------------
+bool Agent::MoveBoardPieceToStand(int board_file, int board_rank)
+{
+    // チェスボードのピース情報を取得
+    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    if(board_piece.GetTypeName() == "") {
+        return false;    // 駒が存在しない場合は何もしない
+    }
+    // ピーススタンドの空いている場所を探す
+    for(size_t i = 0; i < stand_info_.GetStandPieces().size(); ++i) {
+        auto& stand_piece = stand_info_.GetStandPieces()[i];
+        if(stand_piece.GetTypeName() == "") {
+            // 空いている場所が見つかったら、ピースを移動
+            stand_piece = board_piece;
+            board_info_.RemovePiece(board_file, board_rank);
+            return true;
+        }
+    }
+    return false;    //空いてる場所がなかった場合は失敗
 }

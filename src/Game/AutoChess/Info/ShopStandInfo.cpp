@@ -10,7 +10,7 @@
 //---------------------------------------------------------------------------
 //!  オーナーのを設定
 //---------------------------------------------------------------------------
-void ShopStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
+void ShopStandInfo::SetOwner(const std::weak_ptr<Agent>& owner_agent)
 {
     owner_agent_ = owner_agent;
 }

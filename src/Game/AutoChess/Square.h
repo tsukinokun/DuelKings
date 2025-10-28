@@ -45,6 +45,17 @@ public:
     //! @param is_changed [in] 状態が変化したかどうか
     void SetChanged(bool is_changed = true) { is_changed_ = is_changed; }
 
+    //----------------------------------------------------------
+    // 別のマスとピースを交換する関数
+    //! @param other_square_wp [in,out] 移動させるマスのウィークポインタ
+    //----------------------------------------------------------
+    void ExchangePiece(std::weak_ptr<Square> other_square_wp);
+
+    //----------------------------------------------------------
+    // ピースを削除する関数
+    //----------------------------------------------------------
+    void RemovePiece();
+
     //@}
 private:
     bool                  is_changed_ = false;    //状態が変化したかを保持する変数

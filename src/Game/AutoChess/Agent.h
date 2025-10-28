@@ -19,7 +19,7 @@ public:
 
     //-----------------------------------------------------------
     //経験値を増やす関数
-    //! @param exp 増やす経験値
+    //! @param exp [in] 増やす経験値
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
     std::shared_ptr<Agent> AddExp(int exp);
@@ -56,10 +56,10 @@ public:
 
     //-----------------------------------------------------------
     // スタンドに駒を追加する関数
-    //! @param piece 追加する駒
+    //! @param piece [in] 追加する駒
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
-    std::shared_ptr<Agent> AddPieceToStand(PieceInfo piece);
+    std::shared_ptr<Agent> AddPieceToStand(const PieceInfo& piece);
 
     //-----------------------------------------------------------
     // 指定インデックスのショップピースを無効化する関数
@@ -92,28 +92,58 @@ public:
 
     //-----------------------------------------------------------
     // ピーススタンドの駒情報を設定する関数
-    //! @param index  駒情報を設定するインデックス
-    //! @param piece_info 追加する駒情報
+    //! @param index [in] 駒情報を設定するインデックス
+    //! @param piece_info [in] 追加する駒情報
     //! @return 自身のポインタ
     //-----------------------------------------------------------
     std::shared_ptr<Agent> SetPieceStandInfo(size_t index, const PieceInfo& piece_info);
 
     //-----------------------------------------------------------
     // 自陣のチェスボードの駒情報を設定する関数
-    //! @param file  駒情報を設定するファイル（列）
-    //! @param rank  駒情報を設定するランク（行）
+    //! @param file [in] 駒情報を設定するファイル（列）
+    //! @param rank [in] 駒情報を設定するランク（行）
     //! @param piece_info 追加する駒情報
     //! @return 自身のポインタ
     //-----------------------------------------------------------
     std::shared_ptr<Agent> SetBoardInfo(int file, int rank, const PieceInfo& piece_info);
 
     //-----------------------------------------------------------
+    // 自陣チェスボードの駒情報を取得する関数
+    //! @param file [in] 駒情報を取得するファイル
+    //! @param rank [in] 駒情報を取得するランク
+    //! @retval 駒情報
+    //-----------------------------------------------------------
+    PieceInfo GetBoardInfo(int file, int rank) const;
+
+    //-----------------------------------------------------------
     // 自陣のチェスボードの駒情報を削除する関数
-    //! @param file  駒情報を削除するファイル（列）
-    //! @param rank  駒情報を削除するランク（行）
+    //! @param file [in] 駒情報を削除するファイル（列）
+    //! @param rank [in] 駒情報を削除するランク（行）
     //! @return 自身のポインタ
     //-----------------------------------------------------------
     std::shared_ptr<Agent> RemoveBoardInfo(int file, int rank);
+
+    //-----------------------------------------------------------
+    // ピース制限を強制する関数
+    //-----------------------------------------------------------
+    virtual void EnforcePieceLimit();
+
+    //-----------------------------------------------------------
+    // ピーススタンドとチェスボードの情報を交換する関数
+    //! @param piece_stand_index [in] ピーススタンドのインデックス
+    //! @param board_file [in] チェスボードのファイル（列）
+    //! @param board_rank [in] チェスボードのランク（行）
+    //-----------------------------------------------------------
+    virtual void SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file, int board_rank);
+
+    //-----------------------------------------------------------
+    // チェスボードの駒をスタンドに移動する関数
+    //! @param board_file [in] チェスボードのファイル（列
+    //! @param board_rank [in] チェスボードのランク（行）
+    //! @retval 成功した場合 true 、失敗した場合 false
+    //! @note スタンドの左側から空いている場所に移動する
+    //-----------------------------------------------------------
+    virtual bool MoveBoardPieceToStand(int board_file, int board_rank);
 
     //@}
 protected:

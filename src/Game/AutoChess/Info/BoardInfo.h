@@ -15,7 +15,7 @@ public:
     //オーナーの名前を設定
     //! @param owner [in] オーナー
     //---------------------------------------------------------------------------
-    void SetOwner(std::weak_ptr<Agent> owner);
+    void SetOwner(const std::weak_ptr<Agent>& owner);
 
     //---------------------------------------------------------------------------
     //マスのウィーク情報を取得
@@ -35,7 +35,7 @@ public:
     //! @param rank [in] ランク（行）
     //! @param piece [in] 追加する駒の情報
     //---------------------------------------------------------------------------
-    void AddPiece(int file, int rank, PieceInfo piece);
+    void AddPiece(int file, int rank, const PieceInfo& piece);
 
     //---------------------------------------------------------------------------
     // マスのを削除
