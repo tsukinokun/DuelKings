@@ -37,7 +37,7 @@ public:
     // 所属エージェントを設定
     //! @param agent [in] 所属エージェントのウィークポインタ
     //---------------------------------------------------------------------------
-    void SetOwner(std::weak_ptr<Agent> agent);
+    void SetOwner(const std::weak_ptr<Agent>& agent);
 
     //@}
 private:

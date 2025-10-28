@@ -15,7 +15,7 @@ PieceStandInfo::PieceStandInfo()
 //---------------------------------------------------------------------------
 //! ピースの初期化
 //---------------------------------------------------------------------------
-bool PieceStandInfo::AddPiece(PieceInfo piece)
+bool PieceStandInfo::AddPiece(const PieceInfo& piece)
 {
     // ピースを確認
     for(auto& pieces : pieces_) {
@@ -32,7 +32,7 @@ bool PieceStandInfo::AddPiece(PieceInfo piece)
 //---------------------------------------------------------------------------
 //! オーナーのを設定
 //---------------------------------------------------------------------------
-void PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
+void PieceStandInfo::SetOwner(const std::weak_ptr<Agent>& owner_agent)
 {
     owner_agent_ = owner_agent;
 }
@@ -43,6 +43,15 @@ void PieceStandInfo::SetOwner(std::weak_ptr<Agent> owner_agent)
 std::array<PieceInfo, 8> PieceStandInfo::GetStandPieces() const
 {
     return pieces_;
+}
+//-----------------------------------------------------------------------------
+//! マスにピースを設定
+//-----------------------------------------------------------------------------
+void PieceStandInfo::SetPieceAt(size_t index, const PieceInfo& piece)
+{
+    if(index < pieces_.size()) {
+        pieces_[index] = piece;
+    }
 }
 //---------------------------------------------------------------------------
 //! ピースのスタンドが満タンかどうかを取得する関数

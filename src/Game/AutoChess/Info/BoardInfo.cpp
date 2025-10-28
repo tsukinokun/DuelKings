@@ -9,7 +9,7 @@
 //---------------------------------------------------------------------------
 //! オーナーの名前を設定
 //---------------------------------------------------------------------------
-void BoardInfo::SetOwner(std::weak_ptr<Agent> owner)
+void BoardInfo::SetOwner(const std::weak_ptr<Agent>& owner)
 {
     owner_ = owner;
 }
@@ -40,7 +40,7 @@ int BoardInfo::GetPieceNumOnSquares() const
 //---------------------------------------------------------------------------
 //! 駒をマスに追加
 //---------------------------------------------------------------------------
-void BoardInfo::AddPiece(int file, int rank, PieceInfo piece)
+void BoardInfo::AddPiece(int file, int rank, const PieceInfo& piece)
 {
     // 駒を配置
     squares_[file][rank] = piece;

@@ -87,6 +87,10 @@ bool InGameScene::Init()
                     }
                     if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                         if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
+                            PieceInfo piece_info;
+                            piece_info.SetTypeName(purchase_piece->GetNameDefault().data());
+                            piece_info.SetOwner(player);    //ピースのオーナーをプレイヤーに設定
+                            player->AddPieceToStand(piece_info);
                             piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
                             shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
                             player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
