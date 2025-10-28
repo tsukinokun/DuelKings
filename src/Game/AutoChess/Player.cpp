@@ -111,17 +111,19 @@ void Player::EnforcePieceLimit()
         for(int rank = 0; rank < 8 && pieces_to_remove > 0; ++rank) {
             PieceInfo piece = board_info_.GetSquarePtrArray()[file][rank];
             if(piece.GetTypeName() != "") {
-                MoveBoardPieceToStand(file, rank);
-                //board_info_.RemovePiece(file, rank);
-                ////インスタンスも削除
-                //if(auto board = Scene::Object::Get<ChessBoard>()) {
-                //    auto squares_ = board->GetSquarePtrArray();
-                //    if(auto square = squares_[file][rank].lock()) {
-                //        if(auto piece_instance = square->GetPutPiece().lock()) {
-                //            square->RemovePiece();
-                //        }
-                //    }
-                //}
+                if(!MoveBoardPieceToStand(file, rank)) {
+                    //失敗していたら、駒を強制削除
+                    board_info_.RemovePiece(file, rank);
+                    //インスタンスも削除
+                    if(auto board = Scene::Object::Get<ChessBoard>()) {
+                        auto squares_ = board->GetSquarePtrArray();
+                        if(auto square = squares_[file][rank].lock()) {
+                            if(auto piece_instance = square->GetPutPiece().lock()) {
+                                square->RemovePiece();
+                            }
+                        }
+                    }
+                }
                 --pieces_to_remove;
             }
         }
@@ -160,12 +162,12 @@ void Player::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file
 //-----------------------------------------------------------
 //! チェスボードの駒をスタンドに移動する関数
 //-----------------------------------------------------------
-void Player::MoveBoardPieceToStand(int board_file, int board_rank)
+bool Player::MoveBoardPieceToStand(int board_file, int board_rank)
 {
     // チェスボードのピース情報を取得
     auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
     if(board_piece.GetTypeName() == "") {
-        return;    // 駒が存在しない場合は何もしない
+        return false;    // 駒が存在しない場合は何もしない
     }
     // ピーススタンドの空いている場所を探す
     for(size_t i = 0; i < stand_info_.GetStandPieces().size(); ++i) {
@@ -186,9 +188,11 @@ void Player::MoveBoardPieceToStand(int board_file, int board_rank)
                     }
                 }
             }
-            break;
+            // 成功した場合 true を返す
+            return true;
         }
     }
+    return false;    //空いてる場所がなかった場合は失敗
 }
 
 //---------------------------------------------------------------------------------

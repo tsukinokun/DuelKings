@@ -132,9 +132,10 @@ public:
     // チェスボードの駒をスタンドに移動する関数
     //! @param board_file [in] チェスボードのファイル（列
     //! @param board_rank [in] チェスボードのランク（行）
+    //! @retval 成功した場合 true 、失敗した場合 false
     //! @note スタンドの左側から空いている場所に移動する
     //-----------------------------------------------------------
-    virtual void MoveBoardPieceToStand(int board_file, int board_rank);
+    virtual bool MoveBoardPieceToStand(int board_file, int board_rank);
 
     //@}
 protected:

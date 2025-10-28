@@ -235,12 +235,12 @@ void Agent::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file,
 //-----------------------------------------------------------
 //! チェスボードの駒をスタンドに移動する関数
 //-----------------------------------------------------------
-void Agent::MoveBoardPieceToStand(int board_file, int board_rank)
+bool Agent::MoveBoardPieceToStand(int board_file, int board_rank)
 {
     // チェスボードのピース情報を取得
     auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
     if(board_piece.GetTypeName() == "") {
-        return;    // 駒が存在しない場合は何もしない
+        return false;    // 駒が存在しない場合は何もしない
     }
     // ピーススタンドの空いている場所を探す
     for(size_t i = 0; i < stand_info_.GetStandPieces().size(); ++i) {
@@ -249,7 +249,8 @@ void Agent::MoveBoardPieceToStand(int board_file, int board_rank)
             // 空いている場所が見つかったら、ピースを移動
             stand_piece = board_piece;
             board_info_.RemovePiece(board_file, board_rank);
-            break;
+            return true;
         }
     }
+    return false;    //空いてる場所がなかった場合は失敗
 }
