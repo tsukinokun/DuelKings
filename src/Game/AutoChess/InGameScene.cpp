@@ -59,9 +59,9 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     //  NPCの生成
     //---------------------------------------------------------------------------------
-    /* for(int i = 0; i < AGENT_NUM - 1; i++) {
+    for(int i = 0; i < AGENT_NUM - 1; i++) {
         Scene::Object::Create<Npc>();
-    }*/
+    }
     Scene::Object::Create<MouseRay>();                               //マウス光線
     std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
     //---------------------------------------------------------------------------------
@@ -408,6 +408,12 @@ void InGameScene::Update()
             for(auto& agent : Scene::Object::GetArray<Agent>()) {
                 agent->EnforcePieceLimit();    //駒数制限を強制適用
             }
+            //---------------------------------------------------------------------------------
+            // ボードと、ボードに配置されているピースの更新をoffにする
+            //---------------------------------------------------------------------------------
+            if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                chess_board->SetBoardProcessEnable(false);
+            }
         }
         break;
 
@@ -423,6 +429,12 @@ void InGameScene::Update()
                     agent->RerollShopPieces();    //ショップのピースをリロールする
                 }
             }
+            //---------------------------------------------------------------------------------
+            // ボードと、ボードに配置されているピースの更新をonにする
+            //---------------------------------------------------------------------------------
+            if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                chess_board->SetBoardProcessEnable(true);
+            }
             ++turn_count_;
         }
         break;
@@ -435,8 +447,11 @@ void InGameScene::Update()
 void InGameScene::Draw()
 {
     __super::Draw();
+    //バトルフェーズはバトル用の描画処理を行う
+    if(game_state_ == GameState::Battle) {
+        //ボードを描画
+    }
 }
-
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------

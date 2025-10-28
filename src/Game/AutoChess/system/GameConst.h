@@ -9,8 +9,8 @@ const float SQUARE_HALF = 0.5f;    //マスのxz軸の半分の大きさ
 //ゲームプレイ人数
 constexpr int AGENT_NUM = 8;    //プレイ人数
 //フェーズの長さ
-constexpr float SETUP_PHASE_DURATION  = 5.0f;    // 設置フェーズの長さ（秒）
-constexpr float BATTLE_PHASE_DURATION = 1.0f;    // 戦闘フェーズの長さ（秒）
+constexpr float SETUP_PHASE_DURATION  = 15.0f;    // 設置フェーズの長さ（秒）
+constexpr float BATTLE_PHASE_DURATION = 10.0f;    // 戦闘フェーズの長さ（秒）
 //経験値テーブル
 const std::vector<int>   exp_table        = {0, 1, 2, 4, 8, 18, 28, 38, 48};
 const std::array<int, 5> piece_init_stock = {25, 20, 15, 10, 10};    //各レアリティごとの初期在庫数

@@ -126,3 +126,31 @@ int ChessBoard::GetPieceNumOnSquares() const
     }
     return num;
 }
+//-----------------------------------------------------------
+//! ボード、マス、駒の描画と更新処理を行うかを設定する関数
+//-----------------------------------------------------------
+void ChessBoard::SetBoardProcessEnable(bool enable)
+{
+    bool not_enable = !enable;
+    //-----------------------------------------------------------
+    // マスが所持している駒とマスの描画と更新処理
+    //-----------------------------------------------------------
+    for(int f = 0; f < FILE_HALF_; f++) {
+        for(int r = 0; r < RANK_MAX_; r++) {
+            if(auto square = squares_[f][r].lock()) {
+                auto piece_wp = square->GetPutPiece();
+                if(auto piece = piece_wp.lock()) {
+                    piece->SetStatus(Object::StatusBit::NoDraw, not_enable);
+                    piece->SetStatus(Object::StatusBit::NoUpdate, not_enable);
+                }
+                square->SetStatus(Object::StatusBit::NoDraw, not_enable);
+                square->SetStatus(Object::StatusBit::NoUpdate, not_enable);
+            }
+        }
+    }
+    //-----------------------------------------------------------
+    //チェスボード自身の描画と更新
+    //-----------------------------------------------------------
+    SetStatus(Object::StatusBit::NoDraw, not_enable);
+    SetStatus(Object::StatusBit::NoUpdate, not_enable);
+}
