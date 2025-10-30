@@ -30,7 +30,14 @@ void PieceMover::Init()
                 //敵の位置を取得
                 float3 nearest_enemy_position = nearest_enemy->GetTranslate();
                 //移動方向を計算
-                float3 direction = normalize(nearest_enemy_position - translate);
+                float3 direction = nearest_enemy_position - translate;
+                //ベクトルの大きさが射程距離以下なら移動しない
+                float distance = length(direction);
+                if(distance <= this_piece->GetAttackRange()) {
+                    return;
+                }
+                //方向を正規化
+                direction = normalize(direction);
                 //移動速度を取得
                 float move_speed = this_piece->GetMoveSpeed();
                 //移動量を計算

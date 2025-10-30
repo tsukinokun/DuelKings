@@ -57,3 +57,11 @@ float PieceStatus::GetMoveSpeed() const
 {
     return move_speed_;
 }
+
+//-----------------------------------------------------------------------------
+//! ダメージを適用する。
+//-----------------------------------------------------------------------------
+void PieceStatus::ApplyDamage(int amount)
+{
+    hp_ = std::max(0, hp_ - amount);
+}

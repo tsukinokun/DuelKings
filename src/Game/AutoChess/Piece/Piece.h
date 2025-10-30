@@ -7,7 +7,6 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/Info/PieceStatus.h>    // ピースステータス情報をインスタンスとして持つのでここでインクルード
 class Agent;
-class PieceMover;
 USING_PTR(Piece);
 class Piece : public Object
 {
@@ -63,6 +62,12 @@ public:
     //! @retval 移動速度
     //----------------------------------------------------------
     float GetMoveSpeed() const;
+
+    //----------------------------------------------------------
+    // ダメージを受ける
+    //! @param amount [in] ダメージ量
+    //----------------------------------------------------------
+    void TakeDamage(int amount);
 
     //@}
 protected:

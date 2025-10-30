@@ -84,3 +84,11 @@ float Piece::GetMoveSpeed() const
 {
     return status_.GetMoveSpeed();
 }
+
+//----------------------------------------------------------
+//! ダメージを受ける
+//----------------------------------------------------------
+void Piece::TakeDamage(int amount)
+{
+    status_.ApplyDamage(amount);
+}
