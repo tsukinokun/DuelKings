@@ -22,6 +22,8 @@
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/PieceFactory.h>
 #include <Game/AutoChess/Square.h>
+#include <Game/AutoChess/Component/PieceMover.h>
+#include <Game/AutoChess/Component/PieceSensor.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -518,6 +520,14 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
+                    //---------------------------------------------------------------------------------
+                    // 敵を探索するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceSensor>();
+                    //---------------------------------------------------------------------------------
+                    // 移動を制御するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceMover>();
                 }
             }
         }
@@ -526,7 +536,7 @@ void InGameScene::CreatePiecesForBattlePhase()
     //次にNPCの駒を生成
     //----------------------------------------------------------------------
     //とりあえずテストで抽選ナシの一人分
-    for(auto& npc : Scene::Object::GetArray<Npc>()) {
+    if(auto npc = Scene::Object::Get<Npc>()) {
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
             for(int r = 0; r < 8; r++) {
@@ -541,6 +551,14 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(npc);    //オーナーを設定
+                    //---------------------------------------------------------------------------------
+                    // 敵を探索するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceSensor>();
+                    //---------------------------------------------------------------------------------
+                    // 移動を制御するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceMover>();
                 }
             }
         }
