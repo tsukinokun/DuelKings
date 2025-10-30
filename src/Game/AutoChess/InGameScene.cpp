@@ -22,6 +22,7 @@
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/PieceFactory.h>
 #include <Game/AutoChess/Square.h>
+#include <Game/AutoChess/Component/PieceMover.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -518,6 +519,10 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
+                    //---------------------------------------------------------------------------------
+                    // 移動を制御するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceMover>();
                 }
             }
         }
@@ -541,6 +546,10 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(npc);    //オーナーを設定
+                    //---------------------------------------------------------------------------------
+                    // 移動を制御するコンポーネントを追加
+                    //---------------------------------------------------------------------------------
+                    piece->AddComponent<PieceMover>();
                 }
             }
         }
