@@ -17,7 +17,7 @@ bool Piece::Init()
     //---------------------------------------------------------------------------------
     // ピースのステータス情報を設定(Pieceの基底クラスなので、とりあえず参照しても大丈夫なように値を入れて置きます。)
     //---------------------------------------------------------------------------------
-    status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(0.1f).Build();
+    status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
     return true;
 }
 
