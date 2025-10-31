@@ -8,6 +8,7 @@
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/Player.h>
 #include <Game/AutoChess/Piece/Piece.h>
+#include <System/Component/ComponentCollisionModel.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -145,6 +146,19 @@ void ChessBoard::SetBoardProcessEnable(bool enable)
                 }
                 square->SetStatus(Object::StatusBit::NoDraw, not_enable);
                 square->SetStatus(Object::StatusBit::NoUpdate, not_enable);
+                //マスのコリジョンモデルの有効無効を切り替え
+                if(not_enable) {
+                    //コリジョンモデルがあれば削除
+                    if(square->GetComponent<ComponentCollisionModel>()) {
+                        square->RemoveComponent<ComponentCollisionModel>();
+                    }
+                }
+                else {
+                    if(!square->GetComponent<ComponentCollisionModel>()) {
+                        //コリジョンモデルがなければ追加
+                        square->AddComponent<ComponentCollisionModel>()->AttachToModel();
+                    }
+                }
             }
         }
     }
