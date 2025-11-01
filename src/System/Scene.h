@@ -721,6 +721,22 @@ std::vector<std::shared_ptr<T>> Scene::Base::GetObjectsPtr(const std::string_vie
             }
         }
     }
+    if(name == "") {
+        for(auto& obj : pre_objects_) {
+            auto cast = std::dynamic_pointer_cast<T>(obj);
+            if(cast)
+                objects.push_back(cast);
+        }
+    }
+    else {
+        for(auto& obj : pre_objects_) {
+            if(obj->GetNameDefault() == name) {
+                auto cast = std::dynamic_pointer_cast<T>(obj);
+                if(cast)
+                    objects.push_back(cast);
+            }
+        }
+    }
     return objects;
 }
 

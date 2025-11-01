@@ -35,12 +35,6 @@ bool InGameScene::Init()
     Scene::Object::Create<Camera>();                  //カメラ
     auto player = Scene::Object::Create<Player>();    //プレイヤー
     //---------------------------------------------------------------------------------
-    //  NPCの生成
-    //---------------------------------------------------------------------------------
-    for(int i = 0; i < AGENT_NUM; i++) {
-        Scene::Object::Create<Npc>();
-    }
-    //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------
     {
@@ -378,8 +372,9 @@ bool InGameScene::Init()
     //  Agent表示UI
     //---------------------------------------------------------------------------------
     {
-        int agent_count = 0;
-        for(auto& agent : Scene::Object::GetArray<Agent>()) {
+        int  agent_count = 0;
+        auto agents      = Scene::Object::GetArray<Agent>();
+        for(auto& agent : agents) {
             agent_count++;
             auto agent_ui = Scene::Object::Create<UIText>();
             agent_ui->SetFontSize(30);                                                       //フォントサイズ設定

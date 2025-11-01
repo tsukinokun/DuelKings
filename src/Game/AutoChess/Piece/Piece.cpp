@@ -6,6 +6,8 @@
 #include "Piece.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -18,6 +20,17 @@ bool Piece::Init()
     // ピースのステータス情報を設定(Pieceの基底クラスなので、とりあえず参照しても大丈夫なように値を入れて置きます。)
     //---------------------------------------------------------------------------------
     status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
+    //---------------------------------------------------------------------------------
+    // レベル表示画像の追加
+    //---------------------------------------------------------------------------------
+    {
+        auto level_image = Scene::Object::Create<UIImage>();    //レベル表示用の画像オブジェクトを生成
+        level_image->SetName("PieceLevelImage");
+        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));           //レベル1の画像を設定
+        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央に表示
+        level_image->SetScaleAxisXYZ(0.3f);                                          //画像を小さくする
+        //ピースのワールド行列をスクリーン行列に変換したい
+    }
     return true;
 }
 
@@ -83,6 +96,14 @@ float Piece::GetAttackRange() const
 float Piece::GetMoveSpeed() const
 {
     return status_.GetMoveSpeed();
+}
+
+//----------------------------------------------------------
+// ピースのレベルの取得
+//----------------------------------------------------------
+int Piece::GetLevel() const
+{
+    return status_.GetLevel();
 }
 
 //----------------------------------------------------------
