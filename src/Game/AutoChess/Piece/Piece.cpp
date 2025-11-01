@@ -29,7 +29,25 @@ bool Piece::Init()
         level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));           //レベル1の画像を設定
         level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央に表示
         level_image->SetScaleAxisXYZ(0.3f);                                          //画像を小さくする
-        //ピースのワールド行列をスクリーン行列に変換したい
+        auto update_proc = [level_image, this]() {
+            //ピースのワールド空間スクリーン空間に変換したい
+            if(auto camera = Scene::GetCurrentCamera().lock()) {
+                float3 world_position   = GetTranslate();
+                matrix view_matrix      = camera->GetViewMatrix();          //ビュー行列
+                matrix proj_matrix      = camera->GetProjectionMatrix();    //投影行列
+                matrix view_proj_matrix = mul(view_matrix, proj_matrix);
+                float4 screen_position  = mul(float4(world_position, 1.0f), view_proj_matrix);
+                screen_position.xyz     = screen_position.xyz / screen_position.w;
+
+                // スクリーン座標(-1～+1)→UV座標(0～1)
+                float2 uv = screen_position.xy * float2(0.5f, -0.5f) + 0.5f;
+
+                float2 pixel_position = uv * float2(WINDOW_W, WINDOW_H);
+
+                level_image->SetTranslate(float3(pixel_position.xy, 0.0f));
+            }
+        };
+        level_image->SetProc("update", update_proc);
     }
     return true;
 }
