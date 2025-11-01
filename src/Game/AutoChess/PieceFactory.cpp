@@ -20,6 +20,13 @@
 #include <Game/AutoChess/Piece/ChessBishop.h>
 #include <Game/AutoChess/Piece/ChessQueen.h>
 #include <Game/AutoChess/Piece/ChessKing.h>
+#include <Game/AutoChess/Piece/MakrukBia.h>
+#include <Game/AutoChess/Piece/MakrukKhon.h>
+#include <Game/AutoChess/Piece/MakrukKhun.h>
+#include <Game/AutoChess/Piece/MakrukMa.h>
+#include <Game/AutoChess/Piece/MakrukMet.h>
+#include <Game/AutoChess/Piece/MakrukRuea.h>
+
 //mapに、駒の名前と生成関数を登録
 const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFactory::piece_creators_ = {
     {"JapaneseChessBishop", [] { return Scene::Object::Create<JapaneseChessBishop>(); }},
@@ -36,6 +43,12 @@ const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFact
     {        "ChessBishop",         [] { return Scene::Object::Create<ChessBishop>(); }},
     {         "ChessQueen",          [] { return Scene::Object::Create<ChessQueen>(); }},
     {          "ChessKing",           [] { return Scene::Object::Create<ChessKing>(); }},
+    {          "MakrukBia",           [] { return Scene::Object::Create<MakrukBia>(); }},
+    {         "MakrukKhon",          [] { return Scene::Object::Create<MakrukKhon>(); }},
+    {         "MakrukKhun",          [] { return Scene::Object::Create<MakrukKhun>(); }},
+    {           "MakrukMa",            [] { return Scene::Object::Create<MakrukMa>(); }},
+    {          "MakrukMet",           [] { return Scene::Object::Create<MakrukMet>(); }},
+    {         "MakrukRuea",          [] { return Scene::Object::Create<MakrukRuea>(); }}
 };
 //---------------------------------------------------------------------------
 // ピース名を受け取って対応する駒インスタンスを生成する

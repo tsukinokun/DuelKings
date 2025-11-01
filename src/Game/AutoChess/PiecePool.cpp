@@ -29,7 +29,13 @@ void PiecePool::Init()
         {        "ChessBishop", piece_init_stock[0]}, //ビショップ
         {          "ChessRook", piece_init_stock[0]}, //ルーク
         {         "ChessQueen", piece_init_stock[0]}, //クイーン
-        {          "ChessKing", piece_init_stock[0]}  //キング}
+        {          "ChessKing", piece_init_stock[0]}, //キング
+        {          "MakrukBia", piece_init_stock[0]}, //ビア
+        {         "MakrukKhon", piece_init_stock[0]}, //コーン
+        {         "MakrukKhun", piece_init_stock[0]}, //クン
+        {           "MakrukMa", piece_init_stock[0]}, //マーク
+        {          "MakrukMet", piece_init_stock[0]}, //メット
+        {         "MakrukRuea", piece_init_stock[0]}  //ルア
     };
 }
 //---------------------------------------------------------------------------
