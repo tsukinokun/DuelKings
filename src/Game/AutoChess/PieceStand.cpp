@@ -90,7 +90,7 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
         if(auto square = squares_[i].lock()) {
             if(square->GetPutPiece().expired()) {
                 piece->SetTranslate(float3((i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE), 0.5f, 0.0f) + GetTranslate());    //位置を設定
-                square->SetPutPiece(piece);    //バッファにポインタを登録
+                square->SetPutPiece(piece);                                                                                          //バッファにポインタを登録
                 return;
             }    //一度生成したらリターンする
         }

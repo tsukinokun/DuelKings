@@ -11,17 +11,17 @@ std::unordered_map<std::string, int> ImageBuffer::image_buffer_ = {};    // 画�
 //---------------------------------------------------------------------------------
 void ImageBuffer::Init()
 {
-    image_buffer_.clear();                                                        // 画像ハンドルのバッファをクリア
-    image_buffer_["deff"] = DxLib::LoadGraph("data/AutoChess/Image/deff.png");    // デフォルト画像
+    image_buffer_.clear();                                                                                                 // 画像ハンドルのバッファをクリア
+    image_buffer_["deff"]                       = DxLib::LoadGraph("data/AutoChess/Image/deff.png");                       // デフォルト画像
     image_buffer_["piece_purchase_open_button"] = DxLib::LoadGraph("data/AutoChess/Image/PiecePurchaseOpenButton.png");    // ピース購入画面を開くUI画像
-    image_buffer_["left_click_anim"] = DxLib::LoadGraph("data/AutoChess/Image/LeftClickAnim.png");    // 左クリックアニメーション画像
-    image_buffer_["exp_button"]      = DxLib::LoadGraph("data/AutoChess/Image/EXPButton.png");        // 経験値ボタン画像
-    image_buffer_["reroll_button"]   = DxLib::LoadGraph("data/AutoChess/Image/Reroll.png");           // リロールボタン画像
-    image_buffer_["locked_button"]   = DxLib::LoadGraph("data/AutoChess/Image/Locked.png");           // ロックボタン画像
-    image_buffer_["unlocked_button"] = DxLib::LoadGraph("data/AutoChess/Image/Unlocked.png");         // アンロックボタン画像
-    image_buffer_["level1_star"]     = DxLib::LoadGraph("data/AutoChess/Image/Level1Star.png");       // レベル1スター画像
-    image_buffer_["level2_star"]     = DxLib::LoadGraph("data/AutoChess/Image/Level2Star.png");       // レベル2スター画像
-    image_buffer_["level3_star"]     = DxLib::LoadGraph("data/AutoChess/Image/Level3Star.png");       // レベル3スター画像
+    image_buffer_["left_click_anim"]            = DxLib::LoadGraph("data/AutoChess/Image/LeftClickAnim.png");              // 左クリックアニメーション画像
+    image_buffer_["exp_button"]                 = DxLib::LoadGraph("data/AutoChess/Image/EXPButton.png");                  // 経験値ボタン画像
+    image_buffer_["reroll_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Reroll.png");                     // リロールボタン画像
+    image_buffer_["locked_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Locked.png");                     // ロックボタン画像
+    image_buffer_["unlocked_button"]            = DxLib::LoadGraph("data/AutoChess/Image/Unlocked.png");                   // アンロックボタン画像
+    image_buffer_["level1_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level1Star.png");                 // レベル1スター画像
+    image_buffer_["level2_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level2Star.png");                 // レベル2スター画像
+    image_buffer_["level3_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level3Star.png");                 // レベル3スター画像
 }
 
 //---------------------------------------------------------------------------------

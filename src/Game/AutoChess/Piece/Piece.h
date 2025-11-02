@@ -8,13 +8,14 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/Info/PieceStatus.h>    // ピースステータス情報をインスタンスとして持つのでここでインクルード
 class Agent;
+class UIImage;
 USING_PTR(Piece);
-class Piece : public Object
-{
+class Piece : public Object {
 public:
     BP_OBJECT_DECL(Piece, u8"インゲームシーンのピースクラス")
     //@{
     bool Init() override;    //!< 初期化
+    void Exit() override;    //!< 終了
 
     //----------------------------------------------------------
     //選択状態の設定
@@ -80,5 +81,6 @@ public:
 protected:
     PieceStatus          status_;                 //!< ピースステータス情報
     std::weak_ptr<Agent> owner_;                  //!< 所有者エージェント
+    std::weak_ptr<UIImage> level_ui_;              //!< レベル表示用UI画像コンポーネント
     bool                 is_selected_ = false;    //!< 選択されているかどうか
 };

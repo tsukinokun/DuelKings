@@ -26,11 +26,26 @@ bool Piece::Init()
     {
         auto level_image = Scene::Object::Create<UIImage>();    //レベル表示用の画像オブジェクトを生成
         level_image->SetName("PieceLevelImage");
-        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));           //レベル1の画像を設定
-        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央に表示
-        level_image->SetScaleAxisXYZ(0.3f);                                          //画像を小さくする
-        auto update_proc = [level_image, this]() {
+        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));                          //レベル1の画像を設定
+        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);                   //中央に表示
+        level_image->SetScaleAxisXYZ(0.1f);                                                         //画像を小さくする
+        std::weak_ptr<Piece> weak_piece  = std::dynamic_pointer_cast<Piece>(shared_from_this());    // 自分の弱参照を取得
+        auto                 update_proc = [level_image, this, weak_piece]() {
+            //---------------------------------------------------------------------------------
+            // ピースが生きているかを確認
+            //---------------------------------------------------------------------------------
+            if(!weak_piece.lock()) {
+                Scene::Object::Release(level_image);    // ピースがもうないなら画像も消す
+                return;                                 // ここで終了
+            }
+            //---------------------------------------------------------------------------------
+            // 描画状態を親に合わせる
+            //---------------------------------------------------------------------------------
+            level_image->SetStatus(Object::StatusBit::NoDraw, GetStatus(Object::StatusBit::NoDraw));
+
+            //---------------------------------------------------------------------------------
             //ピースのワールド空間スクリーン空間に変換したい
+            //---------------------------------------------------------------------------------
             if(auto camera = Scene::GetCurrentCamera().lock()) {
                 float3 world_position   = GetTranslate();
                 matrix view_matrix      = camera->GetViewMatrix();          //ビュー行列
@@ -48,8 +63,20 @@ bool Piece::Init()
             }
         };
         level_image->SetProc("update", update_proc);
+        level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
     }
     return true;
+}
+//---------------------------------------------------------------------------------
+//!	終了処理
+//---------------------------------------------------------------------------------
+void Piece::Exit()
+{
+    __super::Exit();
+    // レベル表示用UI画像を破棄
+    //if(auto level_ui = level_ui_.lock()) {
+    //    Scene::Object::Release(level_ui);
+    //}
 }
 
 //---------------------------------------------------------------------------------
