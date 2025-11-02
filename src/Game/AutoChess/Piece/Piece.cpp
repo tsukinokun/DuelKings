@@ -8,6 +8,7 @@
 #include <System/Component/ComponentModel.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
+#include <Game/AutoChess/system/HlslppUseful.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -20,6 +21,7 @@ bool Piece::Init()
     // ピースのステータス情報を設定(Pieceの基底クラスなので、とりあえず参照しても大丈夫なように値を入れて置きます。)
     //---------------------------------------------------------------------------------
     status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
+
     //---------------------------------------------------------------------------------
     // レベル表示画像の追加
     //---------------------------------------------------------------------------------
@@ -46,21 +48,8 @@ bool Piece::Init()
             //---------------------------------------------------------------------------------
             //ピースのワールド空間スクリーン空間に変換したい
             //---------------------------------------------------------------------------------
-            if(auto camera = Scene::GetCurrentCamera().lock()) {
-                float3 world_position   = GetTranslate();
-                matrix view_matrix      = camera->GetViewMatrix();          //ビュー行列
-                matrix proj_matrix      = camera->GetProjectionMatrix();    //投影行列
-                matrix view_proj_matrix = mul(view_matrix, proj_matrix);
-                float4 screen_position  = mul(float4(world_position, 1.0f), view_proj_matrix);
-                screen_position.xyz     = screen_position.xyz / screen_position.w;
-
-                // スクリーン座標(-1～+1)→UV座標(0～1)
-                float2 uv = screen_position.xy * float2(0.5f, -0.5f) + 0.5f;
-
-                float2 pixel_position = uv * float2(WINDOW_W, WINDOW_H);
-
-                level_image->SetTranslate(float3(pixel_position.xy, 0.0f));
-            }
+            float2 pixel_position = WorldPositionToScreenPosition(GetTranslate());
+            level_image->SetTranslate(float3(pixel_position.xy, 0.0f));
         };
         level_image->SetProc("update", update_proc);
         level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存

@@ -18,3 +18,9 @@ bool CheckBoxCenterHit(const float2& box_pos1, const float2& box_size1, const fl
 //	2Dの四角と点の当たり判定（座標と大きさに Float2 を渡すバージョン）
 //---------------------------------------------------------------------------
 bool CheckBoxPointHit(const float2& box_pos, const float2& box_size, const float2& point);
+//---------------------------------------------------------------------------
+// ワールド座標をスクリーン座標に変換する関数
+//! @param world_position [in] ワールド座標
+//! @retval スクリーン上のピクセルの座標
+//---------------------------------------------------------------------------
+float2 WorldPositionToScreenPosition(const float3& world_position);

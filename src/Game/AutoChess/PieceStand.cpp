@@ -8,6 +8,11 @@
 #include "Square.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/Player.h>
+#include <Game/AutoChess/ChessBoard.h>
+#include <Game/AutoChess/UIObject/UIButton.h>
+#include <Game/AutoChess/system/HlslppUseful.h>
+#include <Game/AutoChess/system/ImageBuffer.h>
+
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -90,9 +95,88 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
         if(auto square = squares_[i].lock()) {
             if(square->GetPutPiece().expired()) {
                 piece->SetTranslate(float3((i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE), 0.5f, 0.0f) + GetTranslate());    //位置を設定
-                square->SetPutPiece(piece);                                                                                          //バッファにポインタを登録
+                //---------------------------------------------------------------------------------
+                // ピースに、レベルアップを可能にする処理を追加
+                //---------------------------------------------------------------------------------
+                auto level_up_proc = [piece]() {
+                    int piece_num = 0;    //同じピースの数をカウントする変数、自身も探索に含まれるので0スタート
+                    //---------------------------------------------------------------------------------
+                    // ピーススタンドを探索したい
+                    //---------------------------------------------------------------------------------
+                    if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                        auto square_ptrs = piece_stand->GetSquarePtrArray();
+                        for(int j = 0; j < square_ptrs.size(); j++) {
+                            if(auto square = square_ptrs[j].lock()) {
+                                auto put_piece_wp = square->GetPutPiece();
+                                if(auto put_piece = put_piece_wp.lock()) {
+                                    //同じピース名ならカウントアップ
+                                    if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
+                                        piece_num++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //---------------------------------------------------------------------------------
+                    // 次はチェスボードを探索
+                    //---------------------------------------------------------------------------------
+                    if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                        auto board_square_ptrs = chess_board->GetSquarePtrArray();
+                        for(int f = 0; f < board_square_ptrs.size(); f++) {
+                            for(int r = 0; r < board_square_ptrs[f].size(); r++) {
+                                if(auto board_square = board_square_ptrs[f][r].lock()) {
+                                    auto put_piece_wp = board_square->GetPutPiece();
+                                    if(auto put_piece = put_piece_wp.lock()) {
+                                        //アップデートをしていなかったらカウントしない
+                                        if(put_piece->GetStatus(Object::StatusBit::NoUpdate)) {
+                                            continue;
+                                        }
+                                        //同じピース名ならカウントアップ
+                                        if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
+                                            piece_num++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //3つ以上あったらレベルアップボタンを生成
+                    //マウスが触れていたら
+                    std::string button_ui_name = std::string(piece->GetName()) + "level_up_name";
+                    if(piece_num >= 3) {
+                        //左マウスクリックを促す
+                        if(auto button_ui = Scene::Object::Get<UIButton>(button_ui_name)) {
+                            //ピースのスクリーン座標を取得
+                            float2 screen_pos = WorldPositionToScreenPosition(piece->GetTranslate());
+                            //少し上にずらす
+                            float2 offset  = float2(0.0f, -30.0f);
+                            screen_pos    += offset;
+                            button_ui->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));    //位置設定
+                        }
+                        else {
+                            button_ui = Scene::Object::Create<UIButton>();    //左クリックアニメーションオブジェクトを生成
+                            //ピースのスクリーン座標を取得
+                            float2 screen_pos = WorldPositionToScreenPosition(piece->GetTranslate());
+                            //少し上にずらす
+                            float2 offset  = float2(0.0f, -30.0f);
+                            screen_pos    += offset;
+                            button_ui->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));    //位置を設定
+                            button_ui->SetImage(ImageBuffer::GetImageHandle("deff"));             //アニメーションステータス設定
+                            button_ui->SetName(button_ui_name);                                   //名前設定
+                        }
+                    }
+                    else {
+                        //非表示
+                        if(auto button_ui = Scene::Object::Get<UIButton>(button_ui_name)) {
+                            Scene::Object::Release(button_ui);
+                        }
+                    }
+                };
+                piece->SetProc("level_up_proc", level_up_proc, ProcTiming::Update, ProcPriority::NONE);
+                square->SetPutPiece(piece);    //バッファにポインタを登録
+                //一度生成したらリターンする
                 return;
-            }    //一度生成したらリターンする
+            }
         }
     }
 }
