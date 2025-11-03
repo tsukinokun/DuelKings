@@ -174,7 +174,7 @@ bool Agent::IsPieceStandFull() const
 std::shared_ptr<Agent> Agent::SetPieceStandInfo(size_t index, const PieceInfo& piece_info)
 {
     // ピーススタンド情報を設定
-    stand_info_.GetStandPieces()[index] = piece_info;
+    stand_info_.SetPieceAt(index, piece_info);
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
 //-----------------------------------------------------------

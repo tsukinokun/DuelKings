@@ -19,6 +19,9 @@ void ImageBuffer::Init()
     image_buffer_["reroll_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Reroll.png");                     // リロールボタン画像
     image_buffer_["locked_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Locked.png");                     // ロックボタン画像
     image_buffer_["unlocked_button"]            = DxLib::LoadGraph("data/AutoChess/Image/Unlocked.png");                   // アンロックボタン画像
+    image_buffer_["level1_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level1Star.png");                 // レベル1スター画像
+    image_buffer_["level2_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level2Star.png");                 // レベル2スター画像
+    image_buffer_["level3_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level3Star.png");                 // レベル3スター画像
 }
 
 //---------------------------------------------------------------------------------

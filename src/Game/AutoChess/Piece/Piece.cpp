@@ -6,6 +6,9 @@
 #include "Piece.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/system/ImageBuffer.h>
+#include <Game/AutoChess/system/HlslppUseful.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -18,6 +21,44 @@ bool Piece::Init()
     // ピースのステータス情報を設定(Pieceの基底クラスなので、とりあえず参照しても大丈夫なように値を入れて置きます。)
     //---------------------------------------------------------------------------------
     status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
+
+    //---------------------------------------------------------------------------------
+    // レベル表示画像の追加
+    //---------------------------------------------------------------------------------
+    {
+        auto level_image = Scene::Object::Create<UIImage>();    //レベル表示用の画像オブジェクトを生成
+        level_image->SetName("PieceLevelImage");
+        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));                          //レベル1の画像を設定
+        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);                   //中央に表示
+        level_image->SetScaleAxisXYZ(0.1f);                                                         //画像を小さくする
+        std::weak_ptr<Piece> weak_piece  = std::dynamic_pointer_cast<Piece>(shared_from_this());    // 自分の弱参照を取得
+        auto                 update_proc = [level_image, this, weak_piece]() {
+            //---------------------------------------------------------------------------------
+            // ピースが生きているかを確認
+            //---------------------------------------------------------------------------------
+            auto piece = weak_piece.lock();
+            if(!piece) {
+                Scene::Object::Release(level_image);    // ピースがもうないなら画像も消す
+                return;                                 // ここで終了
+            }
+            else if(!piece->GetStatus(Object::StatusBit::Alive)) {
+                Scene::Object::Release(level_image);    // ピースがもうないなら画像も消す
+                return;                                 // ここで終了
+            }
+            //---------------------------------------------------------------------------------
+            // 描画状態を親に合わせる
+            //---------------------------------------------------------------------------------
+            level_image->SetStatus(Object::StatusBit::NoDraw, GetStatus(Object::StatusBit::NoDraw));
+
+            //---------------------------------------------------------------------------------
+            //ピースのワールド空間スクリーン空間に変換したい
+            //---------------------------------------------------------------------------------
+            float2 pixel_position = WorldPositionToScreenPosition(GetTranslate());
+            level_image->SetTranslate(float3(pixel_position.xy, 0.0f));
+        };
+        level_image->SetProc("update", update_proc);
+        level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
+    }
     return true;
 }
 
@@ -86,9 +127,31 @@ float Piece::GetMoveSpeed() const
 }
 
 //----------------------------------------------------------
+// ピースのレベルの取得
+//----------------------------------------------------------
+int Piece::GetLevel() const
+{
+    return status_.GetLevel();
+}
+
+//----------------------------------------------------------
 //! ダメージを受ける
 //----------------------------------------------------------
 void Piece::TakeDamage(int amount)
 {
     status_.ApplyDamage(amount);
+}
+
+//----------------------------------------------------------
+// 駒をレベルアップさせる関数
+//----------------------------------------------------------
+void Piece::LevelUp()
+{
+    status_.LevelUp();
+    // レベル表示用UI画像の更新
+    if(auto level_ui = level_ui_.lock()) {
+        // レベルに応じた画像名を生成
+        std::string image_name = "level" + std::to_string(status_.GetLevel()) + "_star";
+        level_ui->SetImage(ImageBuffer::GetImageHandle(image_name));
+    }
 }

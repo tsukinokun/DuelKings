@@ -38,3 +38,21 @@ bool CheckBoxPointHit(const float2& box_pos, const float2& box_size, const float
     }
     return false;
 }
+//---------------------------------------------------------------------------
+// ワールド座標をスクリーン座標に変換する関数
+//---------------------------------------------------------------------------
+float2 WorldPositionToScreenPosition(const float3& world_position)
+{
+    float2 pixel_position = float2(0.0f, 0.0f);
+    if(auto camera = Scene::GetCurrentCamera().lock()) {
+        matrix view_matrix      = camera->GetViewMatrix();          //ビュー行列
+        matrix proj_matrix      = camera->GetProjectionMatrix();    //投影行列
+        matrix view_proj_matrix = mul(view_matrix, proj_matrix);
+        float4 screen_position  = mul(float4(world_position, 1.0f), view_proj_matrix);
+        screen_position.xyz     = screen_position.xyz / screen_position.w;
+        // スクリーン座標(-1～+1)→UV座標(0～1)
+        float2 uv      = screen_position.xy * float2(0.5f, -0.5f) + 0.5f;
+        pixel_position = uv * float2(WINDOW_W, WINDOW_H);
+    }
+    return pixel_position;
+}

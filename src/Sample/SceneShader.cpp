@@ -15,7 +15,9 @@ bool SceneShader::Init()
     auto obj = Scene::Object::Create<Object>();
 
     // モデルコンポーネント
-    model_ = obj->AddComponent<ComponentModel>("data/Sample/Player/model.mv1");
+    //model_ = obj->AddComponent<ComponentModel>("data/Sample/Player/model.mv1");
+    //model_ = obj->AddComponent<ComponentModel>("data/AutoChess/Piece/MakrukBia.mv1");
+    model_ = obj->AddComponent<ComponentModel>("data/AutoChess/Piece/ChessQueen.mv1");
 
     // カメラコンポーネント
     auto camera = obj->AddComponent<ComponentCamera>();

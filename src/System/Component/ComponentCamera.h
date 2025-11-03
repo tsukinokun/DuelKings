@@ -128,8 +128,10 @@ public:
         DebugCamera,           //!< 自分がデバッグカメラ
     };
 
-    void SetCameraStatus(CameraBit bit, bool on) { camera_status_.set(bit, on); }
-    bool GetCameraStatus(CameraBit bit) { return camera_status_.is(bit); }
+    void   SetCameraStatus(CameraBit bit, bool on) { camera_status_.set(bit, on); }
+    bool   GetCameraStatus(CameraBit bit) { return camera_status_.is(bit); }
+    matrix GetViewMatrix() const { return mat_view_; }          //ビュー行列を返す関数
+    matrix GetProjectionMatrix() const { return mat_proj_; }    //投影行列を返す関数
 
 private:
     Status<CameraBit> camera_status_;    //!< 状態
