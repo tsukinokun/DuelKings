@@ -143,7 +143,7 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                     //3つ以上あったらレベルアップボタンを生成
                     //マウスが触れていたら
                     std::string button_ui_name = std::string(piece->GetName()) + "level_up_name";
-                    if(piece_num >= 3) {
+                    if(piece_num >= LEVEL_UP_REQUIRED_PIECE_COUNT) {
                         //左マウスクリックを促す
                         if(auto button_ui = Scene::Object::Get<UIButton>(button_ui_name)) {
                             //ピースのスクリーン座標を取得
@@ -163,6 +163,108 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                             button_ui->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));    //位置を設定
                             button_ui->SetImage(ImageBuffer::GetImageHandle("deff"));             //アニメーションステータス設定
                             button_ui->SetName(button_ui_name);                                   //名前設定
+                            //自身のウィークポインタを格納
+                            std::weak_ptr<Piece> weak_piece  = piece;    // 自分の弱参照を取得
+                            auto                 update_proc = [button_ui, weak_piece]() {
+                                //---------------------------------------------------------------------------------
+                                // ピースが生きているかを確認
+                                //---------------------------------------------------------------------------------
+                                auto piece = weak_piece.lock();
+                                if(!piece) {
+                                    Scene::Object::Release(button_ui);    // ピースがもうないなら画像も消す
+                                    return;                               // ここで終了
+                                }
+                                else if(!piece->GetStatus(Object::StatusBit::Alive)) {
+                                    Scene::Object::Release(button_ui);    // ピースがもうないなら画像も消す
+                                    return;                               // ここで終了
+                                }
+                                //---------------------------------------------------------------------------------
+                                // 描画状態を親に合わせる
+                                //---------------------------------------------------------------------------------
+                                button_ui->SetStatus(Object::StatusBit::NoDraw, piece->GetStatus(Object::StatusBit::NoDraw));
+
+                                //---------------------------------------------------------------------------------
+                                //ピースのワールド空間スクリーン空間に変換したい
+                                //---------------------------------------------------------------------------------
+                                float2 pixel_position = WorldPositionToScreenPosition(piece->GetTranslate());
+                                button_ui->SetTranslate(float3(pixel_position.xy, 0.0f));
+                            };
+                            button_ui->SetProc("update", update_proc, ProcTiming::Update, ProcPriority::HIGH);
+                            //---------------------------------------------------------------------------------
+                            // ボタンクリック時の処理を設定
+                            //---------------------------------------------------------------------------------
+                            auto click_func = [piece, button_ui_name, weak_piece]() {
+                                //レベルアップ処理
+                                piece->LevelUp();
+                                //---------------------------------------------------------------------------------
+                                // 同種のピースを2つ削除する処理
+                                //---------------------------------------------------------------------------------
+                                int pieces_to_remove = LEVEL_UP_REQUIRED_PIECE_COUNT - 1;    //削除するピースの数はレベルアップに必要な数-1
+                                int removed_count    = 0;                                    //削除したピースの数
+                                //ピーススタンドを探索したい
+                                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                                    //中身を見る
+                                    auto square_ptrs = piece_stand->GetSquarePtrArray();
+                                    for(int j = 0; j < square_ptrs.size(); j++) {
+                                        if(removed_count >= pieces_to_remove) {
+                                            break;
+                                        }
+                                        if(auto square = square_ptrs[j].lock()) {
+                                            auto put_piece_wp = square->GetPutPiece();
+                                            if(auto put_piece = put_piece_wp.lock()) {
+                                                //同じポインタならcontinue
+                                                if(put_piece == weak_piece.lock()) {
+                                                    continue;
+                                                }
+                                                //同じピース名ならリリースしてカウントアップ
+                                                if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
+                                                    square->RemovePiece();    //マスからピースを削除
+                                                    if(auto player = Scene::Object::Get<Player>()) {
+                                                        player->SetPieceStandInfo(j, PieceInfo());    //ピース情報を空にする
+                                                    }
+                                                    removed_count++;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                //次はチェスボードを探索
+                                if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                                    auto board_square_ptrs = chess_board->GetSquarePtrArray();
+                                    for(int f = 0; f < board_square_ptrs.size(); f++) {
+                                        if(removed_count >= pieces_to_remove) {
+                                            break;
+                                        }
+                                        for(int r = 0; r < board_square_ptrs[f].size(); r++) {
+                                            if(removed_count >= pieces_to_remove) {
+                                                break;
+                                            }
+                                            if(auto board_square = board_square_ptrs[f][r].lock()) {
+                                                auto put_piece_wp = board_square->GetPutPiece();
+                                                if(auto put_piece = put_piece_wp.lock()) {
+                                                    //アップデートをしていなかったらcontinue
+                                                    if(put_piece->GetStatus(Object::StatusBit::NoUpdate)) {
+                                                        continue;
+                                                    }
+                                                    //同じポインタならcontinue
+                                                    if(put_piece == weak_piece.lock()) {
+                                                        continue;
+                                                    }
+                                                    //同じピース名ならリリースしてカウントアップ
+                                                    if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
+                                                        board_square->RemovePiece();    //マスからピースを削除
+                                                        if(auto player = Scene::Object::Get<Player>()) {
+                                                            player->RemoveBoardInfo(f, r);    //ボード情報を空にする
+                                                        }
+                                                        removed_count++;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            };
+                            button_ui->SetClickFunc(click_func);
                         }
                     }
                     else {

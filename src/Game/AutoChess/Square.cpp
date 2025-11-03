@@ -151,8 +151,9 @@ void Square::RemovePiece()
     //ピースが存在するなら
     if(auto piece = piece_.lock()) {
         piece->SetSelect(false);    //選択を解除
-        piece->Exit();              //ピースを終了
-        piece_.reset();             //ピースのポインタをリセット
-        SetChanged();               //状態が変化したことを記録
+        //piece->Exit();              //ピースを終了
+        Scene::Object::Release(piece);    //シーンからピースを削除
+        piece_.reset();                   //ピースのポインタをリセット
+        SetChanged();                     //状態が変化したことを記録
     }
 }

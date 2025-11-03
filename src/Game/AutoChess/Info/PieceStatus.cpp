@@ -74,3 +74,13 @@ void PieceStatus::ApplyDamage(int amount)
 {
     hp_ = std::max(0, hp_ - amount);
 }
+
+//---------------------------------------------------------------------------
+//! レベルを上げる関数
+//---------------------------------------------------------------------------
+void PieceStatus::LevelUp()
+{
+    if(level_ < MAX_PIECE_LEVEL) {
+        level_++;
+    }
+}

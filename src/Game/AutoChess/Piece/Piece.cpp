@@ -36,7 +36,12 @@ bool Piece::Init()
             //---------------------------------------------------------------------------------
             // ピースが生きているかを確認
             //---------------------------------------------------------------------------------
-            if(!weak_piece.lock()) {
+            auto piece = weak_piece.lock();
+            if(!piece) {
+                Scene::Object::Release(level_image);    // ピースがもうないなら画像も消す
+                return;                                 // ここで終了
+            }
+            else if(!piece->GetStatus(Object::StatusBit::Alive)) {
                 Scene::Object::Release(level_image);    // ピースがもうないなら画像も消す
                 return;                                 // ここで終了
             }
@@ -55,17 +60,6 @@ bool Piece::Init()
         level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
     }
     return true;
-}
-//---------------------------------------------------------------------------------
-//!	終了処理
-//---------------------------------------------------------------------------------
-void Piece::Exit()
-{
-    __super::Exit();
-    // レベル表示用UI画像を破棄
-    //if(auto level_ui = level_ui_.lock()) {
-    //    Scene::Object::Release(level_ui);
-    //}
 }
 
 //---------------------------------------------------------------------------------
@@ -153,4 +147,11 @@ void Piece::TakeDamage(int amount)
 //----------------------------------------------------------
 void Piece::LevelUp()
 {
+    status_.LevelUp();
+    // レベル表示用UI画像の更新
+    if(auto level_ui = level_ui_.lock()) {
+        // レベルに応じた画像名を生成
+        std::string image_name = "level" + std::to_string(status_.GetLevel()) + "_star";
+        level_ui->SetImage(ImageBuffer::GetImageHandle(image_name));
+    }
 }
