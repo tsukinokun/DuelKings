@@ -109,9 +109,11 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                             if(auto square = square_ptrs[j].lock()) {
                                 auto put_piece_wp = square->GetPutPiece();
                                 if(auto put_piece = put_piece_wp.lock()) {
-                                    //同じピース名ならカウントアップ
+                                    //同じピース名で同じレベルならカウントアップ
                                     if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
-                                        piece_num++;
+                                        if(put_piece->GetLevel() == piece->GetLevel()) {
+                                            piece_num++;
+                                        }
                                     }
                                 }
                             }
@@ -131,9 +133,11 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                                         if(put_piece->GetStatus(Object::StatusBit::NoUpdate)) {
                                             continue;
                                         }
-                                        //同じピース名ならカウントアップ
+                                        //同じピース名で同じレベルならカウントアップ
                                         if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
-                                            piece_num++;
+                                            if(put_piece->GetLevel() == piece->GetLevel()) {
+                                                piece_num++;
+                                            }
                                         }
                                     }
                                 }
@@ -194,8 +198,6 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                             // ボタンクリック時の処理を設定
                             //---------------------------------------------------------------------------------
                             auto click_func = [piece, button_ui_name, weak_piece]() {
-                                //レベルアップ処理
-                                piece->LevelUp();
                                 //---------------------------------------------------------------------------------
                                 // 同種のピースを2つ削除する処理
                                 //---------------------------------------------------------------------------------
@@ -216,13 +218,15 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                                                 if(put_piece == weak_piece.lock()) {
                                                     continue;
                                                 }
-                                                //同じピース名ならリリースしてカウントアップ
+                                                //同じピース名で同じレベルならリリースしてカウントアップ
                                                 if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
-                                                    square->RemovePiece();    //マスからピースを削除
-                                                    if(auto player = Scene::Object::Get<Player>()) {
-                                                        player->SetPieceStandInfo(j, PieceInfo());    //ピース情報を空にする
+                                                    if(put_piece->GetLevel() == piece->GetLevel()) {
+                                                        square->RemovePiece();    //マスからピースを削除
+                                                        if(auto player = Scene::Object::Get<Player>()) {
+                                                            player->SetPieceStandInfo(j, PieceInfo());    //ピース情報を空にする
+                                                        }
+                                                        removed_count++;
                                                     }
-                                                    removed_count++;
                                                 }
                                             }
                                         }
@@ -252,17 +256,21 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                                                     }
                                                     //同じピース名ならリリースしてカウントアップ
                                                     if(put_piece->GetNameDefault() == piece->GetNameDefault()) {
-                                                        board_square->RemovePiece();    //マスからピースを削除
-                                                        if(auto player = Scene::Object::Get<Player>()) {
-                                                            player->RemoveBoardInfo(f, r);    //ボード情報を空にする
+                                                        if(put_piece->GetLevel() == piece->GetLevel()) {
+                                                            board_square->RemovePiece();    //マスからピースを削除
+                                                            if(auto player = Scene::Object::Get<Player>()) {
+                                                                player->RemoveBoardInfo(f, r);    //ボード情報を空にする
+                                                            }
+                                                            removed_count++;
                                                         }
-                                                        removed_count++;
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
+                                //レベルアップ処理
+                                piece->LevelUp();
                             };
                             button_ui->SetClickFunc(click_func);
                         }
