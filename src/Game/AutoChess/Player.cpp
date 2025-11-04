@@ -34,13 +34,13 @@ bool Player::Init()
                             //変更されたかをチェック
                             if(square_->IsChanged()) {
                                 //変更された場合、ピース情報を更新
-
                                 auto      piece_wp = square_->GetPutPiece();
                                 PieceInfo piece_info;
                                 if(auto piece = piece_wp.lock()) {
                                     //ピースが置かれている場合、情報を更新
                                     piece_info.SetOwner(dynamic_pointer_cast<Player>(shared_from_this()));
                                     piece_info.SetTypeName(piece->GetNameDefault().data());
+                                    piece_info.SetLevel(piece->GetLevel());
                                 }
                                 //ない場合は空の状態に変更
                                 SetBoardInfo(file, rank, piece_info);

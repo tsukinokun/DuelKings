@@ -8,6 +8,7 @@
 #include <Game/AutoChess/Info/BoardInfo.h>
 #include <Game/AutoChess/Info/ShopStandInfo.h>
 #include <Game/AutoChess/Info/PieceStandInfo.h>
+#include <Game/AutoChess/Info/AgentInfo.h>
 class PieceInfo;
 USING_PTR(Agent);
 class Agent : public Object
@@ -23,6 +24,26 @@ public:
     //! @return 自分自身のshared_ptr
     //-----------------------------------------------------------
     std::shared_ptr<Agent> AddExp(int exp);
+
+    //-----------------------------------------------------------
+    // 所持金を返す関数
+    //! @retval 所持金
+    //-----------------------------------------------------------
+    int GetGold() const;
+
+    //-----------------------------------------------------------
+    // 所持金を増やす関数
+    //! @param gold [in] 増やす所持金
+    //! @return 自分自身のshared_ptr
+    //-----------------------------------------------------------
+    std::shared_ptr<Agent> AddGold(int gold);
+
+    //-----------------------------------------------------------
+    // 所持金を減らす関数
+    //! @param gold [in] 減らす所持金
+    //! @retval 減らせた場合 true 、減らせなかった場合 false
+    //-----------------------------------------------------------
+    bool SpendGold(int gold);
 
     //-----------------------------------------------------------
     //経験値量から、レベル(置ける駒数)を判定して返す関数
@@ -152,4 +173,5 @@ protected:
     PieceStandInfo stand_info_;         // ピーススタンド
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド
+    AgentInfo      agent_info_;         //エージェント情報
 };
