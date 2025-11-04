@@ -34,7 +34,6 @@ bool Player::Init()
                             //変更されたかをチェック
                             if(square_->IsChanged()) {
                                 //変更された場合、ピース情報を更新
-
                                 auto      piece_wp = square_->GetPutPiece();
                                 PieceInfo piece_info;
                                 if(auto piece = piece_wp.lock()) {

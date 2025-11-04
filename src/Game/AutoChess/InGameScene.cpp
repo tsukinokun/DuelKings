@@ -133,7 +133,10 @@ bool InGameScene::Init()
         reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
         auto click_func = [player]() {
-            player->RerollShopPieces();    //ショップのピースをリロールする
+            //ピースリロールに2ゴールド消費する
+            if(player->SpendGold(2)) {
+                player->RerollShopPieces();    //ショップのピースをリロールする
+            }
         };
         reroll_button->SetClickFunc(click_func);
         purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
