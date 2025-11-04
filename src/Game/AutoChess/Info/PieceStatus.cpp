@@ -21,9 +21,10 @@ PieceStatus::PieceStatus()
 //---------------------------------------------------------------------------
 // コンストラクタ（Builder からのみ呼ばれる）。
 //---------------------------------------------------------------------------
-PieceStatus::PieceStatus(int hp, int power, float range, float speed)
+PieceStatus::PieceStatus(int hp, int power, float interval, float range, float speed)
     : hp_(hp)
     , max_hp_(hp)
+    , attack_interval_(interval)
     , attack_power_(power)
     , attack_range_(range)
     , move_speed_(speed)
@@ -51,6 +52,14 @@ int PieceStatus::GetMaxHP() const
 int PieceStatus::GetAttackPower() const
 {
     return attack_power_;
+}
+
+//---------------------------------------------------------------------------
+//! 攻撃間隔を取得する。
+//---------------------------------------------------------------------------
+float PieceStatus::GetAttackInterval() const
+{
+    return attack_interval_;
 }
 
 //---------------------------------------------------------------------------

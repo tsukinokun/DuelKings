@@ -19,8 +19,8 @@ void PieceAttacker::Init()
         //---------------------------------------------------------
         //最も近い敵の駒を攻撃する(通常攻撃)
         //---------------------------------------------------------
-        auto this_piece = dynamic_pointer_cast<Piece>(GetOwnerPtr());    //ピースであることが前提
-
+        auto this_piece  = dynamic_pointer_cast<Piece>(GetOwnerPtr());    //ピースであることが前提
+        attack_timer_   -= GetDeltaTime();
         //---------------------------------------------------------
         //最も近い敵の駒に攻撃を仕掛ける
         //---------------------------------------------------------
@@ -33,13 +33,17 @@ void PieceAttacker::Init()
                 float3 nearest_enemy_position = nearest_enemy->GetTranslate();
                 //攻撃方向を計算
                 float3 direction = nearest_enemy_position - translate;
-                //ベクトルの大きさが射程距離以下なら攻撃
+                //ベクトルの大きさが射程距離以下でクールタイムが0なら攻撃
                 float distance = length(direction);
                 if(distance <= this_piece->GetAttackRange()) {
-                    //攻撃力を取得
-                    int attack_power = this_piece->GetAttackPower();
-                    //敵のHPを減少させる
-                    nearest_enemy->TakeDamage(attack_power);
+                    if(attack_timer_ <= 0.0f) {
+                        //攻撃力を取得
+                        int attack_power = this_piece->GetAttackPower();
+                        //敵のHPを減少させる
+                        nearest_enemy->TakeDamage(attack_power);
+                        //攻撃クールタイムをリセット
+                        attack_timer_ = this_piece->GetAttackInterval();
+                    }
                 }
             }
         }

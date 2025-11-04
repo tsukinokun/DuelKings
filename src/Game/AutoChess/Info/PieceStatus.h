@@ -30,6 +30,13 @@ public:
             return *this;
         }
 
+        // 攻撃間隔を設定する。
+        Builder& AttackInterval(float interval)
+        {
+            attack_interval_ = interval;
+            return *this;
+        }
+
         // 射程距離を設定する。
         Builder& AttackRange(float range)
         {
@@ -45,14 +52,15 @@ public:
         }
 
         // 設定された値をもとに PieceStatus を生成する。
-        PieceStatus Build() const { return PieceStatus(hp_, attack_power_, attack_range_, move_speed_); }
+        PieceStatus Build() const { return PieceStatus(hp_, attack_power_, attack_interval_, attack_range_, move_speed_); }
 
     private:
         // 各ステータスの初期値（未設定時のデフォルト）。
-        int   hp_           = 0;
-        int   attack_power_ = 0;
-        float attack_range_ = 0.0f;
-        float move_speed_   = 0.0f;
+        int   hp_              = 0;
+        int   attack_power_    = 0;
+        float attack_interval_ = 1.0f;
+        float attack_range_    = 0.0f;
+        float move_speed_      = 0.0f;
     };
 
     //---------------------------------------------------------------------------
@@ -83,6 +91,11 @@ public:
     //! @retval 攻撃力
     //---------------------------------------------------------------------------
     int GetAttackPower() const;
+
+    //---------------------------------------------------------------------------
+    // 攻撃間隔を取得する
+    //---------------------------------------------------------------------------
+    float GetAttackInterval() const;
 
     //---------------------------------------------------------------------------
     // 射程距離を取得する。
@@ -118,14 +131,15 @@ private:
     // コンストラクタ（Builder からのみ呼ばれる）。
     //! @note 外部から直接インスタンス化されないように private にしている。
     //---------------------------------------------------------------------------
-    PieceStatus(int hp, int power, float range, float speed);
+    PieceStatus(int hp, int power, float interval, float range, float speed);
 
 private:
     // ステータス値の保持。
-    int   level_ = 1;       //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
-    int   hp_;              // 現在のHP
-    int   max_hp_;          // 最大HP
-    int   attack_power_;    // 攻撃力
-    float attack_range_;    // 射程距離
-    float move_speed_;      // 移動速度
+    int   level_ = 1;          //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
+    int   hp_;                 // 現在のHP
+    int   max_hp_;             // 最大HP
+    int   attack_power_;       // 攻撃力
+    float attack_interval_;    // 攻撃間隔(秒)
+    float attack_range_;       // 射程距離
+    float move_speed_;         // 移動速度
 };
