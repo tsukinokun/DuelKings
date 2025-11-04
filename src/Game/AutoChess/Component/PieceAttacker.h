@@ -15,6 +15,8 @@ public:
     BP_COMPONENT_DECL(PieceAttacker, u8"ピースの攻撃機能クラス");
 
     virtual void Init() override;    //!< 初期化
+private:
+    float attack_timer_ = 0.0f;
 };
 
 CEREAL_REGISTER_TYPE(PieceAttacker)
