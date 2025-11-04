@@ -378,12 +378,18 @@ bool InGameScene::Init()
         auto agents      = Scene::Object::GetArray<Agent>();
         for(auto& agent : agents) {
             agent_count++;
+            //---------------------------------------------------------------------------------
+            // 名前表示UI
+            //---------------------------------------------------------------------------------
             auto agent_ui = Scene::Object::Create<UIText>();
             agent_ui->SetFontSize(30);                                                       //フォントサイズ設定
             agent_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
             agent_ui->SetTranslate(float3(150.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             agent_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
             agent_ui->SetText(agent->GetName());                                             //エージェント名を表示
+            //---------------------------------------------------------------------------------
+            // エージェントの所持ゴールド表示UI
+            //---------------------------------------------------------------------------------
         }
     }
     return true;

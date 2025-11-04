@@ -36,14 +36,7 @@ void PieceHPDisplayer::Init()
                 //ゲージの表示
                 hp_ui                         = Scene::Object::Create<UIGauge>();    //HPゲージオブジェクトを生成
                 std::weak_ptr<Piece> owner_wp = owner;                               //オーナーの弱参照を取得
-                //ピースがなければオブジェクトは解放される
-                auto release_proc = [owner_wp, hp_ui]() {
-                    auto owner = owner_wp.lock();
-                    if(!owner) {
-                        Scene::Object::Release(hp_ui);
-                    }
-                };
-                hp_ui->SetProc("release_proc", release_proc, ProcTiming::Update, ProcPriority::NONE);
+                hp_ui->SetAutoReleaseTarget(owner_wp.lock());                        //オーナーが消えたら自分も消えるように設定
                 //ピースのスクリーン座標を取得
                 float2 screen_pos = WorldPositionToScreenPosition(owner->GetTranslate());
                 //少し上にずらす

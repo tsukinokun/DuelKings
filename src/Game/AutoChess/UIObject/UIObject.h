@@ -21,7 +21,14 @@ public:
     //! @param alignment [in] UIの配置位置を設定する
     //! @return	自分のSharedPtr
     //------------------------------------------------------
-    std::shared_ptr<ComponentTransformUI> SetAlignment(ComponentTransformUI::Alignment alignment);
+    std::shared_ptr<UIObject> SetAlignment(ComponentTransformUI::Alignment alignment);
+
+    //------------------------------------------------------
+    // あるオブジェクトが破棄されたら、自身も破棄する処理を登録する
+    //! @param target_obj 破棄を監視するオブジェクト
+    //! @return 自分のSharedPtr
+    //------------------------------------------------------
+    std::shared_ptr<UIObject> SetAutoReleaseTarget(const std::weak_ptr<Object>& target_obj);
 
 protected:
     std::weak_ptr<ComponentTransformUI> ui_transform_component_;    //UIのTransformコンポーネント
