@@ -13,6 +13,7 @@ PieceStatus::PieceStatus()
 {
     level_        = 1;    //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
     hp_           = 0;
+    max_hp_       = 0;
     attack_power_ = 0;
     attack_range_ = 0.0f;
     move_speed_   = 0.0f;
@@ -22,6 +23,7 @@ PieceStatus::PieceStatus()
 //---------------------------------------------------------------------------
 PieceStatus::PieceStatus(int hp, int power, float range, float speed)
     : hp_(hp)
+    , max_hp_(hp)
     , attack_power_(power)
     , attack_range_(range)
     , move_speed_(speed)
@@ -33,6 +35,14 @@ PieceStatus::PieceStatus(int hp, int power, float range, float speed)
 int PieceStatus::GetHP() const
 {
     return hp_;
+}
+
+//---------------------------------------------------------------------------
+//! 最大HP を取得する。
+//---------------------------------------------------------------------------
+int PieceStatus::GetMaxHP() const
+{
+    return max_hp_;
 }
 
 //---------------------------------------------------------------------------

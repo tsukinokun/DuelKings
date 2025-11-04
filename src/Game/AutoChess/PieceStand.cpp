@@ -10,6 +10,7 @@
 #include <Game/AutoChess/Player.h>
 #include <Game/AutoChess/ChessBoard.h>
 #include <Game/AutoChess/UIObject/UIButton.h>
+#include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 
@@ -167,7 +168,7 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                             button_ui->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));    //位置を設定
                             button_ui->SetImage(ImageBuffer::GetImageHandle("deff"));             //アニメーションステータス設定
                             button_ui->SetName(button_ui_name);                                   //名前設定
-                            //自身のウィークポインタを格納
+                            //自身のポインタを格納
                             std::weak_ptr<Piece> weak_piece  = piece;    // 自分の弱参照を取得
                             auto                 update_proc = [button_ui, weak_piece]() {
                                 //---------------------------------------------------------------------------------
