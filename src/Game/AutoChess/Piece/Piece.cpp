@@ -151,6 +151,21 @@ int Piece::GetLevel() const
 }
 
 //----------------------------------------------------------
+// ピースレベルを設定する関数
+//! @param level [in] ピースレベル
+//----------------------------------------------------------
+void Piece::SetLevel(int level)
+{
+    status_.SetLevel(level);
+    // レベル表示用UI画像の更新
+    if(auto level_ui = level_ui_.lock()) {
+        // レベルに応じた画像名を生成
+        std::string image_name = "level" + std::to_string(status_.GetLevel()) + "_star";
+        level_ui->SetImage(ImageBuffer::GetImageHandle(image_name));
+    }
+}
+
+//----------------------------------------------------------
 //! ダメージを受ける
 //----------------------------------------------------------
 void Piece::TakeDamage(int amount)

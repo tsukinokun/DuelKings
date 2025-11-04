@@ -53,8 +53,13 @@ const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFact
 //---------------------------------------------------------------------------
 // ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
-std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type)
+std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type, int piece_level)
 {
     auto it = piece_creators_.find(type);
-    return (it != piece_creators_.end()) ? it->second() : nullptr;
+    if(it != piece_creators_.end()) {
+        auto piece = it->second();
+        piece->SetLevel(piece_level);
+        return piece;
+    }
+    return nullptr;
 }

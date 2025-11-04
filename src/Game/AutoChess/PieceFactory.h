@@ -12,10 +12,11 @@ class PieceFactory
 public:
     //---------------------------------------------------------------------------
     // ピース名を受け取って対応する駒インスタンスを生成する
-    //! @param[in] type 駒の種類名（文字列）
+    //! @param [in] type 駒の種類名（文字列）
+    //! @param [in] 駒のレベル
     //! @return 生成された駒のインスタンス（nullptr の場合は未定義）
     //---------------------------------------------------------------------------
-    static std::shared_ptr<Piece> CreatePiece(const std::string_view& type);
+    static std::shared_ptr<Piece> CreatePiece(const std::string_view& type, int piece_level = 1);
 
 private:
     using PieceCreator = std::function<std::shared_ptr<Piece>()>;                       // 駒生成関数の型定義

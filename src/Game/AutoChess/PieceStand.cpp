@@ -272,6 +272,41 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                                 }
                                 //レベルアップ処理
                                 piece->LevelUp();
+                                //---------------------------------------------------------------------------------
+                                // マスを探索して、自分が置かれているマスを探し、そこに更新されたことを伝える
+                                //---------------------------------------------------------------------------------
+                                //ピーススタンド
+                                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                                    auto square_ptrs = piece_stand->GetSquarePtrArray();
+                                    for(int j = 0; j < square_ptrs.size(); j++) {
+                                        if(auto square = square_ptrs[j].lock()) {
+                                            auto put_piece_wp = square->GetPutPiece();
+                                            if(auto put_piece = put_piece_wp.lock()) {
+                                                //同じポインタなら更新を伝える
+                                                if(put_piece == weak_piece.lock()) {
+                                                    square->SetChanged(true);    //更新されたことを伝える
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                //チェスボード
+                                if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
+                                    auto board_square_ptrs = chess_board->GetSquarePtrArray();
+                                    for(int f = 0; f < board_square_ptrs.size(); f++) {
+                                        for(int r = 0; r < board_square_ptrs[f].size(); r++) {
+                                            if(auto board_square = board_square_ptrs[f][r].lock()) {
+                                                auto put_piece_wp = board_square->GetPutPiece();
+                                                if(auto put_piece = put_piece_wp.lock()) {
+                                                    //同じポインタなら更新を伝える
+                                                    if(put_piece == weak_piece.lock()) {
+                                                        board_square->SetChanged(true);    //更新されたことを伝える
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             };
                             button_ui->SetClickFunc(click_func);
                         }

@@ -41,6 +41,7 @@ bool Player::Init()
                                     //ピースが置かれている場合、情報を更新
                                     piece_info.SetOwner(dynamic_pointer_cast<Player>(shared_from_this()));
                                     piece_info.SetTypeName(piece->GetNameDefault().data());
+                                    piece_info.SetLevel(piece->GetLevel());
                                 }
                                 //ない場合は空の状態に変更
                                 SetBoardInfo(file, rank, piece_info);

@@ -390,6 +390,16 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             // エージェントの所持ゴールド表示UI
             //---------------------------------------------------------------------------------
+            auto gold_ui = Scene::Object::Create<UIText>();
+            gold_ui->SetFontSize(30);                                                       //フォントサイズ設定
+            gold_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
+            gold_ui->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            gold_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
+            //更新処理
+            auto set_text_proc = [agent, gold_ui]() {
+                gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
+            };
+            gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
         }
     }
     return true;
@@ -517,7 +527,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                 std::string type_name = piece_info.GetTypeName();
                 if(type_name != "") {
                     //駒を生成
-                    auto piece = PieceFactory::CreatePiece(type_name);
+                    auto piece = PieceFactory::CreatePiece(type_name, piece_info.GetLevel());
                     //駒の位置を設定(左手前から)
                     float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
                     float z_pos = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
@@ -556,7 +566,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                 std::string type_name = piece_info.GetTypeName();
                 if(type_name != "") {
                     //駒を生成
-                    auto piece = PieceFactory::CreatePiece(type_name);
+                    auto piece = PieceFactory::CreatePiece(type_name, piece_info.GetLevel());
                     //駒の位置を設定(右奥から)
                     float x_pos = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
