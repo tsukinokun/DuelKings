@@ -35,7 +35,13 @@ void PiecePool::Init()
         {         "MakrukKhun", piece_init_stock[0]}, //クン
         {           "MakrukMa", piece_init_stock[0]}, //マーク
         {          "MakrukMet", piece_init_stock[0]}, //メット
-        {         "MakrukRuea", piece_init_stock[0]}  //ルア
+        {         "MakrukRuea", piece_init_stock[0]}, //ルア
+        {     "ChaturangaAsva", piece_init_stock[0]}, //アスヴァ
+        {    "ChaturangaRatha", piece_init_stock[0]}, //ラタ
+        {     "ChaturangaGaja", piece_init_stock[0]}, //ガジャ
+        {   "ChaturangaPadati", piece_init_stock[0]}, //パダティ
+        {   "ChaturangaMantri", piece_init_stock[0]}, //マントリ
+        {     "ChaturangaRaja", piece_init_stock[0]}, //ラジャ
     };
 }
 //---------------------------------------------------------------------------
