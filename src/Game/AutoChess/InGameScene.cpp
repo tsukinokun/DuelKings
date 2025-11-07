@@ -32,10 +32,11 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    ImageBuffer::Init();                              //画像バッファの初期化
-    PiecePool::Init();                                //駒プールの初期化
-    Scene::Object::Create<Camera>();                  //カメラ
-    auto player = Scene::Object::Create<Player>();    //プレイヤー
+    game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json");    //マスターデータの読み込み
+    ImageBuffer::Init();                                                            //画像バッファの初期化
+    PiecePool::Init();                                                              //駒プールの初期化
+    Scene::Object::Create<Camera>();                                                //カメラ
+    auto player = Scene::Object::Create<Player>();                                  //プレイヤー
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------

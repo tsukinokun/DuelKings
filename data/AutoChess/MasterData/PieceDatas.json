@@ -1,0 +1,27 @@
+ "piece_datas_": [
+    {
+      "type_name": "JapaneseChessKnight",
+      "display_name": "桂馬",
+      "levels": [
+        { "hp": 100, "atk": 20, "def": 10 },
+        { "hp": 120, "atk": 25, "def": 12 },
+        { "hp": 140, "atk": 30, "def": 15 }
+      ],
+      "synergies": ["ShogiStyle", "JumpUnit"],
+      "icon_path": "icons/shogi_knight.png",
+      "description": "前方に跳ねる将棋系ユニット。"
+    },
+        {
+      "type_name": "ShogiLance",
+      "display_name": "香車",
+      "levels": [
+        { "hp": 90, "atk": 22, "def": 8 },
+        { "hp": 110, "atk": 28, "def": 10 },
+        { "hp": 130, "atk": 34, "def": 12 }
+      ],
+      "synergies": ["ShogiStyle", "ChargeUnit"],
+      "icon_path": "icons/shogi_lance.png",
+      "description": "直線的に突進する将棋系ユニット。"
+    }
+  ]
+}

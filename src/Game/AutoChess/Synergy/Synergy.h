@@ -36,7 +36,7 @@ public:
             return *this;
         }
 
-        Builder& SetEffect(const SynergyEffect& effect)
+        Builder& SetEffect(const std::shared_ptr<SynergyEffect>& effect)
         {
             effect_ = effect;
             return *this;
@@ -45,10 +45,10 @@ public:
         Synergy Build() const { return Synergy(id_, name_, description_, effect_); }
 
     private:
-        SynergyID     id_;
-        std::string   name_;
-        std::string   description_;
-        SynergyEffect effect_;
+        SynergyID                      id_;
+        std::string                    name_;
+        std::string                    description_;
+        std::shared_ptr<SynergyEffect> effect_;
     };
 
     //--------------------------------------------------
@@ -69,13 +69,13 @@ public:
     //--------------------------------------------------
     //! @brief シナジー効果を取得
     //--------------------------------------------------
-    const SynergyEffect& GetEffect() const { return effect_; }
+    const std::shared_ptr<SynergyEffect>& GetEffect() const { return effect_; }
 
 private:
     //--------------------------------------------------
     //! @brief プライベートコンストラクタ（Builder専用）
     //--------------------------------------------------
-    Synergy(SynergyID id, const std::string& name, const std::string& description, const SynergyEffect& effect)
+    Synergy(SynergyID id, const std::string& name, const std::string& description, const std::shared_ptr<SynergyEffect>& effect)
         : id_(id)
         , name_(name)
         , description_(description)
@@ -83,8 +83,8 @@ private:
     {
     }
 
-    SynergyID     id_;
-    std::string   name_;
-    std::string   description_;
-    SynergyEffect effect_;
+    SynergyID                      id_;
+    std::string                    name_;
+    std::string                    description_;
+    std::shared_ptr<SynergyEffect> effect_;
 };

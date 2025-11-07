@@ -17,4 +17,15 @@ struct PieceData
     std::vector<SynergyID>   synergies;       //!< 所属シナジー
     std::string              icon_path;       //!< アイコンパス
     std::string              description;     //!< 説明文
+
+    //--------------------------------------------------
+    //! @brief シリアライズ関数
+    //! @param ar アーカイブ
+    //! @note Cereal用のシリアライズ関数
+    //--------------------------------------------------
+    template <class Archive>
+    void serialize(Archive& ar)
+    {
+        ar(CEREAL_NVP(type_name), CEREAL_NVP(display_name), CEREAL_NVP(levels), CEREAL_NVP(synergies), CEREAL_NVP(icon_path), CEREAL_NVP(description));
+    }
 };
