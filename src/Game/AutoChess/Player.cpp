@@ -25,6 +25,7 @@ bool Player::Init()
     //---------------------------------------------------------------------------------
     {
         auto update = [this]() {
+            bool has_board_changes = false;    //この呼び出しでボードに変更があったかどうかのフラグ
             //ボードをループ
             if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
                 auto squares_ = chess_board->GetSquarePtrArray();
@@ -46,11 +47,18 @@ bool Player::Init()
                                 SetBoardInfo(file, rank, piece_info);
                                 //フラグをリセット
                                 square_->SetChanged(false);
+                                has_board_changes = true;    //変更があったことを記録
                             }
                         }
                     }
                 }
             }
+
+            //ボードに変更があった場合の処理
+            if(has_board_changes) {
+                synergy_system_.UpdateSynergys(board_info_);    //変更された駒があった場合はシナジー情報を更新
+            }
+
             //ピーススタンドにもかける
             if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
                 auto squares_ = piece_stand->GetSquarePtrArray();

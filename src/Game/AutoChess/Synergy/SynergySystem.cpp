@@ -75,6 +75,14 @@ void SynergySystem::UpdateSynergys(const BoardInfo& board_info)
 }
 
 //--------------------------------------------------
+// シナジーのベクターを返す関数
+//--------------------------------------------------
+std::vector<Synergy> SynergySystem::GetSynergys() const
+{
+    return synergys_;
+}
+
+//--------------------------------------------------
 // 全シナジー情報をリセット
 //--------------------------------------------------
 void SynergySystem::Reset()
