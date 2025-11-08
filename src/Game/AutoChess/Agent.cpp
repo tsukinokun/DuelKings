@@ -221,7 +221,7 @@ std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& 
 //-----------------------------------------------------------
 PieceInfo Agent::GetBoardInfo(int file, int rank) const
 {
-    auto info = board_info_.GetSquarePtrArray();
+    auto info = board_info_.GetPieceInfoArray();
     return info[file][rank];
 }
 
@@ -248,7 +248,7 @@ void Agent::EnforcePieceLimit()
     int pieces_to_remove = placed_piece_count - level;
     for(int file = 0; file < 4 && pieces_to_remove > 0; ++file) {
         for(int rank = 0; rank < 8 && pieces_to_remove > 0; ++rank) {
-            PieceInfo piece = board_info_.GetSquarePtrArray()[file][rank];
+            PieceInfo piece = board_info_.GetPieceInfoArray()[file][rank];
             if(piece.GetTypeName() != "") {
                 board_info_.RemovePiece(file, rank);
                 --pieces_to_remove;
@@ -265,7 +265,7 @@ void Agent::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file,
     auto agent = shared_from_this();
     //一時変数にピース情報を保存
     auto stand_piece = stand_info_.GetStandPieces()[piece_stand_index];
-    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    auto board_piece = board_info_.GetPieceInfoArray()[board_file][board_rank];
     // ピーススタンドのピースをチェスボードに移動
     board_info_.AddPiece(board_file, board_rank, stand_piece);
     // チェスボードのピースをピーススタンドに移動
@@ -277,7 +277,7 @@ void Agent::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file,
 bool Agent::MoveBoardPieceToStand(int board_file, int board_rank)
 {
     // チェスボードのピース情報を取得
-    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    auto board_piece = board_info_.GetPieceInfoArray()[board_file][board_rank];
     if(board_piece.GetTypeName() == "") {
         return false;    // 駒が存在しない場合は何もしない
     }

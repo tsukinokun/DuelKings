@@ -11,12 +11,12 @@
 //------------------------------------------------------
 struct PieceData
 {
-    std::string              type_name;       //!< 駒の名前
-    std::string              display_name;    //!< UI表示名
-    std::array<LevelData, 3> levels;          //!< レベル1〜3のステータス
-    std::vector<SynergyID>   synergies;       //!< 所属シナジー
-    std::string              icon_path;       //!< アイコンパス
-    std::string              description;     //!< 説明文
+    std::string              type_name_;       //!< 駒の名前
+    std::string              display_name_;    //!< UI表示名
+    std::array<LevelData, 3> levels_;          //!< レベル1〜3のステータス
+    std::vector<SynergyID>   synergies_;       //!< 所属シナジー
+    std::string              icon_path_;       //!< アイコンパス
+    std::string              description_;     //!< 説明文
 
     //--------------------------------------------------
     //! @brief シリアライズ関数
@@ -26,6 +26,6 @@ struct PieceData
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(CEREAL_NVP(type_name), CEREAL_NVP(display_name), CEREAL_NVP(levels), CEREAL_NVP(synergies), CEREAL_NVP(icon_path), CEREAL_NVP(description));
+        ar(CEREAL_NVP(type_name_), CEREAL_NVP(display_name_), CEREAL_NVP(levels_), CEREAL_NVP(synergies_), CEREAL_NVP(icon_path_), CEREAL_NVP(description_));
     }
 };

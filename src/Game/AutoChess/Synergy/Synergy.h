@@ -18,65 +18,106 @@ public:
     class Builder
     {
     public:
+        //--------------------------------------------------
+        //! @brief シナジーIDを設定
+        //! @param id シナジーID
+        //--------------------------------------------------
         Builder& SetID(SynergyID id)
         {
             id_ = id;
             return *this;
         }
 
+        //--------------------------------------------------
+        //! @brief 発動しているユニット数を設定
+        //! @param count 発動しているユニット数(重複なし)
+        //--------------------------------------------------
+        Builder& SetSynergyCount(int count)
+        {
+            synergy_count_ = count;
+            return *this;
+        }
+
+        //--------------------------------------------------
+        //! @brief シナジー名を設定
+        //! @param name シナジー名
+        //--------------------------------------------------
         Builder& SetName(const std::string& name)
         {
             name_ = name;
             return *this;
         }
 
+        //--------------------------------------------------
+        //! @brief シナジー説明文を設定
+        //! @param description シナジー説明文
+        //--------------------------------------------------
         Builder& SetDescription(const std::string& description)
         {
             description_ = description;
             return *this;
         }
 
+        //--------------------------------------------------
+        //! @brief シナジー効果を設定
+        //! @param effect シナジー効果
+        //--------------------------------------------------
         Builder& SetEffect(const std::shared_ptr<SynergyEffect>& effect)
         {
             effect_ = effect;
             return *this;
         }
 
-        Synergy Build() const { return Synergy(id_, name_, description_, effect_); }
+        //--------------------------------------------------
+        //! @brief Synergy オブジェクトを構築
+        //! @return Synergy オブジェクト
+        //--------------------------------------------------
+        Synergy Build() const { return Synergy(id_, synergy_count_, name_, description_, effect_); }
 
     private:
         SynergyID                      id_;
+        int                            synergy_count_;    //!< 発動しているユニット数(重複なし)
         std::string                    name_;
         std::string                    description_;
         std::shared_ptr<SynergyEffect> effect_;
     };
 
     //--------------------------------------------------
-    //! @brief シナジーIDを取得
+    // シナジーIDを取得
+    //! @return シナジーID
     //--------------------------------------------------
-    SynergyID GetID() const { return id_; }
+    SynergyID GetID() const;
 
     //--------------------------------------------------
-    //! @brief シナジー名を取得
+    // シナジー名を取得
+    //! @return シナジー名
     //--------------------------------------------------
-    const std::string& GetName() const { return name_; }
+    const std::string& GetName() const;
 
     //--------------------------------------------------
-    //! @brief シナジー説明文を取得
+    // シナジー説明文を取得
+    //! @return シナジー説明文
     //--------------------------------------------------
-    const std::string& GetDescription() const { return description_; }
+    const std::string& GetDescription() const;
 
     //--------------------------------------------------
-    //! @brief シナジー効果を取得
+    // シナジー効果を取得
+    //! @return シナジー効果
     //--------------------------------------------------
-    const std::shared_ptr<SynergyEffect>& GetEffect() const { return effect_; }
+    const std::shared_ptr<SynergyEffect>& GetEffect() const;
+
+    //--------------------------------------------------
+    // カウントを増やす
+    //--------------------------------------------------
+    void IncrementSynergyCount();
 
 private:
     //--------------------------------------------------
     //! @brief プライベートコンストラクタ（Builder専用）
     //--------------------------------------------------
-    Synergy(SynergyID id, const std::string& name, const std::string& description, const std::shared_ptr<SynergyEffect>& effect)
+    Synergy(SynergyID id, int synergy_count, const std::string& name, const std::string& description, const std::shared_ptr<SynergyEffect>& effect)
         : id_(id)
+        , synergy_count_(synergy_count)
         , name_(name)
         , description_(description)
         , effect_(effect)
@@ -84,6 +125,7 @@ private:
     }
 
     SynergyID                      id_;
+    int                            synergy_count_;    //!< 発動しているユニット数(重複なし)
     std::string                    name_;
     std::string                    description_;
     std::shared_ptr<SynergyEffect> effect_;

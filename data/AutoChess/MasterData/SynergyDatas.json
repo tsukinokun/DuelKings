@@ -1,0 +1,15 @@
+{
+  "synergies": [
+    {
+      "id": "Shogi",
+      "name": "棋将共鳴",
+      "level_thresholds": [2, 4, 6],
+      "descriptions": [
+        "2体以上で将棋ユニットの攻撃力が+10%される。",
+        "4体以上で将棋ユニットの移動範囲が+1される。",
+        "6体以上で将棋ユニットが毎ターンHPを5回復する。"
+      ],
+      "icon_handle": "japanese_chess_synergy_icon"
+    }
+  ]
+}

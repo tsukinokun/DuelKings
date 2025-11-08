@@ -9,6 +9,7 @@
 #include <Game/AutoChess/Info/ShopStandInfo.h>
 #include <Game/AutoChess/Info/PieceStandInfo.h>
 #include <Game/AutoChess/Info/AgentInfo.h>
+#include <Game/AutoChess/Synergy/SynergySystem.h>
 class PieceInfo;
 USING_PTR(Agent);
 class Agent : public Object
@@ -174,4 +175,5 @@ protected:
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド
     AgentInfo      agent_info_;         //エージェント情報
+    SynergySystem  synergy_system_;     //シナジーシステム
 };

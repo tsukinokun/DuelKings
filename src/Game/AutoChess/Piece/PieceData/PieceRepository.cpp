@@ -24,3 +24,15 @@ bool PieceRepository::LoadFromJson(const std::string& path)
         return false;    // 失敗
     }
 }
+//--------------------------------------------------
+// 駒の種類名（type_name）で定義を検索
+//--------------------------------------------------
+const PieceData* PieceRepository::FindByTypeName(const std::string& type_name) const
+{
+    for(const auto& piece : piece_datas_) {
+        if(piece.type_name_ == type_name) {
+            return &piece;
+        }
+    }
+    return nullptr;
+}

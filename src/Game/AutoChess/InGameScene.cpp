@@ -32,11 +32,11 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json");    //マスターデータの読み込み
-    ImageBuffer::Init();                                                            //画像バッファの初期化
-    PiecePool::Init();                                                              //駒プールの初期化
-    Scene::Object::Create<Camera>();                                                //カメラ
-    auto player = Scene::Object::Create<Player>();                                  //プレイヤー
+    game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json", "data/AutoChess/MasterData/SynergyDatas.json");    //マスターデータの読み込み
+    ImageBuffer::Init();                                                                                                           //画像バッファの初期化
+    PiecePool::Init();                                                                                                             //駒プールの初期化
+    Scene::Object::Create<Camera>();                                                                                               //カメラ
+    auto player = Scene::Object::Create<Player>();                                                                                 //プレイヤー
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------
@@ -134,9 +134,12 @@ bool InGameScene::Init()
         reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
         auto click_func = [player]() {
-            //ピースリロールに2ゴールド消費する
-            if(player->SpendGold(2)) {
-                player->RerollShopPieces();    //ショップのピースをリロールする
+            //ショップがロックされていなければリロール可能
+            if(!player->IsShopLocked()) {
+                //ピースリロールに2ゴールド消費する
+                if(player->SpendGold(2)) {
+                    player->RerollShopPieces();    //ショップのピースをリロールする
+                }
             }
         };
         reroll_button->SetClickFunc(click_func);

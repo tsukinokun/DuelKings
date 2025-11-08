@@ -16,7 +16,7 @@ void BoardInfo::SetOwner(const std::weak_ptr<Agent>& owner)
 //---------------------------------------------------------------------------
 //! マスのウィークポインタを取得
 //---------------------------------------------------------------------------
-std::array<std::array<PieceInfo, 8>, 4> BoardInfo::GetSquarePtrArray() const
+std::array<std::array<PieceInfo, 8>, 4> BoardInfo::GetPieceInfoArray() const
 {
     return squares_;
 }
