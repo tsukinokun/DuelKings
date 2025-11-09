@@ -84,6 +84,19 @@ bool Player::Init()
             }
         };
         SetProc("Update", update, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // シナジーに合わせてUIを更新する処理
+        //---------------------------------------------------------------------------------
+        auto update_ui = [this]() {
+            //シナジー情報を取得
+            auto synergys = synergy_system_.GetSynergys();
+            //TODO: シナジー情報に合わせてUIを更新する処理
+            for(auto& synergy : synergys) {
+                //シナジー名を取得
+                auto synergy_name = synergy.GetName();
+            }
+        };
+        SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NONE);
     }
     return true;
 }

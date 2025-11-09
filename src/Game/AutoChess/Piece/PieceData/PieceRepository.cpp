@@ -15,7 +15,7 @@ bool PieceRepository::LoadFromJson(const std::string& path)
 
     try {
         cereal::JSONInputArchive archive(file);    // cerealアーカイブを作成
-        archive(CEREAL_NVP(piece_datas_));         // pieces_ にデシリアライズ
+        archive(piece_datas_);                     // pieces_ にデシリアライズ
         return true;                               // 成功
     }
     catch(const std::exception& e) {

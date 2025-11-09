@@ -293,3 +293,10 @@ bool Agent::MoveBoardPieceToStand(int board_file, int board_rank)
     }
     return false;    //空いてる場所がなかった場合は失敗
 }
+//-----------------------------------------------------------
+//! @brief シナジーシステムにリポジトリのポインタを設定する関数
+//-----------------------------------------------------------
+void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository)
+{
+    synergy_system_.SetRepository(synergy_repository, piece_repository);
+}

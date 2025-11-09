@@ -14,7 +14,7 @@ bool SynergyRepository::LoadFromJson(const std::string& path)
         return false;
     try {
         cereal::JSONInputArchive archive(file);
-        archive(CEREAL_NVP(synergies_));
+        archive(synergies_);
         return true;
     }
     catch(const std::exception& e) {

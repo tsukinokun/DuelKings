@@ -167,6 +167,13 @@ public:
     //-----------------------------------------------------------
     virtual bool MoveBoardPieceToStand(int board_file, int board_rank);
 
+    //-----------------------------------------------------------
+    // シナジーシステムにリポジトリのポインタを設定する関数
+    //! @param synergy_repository シナジーリポジトリへのポインタ
+    //! @param piece_repository ピースリポジトリへのポインタ
+    //-----------------------------------------------------------
+    void SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository);
+
     //@}
 protected:
     int            exp_ = 0;            //エージェントのレベル

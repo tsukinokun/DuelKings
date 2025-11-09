@@ -22,6 +22,11 @@ public:
     //--------------------------------------------------
     const PieceRepository& GetPieceRepository() const { return piece_repo_; }
 
+    //--------------------------------------------------
+    // シナジー定義リポジトリへの参照を取得
+    //--------------------------------------------------
+    const SynergyRepository& GetSynergyRepository() const { return synergy_repo_; }
+
 private:
     PieceRepository   piece_repo_;      //!< 駒定義リポジトリ
     SynergyRepository synergy_repo_;    //!< シナジー定義リポジトリ

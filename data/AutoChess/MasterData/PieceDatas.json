@@ -1,50 +1,30 @@
-"piece_datas_": [
-  {
-    "type_name_": "JapaneseChessKnight",
-    "display_name_": "桂馬",
-    "levels_": [
-      {
-        "attack_": 20,
-        "hp_": 20,
-        "move_range_": 10
-      },
-      {
-        "attack_": 40,
-        "hp_": 25,
-        "move_range_": 12
-      },
-      {
-        "attack_": 60,
-        "hp_": 30,
-        "move_range_": 15
-      }
-    ],
-    "synergies_": [ "Shogi", "JumpUnit" ],
-    "icon_path_": "icons/shogi_knight.png",
-    "description_": "前方に跳ねる将棋系ユニット。"
-  },
-  {
-    "type_name_": "ShogiLance",
-    "display_name_": "香車",
-    "levels_": [
-      {
-        "attack_": 20,
-        "hp_": 20,
-        "move_range_": 10
-      },
-      {
-        "attack_": 40,
-        "hp_": 25,
-        "move_range_": 12
-      },
-      {
-        "attack_": 60,
-        "hp_": 30,
-        "move_range_": 15
-      }
-    ],
-    "synergies_": [ "Shogi", "ChargeUnit" ],
-    "icon_path_": "icons/shogi_lance.png",
-    "description_": "直線的に突進する将棋系ユニット。"
-  }
-] }
+{
+    "value0": [
+        {
+            "type_name_": "JapaneseChessKnight",
+            "display_name_": "�j�n",
+            "levels_": {
+                "value0": {
+                    "attack_": 20,
+                    "hp_": 20,
+                    "move_range_": 10
+                },
+                "value1": {
+                    "attack_": 40,
+                    "hp_": 25,
+                    "move_range_": 12
+                },
+                "value2": {
+                    "attack_": 60,
+                    "hp_": 30,
+                    "move_range_": 15
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_knight.png",
+            "description_": "japanesechess knight piece."
+        }
+    ]
+}
