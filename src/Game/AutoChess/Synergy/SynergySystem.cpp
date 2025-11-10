@@ -75,7 +75,7 @@ void SynergySystem::UpdateSynergys(const BoardInfo& board_info)
 }
 
 //--------------------------------------------------
-// シナジーのベクターを返す関数
+//! @brief シナジーのベクターを返す関数
 //--------------------------------------------------
 std::vector<Synergy> SynergySystem::GetSynergys() const
 {
@@ -83,7 +83,18 @@ std::vector<Synergy> SynergySystem::GetSynergys() const
 }
 
 //--------------------------------------------------
-// 全シナジー情報をリセット
+//! @brief 指定したシナジーIDのシナジー情報を取得する関数
+//--------------------------------------------------
+const SynergyData* SynergySystem::GetSynergyData(SynergyID synergy_id) const
+{
+    if(synergy_repository_) {
+        return synergy_repository_->FindByID(synergy_id);
+    }
+    return nullptr;
+}
+
+//--------------------------------------------------
+//! @brief 全シナジー情報をリセット
 //--------------------------------------------------
 void SynergySystem::Reset()
 {

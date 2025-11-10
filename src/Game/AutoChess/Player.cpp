@@ -13,6 +13,8 @@
 #include <Game/AutoChess/ChessBoard.h>
 #include <Game/AutoChess/PieceStand.h>
 #include <Game/AutoChess/Info/PieceInfo.h>
+#include <Game/AutoChess/UIObject/UISynergy.h>
+#include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -90,10 +92,22 @@ bool Player::Init()
         auto update_ui = [this]() {
             //シナジー情報を取得
             auto synergys = synergy_system_.GetSynergys();
+            //既存のシナジーUIを全て削除
+            for(auto& synergy_ui : Scene::Object::GetArray<UISynergy>()) {
+                Scene::Object::Release(synergy_ui);
+            }
             //TODO: シナジー情報に合わせてUIを更新する処理
+            int synergy_index = 0;
             for(auto& synergy : synergys) {
-                //シナジー名を取得
-                auto synergy_name = synergy.GetName();
+                //IDを取得
+                SynergyID synergy_id = synergy.GetID();
+                //そのシナジーデータを取得
+                auto synergy_data = synergy_system_.GetSynergyData(synergy_id);
+                auto synergy_ui   = Scene::Object::Create<UISynergy>();
+                synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
+                synergy_ui->SetTranslate(float3(800.0f, 100.0f + (synergy_index * 100.0f), 0.0f));    //位置を右上あたりに設定
+                synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
+                synergy_index++;
             }
         };
         SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NONE);

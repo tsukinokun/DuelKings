@@ -13,7 +13,7 @@
                 "将棋駒のシナジー効果が強化されます。4体以上で追加効果が発動します。",
                 "将棋駒のシナジー効果が最大まで強化されます。6体以上でさらなる追加効果が発動します。"
             ],
-            "icon_path_": "icons/shogi_synergy.png"
+            "icon_path_": "japanese_chess_synergy_icon"
         }
     ]
 }
