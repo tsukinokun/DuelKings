@@ -37,6 +37,14 @@ const std::shared_ptr<SynergyEffect>& Synergy::GetEffect() const
 }
 
 //--------------------------------------------------
+//! @brief 発動数を取得
+//--------------------------------------------------
+int Synergy::GetSynergyCount() const
+{
+    return synergy_count_;
+}
+
+//--------------------------------------------------
 //! @brief カウントを増やす
 //--------------------------------------------------
 void Synergy::IncrementSynergyCount()

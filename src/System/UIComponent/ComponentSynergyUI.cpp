@@ -85,6 +85,24 @@ std::shared_ptr<ComponentSynergyUI> ComponentSynergyUI::SetSynergyImage(int imag
 }
 
 //--------------------------------------------------------------------
+//! @brief 次のレベルまでの必要数を設定する関数
+//--------------------------------------------------------------------
+std::shared_ptr<ComponentSynergyUI> ComponentSynergyUI::SetNextCount(int next_count)
+{
+    next_count_ = next_count;
+    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+}
+
+//--------------------------------------------------------------------
+//! @brief シナジーの数を設定する関数
+//--------------------------------------------------------------------
+std::shared_ptr<ComponentSynergyUI> ComponentSynergyUI::SetSynergyCount(int synergy_count)
+{
+    synergy_count_ = synergy_count;
+    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+}
+
+//--------------------------------------------------------------------
 //! @brief  画像座標の補正値を取得する関数
 //--------------------------------------------------------------------
 float3 ComponentSynergyUI::GetAdjustment() const

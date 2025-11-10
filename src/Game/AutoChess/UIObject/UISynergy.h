@@ -24,6 +24,20 @@ public:
     //-------------------------------------------------
     std::shared_ptr<ComponentSynergyUI> SetSynergyImage(int image_handle);
 
+    //-------------------------------------------------
+    // 次のレベルまでの必要数を設定する関数
+    //! @param next_count 次のレベルまでの必要数
+    //! @retval このオブジェクトのshared_ptr
+    //-------------------------------------------------
+    std::shared_ptr<ComponentSynergyUI> SetNextCount(int next_count);
+
+    //-------------------------------------------------
+    // シナジーの数を設定する関数
+    //! @param synergy_count シナジーの数
+    //! @retval このオブジェクトのshared_ptr
+    //-------------------------------------------------
+    std::shared_ptr<ComponentSynergyUI> SetSynergyCount(int synergy_count);
+
 private:
     std::weak_ptr<ComponentSynergyUI>
         synergy_component_;    // シナジーコンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

@@ -32,3 +32,25 @@ std::shared_ptr<ComponentSynergyUI> UISynergy::SetSynergyImage(int image_handle)
     }
     return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
 }
+
+//-------------------------------------------------
+//! @brief 次のレベルまでの必要数を設定する関数
+//-------------------------------------------------
+std::shared_ptr<ComponentSynergyUI> UISynergy::SetNextCount(int next_count)
+{
+    if(auto synergy_comp = synergy_component_.lock()) {
+        synergy_comp->SetNextCount(next_count);    // 次のレベルまでの必要数を設定
+    }
+    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+}
+
+//-------------------------------------------------
+//! @brief シナジーの数を設定する関数
+//-------------------------------------------------
+std::shared_ptr<ComponentSynergyUI> UISynergy::SetSynergyCount(int synergy_count)
+{
+    if(auto synergy_comp = synergy_component_.lock()) {
+        synergy_comp->SetSynergyCount(synergy_count);    // シナジーの数を設定
+    }
+    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+}

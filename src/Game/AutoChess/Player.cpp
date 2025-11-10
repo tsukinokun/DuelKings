@@ -107,6 +107,18 @@ bool Player::Init()
                 synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
                 synergy_ui->SetTranslate(float3(800.0f, 100.0f + (synergy_index * 100.0f), 0.0f));    //位置を右上あたりに設定
                 synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
+                //シナジーの数を取得
+                int synergy_count = synergy.GetSynergyCount();
+                synergy_ui->SetSynergyCount(synergy_count);    //シナジーの数を設定
+                int next_count = 0;                            // 次のレベルまでの必要数を計算
+                for(int i = 0; i < synergy_data->level_thresholds_.size(); i++) {
+                    //現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入してループを抜ける
+                    if(synergy_count < synergy_data->level_thresholds_[i]) {
+                        next_count = synergy_data->level_thresholds_[i];
+                        break;
+                    }
+                }
+                synergy_ui->SetNextCount(next_count);    //次のレベルまでの必要数を設定
                 synergy_index++;
             }
         };

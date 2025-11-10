@@ -23,6 +23,20 @@ public:
     //--------------------------------------------------------------------
     std::shared_ptr<ComponentSynergyUI> SetSynergyImage(int image_handle);
 
+    //--------------------------------------------------------------------
+    // 次のレベルまでの必要数を設定する関数
+    //! @param next_count 次のレベルまでの必要数
+    //! @retval このコンポーネントのshared_ptr
+    //--------------------------------------------------------------------
+    std::shared_ptr<ComponentSynergyUI> SetNextCount(int next_count);
+
+    //--------------------------------------------------------------------
+    // シナジーの数を設定する関数
+    //! @param synergy_count シナジーの数
+    //! @retval このコンポーネントのshared_ptr
+    //--------------------------------------------------------------------
+    std::shared_ptr<ComponentSynergyUI> SetSynergyCount(int synergy_count);
+
     //! @}
 private:
     //--------------------------------------------------------------------
@@ -36,7 +50,7 @@ private:
     int         max_level_     = 0;                          //!< シナジー最大値
     int         level_         = 0;                          //!< シナジーレベル
     int         next_count_    = 0;                          //!< 次のレベルまでの必要数
-    int         synergy_count_ = 0;                          //!< シナジーの数
+    int         synergy_count_ = 0;                          //!< このシナジーを発動させている駒の数
     std::string font_name_     = "Book Antiqua";             //フォントの名前
     int         font_size_     = DEFAULT_FONT_SIZE;          //フォントサイズ
     int         text_color_    = GetColor(255, 255, 255);    //文字の色
