@@ -166,8 +166,9 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                             float2 offset  = float2(0.0f, -30.0f);
                             screen_pos    += offset;
                             button_ui->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));    //位置を設定
-                            button_ui->SetImage(ImageBuffer::GetImageHandle("deff"));             //アニメーションステータス設定
-                            button_ui->SetName(button_ui_name);                                   //名前設定
+                            button_ui->SetImage(ImageBuffer::GetImageHandle("level_up"));         //アニメーションステータス設定
+                            button_ui->SetScaleAxisXYZ(0.3f);
+                            button_ui->SetName(button_ui_name);    //名前設定
                             //自身のポインタを格納
                             std::weak_ptr<Piece> weak_piece  = piece;    // 自分の弱参照を取得
                             auto                 update_proc = [button_ui, weak_piece]() {
