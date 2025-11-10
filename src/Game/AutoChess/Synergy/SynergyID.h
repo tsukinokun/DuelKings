@@ -6,5 +6,8 @@
 #pragma once
 enum class SynergyID
 {
-    Shogi = 0,    // 将棋駒シナジーのID
+    Shogi      = 0,    // 将棋駒シナジーのID
+    Chess      = 1,    // チェス駒シナジーのID
+    Chaturanga = 2,    // チャトランガ駒シナジーのID
+    Makruk     = 3,    // マークルック駒シナジーのID
 };
