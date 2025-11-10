@@ -13,6 +13,8 @@
 #include <Game/AutoChess/ChessBoard.h>
 #include <Game/AutoChess/PieceStand.h>
 #include <Game/AutoChess/Info/PieceInfo.h>
+#include <Game/AutoChess/UIObject/UISynergy.h>
+#include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -25,6 +27,7 @@ bool Player::Init()
     //---------------------------------------------------------------------------------
     {
         auto update = [this]() {
+            bool has_board_changes = false;    //この呼び出しでボードに変更があったかどうかのフラグ
             //ボードをループ
             if(auto chess_board = Scene::Object::Get<ChessBoard>()) {
                 auto squares_ = chess_board->GetSquarePtrArray();
@@ -46,11 +49,18 @@ bool Player::Init()
                                 SetBoardInfo(file, rank, piece_info);
                                 //フラグをリセット
                                 square_->SetChanged(false);
+                                has_board_changes = true;    //変更があったことを記録
                             }
                         }
                     }
                 }
             }
+
+            //ボードに変更があった場合の処理
+            if(has_board_changes) {
+                synergy_system_.UpdateSynergys(board_info_);    //変更された駒があった場合はシナジー情報を更新
+            }
+
             //ピーススタンドにもかける
             if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
                 auto squares_ = piece_stand->GetSquarePtrArray();
@@ -76,6 +86,43 @@ bool Player::Init()
             }
         };
         SetProc("Update", update, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // シナジーに合わせてUIを更新する処理
+        //---------------------------------------------------------------------------------
+        auto update_ui = [this]() {
+            //シナジー情報を取得
+            auto synergys = synergy_system_.GetSynergys();
+            //既存のシナジーUIを全て削除
+            for(auto& synergy_ui : Scene::Object::GetArray<UISynergy>()) {
+                Scene::Object::Release(synergy_ui);
+            }
+            //TODO: シナジー情報に合わせてUIを更新する処理
+            int synergy_index = 0;
+            for(auto& synergy : synergys) {
+                //IDを取得
+                SynergyID synergy_id = synergy.GetID();
+                //そのシナジーデータを取得
+                auto synergy_data = synergy_system_.GetSynergyData(synergy_id);
+                auto synergy_ui   = Scene::Object::Create<UISynergy>();
+                synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
+                synergy_ui->SetTranslate(float3(800.0f, 100.0f + (synergy_index * 100.0f), 0.0f));    //位置を右上あたりに設定
+                synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
+                //シナジーの数を取得
+                int synergy_count = synergy.GetSynergyCount();
+                synergy_ui->SetSynergyCount(synergy_count);    //シナジーの数を設定
+                int next_count = 0;                            // 次のレベルまでの必要数を計算
+                for(int i = 0; i < synergy_data->level_thresholds_.size(); i++) {
+                    //現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入してループを抜ける
+                    if(synergy_count < synergy_data->level_thresholds_[i]) {
+                        next_count = synergy_data->level_thresholds_[i];
+                        break;
+                    }
+                }
+                synergy_ui->SetNextCount(next_count);    //次のレベルまでの必要数を設定
+                synergy_index++;
+            }
+        };
+        SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NONE);
     }
     return true;
 }
@@ -109,7 +156,7 @@ void Player::EnforcePieceLimit()
     int pieces_to_remove = placed_piece_count - level;
     for(int file = 0; file < 4 && pieces_to_remove > 0; ++file) {
         for(int rank = 0; rank < 8 && pieces_to_remove > 0; ++rank) {
-            PieceInfo piece = board_info_.GetSquarePtrArray()[file][rank];
+            PieceInfo piece = board_info_.GetPieceInfoArray()[file][rank];
             if(piece.GetTypeName() != "") {
                 if(!MoveBoardPieceToStand(file, rank)) {
                     //失敗していたら、駒を強制削除
@@ -137,7 +184,7 @@ void Player::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file
     auto agent = shared_from_this();
     //一時変数にピース情報を保存
     auto stand_piece = stand_info_.GetStandPieces()[piece_stand_index];
-    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    auto board_piece = board_info_.GetPieceInfoArray()[board_file][board_rank];
     // ピーススタンドのピースをチェスボードに移動
     board_info_.AddPiece(board_file, board_rank, stand_piece);
     // チェスボードのピースをピーススタンドに移動
@@ -165,7 +212,7 @@ void Player::SwapPieceStandAndBoardInfo(size_t piece_stand_index, int board_file
 bool Player::MoveBoardPieceToStand(int board_file, int board_rank)
 {
     // チェスボードのピース情報を取得
-    auto board_piece = board_info_.GetSquarePtrArray()[board_file][board_rank];
+    auto board_piece = board_info_.GetPieceInfoArray()[board_file][board_rank];
     if(board_piece.GetTypeName() == "") {
         return false;    // 駒が存在しない場合は何もしない
     }

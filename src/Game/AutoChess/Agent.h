@@ -9,6 +9,7 @@
 #include <Game/AutoChess/Info/ShopStandInfo.h>
 #include <Game/AutoChess/Info/PieceStandInfo.h>
 #include <Game/AutoChess/Info/AgentInfo.h>
+#include <Game/AutoChess/Synergy/SynergySystem.h>
 class PieceInfo;
 USING_PTR(Agent);
 class Agent : public Object
@@ -166,6 +167,13 @@ public:
     //-----------------------------------------------------------
     virtual bool MoveBoardPieceToStand(int board_file, int board_rank);
 
+    //-----------------------------------------------------------
+    // シナジーシステムにリポジトリのポインタを設定する関数
+    //! @param synergy_repository シナジーリポジトリへのポインタ
+    //! @param piece_repository ピースリポジトリへのポインタ
+    //-----------------------------------------------------------
+    void SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository);
+
     //@}
 protected:
     int            exp_ = 0;            //エージェントのレベル
@@ -174,4 +182,5 @@ protected:
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド
     AgentInfo      agent_info_;         //エージェント情報
+    SynergySystem  synergy_system_;     //シナジーシステム
 };

@@ -1,0 +1,64 @@
+{
+    "value0": [
+        {
+            "id_": 0,
+            "name_": "棋将共鳴",
+            "level_thresholds_": [
+                2,
+                4,
+                6
+            ],
+            "descriptions_": [
+                "将棋駒のシナジー効果が発動します。2体以上で効果が開始され、駒数に応じて効果が強化されます。",
+                "将棋駒のシナジー効果が強化されます。4体以上で追加効果が発動します。",
+                "将棋駒のシナジー効果が最大まで強化されます。6体以上でさらなる追加効果が発動します。"
+            ],
+            "icon_path_": "japanese_chess_synergy_icon"
+        },
+        {
+            "id_": 1,
+            "name_": "チェス",
+            "level_thresholds_": [
+                2,
+                4,
+                6
+            ],
+            "descriptions_": [
+                "",
+                "",
+                ""
+            ],
+            "icon_path_": "chess_synergy_icon"
+        },
+        {
+            "id_": 2,
+            "name_": "チャトランガ",
+            "level_thresholds_": [
+                2,
+                4,
+                6
+            ],
+            "descriptions_": [
+                "",
+                "",
+                ""
+            ],
+            "icon_path_": "chaturanga_synergy_icon"
+        },
+        {
+            "id_": 3,
+            "name_": "マークルック",
+            "level_thresholds_": [
+                2,
+                4,
+                6
+            ],
+            "descriptions_": [
+                "",
+                "",
+                ""
+            ],
+            "icon_path_": "makruk_synergy_icon"
+        }
+    ]
+}

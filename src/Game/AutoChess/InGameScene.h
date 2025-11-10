@@ -6,6 +6,7 @@
 #pragma once
 #include <System/Scene.h>
 #include <Game/AutoChess/system/Timer.h>
+#include <Game/AutoChess/Context/GameContext.h>
 class InGameScene : public Scene::Base
 {
 private:
@@ -43,9 +44,10 @@ private:
 
     //@}
 private:
-    Timer     phase_timer_;
-    GameState game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
-    float     state_timer_      = 0.0f;                // 状態経過時間（秒）
-    bool      is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
-    int       turn_count_       = 1;                   // 現在のターン数
+    Timer       phase_timer_;
+    GameContext game_context_;                           //マスターデータなどの管理クラス
+    GameState   game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
+    float       state_timer_      = 0.0f;                // 状態経過時間（秒）
+    bool        is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    int         turn_count_       = 1;                   // 現在のターン数
 };

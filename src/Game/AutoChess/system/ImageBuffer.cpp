@@ -22,6 +22,12 @@ void ImageBuffer::Init()
     image_buffer_["level1_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level1Star.png");                 // レベル1スター画像
     image_buffer_["level2_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level2Star.png");                 // レベル2スター画像
     image_buffer_["level3_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level3Star.png");                 // レベル3スター画像
+    image_buffer_["japanese_chess_synergy_icon"] =
+        DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/JapaneseChessSynergyIcon.png");                              // 将棋シナジーアイコン画像
+    image_buffer_["chess_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChessSynergyIcon.png");    // チェスシナジーアイコン画像
+    image_buffer_["chaturanga_synergy_icon"] =
+        DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChaturangaSynergyIcon.png");                                   // チャトランガシナジーアイコン画像
+    image_buffer_["makruk_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/MakrukSynergyIcon.png");    // マークルックシナジーアイコン画像
 }
 
 //---------------------------------------------------------------------------------
