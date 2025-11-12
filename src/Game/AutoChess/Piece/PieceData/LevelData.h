@@ -9,9 +9,8 @@
 //------------------------------------------------------
 struct LevelData
 {
-    int attack_     = 0;    //!< 攻撃力
-    int hp_         = 0;    //!< 体力
-    int move_range_ = 0;    //!< 移動距離
+    int attack_ = 0;    //!< 攻撃力
+    int hp_     = 0;    //!< 体力
 
     //--------------------------------------------------
     //! @brief シリアライズ関数
@@ -21,6 +20,6 @@ struct LevelData
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(CEREAL_NVP(attack_), CEREAL_NVP(hp_), CEREAL_NVP(move_range_));
+        ar(CEREAL_NVP(attack_), CEREAL_NVP(hp_));
     }
 };

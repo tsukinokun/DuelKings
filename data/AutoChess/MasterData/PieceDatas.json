@@ -2,29 +2,29 @@
     "value0": [
         {
             "type_name_": "JapaneseChessKnight",
-            "display_name_": "Œj”n",
+            "display_name_": "“Þ—Ž‚Ì‰e”n",
             "levels_": {
                 "value0": {
                     "attack_": 20,
-                    "hp_": 20,
-                    "move_range_": 10
+                    "hp_": 20
                 },
                 "value1": {
                     "attack_": 40,
-                    "hp_": 25,
-                    "move_range_": 12
+                    "hp_": 25
                 },
                 "value2": {
                     "attack_": 60,
-                    "hp_": 30,
-                    "move_range_": 15
+                    "hp_": 30
                 }
             },
             "synergies_": [
                 0
             ],
             "icon_path_": "icons/shogi_knight.png",
-            "description_": "japanesechess knight piece."
+            "description_": "japanesechess knight piece.",
+            "attack_interval_": 1.5,
+            "attack_range_": 2.0,
+            "price_": 1
         }
     ]
 }
