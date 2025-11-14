@@ -300,3 +300,10 @@ void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_reposito
 {
     synergy_system_.SetRepository(synergy_repository, piece_repository);
 }
+
+//-----------------------------------------------------------
+//! @brief ダメージを受ける関数
+//-----------------------------------------------------------
+void Agent::ApplyDamage(int amount)
+{
+}

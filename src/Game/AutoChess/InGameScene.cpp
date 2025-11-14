@@ -33,10 +33,11 @@ bool InGameScene::Init()
 {
     __super::Init();
     game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json", "data/AutoChess/MasterData/SynergyDatas.json");    //マスターデータの読み込み
-    ImageBuffer::Init();                                                                                                           //画像バッファの初期化
-    PiecePool::Init();                                                                                                             //駒プールの初期化
-    Scene::Object::Create<Camera>();                                                                                               //カメラ
-    auto player = Scene::Object::Create<Player>();                                                                                 //プレイヤー
+    PieceFactory::SetPieceRepository(&game_context_.GetPieceRepository());
+    ImageBuffer::Init();                              //画像バッファの初期化
+    PiecePool::Init();                                //駒プールの初期化
+    Scene::Object::Create<Camera>();                  //カメラ
+    auto player = Scene::Object::Create<Player>();    //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
@@ -542,13 +543,6 @@ void InGameScene::CreatePiecesForBattlePhase()
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
                     //---------------------------------------------------------------------------------
-                    // マスターデータを設定
-                    //---------------------------------------------------------------------------------
-                    //マスターデータを取得
-                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
-                    piece->SetMasterData(master_data);
-                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
-                    //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSensor>();
@@ -587,13 +581,6 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(npc);    //オーナーを設定
-                    //---------------------------------------------------------------------------------
-                    // マスターデータを設定
-                    //---------------------------------------------------------------------------------
-                    //マスターデータを取得
-                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
-                    piece->SetMasterData(master_data);
-                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
                     //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------

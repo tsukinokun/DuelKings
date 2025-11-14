@@ -62,6 +62,7 @@ const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFact
     {   "ChaturangaMantri",    [] { return Scene::Object::Create<ChaturangaMantri>(); }},
     {     "ChaturangaRaja",      [] { return Scene::Object::Create<ChaturangaRaja>(); }},
 };
+const PieceRepository* PieceFactory::piece_repo_ = nullptr;
 //---------------------------------------------------------------------------
 // ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
@@ -70,8 +71,23 @@ std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type, i
     auto it = piece_creators_.find(type);
     if(it != piece_creators_.end()) {
         auto piece = it->second();
+        //---------------------------------------------------------------------------------
+        // マスターデータを設定
+        //---------------------------------------------------------------------------------
+        //マスターデータを取得
+        const PieceData* master_data = piece_repo_->FindByTypeName(piece->GetNameDefault().data());
+        piece->SetMasterData(master_data);
+        piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
         piece->SetLevel(piece_level);
         return piece;
     }
     return nullptr;
+}
+
+//---------------------------------------------------------------------------
+//! @brief 駒定義リポジトリを設定する関数
+//---------------------------------------------------------------------------
+void PieceFactory::SetPieceRepository(const PieceRepository* repo)
+{
+    piece_repo_ = repo;
 }

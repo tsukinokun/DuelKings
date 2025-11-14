@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+#include <Game/AutoChess/Piece/PieceData/PieceRepository.h>
 //前方宣言
 class Piece;
 class PieceFactory
@@ -18,7 +19,14 @@ public:
     //---------------------------------------------------------------------------
     static std::shared_ptr<Piece> CreatePiece(const std::string_view& type, int piece_level = 1);
 
+    //---------------------------------------------------------------------------
+    // 駒定義リポジトリを設定する関数
+    //! @param [in] repo 駒定義リポジトリへの参照
+    //---------------------------------------------------------------------------
+    static void SetPieceRepository(const PieceRepository* repo);
+
 private:
     using PieceCreator = std::function<std::shared_ptr<Piece>()>;                       // 駒生成関数の型定義
     static const std::unordered_map<std::string_view, PieceCreator> piece_creators_;    // 駒生成関数のマップ
+    const static PieceRepository*                                   piece_repo_;        //!< 駒定義リポジトリ
 };

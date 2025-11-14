@@ -157,6 +157,7 @@ int Piece::GetLevel() const
 void Piece::SetLevel(int level)
 {
     status_.SetLevel(level);
+    //ステータスをマスターデータから再適用
     ApplyStatsFromMaster();
     // レベル表示用UI画像の更新
     if(auto level_ui = level_ui_.lock()) {

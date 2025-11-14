@@ -2,7 +2,7 @@
     "value0": [
         {
             "type_name_": "JapaneseChessPawn",
-            "display_name_": "é»„é‡‘ã®èŠ½",
+            "display_name_": "‰©‹à‚Ì‰è",
             "levels_": {
                 "value0": {
                     "attack_": 52,
@@ -28,7 +28,7 @@
         },
         {
             "type_name_": "JapaneseChessLance",
-            "display_name_": "é€€è·¯ãªãç‹‚æˆ¦å£«",
+            "display_name_": "‘Ş˜H‚È‚«‹¶ím",
             "levels_": {
                 "value0": {
                     "attack_": 60,
@@ -47,14 +47,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_lance.png",
-            "description_": "ã‚ªãƒ¼ã‚¬ãƒ¡ã‚¤ã‚¸",
+            "description_": "ƒI[ƒKƒƒCƒW",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
             "price_": 1
         },
         {
             "type_name_": "JapaneseChessKnight",
-            "display_name_": "å¥ˆè½ã®å½±é¦¬",
+            "display_name_": "“Ş—‚Ì‰e”n",
             "levels_": {
                 "value0": {
                     "attack_": 45,
@@ -73,14 +73,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_knight.png",
-            "description_": "ãƒ©ã‚¤ãƒˆãƒ‰ãƒ©ã‚´ãƒ³",
+            "description_": "ƒ‰ƒCƒgƒhƒ‰ƒSƒ“",
             "attack_interval_": 1.5,
             "attack_range_": 2.0,
             "price_": 1
         },
         {
             "type_name_": "JapaneseChessSilver",
-            "display_name_": "éŠ€ç‹¼",
+            "display_name_": "‹â˜T",
             "levels_": {
                 "value0": {
                     "attack_": 70,
@@ -99,14 +99,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_silver.png",
-            "description_": "ãƒ©ã‚¤ãƒ•ãƒ«ãƒãƒ³",
+            "description_": "ƒ‰ƒCƒtƒ‹ƒ}ƒ“",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,
             "price_": 2
         },
         {
             "type_name_": "JapaneseChessGold",
-            "display_name_": "é‡‘ç‹¼",
+            "display_name_": "‹à˜T",
             "levels_": {
                 "value0": {
                     "attack_": 55,
@@ -125,14 +125,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_gold.png",
-            "description_": "å®çŸ³ãƒã‚¸ã‚·ãƒ£ãƒ³",
+            "description_": "•óÎƒ}ƒWƒVƒƒƒ“",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
             "price_": 3
         },
         {
             "type_name_": "JapaneseChessBishop",
-            "display_name_": "ç•°ç•Œã‚’è¦—ãé­”çœ¼",
+            "display_name_": "ˆÙŠE‚ğ”`‚­–‚Šá",
             "levels_": {
                 "value0": {
                     "attack_": 42,
@@ -151,14 +151,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_bishop.png",
-            "description_": "äº€ä¹—ã‚Šã®é•·è€",
+            "description_": "‹Tæ‚è‚Ì’·˜V",
             "attack_interval_": 1.5,
             "attack_range_": 4.0,
             "price_": 4
         },
         {
             "type_name_": "JapaneseChessRook",
-            "display_name_": "æ˜Ÿç •ãã®ç¿¼",
+            "display_name_": "¯Ó‚«‚Ì—ƒ",
             "levels_": {
                 "value0": {
                     "attack_": 60,
@@ -177,14 +177,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_rook.png",
-            "description_": "é›·ç¥",
+            "description_": "—‹_",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
             "price_": 5
         },
         {
             "type_name_": "JapaneseChessKing",
-            "display_name_": "çµ¶å¯¾ãªã‚‹å›ä¸»",
+            "display_name_": "â‘Î‚È‚éŒNå",
             "levels_": {
                 "value0": {
                     "attack_": 55,
@@ -203,14 +203,14 @@
                 0
             ],
             "icon_path_": "icons/shogi_king.png",
-            "description_": "ä¸æ­»ã®æ•™çš‡",
+            "description_": "•s€‚Ì‹³c",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 3.0,
             "price_": 4
         },
         {
             "type_name_": "ChessPawn",
-            "display_name_": "æ®‰æ•™è€…",
+            "display_name_": "}‹³Ò",
             "levels_": {
                 "value0": {
                     "attack_": 52,
@@ -229,7 +229,7 @@
                 1
             ],
             "icon_path_": "icons/chess_pawn.png",
-            "description_": "ã‚»ã‚¤ã‚¦ãƒãƒœã‚¯ã‚µãƒ¼",
+            "description_": "ƒZƒCƒEƒ`ƒ{ƒNƒT[",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
             "price_": 1
@@ -255,14 +255,14 @@
                 1
             ],
             "icon_path_": "icons/chess_bishop.png",
-            "description_": "ä¸€è§’ç£",
+            "description_": "ˆêŠpb",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,
             "price_": 1
         },
         {
             "type_name_": "ChessKnight",
-            "display_name_": "é—‡å¤œã®é¨å£«",
+            "display_name_": "ˆÅ–é‚Ì‹Rm",
             "levels_": {
                 "value0": {
                     "attack_": 55,
@@ -281,14 +281,14 @@
                 1
             ],
             "icon_path_": "icons/chess_knight.png",
-            "description_": "ç¾Šã®é¨å£«",
+            "description_": "—r‚Ì‹Rm",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
             "price_": 3
         },
         {
             "type_name_": "ChessRook",
-            "display_name_": "é‹¼ã®åŸå¡",
+            "display_name_": "|‚ÌéÇ",
             "levels_": {
                 "value0": {
                     "attack_": 80,
@@ -307,14 +307,14 @@
                 1
             ],
             "icon_path_": "icons/chess_rook.png",
-            "description_": "èµ¤ç‹ã®å‰£å£«",
+            "description_": "ÔŒÏ‚ÌŒ•m",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
             "price_": 4
         },
         {
             "type_name_": "ChessKing",
-            "display_name_": "å­¤é«˜ãªã‚‹ç‰åº§",
+            "display_name_": "ŒÇ‚‚È‚é‹ÊÀ",
             "levels_": {
                 "value0": {
                     "attack_": 82,
@@ -333,14 +333,14 @@
                 1
             ],
             "icon_path_": "icons/chess_king.png",
-            "description_": "æµ·è³Šç‹",
+            "description_": "ŠC‘¯‰¤",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
             "price_": 6
         },
         {
             "type_name_": "ChessQueen",
-            "display_name_": "æœˆä¸‹ã®éº—äºº",
+            "display_name_": "Œ‰º‚Ì—íl",
             "levels_": {
                 "value0": {
                     "attack_": 50,
@@ -359,14 +359,14 @@
                 1
             ],
             "icon_path_": "icons/chess_queen.png",
-            "description_": "é—‡ã®ã‚¹ãƒ”ãƒªãƒƒãƒˆ",
+            "description_": "ˆÅ‚ÌƒXƒsƒŠƒbƒg",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,
             "price_": 5
         },
         {
             "type_name_": "ChaturangaPadati",
-            "display_name_": "ç ‚æ¼ ã®å¾“è€…",
+            "display_name_": "»”™‚Ì]Ò",
             "levels_": {
                 "value0": {
                     "attack_": 60,
@@ -385,14 +385,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_padati.png",
-            "description_": "ã‚½\ã‚¦ãƒ«ãƒ†ã‚¤ã‚«ãƒ¼",
+            "description_": "ƒ\\ƒEƒ‹ƒeƒCƒJ[",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
             "price_": 1
         },
         {
             "type_name_": "ChaturangaAsva",
-            "display_name_": "èˆè¸è€…",
+            "display_name_": "•‘“¥Ò",
             "levels_": {
                 "value0": {
                     "attack_": 95,
@@ -411,14 +411,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_asva.png",
-            "description_": "ã‚¹ãƒ‘ã‚¤ãƒ€ãƒ¼ã‚¯ã‚¤ãƒ¼ãƒ³",
+            "description_": "ƒXƒpƒCƒ_[ƒNƒC[ƒ“",
             "attack_interval_": 1.5,
             "attack_range_": 1.0,
             "price_": 4
         },
         {
             "type_name_": "ChaturangaGaja",
-            "display_name_": "ç ‚å¡µã®å·¨è±¡",
+            "display_name_": "»o‚Ì‹Û",
             "levels_": {
                 "value0": {
                     "attack_": 70,
@@ -437,14 +437,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_gaja.png",
-            "description_": "ç…‰ç„ã®é¨å£«",
+            "description_": "—ù–‚Ì‹Rm",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
             "price_": 2
         },
         {
             "type_name_": "ChaturangaMantri",
-            "display_name_": "è¥¿ã®å®°ç›¸",
+            "display_name_": "¼‚ÌÉ‘Š",
             "levels_": {
                 "value0": {
                     "attack_": 75,
@@ -463,14 +463,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_mantri.png",
-            "description_": "å¤§æ¨¹ã®è³¢è€…",
+            "description_": "‘å÷‚ÌŒ«Ò",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
             "price_": 3
         },
         {
-            "type_name_": "ChaturangaRata",
-            "display_name_": "æš´\è™ã®æˆ¦è»Š",
+            "type_name_": "ChaturangaRatha",
+            "display_name_": "–\\‹s‚ÌíÔ",
             "levels_": {
                 "value0": {
                     "attack_": 50,
@@ -489,14 +489,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_rata.png",
-            "description_": "ã‚¢ã‚¯ã‚¢ãƒãƒ³ã‚¿ãƒ¼",
+            "description_": "ƒAƒNƒAƒnƒ“ƒ^[",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
             "price_": 5
         },
         {
             "type_name_": "ChaturangaRaja",
-            "display_name_": "è’é‡ã®æ”¯é…è€…",
+            "display_name_": "r–ì‚Ìx”zÒ",
             "levels_": {
                 "value0": {
                     "attack_": 80,
@@ -515,14 +515,14 @@
                 2
             ],
             "icon_path_": "icons/chaturanga_raja.png",
-            "description_": "ã‚°ãƒªãƒ ã‚¿ãƒƒãƒ",
+            "description_": "ƒOƒŠƒ€ƒ^ƒbƒ`",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
             "price_": 4
         },
         {
-            "type_name_": "ChaturangaRaja",
-            "display_name_": "æ·±æ·µã®å®ˆè­·è€…",
+            "type_name_": "MakrukBia",
+            "display_name_": "[•£‚ÌçŒìÒ",
             "levels_": {
                 "value0": {
                     "attack_": 80,
@@ -541,14 +541,14 @@
                 3
             ],
             "icon_path_": "icons/makruk_bia.png",
-            "description_": "å²©ã®ã‚¹ãƒ”ãƒªãƒƒãƒˆ",
+            "description_": "Šâ‚ÌƒXƒsƒŠƒbƒg",
             "attack_interval_": 1.7999999523162842,
             "attack_range_": 1.0,
             "price_": 1
         },
         {
             "type_name_": "MakrukMet",
-            "display_name_": "å› æœã®æ¬ ç‰‡",
+            "display_name_": "ˆö‰Ê‚ÌŒ‡•Ğ",
             "levels_": {
                 "value0": {
                     "attack_": 85,
@@ -567,14 +567,14 @@
                 3
             ],
             "icon_path_": "icons/makruk_met.png",
-            "description_": "æ·±æµ·ã®å®ˆè­·è€…",
+            "description_": "[ŠC‚ÌçŒìÒ",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
             "price_": 2
         },
         {
             "type_name_": "MakrukKhon",
-            "display_name_": "å®¿å‘½ã®æ ¹æº",
+            "display_name_": "h–½‚ÌªŒ¹",
             "levels_": {
                 "value0": {
                     "attack_": 55,
@@ -593,14 +593,14 @@
                 3
             ],
             "icon_path_": "icons/makruk_khon.png",
-            "description_": "æ¯’ç«œ",
+            "description_": "“Å—³",
             "attack_interval_": 1.0,
             "attack_range_": 3.0,
             "price_": 3
         },
         {
             "type_name_": "MakrukMa",
-            "display_name_": "å¹»å½±ã®è·³èº",
+            "display_name_": "Œ¶‰e‚Ì’µ–ô",
             "levels_": {
                 "value0": {
                     "attack_": 67,
@@ -619,14 +619,14 @@
                 3
             ],
             "icon_path_": "icons/makruk_ma.png",
-            "description_": "ã¨ã’ã®å¯†çŒŸè€…",
+            "description_": "‚Æ‚°‚Ì–§—ÂÒ",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
             "price_": 4
         },
         {
             "type_name_": "MakrukRuea",
-            "display_name_": "çµ‚ç„‰ã®æ–¹èˆŸ",
+            "display_name_": "Ià‚Ì•ûM",
             "levels_": {
                 "value0": {
                     "attack_": 95,
@@ -645,14 +645,14 @@
                 3
             ],
             "icon_path_": "icons/makruk_ruea.png",
-            "description_": "ã‚­ãƒ£ãƒãƒ³ã‚°ãƒ©ãƒ‹ãƒ¼",
+            "description_": "ƒLƒƒƒmƒ“ƒOƒ‰ƒj[",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 4.0,
             "price_": 5
         },
         {
             "type_name_": "MakrukKhun",
-            "display_name_": "é»™ç¤ºéŒ²ã®æ ¸",
+            "display_name_": "–Ù¦˜^‚ÌŠj",
             "levels_": {
                 "value0": {
                     "attack_": 82,
@@ -671,7 +671,7 @@
                 3
             ],
             "icon_path_": "icons/makruk_khun.png",
-            "description_": "å æ˜Ÿè¡“å¸«",
+            "description_": "è¯pt",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,
             "price_": 5
