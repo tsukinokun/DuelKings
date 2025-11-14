@@ -545,6 +545,136 @@
             "attack_interval_": 1.7999999523162842,
             "attack_range_": 1.0,
             "price_": 1
+        },
+        {
+            "type_name_": "MakrukMet",
+            "display_name_": "àˆâ ÇÃåáï–",
+            "levels_": {
+                "value0": {
+                    "attack_": 85,
+                    "hp_": 650
+                },
+                "value1": {
+                    "attack_": 170,
+                    "hp_": 1300
+                },
+                "value2": {
+                    "attack_": 340,
+                    "hp_": 2600
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_met.png",
+            "description_": "ê[äCÇÃéÁåÏé“",
+            "attack_interval_": 1.2000000476837159,
+            "attack_range_": 1.0,
+            "price_": 2
+        },
+        {
+            "type_name_": "MakrukKhon",
+            "display_name_": "èhñΩÇÃç™åπ",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 500
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 1000
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 2000
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_khon.png",
+            "description_": "ì≈ó≥",
+            "attack_interval_": 1.0,
+            "attack_range_": 3.0,
+            "price_": 3
+        },
+        {
+            "type_name_": "MakrukMa",
+            "display_name_": "å∂âeÇÃíµñÙ",
+            "levels_": {
+                "value0": {
+                    "attack_": 67,
+                    "hp_": 800
+                },
+                "value1": {
+                    "attack_": 135,
+                    "hp_": 1600
+                },
+                "value2": {
+                    "attack_": 270,
+                    "hp_": 3200
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_ma.png",
+            "description_": "Ç∆Ç∞ÇÃñßó¬é“",
+            "attack_interval_": 1.2999999523162842,
+            "attack_range_": 1.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "MakrukRuea",
+            "display_name_": "èI‡ÅÇÃï˚èM",
+            "levels_": {
+                "value0": {
+                    "attack_": 95,
+                    "hp_": 1100
+                },
+                "value1": {
+                    "attack_": 190,
+                    "hp_": 2200
+                },
+                "value2": {
+                    "attack_": 380,
+                    "hp_": 4400
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_ruea.png",
+            "description_": "ÉLÉÉÉmÉìÉOÉâÉjÅ[",
+            "attack_interval_": 1.2999999523162842,
+            "attack_range_": 4.0,
+            "price_": 5
+        },
+        {
+            "type_name_": "MakrukKhun",
+            "display_name_": "ñŸé¶ò^ÇÃäj",
+            "levels_": {
+                "value0": {
+                    "attack_": 82,
+                    "hp_": 1000
+                },
+                "value1": {
+                    "attack_": 165,
+                    "hp_": 2000
+                },
+                "value2": {
+                    "attack_": 330,
+                    "hp_": 4000
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_khun.png",
+            "description_": "êËêØèpét",
+            "attack_interval_": 1.100000023841858,
+            "attack_range_": 4.0,
+            "price_": 5
         }
     ]
 }

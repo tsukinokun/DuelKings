@@ -542,6 +542,13 @@ void InGameScene::CreatePiecesForBattlePhase()
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
                     //---------------------------------------------------------------------------------
+                    // マスターデータを設定
+                    //---------------------------------------------------------------------------------
+                    //マスターデータを取得
+                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
+                    piece->SetMasterData(master_data);
+                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
+                    //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSensor>();
@@ -580,6 +587,13 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(npc);    //オーナーを設定
+                    //---------------------------------------------------------------------------------
+                    // マスターデータを設定
+                    //---------------------------------------------------------------------------------
+                    //マスターデータを取得
+                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
+                    piece->SetMasterData(master_data);
+                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
                     //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------
