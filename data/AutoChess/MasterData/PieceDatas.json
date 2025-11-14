@@ -1,30 +1,680 @@
 {
     "value0": [
         {
-            "type_name_": "JapaneseChessKnight",
-            "display_name_": "�ޗ��̉e�n",
+            "type_name_": "JapaneseChessPawn",
+            "display_name_": "黄金の芽",
             "levels_": {
                 "value0": {
-                    "attack_": 20,
-                    "hp_": 20
+                    "attack_": 52,
+                    "hp_": 700
                 },
                 "value1": {
-                    "attack_": 40,
-                    "hp_": 25
+                    "attack_": 105,
+                    "hp_": 1400
                 },
                 "value2": {
+                    "attack_": 210,
+                    "hp_": 2800
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_pawn.png",
+            "description_": "japanesechess pawn piece.",
+            "attack_interval_": 1.5,
+            "attack_range_": 1.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "JapaneseChessLance",
+            "display_name_": "退路なき狂戦士",
+            "levels_": {
+                "value0": {
                     "attack_": 60,
-                    "hp_": 30
+                    "hp_": 700
+                },
+                "value1": {
+                    "attack_": 120,
+                    "hp_": 1400
+                },
+                "value2": {
+                    "attack_": 240,
+                    "hp_": 2800
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_lance.png",
+            "description_": "オーガメイジ",
+            "attack_interval_": 1.399999976158142,
+            "attack_range_": 1.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "JapaneseChessKnight",
+            "display_name_": "奈落の影馬",
+            "levels_": {
+                "value0": {
+                    "attack_": 45,
+                    "hp_": 450
+                },
+                "value1": {
+                    "attack_": 90,
+                    "hp_": 900
+                },
+                "value2": {
+                    "attack_": 180,
+                    "hp_": 1800
                 }
             },
             "synergies_": [
                 0
             ],
             "icon_path_": "icons/shogi_knight.png",
-            "description_": "japanesechess knight piece.",
+            "description_": "ライトドラゴン",
             "attack_interval_": 1.5,
             "attack_range_": 2.0,
             "price_": 1
+        },
+        {
+            "type_name_": "JapaneseChessSilver",
+            "display_name_": "銀狼",
+            "levels_": {
+                "value0": {
+                    "attack_": 70,
+                    "hp_": 450
+                },
+                "value1": {
+                    "attack_": 140,
+                    "hp_": 900
+                },
+                "value2": {
+                    "attack_": 280,
+                    "hp_": 1800
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_silver.png",
+            "description_": "ライフルマン",
+            "attack_interval_": 1.100000023841858,
+            "attack_range_": 4.0,
+            "price_": 2
+        },
+        {
+            "type_name_": "JapaneseChessGold",
+            "display_name_": "金狼",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 800
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 1600
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 2400
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_gold.png",
+            "description_": "宝石マジシャン",
+            "attack_interval_": 1.0,
+            "attack_range_": 1.0,
+            "price_": 3
+        },
+        {
+            "type_name_": "JapaneseChessBishop",
+            "display_name_": "異界を覗く魔眼",
+            "levels_": {
+                "value0": {
+                    "attack_": 42,
+                    "hp_": 650
+                },
+                "value1": {
+                    "attack_": 85,
+                    "hp_": 1300
+                },
+                "value2": {
+                    "attack_": 170,
+                    "hp_": 2600
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_bishop.png",
+            "description_": "亀乗りの長老",
+            "attack_interval_": 1.5,
+            "attack_range_": 4.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "JapaneseChessRook",
+            "display_name_": "星砕きの翼",
+            "levels_": {
+                "value0": {
+                    "attack_": 60,
+                    "hp_": 950
+                },
+                "value1": {
+                    "attack_": 120,
+                    "hp_": 1900
+                },
+                "value2": {
+                    "attack_": 240,
+                    "hp_": 3800
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_rook.png",
+            "description_": "雷神",
+            "attack_interval_": 1.399999976158142,
+            "attack_range_": 3.0,
+            "price_": 5
+        },
+        {
+            "type_name_": "JapaneseChessKing",
+            "display_name_": "絶対なる君主",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 800
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 1600
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 3200
+                }
+            },
+            "synergies_": [
+                0
+            ],
+            "icon_path_": "icons/shogi_king.png",
+            "description_": "不死の教皇",
+            "attack_interval_": 1.2000000476837159,
+            "attack_range_": 3.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "ChessPawn",
+            "display_name_": "殉教者",
+            "levels_": {
+                "value0": {
+                    "attack_": 52,
+                    "hp_": 650
+                },
+                "value1": {
+                    "attack_": 105,
+                    "hp_": 1300
+                },
+                "value2": {
+                    "attack_": 210,
+                    "hp_": 2600
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_pawn.png",
+            "description_": "セイウチボクサー",
+            "attack_interval_": 1.2000000476837159,
+            "attack_range_": 1.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "ChessBishop",
+            "display_name_": "",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 400
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 800
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 1500
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_bishop.png",
+            "description_": "一角獣",
+            "attack_interval_": 1.5,
+            "attack_range_": 3.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "ChessKnight",
+            "display_name_": "闇夜の騎士",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 750
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 1500
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 3000
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_knight.png",
+            "description_": "羊の騎士",
+            "attack_interval_": 1.399999976158142,
+            "attack_range_": 1.0,
+            "price_": 3
+        },
+        {
+            "type_name_": "ChessRook",
+            "display_name_": "鋼の城塞",
+            "levels_": {
+                "value0": {
+                    "attack_": 80,
+                    "hp_": 750
+                },
+                "value1": {
+                    "attack_": 160,
+                    "hp_": 1500
+                },
+                "value2": {
+                    "attack_": 320,
+                    "hp_": 3000
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_rook.png",
+            "description_": "赤狐の剣士",
+            "attack_interval_": 1.0,
+            "attack_range_": 1.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "ChessKing",
+            "display_name_": "孤高なる玉座",
+            "levels_": {
+                "value0": {
+                    "attack_": 82,
+                    "hp_": 950
+                },
+                "value1": {
+                    "attack_": 165,
+                    "hp_": 1900
+                },
+                "value2": {
+                    "attack_": 330,
+                    "hp_": 3800
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_king.png",
+            "description_": "海賊王",
+            "attack_interval_": 1.2999999523162842,
+            "attack_range_": 1.0,
+            "price_": 6
+        },
+        {
+            "type_name_": "ChessQueen",
+            "display_name_": "月下の麗人",
+            "levels_": {
+                "value0": {
+                    "attack_": 50,
+                    "hp_": 1000
+                },
+                "value1": {
+                    "attack_": 100,
+                    "hp_": 2000
+                },
+                "value2": {
+                    "attack_": 200,
+                    "hp_": 4000
+                }
+            },
+            "synergies_": [
+                1
+            ],
+            "icon_path_": "icons/chess_queen.png",
+            "description_": "闇のスピリット",
+            "attack_interval_": 1.5,
+            "attack_range_": 3.0,
+            "price_": 5
+        },
+        {
+            "type_name_": "ChaturangaPadati",
+            "display_name_": "砂漠の従者",
+            "levels_": {
+                "value0": {
+                    "attack_": 60,
+                    "hp_": 550
+                },
+                "value1": {
+                    "attack_": 120,
+                    "hp_": 1100
+                },
+                "value2": {
+                    "attack_": 240,
+                    "hp_": 2200
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_padati.png",
+            "description_": "ソ\ウルテイカー",
+            "attack_interval_": 1.0,
+            "attack_range_": 1.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "ChaturangaAsva",
+            "display_name_": "舞踏者",
+            "levels_": {
+                "value0": {
+                    "attack_": 95,
+                    "hp_": 900
+                },
+                "value1": {
+                    "attack_": 160,
+                    "hp_": 1800
+                },
+                "value2": {
+                    "attack_": 320,
+                    "hp_": 3600
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_asva.png",
+            "description_": "スパイダークイーン",
+            "attack_interval_": 1.5,
+            "attack_range_": 1.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "ChaturangaGaja",
+            "display_name_": "砂塵の巨象",
+            "levels_": {
+                "value0": {
+                    "attack_": 70,
+                    "hp_": 600
+                },
+                "value1": {
+                    "attack_": 140,
+                    "hp_": 1200
+                },
+                "value2": {
+                    "attack_": 280,
+                    "hp_": 2400
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_gaja.png",
+            "description_": "煉獄の騎士",
+            "attack_interval_": 1.2000000476837159,
+            "attack_range_": 1.0,
+            "price_": 2
+        },
+        {
+            "type_name_": "ChaturangaMantri",
+            "display_name_": "西の宰相",
+            "levels_": {
+                "value0": {
+                    "attack_": 75,
+                    "hp_": 700
+                },
+                "value1": {
+                    "attack_": 150,
+                    "hp_": 1400
+                },
+                "value2": {
+                    "attack_": 300,
+                    "hp_": 2800
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_mantri.png",
+            "description_": "大樹の賢者",
+            "attack_interval_": 2.0,
+            "attack_range_": 1.0,
+            "price_": 3
+        },
+        {
+            "type_name_": "ChaturangaRata",
+            "display_name_": "暴\虐の戦車",
+            "levels_": {
+                "value0": {
+                    "attack_": 50,
+                    "hp_": 1000
+                },
+                "value1": {
+                    "attack_": 100,
+                    "hp_": 2000
+                },
+                "value2": {
+                    "attack_": 200,
+                    "hp_": 4000
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_rata.png",
+            "description_": "アクアハンター",
+            "attack_interval_": 2.0,
+            "attack_range_": 1.0,
+            "price_": 5
+        },
+        {
+            "type_name_": "ChaturangaRaja",
+            "display_name_": "荒野の支配者",
+            "levels_": {
+                "value0": {
+                    "attack_": 80,
+                    "hp_": 750
+                },
+                "value1": {
+                    "attack_": 160,
+                    "hp_": 1500
+                },
+                "value2": {
+                    "attack_": 320,
+                    "hp_": 3000
+                }
+            },
+            "synergies_": [
+                2
+            ],
+            "icon_path_": "icons/chaturanga_raja.png",
+            "description_": "グリムタッチ",
+            "attack_interval_": 1.399999976158142,
+            "attack_range_": 3.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "ChaturangaRaja",
+            "display_name_": "深淵の守護者",
+            "levels_": {
+                "value0": {
+                    "attack_": 80,
+                    "hp_": 700
+                },
+                "value1": {
+                    "attack_": 160,
+                    "hp_": 1400
+                },
+                "value2": {
+                    "attack_": 320,
+                    "hp_": 2800
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_bia.png",
+            "description_": "岩のスピリット",
+            "attack_interval_": 1.7999999523162842,
+            "attack_range_": 1.0,
+            "price_": 1
+        },
+        {
+            "type_name_": "MakrukMet",
+            "display_name_": "因果の欠片",
+            "levels_": {
+                "value0": {
+                    "attack_": 85,
+                    "hp_": 650
+                },
+                "value1": {
+                    "attack_": 170,
+                    "hp_": 1300
+                },
+                "value2": {
+                    "attack_": 340,
+                    "hp_": 2600
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_met.png",
+            "description_": "深海の守護者",
+            "attack_interval_": 1.2000000476837159,
+            "attack_range_": 1.0,
+            "price_": 2
+        },
+        {
+            "type_name_": "MakrukKhon",
+            "display_name_": "宿命の根源",
+            "levels_": {
+                "value0": {
+                    "attack_": 55,
+                    "hp_": 500
+                },
+                "value1": {
+                    "attack_": 110,
+                    "hp_": 1000
+                },
+                "value2": {
+                    "attack_": 220,
+                    "hp_": 2000
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_khon.png",
+            "description_": "毒竜",
+            "attack_interval_": 1.0,
+            "attack_range_": 3.0,
+            "price_": 3
+        },
+        {
+            "type_name_": "MakrukMa",
+            "display_name_": "幻影の跳躍",
+            "levels_": {
+                "value0": {
+                    "attack_": 67,
+                    "hp_": 800
+                },
+                "value1": {
+                    "attack_": 135,
+                    "hp_": 1600
+                },
+                "value2": {
+                    "attack_": 270,
+                    "hp_": 3200
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_ma.png",
+            "description_": "とげの密猟者",
+            "attack_interval_": 1.2999999523162842,
+            "attack_range_": 1.0,
+            "price_": 4
+        },
+        {
+            "type_name_": "MakrukRuea",
+            "display_name_": "終焉の方舟",
+            "levels_": {
+                "value0": {
+                    "attack_": 95,
+                    "hp_": 1100
+                },
+                "value1": {
+                    "attack_": 190,
+                    "hp_": 2200
+                },
+                "value2": {
+                    "attack_": 380,
+                    "hp_": 4400
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_ruea.png",
+            "description_": "キャノングラニー",
+            "attack_interval_": 1.2999999523162842,
+            "attack_range_": 4.0,
+            "price_": 5
+        },
+        {
+            "type_name_": "MakrukKhun",
+            "display_name_": "黙示録の核",
+            "levels_": {
+                "value0": {
+                    "attack_": 82,
+                    "hp_": 1000
+                },
+                "value1": {
+                    "attack_": 165,
+                    "hp_": 2000
+                },
+                "value2": {
+                    "attack_": 330,
+                    "hp_": 4000
+                }
+            },
+            "synergies_": [
+                3
+            ],
+            "icon_path_": "icons/makruk_khun.png",
+            "description_": "占星術師",
+            "attack_interval_": 1.100000023841858,
+            "attack_range_": 4.0,
+            "price_": 5
         }
     ]
 }

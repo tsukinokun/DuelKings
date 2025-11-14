@@ -7,6 +7,7 @@
 #pragma once
 #include <System/Scene.h>
 #include <Game/AutoChess/Info/PieceStatus.h>    // ピースステータス情報をインスタンスとして持つのでここでインクルード
+#include <Game/AutoChess/Piece/PieceData/PieceData.h>
 class Agent;
 class UIImage;
 USING_PTR(Piece);
@@ -100,8 +101,20 @@ public:
     //----------------------------------------------------------
     void LevelUp();
 
+    //----------------------------------------------------------
+    // 参照するマスターデータを設定する関数
+    //! @param master [in] 参照マスターデータ
+    //----------------------------------------------------------
+    void SetMasterData(const PieceData* master);
+
+    //----------------------------------------------------------
+    // マスターデータを参照して、ピースステータスを更新する関数
+    //----------------------------------------------------------
+    void ApplyStatsFromMaster();
+
     //@}
 protected:
+    const PieceData* master_;                     //!< 参照マスターデータ
     PieceStatus          status_;                 //!< ピースステータス情報
     std::weak_ptr<Agent> owner_;                  //!< 所有者エージェント
     std::weak_ptr<UIImage> level_ui_;              //!< レベル表示用UI画像コンポーネント

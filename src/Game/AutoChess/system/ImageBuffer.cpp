@@ -28,6 +28,7 @@ void ImageBuffer::Init()
     image_buffer_["chaturanga_synergy_icon"] =
         DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChaturangaSynergyIcon.png");                                   // チャトランガシナジーアイコン画像
     image_buffer_["makruk_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/MakrukSynergyIcon.png");    // マークルックシナジーアイコン画像
+    image_buffer_["level_up"]            = DxLib::LoadGraph("data/AutoChess/Image/LevelUP.png");                           // 追加画像
 }
 
 //---------------------------------------------------------------------------------

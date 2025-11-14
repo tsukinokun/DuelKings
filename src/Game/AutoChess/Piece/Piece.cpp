@@ -157,6 +157,7 @@ int Piece::GetLevel() const
 void Piece::SetLevel(int level)
 {
     status_.SetLevel(level);
+    ApplyStatsFromMaster();
     // レベル表示用UI画像の更新
     if(auto level_ui = level_ui_.lock()) {
         // レベルに応じた画像名を生成
@@ -185,4 +186,27 @@ void Piece::LevelUp()
         std::string image_name = "level" + std::to_string(status_.GetLevel()) + "_star";
         level_ui->SetImage(ImageBuffer::GetImageHandle(image_name));
     }
+}
+
+//----------------------------------------------------------
+//! 参照するマスターデータを設定する関数
+//----------------------------------------------------------
+void Piece::SetMasterData(const PieceData* master)
+{
+    master_ = master;
+}
+
+//----------------------------------------------------------
+// マスターデータを参照して、ピースステータスを更新する関数
+//----------------------------------------------------------
+void Piece::ApplyStatsFromMaster()
+{
+    int level = status_.GetLevel();
+    status_   = PieceStatus::Create()
+                  .HP(master_->levels_[level].hp_)
+                  .AttackPower(master_->levels_[level].attack_)
+                  .AttackInterval(master_->attack_interval_)
+                  .AttackRange(master_->attack_range_)
+                  .MoveSpeed(1.0f)
+                  .Build();
 }
