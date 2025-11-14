@@ -18,6 +18,8 @@ constexpr int LEVEL_UP_REQUIRED_PIECE_COUNT = 3;
 //経験値テーブル
 const std::vector<int>   exp_table        = {0, 1, 2, 4, 8, 18, 28, 38, 48};
 const std::array<int, 5> piece_init_stock = {25, 20, 15, 10, 10};    //各レアリティごとの初期在庫数
+//Agentの最大HP
+int constexpr MAX_AGENT_HP = 100;
 //---------------------------------------------------------------------------
 //  駒提供割合の定数
 //  [レベル][コスト] = 出現率（%）

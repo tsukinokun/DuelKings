@@ -26,6 +26,7 @@
 #include <Game/AutoChess/Component/PieceSensor.h>
 #include <Game/AutoChess/Component/PieceAttacker.h>
 #include <Game/AutoChess/Component/PieceHPDisplayer.h>
+#include <Game/AutoChess/UIObject/UIGauge.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -409,6 +410,18 @@ bool InGameScene::Init()
                 gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
             gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            //---------------------------------------------------------------------------------
+            // エージェントのHP表示UI
+            //---------------------------------------------------------------------------------
+            auto hp_gauge = Scene::Object::Create<UIGauge>();
+            hp_gauge->SetTranslate(float3(450.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            hp_gauge->SetGaugeSize(int2(100, 20));                                           //ゲージサイズ設定
+            //更新処理
+            auto set_gauge_proc = [agent, hp_gauge]() {
+                float hp_ratio = static_cast<float>(agent->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                hp_gauge->SetGaugeRate(hp_ratio);
+            };
+            hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
         }
     }
     return true;

@@ -33,6 +33,12 @@ public:
     int GetGold() const;
 
     //-----------------------------------------------------------
+    // HPを取得する関数
+    //! @retval HP
+    //-----------------------------------------------------------
+    int GetHP() const;
+
+    //-----------------------------------------------------------
     // 所持金を増やす関数
     //! @param gold [in] 増やす所持金
     //! @return 自分自身のshared_ptr
@@ -183,7 +189,6 @@ public:
     //@}
 protected:
     int            exp_ = 0;            //エージェントのレベル
-    int            hp_  = 100;          //エージェントの体力
     PieceStandInfo stand_info_;         // ピーススタンド
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド

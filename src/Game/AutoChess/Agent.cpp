@@ -50,6 +50,15 @@ int Agent::GetGold() const
 }
 
 //-----------------------------------------------------------
+// HPを取得する関数
+//! @retval HP
+//-----------------------------------------------------------
+int Agent::GetHP() const
+{
+    return agent_info_.GetHP();
+}
+
+//-----------------------------------------------------------
 //! 所持金を増やす関数
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::AddGold(int gold)
@@ -306,4 +315,5 @@ void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_reposito
 //-----------------------------------------------------------
 void Agent::ApplyDamage(int amount)
 {
+    agent_info_.ApplyDamage(amount);
 }
