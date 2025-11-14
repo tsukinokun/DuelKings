@@ -59,6 +59,15 @@ bool Piece::Init()
         level_image->SetProc("update", update_proc);
         level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
     }
+    //---------------------------------------------------------------------------------
+    // 死亡したならピースをリリースする
+    //---------------------------------------------------------------------------------
+    auto death_proc = [this]() {
+        if(status_.IsDead()) {
+            Scene::Object::Release(dynamic_pointer_cast<Piece>(shared_from_this()));    // ピースをリリースする
+        }
+    };
+    SetProc("death_check", death_proc, ProcTiming::Update, ProcPriority::LOW);
     return true;
 }
 
