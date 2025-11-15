@@ -42,6 +42,11 @@ private:
     //----------------------------------------------------------------------
     void DestroyPiecesAfterBattlePhase();
 
+    //----------------------------------------------------------------------
+    // バトルフェーズの処理
+    //----------------------------------------------------------------------
+    void UpdateBattlePhase();
+
     //@}
 private:
     Timer       phase_timer_;
@@ -49,5 +54,6 @@ private:
     GameState   game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
     float       state_timer_      = 0.0f;                // 状態経過時間（秒）
     bool        is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    bool        has_battle_ended_ = false;               //バトルが終了したかどうか
     int         turn_count_       = 1;                   // 現在のターン数
 };

@@ -1,5 +1,5 @@
 ﻿//---------------------------------------------------------------------------
-//! @file   Component.h
+//! @file   Component.cpp
 //! @brief  コンポーネント ベースクラス
 //---------------------------------------------------------------------------
 #include "Component.h"
@@ -52,6 +52,7 @@ const ObjectPtr Component::GetOwnerPtr() const
 Component::Component()
     : owner_(nullptr)
 {
+    SetStatus(StatusBit::Enable, true);
 }
 
 void Component::Construct(ObjectPtr owner)
@@ -179,7 +180,8 @@ void Component::RemoveThisComponent()
 //! @param on 有効/無効
 void Component::SetStatus(StatusBit b, bool on)
 {
-    on ? status_.on(b) : status_.off(b);
+    status_old_.set(b, status_.is(b));
+    status_.set(b, on);
 }
 
 //! @brief ステータスの取得
