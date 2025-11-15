@@ -337,6 +337,15 @@ void ComponentEffect::Play(bool loop)
     effect_status_.set(EffectBit::Loop, loop);
     effect_status_.set(EffectBit::Playing, true);
 
+    auto   mat  = effect_transform_;
+    float* matz = (float*)mat.f32_128_0;
+    float  pos[3], rot[3], scale[3];
+    DecomposeMatrixToComponents(matz, pos, rot, scale);
+
+    SetPosPlayingEffekseer3DEffect(effect_play_handle_, pos[0], pos[1], pos[2]);
+    SetScalePlayingEffekseer3DEffect(effect_play_handle_, scale[0], scale[1], scale[2]);
+    SetRotationPlayingEffekseer3DEffect(effect_play_handle_, radians((float1)rot[0]), radians((float1)rot[1]), radians((float1)rot[2]));
+
     effect_play_handle_ = PlayEffekseer3DEffect(effect_handle_);
 }
 

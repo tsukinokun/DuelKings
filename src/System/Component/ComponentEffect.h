@@ -36,7 +36,7 @@ public:
     static ObjectPtr CreateObject(const std::string_view effect_name,
                                   const float3&          pos,
                                   const float3&          rotation      = {0, 0, 0},
-                                  const float3&          scale         = {0, 0, 0},
+                                  const float3&          scale         = {1, 1, 1},
                                   const ObjectPtr&       object        = nullptr,
                                   const EffectFunc&      callback_func = nullptr);
 
@@ -50,7 +50,7 @@ public:
         static ObjectPtr Create(const std::string_view effect_name,
                                 const float3&          pos,
                                 const float3&          rotation      = {0, 0, 0},
-                                const float3&          scale         = {0, 0, 0},
+                                const float3&          scale         = {1, 1, 1},
                                 const ObjectPtr&       object        = nullptr,
                                 const EffectFunc&      callback_func = nullptr);
     };
