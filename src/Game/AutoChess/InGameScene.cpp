@@ -461,7 +461,6 @@ void InGameScene::Update()
                 chess_board->SetBoardProcessEnable(false);
             }
             CreatePiecesForBattlePhase();    //バトルフェーズ用に駒を生成する
-            has_battle_ended_ = false;       //バトル終了フラグをリセット
         }
         break;
 
@@ -486,6 +485,7 @@ void InGameScene::Update()
                 chess_board->SetBoardProcessEnable(true);
             }
             ++turn_count_;
+            has_battle_ended_ = false;    //バトル終了フラグをリセット
         }
         break;
     }
@@ -589,6 +589,7 @@ void InGameScene::CreatePiecesForBattlePhase()
     //----------------------------------------------------------------------
     //とりあえずテストで抽選ナシの一人分
     if(auto npc = Scene::Object::Get<Npc>()) {
+        battle_agent_ = npc;    //このタイミングでバトルエージェントとして設定
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
             for(int r = 0; r < 8; r++) {
@@ -702,4 +703,52 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
 //----------------------------------------------------------------------
 void InGameScene::UpdateBattlePhase()
 {
+    //バトルが終了していない場合、終了判定を行う
+    if(!has_battle_ended_) {
+        //エージェントの駒数を取得
+        int player_alive_piece_count = GetAlivePieceCountForAgent(Scene::Object::Get<Player>());
+        int npc_alive_piece_count    = 0;
+        if(auto battle_npc = battle_agent_.lock()) {
+            npc_alive_piece_count = GetAlivePieceCountForAgent(battle_npc);
+        }
+        //どちらかの駒数が0になったらバトル終了
+        if(player_alive_piece_count == 0 || npc_alive_piece_count == 0) {
+            has_battle_ended_ = true;    //バトル終了フラグを立てる
+            //ダメージ処理
+            if(auto battle_npc = battle_agent_.lock()) {
+                if(npc_alive_piece_count == 0) {
+                    //NPCの駒が全滅したら、NPCがダメージを受ける
+                    if(auto battle_npc = battle_agent_.lock()) {
+                        int damage = player_alive_piece_count * 4;
+                        battle_npc->ApplyDamage(damage);
+                    }
+                }
+                else if(player_alive_piece_count == 0) {
+                    //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
+                    int damage = npc_alive_piece_count * 4;
+                    if(auto player = Scene::Object::Get<Player>()) {
+                        player->ApplyDamage(damage);
+                    }
+                }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------
+// エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
+//------------------------------------------------------
+int InGameScene::GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent)
+{
+    int count = 0;
+    for(auto piece : Scene::Object::GetArray<Piece>()) {
+        if(!piece->GetComponent<PieceSensor>()) {
+            continue;    //センサーコンポーネントが無い駒はスキップ
+        }
+        if(piece->GetOwner() == agent) {
+            //オーナーが一致したらカウントアップ
+            count++;
+        }
+    }
+    return count;
 }
