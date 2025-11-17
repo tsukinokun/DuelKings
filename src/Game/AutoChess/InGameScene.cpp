@@ -266,6 +266,24 @@ bool InGameScene::Init()
         }
     }
     //---------------------------------------------------------------------------------
+    //  売却ボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
+        sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
+        sell_button->SetTranslate(float3(1050.0f, 500.0f, 0.0f));    //位置を画面右下あたりに設定
+        //左クリックを促す
+        sell_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = []() {
+            if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                // piece_stand->SellSelectedPiece();    //選択されているピースを売却する
+            }
+        };
+        sell_button->SetClickFunc(click_func);
+    }
+    //---------------------------------------------------------------------------------
     //  駒数UI
     //---------------------------------------------------------------------------------
     {
