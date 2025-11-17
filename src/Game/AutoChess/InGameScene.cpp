@@ -26,6 +26,7 @@
 #include <Game/AutoChess/Component/PieceSensor.h>
 #include <Game/AutoChess/Component/PieceAttacker.h>
 #include <Game/AutoChess/Component/PieceHPDisplayer.h>
+#include <Game/AutoChess/UIObject/UIGauge.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -33,10 +34,11 @@ bool InGameScene::Init()
 {
     __super::Init();
     game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json", "data/AutoChess/MasterData/SynergyDatas.json");    //マスターデータの読み込み
-    ImageBuffer::Init();                                                                                                           //画像バッファの初期化
-    PiecePool::Init();                                                                                                             //駒プールの初期化
-    Scene::Object::Create<Camera>();                                                                                               //カメラ
-    auto player = Scene::Object::Create<Player>();                                                                                 //プレイヤー
+    PieceFactory::SetPieceRepository(&game_context_.GetPieceRepository());
+    ImageBuffer::Init();                              //画像バッファの初期化
+    PiecePool::Init();                                //駒プールの初期化
+    Scene::Object::Create<Camera>();                  //カメラ
+    auto player = Scene::Object::Create<Player>();    //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
@@ -77,6 +79,7 @@ bool InGameScene::Init()
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 500.0f, 0.0f));
             auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
+            //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------
             //  クリック時処理の設定
@@ -108,15 +111,21 @@ bool InGameScene::Init()
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
+                    ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
+                    MATRIX prev_mat = GetCameraViewMatrix();
                     //一旦ピースの一番目をうつす
-                    //if(auto draw_piece = shop_pieces[i].lock()) {
-                    //    //モデルを描画
-                    //    //if(auto model = draw_piece->GetComponent<ComponentModel>()) {
-                    //    //    MV1DrawModel(model->GetModel());
-                    //    //}
-                    //}
-                    //piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
+                    if(auto draw_piece = shop_pieces[i].lock()) {
+                        SetCameraPositionAndTarget_UpVecY(cast(draw_piece->GetTranslate() + float3(0.0f, 0.0f, -2.0f)),
+                                                          cast(draw_piece->GetTranslate()));    //カメラをモデルの方に向ける
+                        //モデルを描画
+                        if(auto model = draw_piece->GetComponent<ComponentModel>()) {
+                            MV1DrawModel(model->GetModel());
+                        }
+                    }
+                    piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
                     SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
+                    //SetDrawScreen(DX_SCREEN_BACK);                         //描画先をバックバッファに戻す
+                    SetCameraViewMatrix(prev_mat);    //カメラ行列を戻す
                 }
             };
             piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
@@ -390,24 +399,36 @@ bool InGameScene::Init()
             // 名前表示UI
             //---------------------------------------------------------------------------------
             auto agent_ui = Scene::Object::Create<UIText>();
-            agent_ui->SetFontSize(30);                                                       //フォントサイズ設定
-            agent_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
-            agent_ui->SetTranslate(float3(150.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
-            agent_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
-            agent_ui->SetText(agent->GetName());                                             //エージェント名を表示
+            agent_ui->SetFontSize(30);                                                      //フォントサイズ設定
+            agent_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                 //文字色設定
+            agent_ui->SetTranslate(float3(20.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            agent_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);             //左上寄せに設定
+            agent_ui->SetText(agent->GetName());                                            //エージェント名を表示
             //---------------------------------------------------------------------------------
             // エージェントの所持ゴールド表示UI
             //---------------------------------------------------------------------------------
             auto gold_ui = Scene::Object::Create<UIText>();
             gold_ui->SetFontSize(30);                                                       //フォントサイズ設定
             gold_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
-            gold_ui->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            gold_ui->SetTranslate(float3(150.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             gold_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
             //更新処理
             auto set_text_proc = [agent, gold_ui]() {
                 gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
             gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            //---------------------------------------------------------------------------------
+            // エージェントのHP表示UI
+            //---------------------------------------------------------------------------------
+            auto hp_gauge = Scene::Object::Create<UIGauge>();
+            hp_gauge->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            hp_gauge->SetGaugeSize(int2(100, 20));                                           //ゲージサイズ設定
+            //更新処理
+            auto set_gauge_proc = [agent, hp_gauge]() {
+                float hp_ratio = static_cast<float>(agent->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                hp_gauge->SetGaugeRate(hp_ratio);
+            };
+            hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
         }
     }
     return true;
@@ -444,6 +465,7 @@ void InGameScene::Update()
         break;
 
     case GameState::Battle:
+        UpdateBattlePhase();    //バトルフェーズの更新処理
         if(state_timer_ >= BATTLE_PHASE_DURATION) {
             TransitionTo(GameState::Setup);
             DestroyPiecesAfterBattlePhase();    //バトルフェーズ用に生成した駒を破棄する
@@ -463,6 +485,7 @@ void InGameScene::Update()
                 chess_board->SetBoardProcessEnable(true);
             }
             ++turn_count_;
+            has_battle_ended_ = false;    //バトル終了フラグをリセット
         }
         break;
     }
@@ -542,13 +565,6 @@ void InGameScene::CreatePiecesForBattlePhase()
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(player);    //オーナーを設定
                     //---------------------------------------------------------------------------------
-                    // マスターデータを設定
-                    //---------------------------------------------------------------------------------
-                    //マスターデータを取得
-                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
-                    piece->SetMasterData(master_data);
-                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
-                    //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSensor>();
@@ -573,6 +589,7 @@ void InGameScene::CreatePiecesForBattlePhase()
     //----------------------------------------------------------------------
     //とりあえずテストで抽選ナシの一人分
     if(auto npc = Scene::Object::Get<Npc>()) {
+        battle_agent_ = npc;    //このタイミングでバトルエージェントとして設定
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
             for(int r = 0; r < 8; r++) {
@@ -587,13 +604,6 @@ void InGameScene::CreatePiecesForBattlePhase()
                     float z_pos = ((7 - f) * SQUARE_SIZE) - (4 * SQUARE_SIZE);
                     piece->SetTranslate(float3(x_pos, 0.5f, z_pos));
                     piece->SetOwner(npc);    //オーナーを設定
-                    //---------------------------------------------------------------------------------
-                    // マスターデータを設定
-                    //---------------------------------------------------------------------------------
-                    //マスターデータを取得
-                    const PieceData* master_data = game_context_.GetPieceRepository().FindByTypeName(piece->GetNameDefault().data());
-                    piece->SetMasterData(master_data);
-                    piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
                     //---------------------------------------------------------------------------------
                     // 敵を探索するコンポーネントを追加
                     //---------------------------------------------------------------------------------
@@ -686,4 +696,59 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
             }
         }
     }
+}
+
+//----------------------------------------------------------------------
+// バトルフェーズの処理
+//----------------------------------------------------------------------
+void InGameScene::UpdateBattlePhase()
+{
+    //バトルが終了していない場合、終了判定を行う
+    if(!has_battle_ended_) {
+        //エージェントの駒数を取得
+        int player_alive_piece_count = GetAlivePieceCountForAgent(Scene::Object::Get<Player>());
+        int npc_alive_piece_count    = 0;
+        if(auto battle_npc = battle_agent_.lock()) {
+            npc_alive_piece_count = GetAlivePieceCountForAgent(battle_npc);
+        }
+        //どちらかの駒数が0になったらバトル終了
+        if(player_alive_piece_count == 0 || npc_alive_piece_count == 0) {
+            has_battle_ended_ = true;    //バトル終了フラグを立てる
+            //ダメージ処理
+            if(auto battle_npc = battle_agent_.lock()) {
+                if(npc_alive_piece_count == 0) {
+                    //NPCの駒が全滅したら、NPCがダメージを受ける
+                    if(auto battle_npc = battle_agent_.lock()) {
+                        int damage = player_alive_piece_count * 4;
+                        battle_npc->ApplyDamage(damage);
+                    }
+                }
+                else if(player_alive_piece_count == 0) {
+                    //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
+                    int damage = npc_alive_piece_count * 4;
+                    if(auto player = Scene::Object::Get<Player>()) {
+                        player->ApplyDamage(damage);
+                    }
+                }
+            }
+        }
+    }
+}
+
+//------------------------------------------------------
+// エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
+//------------------------------------------------------
+int InGameScene::GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent)
+{
+    int count = 0;
+    for(auto piece : Scene::Object::GetArray<Piece>()) {
+        if(!piece->GetComponent<PieceSensor>()) {
+            continue;    //センサーコンポーネントが無い駒はスキップ
+        }
+        if(piece->GetOwner() == agent) {
+            //オーナーが一致したらカウントアップ
+            count++;
+        }
+    }
+    return count;
 }

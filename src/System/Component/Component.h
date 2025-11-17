@@ -278,6 +278,7 @@ public:
         Exited,          //!< 正しく終了が呼ばれている
         Serialized,      //!< シリアライズ済み.
         NoSerialize,     //!< シリアライズしない.
+        Enable,          //!< 処理する or 処理しない(Update/Draw系なにもしない)
     };
 
     void SetStatus(StatusBit b, bool on);    //!< ステータスの設定
@@ -295,7 +296,8 @@ protected:
     std::string name_;
 
 private:
-    Status<StatusBit> status_;    //!< コンポーネント状態
+    Status<StatusBit> status_;        //!< コンポーネント状態
+    Status<StatusBit> status_old_;    //!< セット前のコンポーネント状態
 
 private:
     //--------------------------------------------------------------------

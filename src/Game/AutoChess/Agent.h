@@ -8,7 +8,7 @@
 #include <Game/AutoChess/Info/BoardInfo.h>
 #include <Game/AutoChess/Info/ShopStandInfo.h>
 #include <Game/AutoChess/Info/PieceStandInfo.h>
-#include <Game/AutoChess/Info/AgentInfo.h>
+#include <Game/AutoChess/Info/AgentStatus.h>
 #include <Game/AutoChess/Synergy/SynergySystem.h>
 class PieceInfo;
 USING_PTR(Agent);
@@ -31,6 +31,12 @@ public:
     //! @retval 所持金
     //-----------------------------------------------------------
     int GetGold() const;
+
+    //-----------------------------------------------------------
+    // HPを取得する関数
+    //! @retval HP
+    //-----------------------------------------------------------
+    int GetHP() const;
 
     //-----------------------------------------------------------
     // 所持金を増やす関数
@@ -174,13 +180,18 @@ public:
     //-----------------------------------------------------------
     void SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository);
 
+    //-----------------------------------------------------------
+    // ダメージを受ける関数
+    //! @param amount [in] ダメージ量
+    //-----------------------------------------------------------
+    void ApplyDamage(int amount);
+
     //@}
 protected:
     int            exp_ = 0;            //エージェントのレベル
-    int            hp_  = 100;          //エージェントの体力
     PieceStandInfo stand_info_;         // ピーススタンド
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド
-    AgentInfo      agent_info_;         //エージェント情報
+    AgentStatus    agent_info_;         //エージェント情報
     SynergySystem  synergy_system_;     //シナジーシステム
 };

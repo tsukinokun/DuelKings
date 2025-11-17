@@ -9,6 +9,7 @@
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
+#include <System/Component/ComponentEffect.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -59,6 +60,21 @@ bool Piece::Init()
         level_image->SetProc("update", update_proc);
         level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
     }
+    //---------------------------------------------------------------------------------
+    // 死亡したならピースをリリースする
+    //---------------------------------------------------------------------------------
+    auto death_proc = [this]() {
+        if(status_.IsDead()) {
+            // 死亡エフェクトを再生
+            const std::string path = "data/AutoChess/Effect/PieceDeath.efkefc";
+            //const std::string path   = "data/AutoChess/Effect/Poison/Poison.efkefc";
+            float3 pos    = GetTranslate();
+            auto   effect = ComponentEffect::Object::Create(path, pos);
+            effect->SetTranslate(pos);
+            Scene::Object::Release(dynamic_pointer_cast<Piece>(shared_from_this()));    // ピースをリリースする
+        }
+    };
+    SetProc("death_check", death_proc, ProcTiming::Update, ProcPriority::LOW);
     return true;
 }
 
@@ -157,6 +173,7 @@ int Piece::GetLevel() const
 void Piece::SetLevel(int level)
 {
     status_.SetLevel(level);
+    //ステータスをマスターデータから再適用
     ApplyStatsFromMaster();
     // レベル表示用UI画像の更新
     if(auto level_ui = level_ui_.lock()) {

@@ -50,6 +50,15 @@ int Agent::GetGold() const
 }
 
 //-----------------------------------------------------------
+// HPを取得する関数
+//! @retval HP
+//-----------------------------------------------------------
+int Agent::GetHP() const
+{
+    return agent_info_.GetHP();
+}
+
+//-----------------------------------------------------------
 //! 所持金を増やす関数
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::AddGold(int gold)
@@ -299,4 +308,12 @@ bool Agent::MoveBoardPieceToStand(int board_file, int board_rank)
 void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository)
 {
     synergy_system_.SetRepository(synergy_repository, piece_repository);
+}
+
+//-----------------------------------------------------------
+//! @brief ダメージを受ける関数
+//-----------------------------------------------------------
+void Agent::ApplyDamage(int amount)
+{
+    agent_info_.ApplyDamage(amount);
 }

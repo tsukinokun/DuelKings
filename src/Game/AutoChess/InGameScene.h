@@ -7,6 +7,8 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/system/Timer.h>
 #include <Game/AutoChess/Context/GameContext.h>
+//前方宣言
+class Agent;
 class InGameScene : public Scene::Base
 {
 private:
@@ -42,12 +44,24 @@ private:
     //----------------------------------------------------------------------
     void DestroyPiecesAfterBattlePhase();
 
+    //----------------------------------------------------------------------
+    // バトルフェーズの処理
+    //----------------------------------------------------------------------
+    void UpdateBattlePhase();
+
+    //------------------------------------------------------
+    // エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
+    //------------------------------------------------------
+    int GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent);
+
     //@}
 private:
-    Timer       phase_timer_;
-    GameContext game_context_;                           //マスターデータなどの管理クラス
-    GameState   game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
-    float       state_timer_      = 0.0f;                // 状態経過時間（秒）
-    bool        is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
-    int         turn_count_       = 1;                   // 現在のターン数
+    Timer                phase_timer_;
+    GameContext          game_context_;                           //マスターデータなどの管理クラス
+    GameState            game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
+    float                state_timer_      = 0.0f;                // 状態経過時間（秒）
+    bool                 is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    bool                 has_battle_ended_ = false;               //バトルが終了したかどうか
+    int                  turn_count_       = 1;                   // 現在のターン数
+    std::weak_ptr<Agent> battle_agent_;                           //バトル中のエージェント
 };
