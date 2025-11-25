@@ -213,6 +213,16 @@ std::shared_ptr<Agent> Agent::SetPieceStandInfo(size_t index, const PieceInfo& p
     return dynamic_pointer_cast<Agent>(shared_from_this());
 }
 //-----------------------------------------------------------
+// ピーススタンドの駒情報を取得する関数
+//! @param index [in] 駒情報を取得するインデックス
+//! @param retval 駒情報
+//-----------------------------------------------------------
+PieceInfo Agent::GetPieceStandInfo(size_t index) const
+{
+    auto info = stand_info_.GetStandPieces();
+    return info[index];
+}
+//-----------------------------------------------------------
 //! 自陣のチェスボードの駒情報を設定する関数
 //-----------------------------------------------------------
 std::shared_ptr<Agent> Agent::SetBoardInfo(int file, int rank, const PieceInfo& piece_info)

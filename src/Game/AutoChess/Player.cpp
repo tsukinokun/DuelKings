@@ -242,6 +242,14 @@ bool Player::MoveBoardPieceToStand(int board_file, int board_rank)
     return false;    //空いてる場所がなかった場合は失敗
 }
 
+//-----------------------------------------------------------
+//! @brief 選択されているピースを取得する関数
+//-----------------------------------------------------------
+std::shared_ptr<Piece> Player::GetSelectedPiece() const
+{
+    return selected_piece_;
+}
+
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
@@ -258,6 +266,9 @@ void Player::Update()
                 if(auto square = stand_squares_[i].lock()) {
                     if(auto piece = square->GetPutPiece().lock()) {
                         piece->SetSelect(false);
+                        if(square->IsRayHit()) {
+                            selected_piece_ = piece;
+                        }
                     }
                 }
             }
@@ -269,6 +280,9 @@ void Player::Update()
                     if(auto square = board_squares_[f][r].lock()) {
                         if(auto piece = square->GetPutPiece().lock()) {
                             piece->SetSelect(false);
+                            if(square->IsRayHit()) {
+                                selected_piece_ = piece;
+                            }
                         }
                     }
                 }
