@@ -27,6 +27,7 @@
 #include <Game/AutoChess/Component/PieceAttacker.h>
 #include <Game/AutoChess/Component/PieceHPDisplayer.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
+#include <Game/AutoChess/UIObject/UIPieceDitail.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -78,7 +79,7 @@ bool InGameScene::Init()
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 500.0f, 0.0f));
-            auto texture = std::make_shared<Texture>(100, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
+            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------
@@ -124,7 +125,7 @@ bool InGameScene::Init()
                     }
                     piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
                     SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
-                    //SetDrawScreen(DX_SCREEN_BACK);                         //描画先をバックバッファに戻す
+                    //SetDrawScreen(DX_SCREEN_BACK);                       //描画先をバックバッファに戻す
                     SetCameraViewMatrix(prev_mat);    //カメラ行列を戻す
                 }
             };
@@ -264,6 +265,24 @@ bool InGameScene::Init()
                 next_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
             }
         }
+    }
+    //---------------------------------------------------------------------------------
+    //  売却ボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
+        sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
+        sell_button->SetTranslate(float3(1050.0f, 500.0f, 0.0f));    //位置を画面右下あたりに設定
+        //左クリックを促す
+        sell_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = [player]() {
+            if(auto select_piece = player->GetSelectedPiece()) {
+                Scene::Object::Release(select_piece);    //選択されているオブジェクトを解放する
+            }
+        };
+        sell_button->SetClickFunc(click_func);
     }
     //---------------------------------------------------------------------------------
     //  駒数UI
@@ -430,6 +449,21 @@ bool InGameScene::Init()
             };
             hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
         }
+    }
+    //---------------------------------------------------------------------------------
+    // ピース情報UI
+    //---------------------------------------------------------------------------------
+    {
+        auto piece_detail_ui = Scene::Object::Create<UIPieceDitail>();
+        piece_detail_ui->SetTranslate(float3(100.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+        auto update_proc = [piece_detail_ui, player]() {
+            //選択されているピースを取得
+            if(auto piece = player->GetSelectedPiece()) {
+                //ピース情報UIに情報を設定
+                piece_detail_ui->SetText(piece->GetNameDefault());
+            }
+        };
+        piece_detail_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
     }
     return true;
 }

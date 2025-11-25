@@ -7,6 +7,7 @@
 #include <System/Scene.h>
 #include "Agent.h"
 class ChessBoard;
+class Piece;
 USING_PTR(Player);
 USING_PTR(PieceStand);
 class Player : public Agent
@@ -51,8 +52,15 @@ public:
     //-----------------------------------------------------------
     bool MoveBoardPieceToStand(int board_file, int board_rank) override;
 
+    //-----------------------------------------------------------
+    // 選択されているピースを取得する関数
+    //! @retval 選択されているピースのshared_ptr
+    //-----------------------------------------------------------
+    std::shared_ptr<Piece> GetSelectedPiece() const;
+
     //@}
 private:
-    bool should_select_piece_ = false;    //このフレームで、OnHitの選択を行うか否かを保持する変数
-    bool should_drop_piece_   = false;    //このフレームで、OnHitのドロップを行うか否かを保持する変数
+    bool                   should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数
+    bool                   should_drop_piece_   = false;      //このフレームで、OnHitのドロップを行うか否かを保持する変数
+    std::shared_ptr<Piece> selected_piece_      = nullptr;    //選択されているピースデータのポインタ
 };
