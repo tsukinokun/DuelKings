@@ -63,4 +63,5 @@ private:
     bool                   should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数
     bool                   should_drop_piece_   = false;      //このフレームで、OnHitのドロップを行うか否かを保持する変数
     std::shared_ptr<Piece> selected_piece_      = nullptr;    //選択されているピースデータのポインタ
+    bool*                  is_purchase_open_    = nullptr;    //ピース購入画面が開いているかどうかのフラグへのポインタ
 };

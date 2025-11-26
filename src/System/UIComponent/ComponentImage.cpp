@@ -25,7 +25,12 @@ void ComponentImage::Init()
         float size = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
         //角度はx軸の角度から取る
         float angle = owner->GetRotationAxisXYZ().x;    // X軸の角度を取得0
+        // 透明度の設定
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);
+        // 画像の描画
         DrawRotaGraphF(pos.x, pos.y, static_cast<double>(size), static_cast<double>(angle), image_, TRUE);
+        //透明度を元に戻す
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
     };
     SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
 }
@@ -131,6 +136,15 @@ float3 ComponentImage::GetAdjustment() const
         }
     }
     return adjustment;
+}
+
+//---------------------------------------------------------------------------
+//! @brief  画像の透明度を設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentImage> ComponentImage::SetAlpha(int alpha)
+{
+    alpha_ = alpha;
+    return dynamic_pointer_cast<ComponentImage>(shared_from_this());
 }
 
 CEREAL_REGISTER_TYPE(ComponentImage)
