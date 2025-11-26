@@ -58,6 +58,12 @@ public:
     //-----------------------------------------------------------
     std::shared_ptr<Piece> GetSelectedPiece() const;
 
+    //-----------------------------------------------------------
+    // ピース購入画面が開いているかどうかのフラグへのポインタを設定する関数
+    //! @param is_purchase_open [in] ピース購入画面が開いているかどうかのフラグへのポインタ
+    //-----------------------------------------------------------
+    void SetIsPurchaseOpenFlag(bool* is_purchase_open);
+
     //@}
 private:
     bool                   should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数

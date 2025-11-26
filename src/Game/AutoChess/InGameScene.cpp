@@ -42,6 +42,7 @@ bool InGameScene::Init()
     Scene::Object::Create<Camera>();                  //カメラ
     auto player = Scene::Object::Create<Player>();    //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
+    player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------
