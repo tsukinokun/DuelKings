@@ -250,6 +250,14 @@ std::shared_ptr<Piece> Player::GetSelectedPiece() const
     return selected_piece_;
 }
 
+//-----------------------------------------------------------
+//! @brief ピース購入画面が開いているかどうかのフラグへのポインタを設定する関数
+//-----------------------------------------------------------
+void Player::SetIsPurchaseOpenFlag(bool* is_purchase_open)
+{
+    is_purchase_open_ = is_purchase_open;
+}
+
 //---------------------------------------------------------------------------------
 //!	更新
 //---------------------------------------------------------------------------------
@@ -258,26 +266,14 @@ void Player::Update()
     __super::Update();
 
     should_select_piece_ = false;    //選択するかをリセット
-    //左クリックで選択
-    if(IsMouseDown(MOUSE_INPUT_LEFT)) {
-        if(auto stand = Scene::Object::Get<PieceStand>()) {
-            auto stand_squares_ = stand->GetSquarePtrArray();
-            for(int i = 0; i < stand_squares_.size(); i++) {
-                if(auto square = stand_squares_[i].lock()) {
-                    if(auto piece = square->GetPutPiece().lock()) {
-                        piece->SetSelect(false);
-                        if(square->IsRayHit()) {
-                            selected_piece_ = piece;
-                        }
-                    }
-                }
-            }
-        }
-        if(auto board = Scene::Object::Get<ChessBoard>()) {
-            auto board_squares_ = board->GetSquarePtrArray();
-            for(int f = 0; f < 4; f++) {
-                for(int r = 0; r < board_squares_[f].size(); r++) {
-                    if(auto square = board_squares_[f][r].lock()) {
+    //購入画面が開いていない場合のみ選択可能
+    if(!*is_purchase_open_) {
+        //左クリックで選択
+        if(IsMouseDown(MOUSE_INPUT_LEFT)) {
+            if(auto stand = Scene::Object::Get<PieceStand>()) {
+                auto stand_squares_ = stand->GetSquarePtrArray();
+                for(int i = 0; i < stand_squares_.size(); i++) {
+                    if(auto square = stand_squares_[i].lock()) {
                         if(auto piece = square->GetPutPiece().lock()) {
                             piece->SetSelect(false);
                             if(square->IsRayHit()) {
@@ -287,32 +283,47 @@ void Player::Update()
                     }
                 }
             }
-        }
-        should_select_piece_ = true;
-    }
-
-    //ドロップ操作
-    should_drop_piece_ = false;    //ドロップするかをリセット
-    if(IsMouseUp(MOUSE_INPUT_LEFT)) {
-        if(auto stand = Scene::Object::Get<PieceStand>()) {
-            auto stand_squares_ = stand->GetSquarePtrArray();
-            for(int i = 0; i < stand_squares_.size(); i++) {
-                if(auto square = stand_squares_[i].lock()) {
-                    if(auto piece = square->GetPutPiece().lock()) {
-                        if(piece->IsSelect()) {
-                            should_drop_piece_ = true;    //ドロップする
+            if(auto board = Scene::Object::Get<ChessBoard>()) {
+                auto board_squares_ = board->GetSquarePtrArray();
+                for(int f = 0; f < 4; f++) {
+                    for(int r = 0; r < board_squares_[f].size(); r++) {
+                        if(auto square = board_squares_[f][r].lock()) {
+                            if(auto piece = square->GetPutPiece().lock()) {
+                                piece->SetSelect(false);
+                                if(square->IsRayHit()) {
+                                    selected_piece_ = piece;
+                                }
+                            }
                         }
                     }
                 }
             }
+            should_select_piece_ = true;
         }
-        if(auto board = Scene::Object::Get<ChessBoard>()) {
-            auto board_squares_ = board->GetSquarePtrArray();
-            for(int f = 0; f < 4; f++) {
-                for(int r = 0; r < board_squares_[f].size(); r++) {
-                    if(auto square = board_squares_[f][r].lock()) {
+
+        //ドロップ操作
+        should_drop_piece_ = false;    //ドロップするかをリセット
+        if(IsMouseUp(MOUSE_INPUT_LEFT)) {
+            if(auto stand = Scene::Object::Get<PieceStand>()) {
+                auto stand_squares_ = stand->GetSquarePtrArray();
+                for(int i = 0; i < stand_squares_.size(); i++) {
+                    if(auto square = stand_squares_[i].lock()) {
                         if(auto piece = square->GetPutPiece().lock()) {
-                            should_drop_piece_ = true;    //ドロップする
+                            if(piece->IsSelect()) {
+                                should_drop_piece_ = true;    //ドロップする
+                            }
+                        }
+                    }
+                }
+            }
+            if(auto board = Scene::Object::Get<ChessBoard>()) {
+                auto board_squares_ = board->GetSquarePtrArray();
+                for(int f = 0; f < 4; f++) {
+                    for(int r = 0; r < board_squares_[f].size(); r++) {
+                        if(auto square = board_squares_[f][r].lock()) {
+                            if(auto piece = square->GetPutPiece().lock()) {
+                                should_drop_piece_ = true;    //ドロップする
+                            }
                         }
                     }
                 }

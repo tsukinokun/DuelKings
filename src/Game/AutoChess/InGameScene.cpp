@@ -28,6 +28,7 @@
 #include <Game/AutoChess/Component/PieceHPDisplayer.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/UIObject/UIPieceDitail.h>
+#include <Game/AutoChess/UIObject/UIImage.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -41,6 +42,7 @@ bool InGameScene::Init()
     Scene::Object::Create<Camera>();                  //カメラ
     auto player = Scene::Object::Create<Player>();    //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
+    player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------
@@ -69,6 +71,18 @@ bool InGameScene::Init()
     }
     Scene::Object::Create<MouseRay>();                               //マウス光線
     std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
+    //---------------------------------------------------------------------------------
+    //  購入画面のフィルター
+    //---------------------------------------------------------------------------------
+    {
+        auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
+        purchase_window_filter->SetScaleAxisXYZ(10.0f);                    //大きさを画面全体に設定
+        purchase_window_filter->SetAlpha(64);                              //透明度を設定
+        float x = WINDOW_W * 0.5f;
+        float y = WINDOW_H * 0.5f;
+        purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
+        purchase_window_objects.push_back(purchase_window_filter);    //購入画面のウィンドウ群に追加
+    }
     //---------------------------------------------------------------------------------
     //  ピース購入ボタン
     //---------------------------------------------------------------------------------
