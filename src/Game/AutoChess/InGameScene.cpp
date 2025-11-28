@@ -504,7 +504,7 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             auto piece_name_ui = Scene::Object::Create<UIText>();
-            piece_name_ui->SetTranslate(float3(170.0f, 300.0f, 0.0f));              //位置を左中央あたりに設定
+            piece_name_ui->SetTranslate(float3(170.0f, 150.0f, 0.0f));              //位置を左中央あたりに設定
             piece_name_ui->SetFontName("游明朝");                                   //フォントを設定
             piece_name_ui->SetFontSize(20);                                         //フォントサイズ設定
             piece_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
@@ -519,6 +519,30 @@ bool InGameScene::Init()
             };
             piece_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
         }
+        //---------------------------------------------------------------------------------
+        // 駒のレベルUI
+        //---------------------------------------------------------------------------------
+        {
+            auto piece_level_ui = Scene::Object::Create<UIImage>();
+            piece_level_ui->SetTranslate(float3(170.0f, 180.0f, 0.0f));
+            piece_level_ui->SetScaleAxisXYZ(0.1f);    //大きさを少し小さく設定
+            piece_level_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            auto update_proc = [piece_level_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピースのレベルを取得
+                    int piece_level = piece->GetLevel();
+                    //レベルに応じた画像を設定
+                    piece_level_ui->SetImage(ImageBuffer::GetImageHandle(std::string("level" + std::to_string(piece_level) + "_star")));
+                }
+            };
+            piece_level_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(piece_level_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // ピースのHP表示UI
+        //---------------------------------------------------------------------------------
+
         //---------------------------------------------------------------------------------
         // プレイヤーがピースを選択中ならエージェント情報を表示する
         //---------------------------------------------------------------------------------
