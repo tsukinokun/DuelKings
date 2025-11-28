@@ -27,8 +27,8 @@
 #include <Game/AutoChess/Component/PieceAttacker.h>
 #include <Game/AutoChess/Component/PieceHPDisplayer.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
-#include <Game/AutoChess/UIObject/UIPieceDitail.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/Piece/PieceData/PieceData.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -326,7 +326,7 @@ bool InGameScene::Init()
             }
         };
         piece_num_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
-        piece_num_ui->SetTranslate(float3(500.0f, 250.0f, 0.0f));
+        piece_num_ui->SetTranslate(float3(WINDOW_W * 0.5f - 50.0f, WINDOW_H * 0.5f, 0.0f));
         piece_num_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
     //---------------------------------------------------------------------------------
@@ -337,7 +337,7 @@ bool InGameScene::Init()
         line_ui->SetFontSize(80);                                         //フォントサイズ設定
         line_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
         line_ui->SetText("/");
-        line_ui->SetTranslate(float3(550.0f, 250.0f, 0.0f));
+        line_ui->SetTranslate(float3(WINDOW_W * 0.5f, WINDOW_H * 0.5f, 0.0f));
         line_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
     //---------------------------------------------------------------------------------
@@ -354,7 +354,7 @@ bool InGameScene::Init()
             piece_max_ui->SetText(std::to_string(level));
         };
         piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
-        piece_max_ui->SetTranslate(float3(600.0f, 250.0f, 0.0f));
+        piece_max_ui->SetTranslate(float3(WINDOW_W * 0.5f + 50.0f, WINDOW_H * 0.5f, 0.0f));
         piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
     }
     //---------------------------------------------------------------------------------
@@ -362,10 +362,10 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto turn_ui = Scene::Object::Create<UIText>();
-        turn_ui->SetFontSize(50);                                             //フォントサイズ設定
-        turn_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));        //文字色設定
-        turn_ui->SetTranslate(float3(50.0f, 50.0f, 0.0f));                    //位置を左上部に設定
-        turn_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);    //左上寄せに設定
+        turn_ui->SetFontSize(50);                                                //フォントサイズ設定
+        turn_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));           //文字色設定
+        turn_ui->SetTranslate(float3(100.0f, 100.0f, 0.0f));                     //位置を左上部に設定
+        turn_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //左上寄せに設定
         //更新処理
         auto set_text_proc = [this, turn_ui]() { turn_ui->SetText("Turn: " + std::to_string(turn_count_)); };
         turn_ui->SetProc("set_turn", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
@@ -375,10 +375,10 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto phase_timer_ui = Scene::Object::Create<UIText>();
-        phase_timer_ui->SetFontSize(50);                                               //フォントサイズ設定
-        phase_timer_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));          //文字色設定
-        phase_timer_ui->SetTranslate(float3(300.0f, 50.0f, 0.0f));                     //位置を上部中央あたりに設定
-        phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::UpperCenter);    //中央寄せに設定
+        phase_timer_ui->SetFontSize(50);                                                //フォントサイズ設定
+        phase_timer_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));           //文字色設定
+        phase_timer_ui->SetTranslate(float3(WINDOW_W * 0.5f, 100.0f, 0.0f));            //位置を上部中央あたりに設定
+        phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央寄せに設定
         //更新処理
         auto set_text_proc = [this, phase_timer_ui]() {
             int time_left = 0;
@@ -401,10 +401,10 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto phase_ui = Scene::Object::Create<UIText>();
-        phase_ui->SetFontSize(50);                                              //フォントサイズ設定
-        phase_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));         //文字色設定
-        phase_ui->SetTranslate(float3(600.0f, 50.0f, 0.0f));                    //位置を上部に設定
-        phase_ui->SetAlignment(ComponentTransformUI::Alignment::UpperRight);    //右上寄せに設定
+        phase_ui->SetFontSize(50);                                                //フォントサイズ設定
+        phase_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));           //文字色設定
+        phase_ui->SetTranslate(float3(1000.0f, 100.0f, 0.0f));                    //位置を上部に設定
+        phase_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //右上寄せに設定
         //更新処理
         auto set_text_proc = [this, phase_ui]() {
             switch(game_state_) {
@@ -424,8 +424,9 @@ bool InGameScene::Init()
     //  Agent表示UI
     //---------------------------------------------------------------------------------
     {
-        int  agent_count = 0;
-        auto agents      = Scene::Object::GetArray<Agent>();
+        int                                  agent_count = 0;
+        auto                                 agents      = Scene::Object::GetArray<Agent>();
+        std::vector<std::shared_ptr<Object>> agent_ui_objects;    //Agent情報のUI群
         for(auto& agent : agents) {
             agent_count++;
             //---------------------------------------------------------------------------------
@@ -437,6 +438,7 @@ bool InGameScene::Init()
             agent_ui->SetTranslate(float3(20.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             agent_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);             //左上寄せに設定
             agent_ui->SetText(agent->GetName());                                            //エージェント名を表示
+            agent_ui_objects.push_back(agent_ui);
             //---------------------------------------------------------------------------------
             // エージェントの所持ゴールド表示UI
             //---------------------------------------------------------------------------------
@@ -450,6 +452,7 @@ bool InGameScene::Init()
                 gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
             gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            agent_ui_objects.push_back(gold_ui);
             //---------------------------------------------------------------------------------
             // エージェントのHP表示UI
             //---------------------------------------------------------------------------------
@@ -462,22 +465,72 @@ bool InGameScene::Init()
                 hp_gauge->SetGaugeRate(hp_ratio);
             };
             hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
+            agent_ui_objects.push_back(hp_gauge);
+        }
+        //---------------------------------------------------------------------------------
+        // プレイヤーがピースを選択中でないならエージェント情報を表示する
+        //---------------------------------------------------------------------------------
+        for(auto& obj : agent_ui_objects) {
+            auto agent_ui_update_proc = [obj, player]() {
+                bool is_visible = player->IsSelectingPiece();
+                //エージェント情報UI群の表示・非表示を切り替え
+                obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
+            };
+            // 処理を登録
+            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NONE);
         }
     }
     //---------------------------------------------------------------------------------
     // ピース情報UI
     //---------------------------------------------------------------------------------
     {
-        auto piece_detail_ui = Scene::Object::Create<UIPieceDitail>();
-        piece_detail_ui->SetTranslate(float3(100.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
-        auto update_proc = [piece_detail_ui, player]() {
-            //選択されているピースを取得
-            if(auto piece = player->GetSelectedPiece()) {
-                //ピース情報UIに情報を設定
-                piece_detail_ui->SetText(piece->GetNameDefault());
-            }
-        };
-        piece_detail_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+        auto                                 piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを事前に取得しておく
+        std::vector<std::shared_ptr<Object>> piece_ditail_ui_objects;                                  //Agent情報のUI群
+        //---------------------------------------------------------------------------------
+        // ピース詳細背景画像
+        //---------------------------------------------------------------------------------
+        {
+            auto piece_detail_back = Scene::Object::Create<UIImage>();
+            piece_detail_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+            piece_detail_back->SetImage(ImageBuffer::GetImageHandle("piece_detail_back"));
+            piece_detail_back->SetTranslate(float3(170.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+            piece_detail_back->SetAlpha(128);                                 //透明度を設定
+            piece_detail_back->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            piece_detail_back->SetScaleAxisXYZ(1.5f);    //大きさを少し大さく設定
+            piece_ditail_ui_objects.push_back(piece_detail_back);
+        }
+        //---------------------------------------------------------------------------------
+        // ピース名表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto piece_name_ui = Scene::Object::Create<UIText>();
+            piece_name_ui->SetTranslate(float3(170.0f, 300.0f, 0.0f));              //位置を左中央あたりに設定
+            piece_name_ui->SetFontName("游明朝");                                   //フォントを設定
+            piece_name_ui->SetFontSize(20);                                         //フォントサイズ設定
+            piece_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            piece_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            auto update_proc = [piece_name_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    piece_name_ui->SetText(piece_data->display_name_);
+                }
+            };
+            piece_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+        }
+        //---------------------------------------------------------------------------------
+        // プレイヤーがピースを選択中ならエージェント情報を表示する
+        //---------------------------------------------------------------------------------
+        for(auto& obj : piece_ditail_ui_objects) {
+            auto agent_ui_update_proc = [obj, player]() {
+                bool is_visible = !player->IsSelectingPiece();
+                //エージェント情報UI群の表示・非表示を切り替え
+                obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
+            };
+            // 処理を登録
+            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NONE);
+        }
     }
     return true;
 }

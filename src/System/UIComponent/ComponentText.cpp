@@ -29,16 +29,16 @@ void ComponentText::Init()
             if(font_handle != -1) {
                 //フォントが存在しているなら
                 //配置位置(縦)
-                hight = static_cast<float>(GetFontSize());    //フォントサイズを取得(=高さ)
+                hight = static_cast<float>(GetFontSizeToHandle(font_handle));    //フォントサイズを取得(=高さ)
                 //配置位置(横)
-                width = static_cast<float>(GetDrawStringWidth(str_.data(), str_.size()));    // 文字列の幅を取得
+                width = static_cast<float>(GetDrawStringWidthToHandle(str_.data(), str_.size(), font_handle));    // 文字列の幅を取得
             }
             else {
                 //存在していないなら
                 //配置位置(縦)
-                hight = static_cast<float>(GetFontSizeToHandle(font_handle));    //フォントサイズを取得(=高さ)
+                hight = static_cast<float>(GetFontSize());    //フォントサイズを取得(=高さ)
                 //配置位置(横)
-                width = static_cast<float>(GetDrawStringWidthToHandle(str_.data(), str_.size(), font_handle));    // 文字列の幅を取得
+                width = static_cast<float>(GetDrawStringWidth(str_.data(), str_.size()));    // 文字列の幅を取得
             }
             //配置位置(縦)
             switch(static_cast<int>(alignment) / 3) {
@@ -46,10 +46,10 @@ void ComponentText::Init()
                 adjustment.y = 0.0f;
                 break;    // 上寄せ
             case 1:
-                adjustment.y = (hight * 0.5f);
+                adjustment.y = (-hight * 0.5f);
                 break;    // 中央寄せ
             case 2:
-                adjustment.y = hight;
+                adjustment.y = -hight;
                 break;    // 下寄せ
             }
             //配置位置(横)
@@ -58,10 +58,10 @@ void ComponentText::Init()
                 adjustment.x = 0.0f;
                 break;    // 左寄せ
             case 1:
-                adjustment.x = (width * 0.5f);
+                adjustment.x = (-width * 0.5f);
                 break;    // 中央寄せ
             case 2:
-                adjustment.x = width;
+                adjustment.x = -width;
                 break;    // 右寄せ
             }
         }

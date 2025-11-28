@@ -30,6 +30,7 @@ void ImageBuffer::Init()
     image_buffer_["makruk_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/MakrukSynergyIcon.png");    // マークルックシナジーアイコン画像
     image_buffer_["level_up"]            = DxLib::LoadGraph("data/AutoChess/Image/LevelUP.png");                           // 追加画像
     image_buffer_["sell_button"]         = DxLib::LoadGraph("data/AutoChess/Image/SellButton.png");                        // 売却ボタン画像
+    image_buffer_["piece_detail_back"]   = DxLib::LoadGraph("data/AutoChess/Image/PieceDetailBack.png");                   // ピース詳細背景画像
 }
 
 //---------------------------------------------------------------------------------

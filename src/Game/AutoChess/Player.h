@@ -64,6 +64,12 @@ public:
     //-----------------------------------------------------------
     void SetIsPurchaseOpenFlag(bool* is_purchase_open);
 
+    //-----------------------------------------------------------
+    // ピースを選択中かを返す関数
+    //! @retval ピースを選択中ならtrue、そうでなければfalse
+    //-----------------------------------------------------------
+    bool IsSelectingPiece() const;
+
     //@}
 private:
     bool                   should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数
