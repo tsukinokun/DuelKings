@@ -119,7 +119,7 @@ public:
 
     //! @brief 再生アニメーション名
     //! @return アニメーション名
-    const std::string_view GetEffectName();
+    const std::string GetEffectName() const;
 
     //! @brief 再生経過時間の取得
     //! @return 再生経過時間
