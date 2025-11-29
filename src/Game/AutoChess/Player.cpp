@@ -251,11 +251,39 @@ std::shared_ptr<Piece> Player::GetSelectedPiece() const
 }
 
 //-----------------------------------------------------------
+//! @brief 選択中のピースをクリアする関数
+//-----------------------------------------------------------
+bool Player::ReleaseSelectedPiece()
+{
+    //選択されているピースがある場合
+    if(selected_piece_) {
+        // 選択を解除
+        selected_piece_->SetSelect(false);
+        // 選択中のピースをクリア
+        selected_piece_ = nullptr;
+        return true;
+    }
+    return false;
+}
+
+//-----------------------------------------------------------
 //! @brief ピース購入画面が開いているかどうかのフラグへのポインタを設定する関数
 //-----------------------------------------------------------
 void Player::SetIsPurchaseOpenFlag(bool* is_purchase_open)
 {
     is_purchase_open_ = is_purchase_open;
+}
+
+//-----------------------------------------------------------
+// ピースを選択中かを返す関数
+//! @retval ピースを選択中ならtrue、そうでなければfalse
+//-----------------------------------------------------------
+bool Player::IsSelectingPiece() const
+{
+    if(selected_piece_) {
+        return true;
+    }
+    return false;
 }
 
 //---------------------------------------------------------------------------------
@@ -268,6 +296,7 @@ void Player::Update()
     should_select_piece_ = false;    //選択するかをリセット
     //購入画面が開いていない場合のみ選択可能
     if(!*is_purchase_open_) {
+        bool is_selecting_piece = false;    //ピース選択を行ったかどうかのフラグ
         //左クリックで選択
         if(IsMouseDown(MOUSE_INPUT_LEFT)) {
             if(auto stand = Scene::Object::Get<PieceStand>()) {
@@ -277,7 +306,8 @@ void Player::Update()
                         if(auto piece = square->GetPutPiece().lock()) {
                             piece->SetSelect(false);
                             if(square->IsRayHit()) {
-                                selected_piece_ = piece;
+                                selected_piece_    = piece;
+                                is_selecting_piece = true;
                             }
                         }
                     }
@@ -291,7 +321,8 @@ void Player::Update()
                             if(auto piece = square->GetPutPiece().lock()) {
                                 piece->SetSelect(false);
                                 if(square->IsRayHit()) {
-                                    selected_piece_ = piece;
+                                    selected_piece_    = piece;
+                                    is_selecting_piece = true;
                                 }
                             }
                         }
@@ -299,6 +330,10 @@ void Player::Update()
                 }
             }
             should_select_piece_ = true;
+            //ピースを選択していなければ、選択中のピースをクリア
+            if(!is_selecting_piece) {
+                ReleaseSelectedPiece();
+            }
         }
 
         //ドロップ操作

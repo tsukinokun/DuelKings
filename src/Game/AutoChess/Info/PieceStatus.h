@@ -51,11 +51,19 @@ public:
             return *this;
         }
 
+        //レベルを設定する。
+        Builder& Level(int level)
+        {
+            level_ = level;
+            return *this;
+        }
+
         // 設定された値をもとに PieceStatus を生成する。
-        PieceStatus Build() const { return PieceStatus(hp_, attack_power_, attack_interval_, attack_range_, move_speed_); }
+        PieceStatus Build() const { return PieceStatus(level_, hp_, attack_power_, attack_interval_, attack_range_, move_speed_); }
 
     private:
         // 各ステータスの初期値（未設定時のデフォルト）。
+        int   level_           = 1;
         int   hp_              = 100;
         int   attack_power_    = 0;
         float attack_interval_ = 1.0f;
@@ -143,7 +151,7 @@ private:
     // コンストラクタ（Builder からのみ呼ばれる）。
     //! @note 外部から直接インスタンス化されないように private にしている。
     //---------------------------------------------------------------------------
-    PieceStatus(int hp, int power, float interval, float range, float speed);
+    PieceStatus(int level_, int hp, int power, float interval, float range, float speed);
 
 private:
     // ステータス値の保持。
