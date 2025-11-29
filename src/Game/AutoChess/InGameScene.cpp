@@ -70,189 +70,7 @@ bool InGameScene::Init()
     for(int i = 0; i < AGENT_NUM - 1; i++) {
         Scene::Object::Create<Npc>();
     }
-    Scene::Object::Create<MouseRay>();                               //マウス光線
-    std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
-    //---------------------------------------------------------------------------------
-    //  購入画面のフィルター
-    //---------------------------------------------------------------------------------
-    {
-        auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
-        purchase_window_filter->SetScaleAxisXYZ(10.0f);                    //大きさを画面全体に設定
-        purchase_window_filter->SetAlpha(64);                              //透明度を設定
-        float x = WINDOW_W * 0.5f;
-        float y = WINDOW_H * 0.5f;
-        purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
-        purchase_window_objects.push_back(purchase_window_filter);    //購入画面のウィンドウ群に追加
-    }
-    //---------------------------------------------------------------------------------
-    //  ピース購入ボタン
-    //---------------------------------------------------------------------------------
-    {
-        auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
-        for(int i = 0; i < shop_pieces.size(); ++i) {
-            auto piece_purchase_button = Scene::Object::Create<UIButton>();
-            piece_purchase_button->SetName("PiecePurchaseButton");
-            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
-            piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
-            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
-            //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
-            piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
-            //---------------------------------------------------------------------------------
-            //  クリック時処理の設定
-            //---------------------------------------------------------------------------------
-            auto click_func = [i, player]() {
-                //ピーズスタンドが満タンなら購入できないようにする
-                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
-                    if(piece_stand->IsFull()) {
-                        return;
-                    }
-                    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-                        if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
-                            PieceInfo piece_info;
-                            piece_info.SetTypeName(purchase_piece->GetNameDefault().data());
-                            piece_info.SetOwner(player);    //ピースのオーナーをプレイヤーに設定
-                            player->AddPieceToStand(piece_info);
-                            piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
-                            shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
-                            player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
-                        }
-                    }
-                }
-            };
-            piece_purchase_button->SetClickFunc(click_func);    //クリック時の処理を設定
-            //---------------------------------------------------------------------------------
-            //  ターゲットをうつす処理を入れ込む。
-            //---------------------------------------------------------------------------------
-            auto draw_target = [piece_purchase_button, texture, i]() {
-                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
-                    SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
-                    ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
-                    MATRIX prev_mat = GetCameraViewMatrix();
-                    //一旦ピースの一番目をうつす
-                    if(auto draw_piece = shop_pieces[i].lock()) {
-                        SetCameraPositionAndTarget_UpVecY(cast(draw_piece->GetTranslate() + float3(0.0f, 0.0f, -2.0f)),
-                                                          cast(draw_piece->GetTranslate()));    //カメラをモデルの方に向ける
-                        //モデルを描画
-                        if(auto model = draw_piece->GetComponent<ComponentModel>()) {
-                            MV1DrawModel(model->GetModel());
-                        }
-                    }
-                    piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
-                    SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
-                    //SetDrawScreen(DX_SCREEN_BACK);                       //描画先をバックバッファに戻す
-                    SetCameraViewMatrix(prev_mat);    //カメラ行列を戻す
-                }
-            };
-            piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
-            purchase_window_objects.push_back(piece_purchase_button);    //購入画面のウィンドウ群に追加
-        }
-    }
-    //---------------------------------------------------------------------------------
-    // ショップピースの名前表示テキスト
-    //---------------------------------------------------------------------------------
-    {
-        auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
-        const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
-        for(int i = 0; i < shop_pieces.size(); ++i) {
-            auto piece_name_text = Scene::Object::Create<UIText>();
-            piece_name_text->SetName("PieceNameText");
-            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
-            piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
-            piece_name_text->SetFontSize(16);                                         //フォントサイズを設定
-            piece_name_text->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色を白に設定
-            piece_name_text->SetFontName("游明朝");
-            piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
-            //---------------------------------------------------------------------------------
-            //  更新処理の設定
-            //---------------------------------------------------------------------------------
-            auto update_func = [piece_name_text, piece_repository, i]() {
-                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
-                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
-                    if(auto piece = shop_pieces[i].lock()) {
-                        //ピース情報UIに情報を設定
-                        auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
-                        piece_name_text->SetText(piece_data->display_name_);
-                    }
-                    else {
-                        piece_name_text->SetText("");    //ピースがない場合は空文字にする
-                    }
-                }
-            };
-            piece_name_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NONE);
-            purchase_window_objects.push_back(piece_name_text);    //購入画面のウィンドウ群に追加
-        }
-    }
-    //---------------------------------------------------------------------------------
-    //  リロールボタン
-    //---------------------------------------------------------------------------------
-    {
-        auto reroll_button = Scene::Object::Create<UIButton>();
-        reroll_button->SetImage(ImageBuffer::GetImageHandle("reroll_button"));
-        reroll_button->SetScaleAxisXYZ(0.5f);                          //大きさを少し小さく設定
-        reroll_button->SetTranslate(float3(1150.0f, 300.0f, 0.0f));    //位置を画面右中央あたりに設定
-        //左クリックを促す
-        reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
-        //クリック時の処理
-        auto click_func = [player]() {
-            //ショップがロックされていなければリロール可能
-            if(!player->IsShopLocked()) {
-                //ピースリロールに2ゴールド消費する
-                if(player->SpendGold(2)) {
-                    player->RerollShopPieces();    //ショップのピースをリロールする
-                }
-            }
-        };
-        reroll_button->SetClickFunc(click_func);
-        purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
-    }
-    //---------------------------------------------------------------------------------
-    //  ロックボタンボタン
-    //---------------------------------------------------------------------------------
-    {
-        auto lock_button = Scene::Object::Create<UIButton>();
-        lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
-        lock_button->SetScaleAxisXYZ(0.5f);                         //大きさを少し小さく設定
-        lock_button->SetTranslate(float3(150.0f, 300.0f, 0.0f));    //位置を画面左中央あたりに設定
-        //左クリックを促す
-        lock_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
-        //クリック時の処理
-        auto click_func = [player, lock_button]() {
-            player->ToggleShopLockState();    //ショップのロックを切り替える
-            //ロック状態に応じてボタンの見た目を変える
-            if(player->IsShopLocked()) {
-                lock_button->SetImage(ImageBuffer::GetImageHandle("locked_button"));
-            }
-            else {
-                lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
-            }
-        };
-        lock_button->SetClickFunc(click_func);
-        purchase_window_objects.push_back(lock_button);    //購入画面のウィンドウ群に追加
-    }
-    //---------------------------------------------------------------------------------
-    //  ピース購入画面を開けるボタン
-    //---------------------------------------------------------------------------------
-    {
-        auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
-        auto click_func                 = [this, purchase_window_objects]() {
-            is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
-            //ウィンドウ群に対して開閉処理を行う
-            if(is_purchase_open_) {
-                for(auto& obj : purchase_window_objects) {
-                    obj->SetStatus(Object::StatusBit::NoDraw, false);      //描画する
-                    obj->SetStatus(Object::StatusBit::NoUpdate, false);    //更新する
-                }
-            }
-            else {
-                for(auto& obj : purchase_window_objects) {
-                    obj->SetStatus(Object::StatusBit::NoDraw, true);      //描画しない
-                    obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
-                }
-            }
-        };
-        piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
-    }
+    Scene::Object::Create<MouseRay>();    //マウス光線
     //---------------------------------------------------------------------------------
     //  経験値ボタン
     //---------------------------------------------------------------------------------
@@ -737,6 +555,188 @@ bool InGameScene::Init()
             obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NONE);
         }
     }
+    std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
+    //---------------------------------------------------------------------------------
+    //  購入画面のフィルター
+    //---------------------------------------------------------------------------------
+    {
+        auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
+        purchase_window_filter->SetScaleAxisXYZ(15.0f);                    //大きさを画面全体に設定
+        purchase_window_filter->SetAlpha(128);                             //透明度を設定
+        float x = WINDOW_W * 0.5f;
+        float y = WINDOW_H * 0.5f;
+        purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
+        purchase_window_objects.push_back(purchase_window_filter);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
+    //  ピース購入ボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_purchase_button = Scene::Object::Create<UIButton>();
+            piece_purchase_button->SetName("PiecePurchaseButton");
+            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
+            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
+            //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
+            piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
+            //---------------------------------------------------------------------------------
+            //  クリック時処理の設定
+            //---------------------------------------------------------------------------------
+            auto click_func = [i, player]() {
+                //ピーズスタンドが満タンなら購入できないようにする
+                if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+                    if(piece_stand->IsFull()) {
+                        return;
+                    }
+                    if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                        if(auto purchase_piece = shop_stand->GetShopPieces()[i].lock()) {
+                            PieceInfo piece_info;
+                            piece_info.SetTypeName(purchase_piece->GetNameDefault().data());
+                            piece_info.SetOwner(player);    //ピースのオーナーをプレイヤーに設定
+                            player->AddPieceToStand(piece_info);
+                            piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
+                            shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
+                            player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
+                        }
+                    }
+                }
+            };
+            piece_purchase_button->SetClickFunc(click_func);    //クリック時の処理を設定
+            //---------------------------------------------------------------------------------
+            //  ターゲットをうつす処理を入れ込む。
+            //---------------------------------------------------------------------------------
+            auto draw_target = [piece_purchase_button, texture, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
+                    ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
+                    MATRIX prev_mat = GetCameraViewMatrix();
+                    //一旦ピースの一番目をうつす
+                    if(auto draw_piece = shop_pieces[i].lock()) {
+                        SetCameraPositionAndTarget_UpVecY(cast(draw_piece->GetTranslate() + float3(0.0f, 0.0f, -2.0f)),
+                                                          cast(draw_piece->GetTranslate()));    //カメラをモデルの方に向ける
+                        //モデルを描画
+                        if(auto model = draw_piece->GetComponent<ComponentModel>()) {
+                            MV1DrawModel(model->GetModel());
+                        }
+                    }
+                    piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
+                    SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
+                    //SetDrawScreen(DX_SCREEN_BACK);                       //描画先をバックバッファに戻す
+                    SetCameraViewMatrix(prev_mat);    //カメラ行列を戻す
+                }
+            };
+            piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
+            purchase_window_objects.push_back(piece_purchase_button);    //購入画面のウィンドウ群に追加
+        }
+    }
+    //---------------------------------------------------------------------------------
+    // ショップピースの名前表示テキスト
+    //---------------------------------------------------------------------------------
+    {
+        auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
+        const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_name_text = Scene::Object::Create<UIText>();
+            piece_name_text->SetName("PieceNameText");
+            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
+            piece_name_text->SetFontSize(16);                                         //フォントサイズを設定
+            piece_name_text->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色を白に設定
+            piece_name_text->SetFontName("游明朝");
+            piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
+            //---------------------------------------------------------------------------------
+            //  更新処理の設定
+            //---------------------------------------------------------------------------------
+            auto update_func = [piece_name_text, piece_repository, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    if(auto piece = shop_pieces[i].lock()) {
+                        //ピース情報UIに情報を設定
+                        auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                        piece_name_text->SetText(piece_data->display_name_);
+                    }
+                    else {
+                        piece_name_text->SetText("");    //ピースがない場合は空文字にする
+                    }
+                }
+            };
+            piece_name_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NONE);
+            purchase_window_objects.push_back(piece_name_text);    //購入画面のウィンドウ群に追加
+        }
+    }
+    //---------------------------------------------------------------------------------
+    //  リロールボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto reroll_button = Scene::Object::Create<UIButton>();
+        reroll_button->SetImage(ImageBuffer::GetImageHandle("reroll_button"));
+        reroll_button->SetScaleAxisXYZ(0.5f);                          //大きさを少し小さく設定
+        reroll_button->SetTranslate(float3(1150.0f, 300.0f, 0.0f));    //位置を画面右中央あたりに設定
+        //左クリックを促す
+        reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = [player]() {
+            //ショップがロックされていなければリロール可能
+            if(!player->IsShopLocked()) {
+                //ピースリロールに2ゴールド消費する
+                if(player->SpendGold(2)) {
+                    player->RerollShopPieces();    //ショップのピースをリロールする
+                }
+            }
+        };
+        reroll_button->SetClickFunc(click_func);
+        purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
+    //  ロックボタンボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto lock_button = Scene::Object::Create<UIButton>();
+        lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
+        lock_button->SetScaleAxisXYZ(0.5f);                         //大きさを少し小さく設定
+        lock_button->SetTranslate(float3(150.0f, 300.0f, 0.0f));    //位置を画面左中央あたりに設定
+        //左クリックを促す
+        lock_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto click_func = [player, lock_button]() {
+            player->ToggleShopLockState();    //ショップのロックを切り替える
+            //ロック状態に応じてボタンの見た目を変える
+            if(player->IsShopLocked()) {
+                lock_button->SetImage(ImageBuffer::GetImageHandle("locked_button"));
+            }
+            else {
+                lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
+            }
+        };
+        lock_button->SetClickFunc(click_func);
+        purchase_window_objects.push_back(lock_button);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
+    //  ピース購入画面を開けるボタン
+    //---------------------------------------------------------------------------------
+    {
+        auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
+        auto click_func                 = [this, purchase_window_objects]() {
+            is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
+            //ウィンドウ群に対して開閉処理を行う
+            if(is_purchase_open_) {
+                for(auto& obj : purchase_window_objects) {
+                    obj->SetStatus(Object::StatusBit::NoDraw, false);      //描画する
+                    obj->SetStatus(Object::StatusBit::NoUpdate, false);    //更新する
+                }
+            }
+            else {
+                for(auto& obj : purchase_window_objects) {
+                    obj->SetStatus(Object::StatusBit::NoDraw, true);      //描画しない
+                    obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
+                }
+            }
+        };
+        piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
+    }
     return true;
 }
 
@@ -893,7 +893,8 @@ void InGameScene::CreatePiecesForBattlePhase()
     //----------------------------------------------------------------------
     //次にNPCの駒を生成
     //----------------------------------------------------------------------
-    //とりあえずテストで抽選ナシの一人分
+    //生きているNPCの中からランダムに1体取得
+    //auto npcs = Scene::Object::GetArray<Npc>();
     if(auto npc = Scene::Object::Get<Npc>()) {
         battle_agent_ = npc;    //このタイミングでバトルエージェントとして設定
         //ボードの位置に駒を生成
@@ -1039,6 +1040,8 @@ void InGameScene::UpdateBattlePhase()
                                 hp_ui->SetFontName("游明朝");
                                 hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
                                 hp_ui->SetText("敗北");
+                                //NPCをシーンから削除
+                                Scene::Object::Release(battle_npc);
                             }
                             // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
                             float hp_ratio         = static_cast<float>(battle_npc->GetHP()) / static_cast<float>(MAX_AGENT_HP);
