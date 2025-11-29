@@ -17,8 +17,6 @@ public:
     bool Init() override
     {
         __super::Init();
-
-        Scene::GetCurrentScene()->SetPriority(shared_from_this(), ProcTiming::PostUpdate, static_cast<ProcPriority>(ProcPriority::LOW));
         return true;
     }
 
@@ -37,20 +35,6 @@ public:
 
         // 自分ごと消去
         Scene::Object::Release(SharedThis());
-    }
-
-    void PostUpdate() override
-    {
-        __super::PostUpdate();
-
-        auto eff_mat = matrix::identity();
-        if(auto eff = GetComponent<ComponentEffect>())
-            eff_mat = eff->GetMatrix();
-
-        if(auto owner = effect_owner_.lock())
-            eff_mat = mul(eff_mat, owner->GetMatrix());
-
-        SetMatrix(eff_mat);
     }
 
     void SetEffect(const std::string_view name) { AddComponent<ComponentEffect>(name); }
@@ -149,14 +133,13 @@ ObjectPtr ComponentEffect::CreateObject(const std::string_view effect_name, cons
 
 ObjectPtr ComponentEffect::Object::Create(const std::string_view effect_name, const matrix& offset, const ObjectPtr& object, const EffectFunc& callback_func)
 {
-    auto obj = Scene::Object::CreateDelayInitialize<EffectObject>("effect_object");
+    auto obj = Scene::Object::Create<EffectObject>("effect_object");
     obj->SetEffect(effect_name);
 
     if(object)
         obj->SetEffectOwnerAndFunction(object, callback_func);
 
-    obj->SetEffectMatrix(offset);
-
+    obj->SetMatrix(offset);
     obj->Play();
 
     return obj;
@@ -181,10 +164,14 @@ void ComponentEffect::PostUpdate()
         // アニメーションがあり再生している?
         effect_time_ += (delta * effect_speed_);
 
+#if 1
+        auto mat = GetOwner()->GetMatrix();
+#else
         auto mat  = effect_transform_;
         auto trns = GetOwner()->GetComponent<ComponentTransform>();
         if(trns)
             mat = mul(mat, trns->GetMatrix());
+#endif
 
         // Drawはここで抑えておく
         if(GetStatus(Component::StatusBit::NoDraw)) {
@@ -246,6 +233,11 @@ void ComponentEffect::GUI()
 
         // モデルコンポーネント表示
         if(ImGui::TreeNode("Effect")) {
+            // 有効/無効
+            bool enable = GetStatus(StatusBit::Enable);
+            if(ImGui::Checkbox(u8"有効", &enable))
+                SetStatus(StatusBit::Enable, enable);
+
             if(ImGui::Button(u8"削除")) {
                 GetOwner()->RemoveComponent(shared_from_this());
             }
@@ -300,7 +292,7 @@ void ComponentEffect::GUI()
             // アニメーション名
             if(IsPlaying()) {
                 ImGui::TextColored({0.5, 1, 0.5, 1}, u8"再生中");
-                ImGui::Text(u8"[%3.2f]%s", effect_time_, GetEffectName().data());
+                ImGui::Text(u8"[%3.2f] %s", effect_time_, GetEffectName().data());
                 ImGui::Separator();
             }
 
@@ -346,6 +338,7 @@ void ComponentEffect::Play(bool loop)
     SetScalePlayingEffekseer3DEffect(effect_play_handle_, scale[0], scale[1], scale[2]);
     SetRotationPlayingEffekseer3DEffect(effect_play_handle_, radians((float1)rot[0]), radians((float1)rot[1]), radians((float1)rot[2]));
 
+    Effekseer_Sync3DSetting();
     effect_play_handle_ = PlayEffekseer3DEffect(effect_handle_);
 }
 
@@ -403,7 +396,7 @@ bool ComponentEffect::IsValid()
     return effect_status_.is(EffectBit::Initialized);
 }
 
-const std::string_view ComponentEffect::GetEffectName()
+const std::string ComponentEffect::GetEffectName() const
 {
     return HelperLib::File::GetOnlyFileNameWithoutExtension(path_);
 }
