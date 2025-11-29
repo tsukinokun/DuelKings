@@ -578,7 +578,7 @@ bool InGameScene::Init()
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
-            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
+            auto texture = std::make_shared<Texture>(200, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------
@@ -612,11 +612,18 @@ bool InGameScene::Init()
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
                     ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
-                    MATRIX prev_mat = GetCameraViewMatrix();
+                    MATRIX prev_mat      = GetCameraViewMatrix();
+                    MATRIX prev_proj_mat = GetCameraProjectionMatrix();
                     //一旦ピースの一番目をうつす
                     if(auto draw_piece = shop_pieces[i].lock()) {
                         SetCameraPositionAndTarget_UpVecY(cast(draw_piece->GetTranslate() + float3(0.0f, 0.0f, -2.0f)),
                                                           cast(draw_piece->GetTranslate()));    //カメラをモデルの方に向ける
+                        matrix proj_mat =
+                            matrix::perspectiveFovLH(D2R(90.0f),
+                                                     1.0f,
+                                                     0.1f,
+                                                     1000.0f);    //透視投影行列を作成(画角45度、アスペクト比1.0、前方クリップ距離0.1、後方クリップ距離1000.0)
+                        SetupCamera_ProjectionMatrix(cast(proj_mat));
                         //モデルを描画
                         if(auto model = draw_piece->GetComponent<ComponentModel>()) {
                             MV1DrawModel(model->GetModel());
@@ -625,7 +632,8 @@ bool InGameScene::Init()
                     piece_purchase_button->SetImage(*texture);             //スクリーンを入れ込む。
                     SetRenderTarget(GetHdrBuffer(), GetDepthStencil());    //レンダーターゲットを戻す
                     //SetDrawScreen(DX_SCREEN_BACK);                       //描画先をバックバッファに戻す
-                    SetCameraViewMatrix(prev_mat);    //カメラ行列を戻す
+                    SetCameraViewMatrix(prev_mat);                  //カメラ行列を戻す
+                    SetupCamera_ProjectionMatrix(prev_proj_mat);    //遠近法投影行列を戻す
                 }
             };
             piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
