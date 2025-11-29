@@ -29,6 +29,7 @@
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
+#include <Game/AutoChess/Piece/PieceData/LevelData.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -294,6 +295,7 @@ bool InGameScene::Init()
         auto click_func = [player]() {
             if(auto select_piece = player->GetSelectedPiece()) {
                 Scene::Object::Release(select_piece);    //選択されているオブジェクトを解放する
+                player->ReleaseSelectedPiece();          //選択中のピースをクリアする
             }
         };
         sell_button->SetClickFunc(click_func);
@@ -518,6 +520,7 @@ bool InGameScene::Init()
                 }
             };
             piece_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(piece_name_ui);
         }
         //---------------------------------------------------------------------------------
         // 駒のレベルUI
@@ -542,7 +545,119 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // ピースのHP表示UI
         //---------------------------------------------------------------------------------
-
+        {
+            auto piece_hp_ui = Scene::Object::Create<UIGauge>();
+            piece_hp_ui->SetTranslate(float3(170.0f, 220.0f, 0.0f));    //位置を左中央あたりに設定
+            piece_hp_ui->SetGaugeSize(int2(200, 20));                   //ゲージサイズ設定
+            auto update_proc = [piece_hp_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto  piece_data        = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    int   piece_level       = piece->GetLevel();
+                    auto  piece_level_datas = piece_data->levels_;
+                    float hp_ratio          = static_cast<float>(piece->GetHP()) / static_cast<float>(piece_level_datas[piece_level].hp_);
+                    piece_hp_ui->SetGaugeRate(hp_ratio);
+                }
+            };
+            piece_hp_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(piece_hp_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃力アイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_icon_ui = Scene::Object::Create<UIImage>();
+            attack_icon_ui->SetTranslate(float3(80.0f, 260.0f, 0.0f));
+            attack_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            attack_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_icon_ui->SetImage(ImageBuffer::GetImageHandle("attack_power_icon"));
+            piece_ditail_ui_objects.push_back(attack_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃力表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_power_ui = Scene::Object::Create<UIText>();
+            attack_power_ui->SetTranslate(float3(130.0f, 260.0f, 0.0f));    //位置を左中央あたりに設定
+            attack_power_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_power_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            attack_power_ui->SetFontSize(26);                                         //少しだけ大きく
+            auto update_proc = [attack_power_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data        = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    int  piece_level       = piece->GetLevel();
+                    auto piece_level_datas = piece_data->levels_;
+                    attack_power_ui->SetText(std::to_string(piece_level_datas[piece_level].attack_));
+                }
+            };
+            attack_power_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(attack_power_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃間隔アイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_interval_icon_ui = Scene::Object::Create<UIImage>();
+            attack_interval_icon_ui->SetTranslate(float3(200.0f, 260.0f, 0.0f));
+            attack_interval_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            attack_interval_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_interval_icon_ui->SetImage(ImageBuffer::GetImageHandle("attack_interval_icon"));
+            piece_ditail_ui_objects.push_back(attack_interval_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃間隔表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_interval_ui = Scene::Object::Create<UIText>();
+            attack_interval_ui->SetTranslate(float3(230.0f, 260.0f, 0.0f));    //位置を左中央あたりに設定
+            attack_interval_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_interval_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            attack_interval_ui->SetFontSize(26);                                         //少しだけ大きく
+            auto update_proc = [attack_interval_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    attack_interval_ui->SetText(std::format("{:.1f}", piece_data->attack_interval_));
+                }
+            };
+            attack_interval_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(attack_interval_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃範囲アイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_range_icon_ui = Scene::Object::Create<UIImage>();
+            attack_range_icon_ui->SetTranslate(float3(80.0f, 300.0f, 0.0f));
+            attack_range_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            attack_range_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_range_icon_ui->SetImage(ImageBuffer::GetImageHandle("attack_range_icon"));
+            piece_ditail_ui_objects.push_back(attack_range_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 攻撃範囲表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto attack_range_ui = Scene::Object::Create<UIText>();
+            attack_range_ui->SetTranslate(float3(130.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+            attack_range_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            attack_range_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            attack_range_ui->SetFontSize(26);                                         //少しだけ大きく
+            auto update_proc = [attack_range_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    attack_range_ui->SetText(std::format("{:.1f}", piece_data->attack_range_));
+                }
+            };
+            attack_range_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(attack_range_ui);
+        }
         //---------------------------------------------------------------------------------
         // プレイヤーがピースを選択中ならエージェント情報を表示する
         //---------------------------------------------------------------------------------

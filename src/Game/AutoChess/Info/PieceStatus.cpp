@@ -21,8 +21,9 @@ PieceStatus::PieceStatus()
 //---------------------------------------------------------------------------
 // コンストラクタ（Builder からのみ呼ばれる）。
 //---------------------------------------------------------------------------
-PieceStatus::PieceStatus(int hp, int power, float interval, float range, float speed)
-    : hp_(hp)
+PieceStatus::PieceStatus(int level, int hp, int power, float interval, float range, float speed)
+    : level_(level)
+    , hp_(hp)
     , max_hp_(hp)
     , attack_interval_(interval)
     , attack_power_(power)

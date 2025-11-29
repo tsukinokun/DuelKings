@@ -197,6 +197,8 @@ void Piece::TakeDamage(int amount)
 void Piece::LevelUp()
 {
     status_.LevelUp();
+    //ステータスをマスターデータから再適用
+    ApplyStatsFromMaster();
     // レベル表示用UI画像の更新
     if(auto level_ui = level_ui_.lock()) {
         // レベルに応じた画像名を生成
@@ -220,6 +222,7 @@ void Piece::ApplyStatsFromMaster()
 {
     int level = status_.GetLevel();
     status_   = PieceStatus::Create()
+                  .Level(level)
                   .HP(master_->levels_[level].hp_)
                   .AttackPower(master_->levels_[level].attack_)
                   .AttackInterval(master_->attack_interval_)
