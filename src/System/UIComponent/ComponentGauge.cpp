@@ -106,6 +106,8 @@ std::shared_ptr<ComponentGauge> ComponentGauge::SetDuration(float duration)
 std::shared_ptr<ComponentGauge> ComponentGauge::SetGaugeRate(float rate)
 {
     gauge_rate_ = rate;    // ゲージの割合を設定
+    //割合は0.0f~1.0fの範囲内に収める
+    gauge_rate_ = std::clamp(gauge_rate_, 0.0f, 1.0f);
     //セットしたタイミングで滑らかに変化するために必要な処理をここに書く
     duration_start_rate_ = smooth_rate_;    // 滑らかに変化する開始時の割合を現在の割合に設定
     elapsed_time_        = 0.0f;            // 経過時間をリセット

@@ -254,7 +254,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_bishop.png",
+            "icon_path_": "chess_bishop_icon",
             "description_": "àÍäpèb",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,

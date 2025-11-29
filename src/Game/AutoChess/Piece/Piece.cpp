@@ -221,10 +221,11 @@ void Piece::SetMasterData(const PieceData* master)
 void Piece::ApplyStatsFromMaster()
 {
     int level = status_.GetLevel();
+    int index = level - 1;
     status_   = PieceStatus::Create()
                   .Level(level)
-                  .HP(master_->levels_[level].hp_)
-                  .AttackPower(master_->levels_[level].attack_)
+                  .HP(master_->levels_[index].hp_)
+                  .AttackPower(master_->levels_[index].attack_)
                   .AttackInterval(master_->attack_interval_)
                   .AttackRange(master_->attack_range_)
                   .MoveSpeed(1.0f)

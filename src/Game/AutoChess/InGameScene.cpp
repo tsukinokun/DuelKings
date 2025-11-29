@@ -93,7 +93,7 @@ bool InGameScene::Init()
             auto piece_purchase_button = Scene::Object::Create<UIButton>();
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
-            piece_purchase_button->SetTranslate(float3(x_pos, 500.0f, 0.0f));
+            piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
             auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
@@ -146,6 +146,41 @@ bool InGameScene::Init()
             };
             piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
             purchase_window_objects.push_back(piece_purchase_button);    //購入画面のウィンドウ群に追加
+        }
+    }
+    //---------------------------------------------------------------------------------
+    // ショップピースの名前表示テキスト
+    //---------------------------------------------------------------------------------
+    {
+        auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
+        const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_name_text = Scene::Object::Create<UIText>();
+            piece_name_text->SetName("PieceNameText");
+            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
+            piece_name_text->SetFontSize(16);                                         //フォントサイズを設定
+            piece_name_text->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色を白に設定
+            piece_name_text->SetFontName("游明朝");
+            piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
+            //---------------------------------------------------------------------------------
+            //  更新処理の設定
+            //---------------------------------------------------------------------------------
+            auto update_func = [piece_name_text, piece_repository, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    if(auto piece = shop_pieces[i].lock()) {
+                        //ピース情報UIに情報を設定
+                        auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                        piece_name_text->SetText(piece_data->display_name_);
+                    }
+                    else {
+                        piece_name_text->SetText("");    //ピースがない場合は空文字にする
+                    }
+                }
+            };
+            piece_name_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NONE);
+            purchase_window_objects.push_back(piece_name_text);    //購入画面のウィンドウ群に追加
         }
     }
     //---------------------------------------------------------------------------------
@@ -468,6 +503,15 @@ bool InGameScene::Init()
             };
             hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
             agent_ui_objects.push_back(hp_gauge);
+            //---------------------------------------------------------------------------------
+            // エージェントのHP数値表示UI
+            //---------------------------------------------------------------------------------
+            auto hp_ui = Scene::Object::Create<UIText>();
+            hp_ui->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            hp_ui->SetName(std::string(agent->GetName()) + "HPText");
+            hp_ui->SetFontSize(25);                                         //フォントサイズ設定
+            hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            agent_ui_objects.push_back(hp_ui);
         }
         //---------------------------------------------------------------------------------
         // プレイヤーがピースを選択中でないならエージェント情報を表示する
@@ -543,20 +587,41 @@ bool InGameScene::Init()
             piece_ditail_ui_objects.push_back(piece_level_ui);
         }
         //---------------------------------------------------------------------------------
+        // ピースアイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto piece_icon_ui = Scene::Object::Create<UIImage>();
+            piece_icon_ui->SetTranslate(float3(90.0f, 200.0f, 0.0f));
+            piece_icon_ui->SetScaleAxisXYZ(0.3f);    //大きさを少し小さく設定
+            piece_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            auto update_proc = [piece_icon_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    piece_icon_ui->SetImage(ImageBuffer::GetImageHandle(piece_data->icon_path_));
+                }
+            };
+            piece_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(piece_icon_ui);
+        }
+
+        //---------------------------------------------------------------------------------
         // ピースのHP表示UI
         //---------------------------------------------------------------------------------
         {
             auto piece_hp_ui = Scene::Object::Create<UIGauge>();
-            piece_hp_ui->SetTranslate(float3(170.0f, 220.0f, 0.0f));    //位置を左中央あたりに設定
-            piece_hp_ui->SetGaugeSize(int2(200, 20));                   //ゲージサイズ設定
+            piece_hp_ui->SetTranslate(float3(210.0f, 220.0f, 0.0f));    //位置を左中央あたりに設定
+            piece_hp_ui->SetGaugeSize(int2(150, 20));                   //ゲージサイズ設定
             auto update_proc = [piece_hp_ui, piece_repository, player]() {
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
                     auto  piece_data        = piece_repository.FindByTypeName(piece->GetNameDefault().data());
                     int   piece_level       = piece->GetLevel();
+                    int   index             = piece_level - 1;
                     auto  piece_level_datas = piece_data->levels_;
-                    float hp_ratio          = static_cast<float>(piece->GetHP()) / static_cast<float>(piece_level_datas[piece_level].hp_);
+                    float hp_ratio          = static_cast<float>(piece->GetHP()) / static_cast<float>(piece_level_datas[index].hp_);
                     piece_hp_ui->SetGaugeRate(hp_ratio);
                 }
             };
@@ -589,8 +654,9 @@ bool InGameScene::Init()
                     //ピース情報UIに情報を設定
                     auto piece_data        = piece_repository.FindByTypeName(piece->GetNameDefault().data());
                     int  piece_level       = piece->GetLevel();
+                    int  index             = piece_level - 1;
                     auto piece_level_datas = piece_data->levels_;
-                    attack_power_ui->SetText(std::to_string(piece_level_datas[piece_level].attack_));
+                    attack_power_ui->SetText(std::to_string(piece_level_datas[index].attack_));
                 }
             };
             attack_power_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
@@ -959,15 +1025,51 @@ void InGameScene::UpdateBattlePhase()
                 if(npc_alive_piece_count == 0) {
                     //NPCの駒が全滅したら、NPCがダメージを受ける
                     if(auto battle_npc = battle_agent_.lock()) {
-                        int damage = player_alive_piece_count * 4;
+                        int damage = player_alive_piece_count * 2;
                         battle_npc->ApplyDamage(damage);
+                        //HPの数値UIを更新
+                        if(auto hp_ui = Scene::Object::Get<UIText>(std::string(battle_npc->GetName()) + "HPText")) {
+                            int hp = battle_npc->GetHP();
+                            if(hp > 0) {
+                                //HPが0以下でなければ表示
+                                hp_ui->SetText(std::to_string(battle_npc->GetHP()));
+                            }
+                            else {
+                                //0以下なら、敗北と表示
+                                hp_ui->SetFontName("游明朝");
+                                hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                                hp_ui->SetText("敗北");
+                            }
+                            // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                            float hp_ratio         = static_cast<float>(battle_npc->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                            int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                            hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                        }
                     }
                 }
                 else if(player_alive_piece_count == 0) {
                     //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
-                    int damage = npc_alive_piece_count * 4;
+                    int damage = npc_alive_piece_count * 2;
                     if(auto player = Scene::Object::Get<Player>()) {
                         player->ApplyDamage(damage);
+                        //HPの数値UIを更新
+                        if(auto hp_ui = Scene::Object::Get<UIText>(std::string(player->GetName()) + "HPText")) {
+                            int hp = player->GetHP();
+                            if(hp > 0) {
+                                //HPが0以下でなければ表示
+                                hp_ui->SetText(std::to_string(battle_npc->GetHP()));
+                            }
+                            else {
+                                //0以下なら、敗北と表示
+                                hp_ui->SetFontName("游明朝");
+                                hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                                hp_ui->SetText("敗北");
+                            }
+                            // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                            float hp_ratio         = static_cast<float>(player->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                            int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                            hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                        }
                     }
                 }
             }
