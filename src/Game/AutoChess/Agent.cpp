@@ -320,6 +320,30 @@ void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_reposito
     synergy_system_.SetRepository(synergy_repository, piece_repository);
 }
 
+//---------------------------------------------------------------------------
+//! @brief  勝敗結果を更新する関数
+//---------------------------------------------------------------------------
+void Agent::UpdateResult(bool isWin)
+{
+    agent_info_.UpdateResult(isWin);
+}
+
+//-----------------------------------------------------------
+//! @brief 勝利数を取得する関数
+//-----------------------------------------------------------
+int Agent::GetWinStreak() const
+{
+    return agent_info_.GetWinStreak();
+}
+
+//-----------------------------------------------------------
+//! @brief 敗北数を取得する関数
+//-----------------------------------------------------------
+int Agent::GetLoseStreak() const
+{
+    return agent_info_.GetLoseStreak();
+}
+
 //-----------------------------------------------------------
 //! @brief ダメージを受ける関数
 //-----------------------------------------------------------
