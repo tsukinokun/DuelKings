@@ -8,6 +8,7 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/Info/PieceStatus.h>    // ピースステータス情報をインスタンスとして持つのでここでインクルード
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
+#include <Game/AutoChess/system/GameConst.h>
 class Agent;
 class UIImage;
 USING_PTR(Piece);
@@ -93,8 +94,9 @@ public:
     //----------------------------------------------------------
     // ダメージを受ける
     //! @param amount [in] ダメージ量
+    //! @param damage_type [in] ダメージタイプ
     //----------------------------------------------------------
-    void TakeDamage(int amount);
+    void TakeDamage(int amount, DamageType damage_type = DamageType::Physical);
 
     //----------------------------------------------------------
     // 駒をレベルアップさせる関数

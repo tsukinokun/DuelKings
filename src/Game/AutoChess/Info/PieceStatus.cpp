@@ -21,7 +21,7 @@ PieceStatus::PieceStatus()
 //---------------------------------------------------------------------------
 // コンストラクタ（Builder からのみ呼ばれる）。
 //---------------------------------------------------------------------------
-PieceStatus::PieceStatus(int level, int hp, int power, float interval, float range, float speed)
+PieceStatus::PieceStatus(int level, int hp, int power, float interval, float range, float speed, int physical_defense, float magical_defense)
     : level_(level)
     , hp_(hp)
     , max_hp_(hp)
@@ -29,6 +29,8 @@ PieceStatus::PieceStatus(int level, int hp, int power, float interval, float ran
     , attack_power_(power)
     , attack_range_(range)
     , move_speed_(speed)
+    , physical_defense_(physical_defense)
+    , magical_defense_(magical_defense)
 {
 }
 //---------------------------------------------------------------------------
@@ -85,6 +87,22 @@ float PieceStatus::GetMoveSpeed() const
 int PieceStatus::GetLevel() const
 {
     return level_;
+}
+
+//---------------------------------------------------------------------------
+//! 物理防御を取得する。
+//---------------------------------------------------------------------------
+int PieceStatus::GetPhysicalDefense() const
+{
+    return physical_defense_;
+}
+
+//---------------------------------------------------------------------------
+//! 魔法防御を取得する。
+//---------------------------------------------------------------------------
+float PieceStatus::GetMagicalDefense() const
+{
+    return magical_defense_;
 }
 
 //-----------------------------------------------------------------------------

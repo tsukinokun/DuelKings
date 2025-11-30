@@ -578,7 +578,7 @@ bool InGameScene::Init()
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
-            auto texture = std::make_shared<Texture>(200, 200, DXGI_FORMAT_R8G8B8A8_UNORM);
+            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------

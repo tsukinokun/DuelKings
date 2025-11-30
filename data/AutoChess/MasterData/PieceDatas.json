@@ -20,10 +20,12 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_pawn.png",
+            "icon_path_": "japanese_chess_pawn_icon",
             "description_": "japanesechess pawn piece.",
             "attack_interval_": 1.5,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -50,6 +52,8 @@
             "description_": "オーガメイジ",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -76,6 +80,8 @@
             "description_": "ライトドラゴン",
             "attack_interval_": 1.5,
             "attack_range_": 2.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -102,6 +108,8 @@
             "description_": "ライフルマン",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 2
         },
         {
@@ -128,6 +136,8 @@
             "description_": "宝石マジシャン",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
+            "physical_defense_": -858993460,
+            "magical_defense_": -107374176.0,
             "price_": 3
         },
         {
@@ -154,6 +164,8 @@
             "description_": "亀乗りの長老",
             "attack_interval_": 1.5,
             "attack_range_": 4.0,
+            "physical_defense_": -858993460,
+            "magical_defense_": -107374176.0,
             "price_": 4
         },
         {
@@ -180,6 +192,8 @@
             "description_": "雷神",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
+            "physical_defense_": 0,
+            "magical_defense_": 0.4000000059604645,
             "price_": 5
         },
         {
@@ -206,6 +220,8 @@
             "description_": "不死の教皇",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 3.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 4
         },
         {
@@ -232,6 +248,8 @@
             "description_": "セイウチボクサー",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -258,6 +276,8 @@
             "description_": "一角獣",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -284,6 +304,8 @@
             "description_": "羊の騎士",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
+            "physical_defense_": 10,
+            "magical_defense_": 0.0,
             "price_": 3
         },
         {
@@ -310,6 +332,8 @@
             "description_": "赤狐の剣士",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
+            "physical_defense_": 8,
+            "magical_defense_": 0.10000000149011612,
             "price_": 4
         },
         {
@@ -336,6 +360,8 @@
             "description_": "海賊王",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
+            "physical_defense_": 8,
+            "magical_defense_": 0.0,
             "price_": 6
         },
         {
@@ -362,6 +388,8 @@
             "description_": "闇のスピリット",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.4000000059604645,
             "price_": 5
         },
         {
@@ -388,6 +416,8 @@
             "description_": "ソ\ウルテイカー",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -414,6 +444,8 @@
             "description_": "スパイダークイーン",
             "attack_interval_": 1.5,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.05000000074505806,
             "price_": 4
         },
         {
@@ -440,6 +472,8 @@
             "description_": "煉獄の騎士",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 2
         },
         {
@@ -466,6 +500,8 @@
             "description_": "大樹の賢者",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 3
         },
         {
@@ -492,6 +528,8 @@
             "description_": "アクアハンター",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 5
         },
         {
@@ -518,6 +556,8 @@
             "description_": "グリムタッチ",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 4
         },
         {
@@ -544,6 +584,8 @@
             "description_": "岩のスピリット",
             "attack_interval_": 1.7999999523162842,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 1
         },
         {
@@ -570,6 +612,8 @@
             "description_": "深海の守護者",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 2
         },
         {
@@ -596,6 +640,8 @@
             "description_": "毒竜",
             "attack_interval_": 1.0,
             "attack_range_": 3.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.20000000298023225,
             "price_": 3
         },
         {
@@ -622,6 +668,8 @@
             "description_": "とげの密猟者",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
+            "physical_defense_": 10,
+            "magical_defense_": 0.0,
             "price_": 4
         },
         {
@@ -648,6 +696,8 @@
             "description_": "キャノングラニー",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 4.0,
+            "physical_defense_": 12,
+            "magical_defense_": 0.0,
             "price_": 5
         },
         {
@@ -674,6 +724,8 @@
             "description_": "占星術師",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 5
         }
     ]
