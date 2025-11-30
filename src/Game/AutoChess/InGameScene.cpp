@@ -30,6 +30,7 @@
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
 #include <Game/AutoChess/Piece/PieceData/LevelData.h>
+#include <Game/AutoChess/system/Logic.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1028,11 +1029,14 @@ void InGameScene::UpdateBattlePhase()
         }
         //どちらかの駒数が0になったらバトル終了
         if(player_alive_piece_count == 0 || npc_alive_piece_count == 0) {
-            has_battle_ended_ = true;    //バトル終了フラグを立てる
+            has_battle_ended_      = true;                            //バトル終了フラグを立てる
+            bool is_player_victory = (npc_alive_piece_count == 0);    //プレイヤーの勝利判定
             //ダメージ処理
             if(auto battle_npc = battle_agent_.lock()) {
-                if(npc_alive_piece_count == 0) {
+                if(is_player_victory) {
+                    //----------------------------------------------------------------------
                     //NPCの駒が全滅したら、NPCがダメージを受ける
+                    //----------------------------------------------------------------------
                     if(auto battle_npc = battle_agent_.lock()) {
                         int damage = player_alive_piece_count * 2;
                         battle_npc->ApplyDamage(damage);
@@ -1059,7 +1063,9 @@ void InGameScene::UpdateBattlePhase()
                     }
                 }
                 else if(player_alive_piece_count == 0) {
+                    //----------------------------------------------------------------------
                     //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
+                    //----------------------------------------------------------------------
                     int damage = npc_alive_piece_count * 2;
                     if(auto player = Scene::Object::Get<Player>()) {
                         player->ApplyDamage(damage);
@@ -1082,6 +1088,21 @@ void InGameScene::UpdateBattlePhase()
                             hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
                         }
                     }
+                }
+                //----------------------------------------------------------------------
+                // 内部的な勝ち負けを更新してゴールドを付与
+                //----------------------------------------------------------------------
+                //プレイヤー
+                if(auto player = Scene::Object::Get<Player>()) {
+                    player->UpdateResult(is_player_victory);
+                    int goldain = CalculateRoundGold(player, is_player_victory);
+                    player->AddGold(goldain);    //ゴールドを5増やす
+                }
+                //NPC
+                if(auto battle_npc = battle_agent_.lock()) {
+                    battle_npc->UpdateResult(!is_player_victory);
+                    int goldain = CalculateRoundGold(battle_npc, !is_player_victory);
+                    battle_npc->AddGold(goldain);    //ゴールドを5増やす
                 }
             }
         }
