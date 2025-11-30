@@ -186,9 +186,25 @@ void Piece::SetLevel(int level)
 //----------------------------------------------------------
 //! ダメージを受ける
 //----------------------------------------------------------
-void Piece::TakeDamage(int amount)
+void Piece::TakeDamage(int amount, DamageType damage_type)
 {
-    status_.ApplyDamage(amount);
+    // 最終的なダメージ量
+    int finalDamage = amount;
+    // 防御力を考慮したダメージ計算
+    if(damage_type == DamageType::Physical) {
+        int    armor      = status_.GetPhysicalDefense();
+        double multiplier = 1.0 - (0.052 * armor) / (0.9 + 0.048 * std::abs(armor));
+        finalDamage       = amount * multiplier;
+    }
+    else if(damage_type == DamageType::Magic) {
+        double resistance = status_.GetMagicalDefense();    // 例: 0.15 = 15%
+        double multiplier = 1.0 - resistance;
+        finalDamage       = amount * multiplier;
+    }
+
+    if(finalDamage < 1)
+        finalDamage = 1;
+    status_.ApplyDamage(finalDamage);
 }
 
 //----------------------------------------------------------
@@ -229,5 +245,7 @@ void Piece::ApplyStatsFromMaster()
                   .AttackInterval(master_->attack_interval_)
                   .AttackRange(master_->attack_range_)
                   .MoveSpeed(1.0f)
+                  .PhysicalDefense(master_->physical_defense_)
+                  .MagicalDefense(master_->magical_defense_)
                   .Build();
 }

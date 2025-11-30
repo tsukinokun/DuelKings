@@ -51,6 +51,20 @@ public:
             return *this;
         }
 
+        // 物理防御力を設定する。
+        Builder& PhysicalDefense(int defense)
+        {
+            physical_defense_ = defense;
+            return *this;
+        }
+
+        // 魔法防御力を設定する。
+        Builder& MagicalDefense(float defense)
+        {
+            magical_defense_ = defense;
+            return *this;
+        }
+
         //レベルを設定する。
         Builder& Level(int level)
         {
@@ -59,16 +73,21 @@ public:
         }
 
         // 設定された値をもとに PieceStatus を生成する。
-        PieceStatus Build() const { return PieceStatus(level_, hp_, attack_power_, attack_interval_, attack_range_, move_speed_); }
+        PieceStatus Build() const
+        {
+            return PieceStatus(level_, hp_, attack_power_, attack_interval_, attack_range_, move_speed_, physical_defense_, magical_defense_);
+        }
 
     private:
         // 各ステータスの初期値（未設定時のデフォルト）。
-        int   level_           = 1;
-        int   hp_              = 100;
-        int   attack_power_    = 0;
-        float attack_interval_ = 1.0f;
-        float attack_range_    = 0.0f;
-        float move_speed_      = 0.0f;
+        int   level_            = 1;
+        int   hp_               = 100;
+        int   attack_power_     = 0;
+        float attack_interval_  = 1.0f;
+        float attack_range_     = 0.0f;
+        float move_speed_       = 0.0f;
+        int   physical_defense_ = 0;
+        float magical_defense_  = 0.0f;
     };
 
     //---------------------------------------------------------------------------
@@ -123,6 +142,18 @@ public:
     //---------------------------------------------------------------------------
     int GetLevel() const;
 
+    //---------------------------------------------------------------------------
+    // 物理防御を取得する。
+    //! @retval 物理防御力
+    //---------------------------------------------------------------------------
+    int GetPhysicalDefense() const;
+
+    //---------------------------------------------------------------------------
+    // 魔法防御を取得する。
+    //! @retval 魔法防御力
+    //---------------------------------------------------------------------------
+    float GetMagicalDefense() const;
+
     //-----------------------------------------------------------------------------
     // ダメージを適用する。
     //! @param [in] amount ダメージ量
@@ -151,15 +182,17 @@ private:
     // コンストラクタ（Builder からのみ呼ばれる）。
     //! @note 外部から直接インスタンス化されないように private にしている。
     //---------------------------------------------------------------------------
-    PieceStatus(int level_, int hp, int power, float interval, float range, float speed);
+    PieceStatus(int level_, int hp, int power, float interval, float range, float speed, int physical_defense, float magical_defense);
 
 private:
     // ステータス値の保持。
-    int   level_ = 1;          //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
-    int   hp_;                 // 現在のHP
-    int   max_hp_;             // 最大HP
-    int   attack_power_;       // 攻撃力
-    float attack_interval_;    // 攻撃間隔(秒)
-    float attack_range_;       // 射程距離
-    float move_speed_;         // 移動速度
+    int   level_ = 1;           //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
+    int   hp_;                  // 現在のHP
+    int   max_hp_;              // 最大HP
+    int   attack_power_;        // 攻撃力
+    float attack_interval_;     // 攻撃間隔(秒)
+    float attack_range_;        // 射程距離
+    float move_speed_;          // 移動速度
+    int   physical_defense_;    // 物理防御力
+    float magical_defense_;     // 魔法防御力
 };
