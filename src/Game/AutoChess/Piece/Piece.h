@@ -11,6 +11,7 @@
 #include <Game/AutoChess/system/GameConst.h>
 class Agent;
 class UIImage;
+class ComponentActiveSkill;
 USING_PTR(Piece);
 class Piece : public Object {
 public:
@@ -99,6 +100,12 @@ public:
     void TakeDamage(int amount, DamageType damage_type = DamageType::Physical);
 
     //----------------------------------------------------------
+    // HPを回復する関数
+    //! @param amount [in] 回復量
+    //----------------------------------------------------------
+    void Heal(int amount);
+
+    //----------------------------------------------------------
     // 駒をレベルアップさせる関数
     //----------------------------------------------------------
     void LevelUp();
@@ -120,5 +127,6 @@ protected:
     PieceStatus          status_;                 //!< ピースステータス情報
     std::weak_ptr<Agent> owner_;                  //!< 所有者エージェント
     std::weak_ptr<UIImage> level_ui_;              //!< レベル表示用UI画像コンポーネント
+    std::weak_ptr<ComponentActiveSkill> active_skill_; //!< アクティブスキルコンポーネント
     bool                 is_selected_ = false;    //!< 選択されているかどうか
 };
