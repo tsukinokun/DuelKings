@@ -32,6 +32,7 @@
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
 #include <Game/AutoChess/Piece/PieceData/LevelData.h>
 #include <Game/AutoChess/system/Logic.h>
+#include <Game/AutoChess/SkillObject/SkillObjectBase.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1021,6 +1022,13 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
             }
         }
     }
+
+    //----------------------------------------------------------------------
+    // 存在するスキルオブジェクトをすべて破棄する
+    //----------------------------------------------------------------------
+    for(auto& skill_obj : Scene::Object::GetArray<SkillObjectBase>()) {
+        Scene::Object::Release(skill_obj);
+    }
 }
 
 //----------------------------------------------------------------------
@@ -1038,6 +1046,13 @@ void InGameScene::UpdateBattlePhase()
         }
         //どちらかの駒数が0になったらバトル終了
         if(player_alive_piece_count == 0 || npc_alive_piece_count == 0) {
+            //----------------------------------------------------------------------
+            // 存在するスキルオブジェクトをすべて破棄する
+            //----------------------------------------------------------------------
+            for(auto& skill_obj : Scene::Object::GetArray<SkillObjectBase>()) {
+                Scene::Object::Release(skill_obj);
+            }
+
             has_battle_ended_      = true;                            //バトル終了フラグを立てる
             bool is_player_victory = (npc_alive_piece_count == 0);    //プレイヤーの勝利判定
             //ダメージ処理

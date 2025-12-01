@@ -24,7 +24,6 @@ public:
 
 private:
     const std::array<int, 3> HEAL_AMOUNT_ = {15, 30, 45};    //各レベルの回復量
-    const float              HEAL_RANGE_  = 3.0f;            //回復範囲
 };
 
 CEREAL_REGISTER_TYPE(ChessBishopSkill)
