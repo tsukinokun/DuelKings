@@ -63,6 +63,7 @@ const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFact
     {     "ChaturangaRaja",      [] { return Scene::Object::Create<ChaturangaRaja>(); }},
 };
 const PieceRepository* PieceFactory::piece_repo_ = nullptr;
+const SkillRepository* PieceFactory::skill_repo_ = nullptr;
 //---------------------------------------------------------------------------
 // ピース名を受け取って対応する駒インスタンスを生成する
 //---------------------------------------------------------------------------
@@ -90,4 +91,12 @@ std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type, i
 void PieceFactory::SetPieceRepository(const PieceRepository* repo)
 {
     piece_repo_ = repo;
+}
+
+//---------------------------------------------------------------------------
+//! @brief スキル定義リポジトリを取得する関数
+//---------------------------------------------------------------------------
+void PieceFactory::SetSkillRepository(const SkillRepository* repo)
+{
+    skill_repo_ = repo;
 }

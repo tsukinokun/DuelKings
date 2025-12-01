@@ -6,7 +6,7 @@
 #pragma once
 
 #include <System/Component/Component.h>
-
+#include <Game/AutoChess/Component/SkillComponent/SkillData/SkillData.h>
 USING_PTR(ComponentActiveSkill);
 
 class ComponentActiveSkill : public Component
@@ -40,11 +40,9 @@ public:
     int GetMP() const;
 
 protected:
-    int         mp_                 = 0;                             //!< スキルMP
-    float       max_cool_doen_time_ = 15.0f;                         //!< クールダウン最大値
-    float       cool_doen_time_     = 0.0f;                          //!< クールダウン時間
-    std::string skill_name_         = "ActiveSkill";                 //!< スキル名
-    std::string skill_description_  = "Active Skill Description";    //!< スキル説明文
+    SkillData skill_data_;               //!< スキルデータ
+    int       mp_             = 0;       //!< スキルMP
+    float     cool_doen_time_ = 0.0f;    //!< クールダウン時間
 };
 
 CEREAL_REGISTER_TYPE(ComponentActiveSkill)
