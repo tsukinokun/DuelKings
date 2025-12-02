@@ -32,7 +32,7 @@
 #include <Game/AutoChess/Piece/ChaturangaPadati.h>
 #include <Game/AutoChess/Piece/ChaturangaMantri.h>
 #include <Game/AutoChess/Piece/ChaturangaRaja.h>
-
+#include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 //mapに、駒の名前と生成関数を登録
 const std::unordered_map<std::string_view, PieceFactory::PieceCreator> PieceFactory::piece_creators_ = {
     {"JapaneseChessBishop", [] { return Scene::Object::Create<JapaneseChessBishop>(); }},
@@ -73,13 +73,24 @@ std::shared_ptr<Piece> PieceFactory::CreatePiece(const std::string_view& type, i
     if(it != piece_creators_.end()) {
         auto piece = it->second();
         //---------------------------------------------------------------------------------
-        // マスターデータを設定
+        // 駒のマスターデータを設定
         //---------------------------------------------------------------------------------
-        //マスターデータを取得
-        const PieceData* master_data = piece_repo_->FindByTypeName(piece->GetNameDefault().data());
-        piece->SetMasterData(master_data);
-        piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
-        piece->SetLevel(piece_level);
+        {
+            //マスターデータを取得
+            const PieceData* piece_master_data = piece_repo_->FindByTypeName(piece->GetNameDefault().data());
+            piece->SetMasterData(piece_master_data);
+            piece->ApplyStatsFromMaster();    //マスターデータからステータスを適用
+            piece->SetLevel(piece_level);
+        }
+        //---------------------------------------------------------------------------------
+        // スキルコンポーネントにマスターデータを設定
+        //---------------------------------------------------------------------------------
+        {
+            if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
+                const SkillData* skill_data = skill_repo_->FindBySkillName(skill_comp->GetName());
+                skill_comp->SetMasterData(skill_data);
+            }
+        }
         return piece;
     }
     return nullptr;

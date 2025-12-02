@@ -51,6 +51,17 @@ int ComponentActiveSkill::GetMP() const
     return mp_;
 }
 
+//----------------------------------------------------------
+//! @brief 参照するマスターデータを設定する関数
+//----------------------------------------------------------
+void ComponentActiveSkill::SetMasterData(const SkillData* master)
+{
+    // マスターデータが存在する場合、スキルデータをコピーする
+    if(master) {
+        skill_data_ = *master;
+    }
+}
+
 //---------------------------------------------------------
 //  スキル発動可能かを返す関数
 //!  @return スキル発動可能ならtrue、不可ならfalse
