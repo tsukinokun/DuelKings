@@ -39,8 +39,11 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json", "data/AutoChess/MasterData/SynergyDatas.json");    //マスターデータの読み込み
+    game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json",
+                                   "data/AutoChess/MasterData/SynergyDatas.json",
+                                   "data/AutoChess/MasterData/SkillDatas.json");    //マスターデータの読み込み
     PieceFactory::SetPieceRepository(&game_context_.GetPieceRepository());
+    PieceFactory::SetSkillRepository(&game_context_.GetSkillRepository());
     ImageBuffer::Init();                              //画像バッファの初期化
     PiecePool::Init();                                //駒プールの初期化
     Scene::Object::Create<Camera>();                  //カメラ

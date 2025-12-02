@@ -1,0 +1,10 @@
+{
+    "value0": [
+        {
+            "max_cool_doen_time_": 15.0,
+            "skill_component_name_": "ChessBishopSkill",
+            "skill_name_": "闇の儀式",
+            "skill_description_": "周囲3マスの味方に1.5秒ごとに15/30/45回復を行う。"
+        }
+    ]
+}
