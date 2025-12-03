@@ -549,6 +549,69 @@ bool InGameScene::Init()
             piece_ditail_ui_objects.push_back(attack_range_ui);
         }
         //---------------------------------------------------------------------------------
+        // 物理防御アイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto physical_defense_icon_ui = Scene::Object::Create<UIImage>();
+            physical_defense_icon_ui->SetTranslate(float3(200.0f, 300.0f, 0.0f));
+            physical_defense_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            physical_defense_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            physical_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("physical_defense_icon"));
+            piece_ditail_ui_objects.push_back(physical_defense_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 物理防御表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto physical_defense_ui = Scene::Object::Create<UIText>();
+            physical_defense_ui->SetTranslate(float3(230.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+            physical_defense_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            physical_defense_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            physical_defense_ui->SetFontSize(26);                                         //少しだけ大きく
+            auto update_proc = [physical_defense_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    physical_defense_ui->SetText(std::to_string(piece_data->physical_defense_));
+                }
+            };
+            physical_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(physical_defense_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 魔法防御アイコンUI
+        //---------------------------------------------------------------------------------
+        {
+            auto magic_defense_icon_ui = Scene::Object::Create<UIImage>();
+            magic_defense_icon_ui->SetTranslate(float3(280.0f, 300.0f, 0.0f));
+            magic_defense_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            magic_defense_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            magic_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("magic_defense_icon"));
+            piece_ditail_ui_objects.push_back(magic_defense_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // 魔法防御表示UI
+        //---------------------------------------------------------------------------------
+        {
+            auto magic_defense_ui = Scene::Object::Create<UIText>();
+            magic_defense_ui->SetTranslate(float3(310.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+            magic_defense_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            magic_defense_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            magic_defense_ui->SetFontSize(26);                                         //少しだけ大きく
+            auto update_proc = [magic_defense_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    //ピース情報UIに情報を設定
+                    auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                    magic_defense_ui->SetText(std::to_string(piece_data->magical_defense_));
+                }
+            };
+            magic_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(magic_defense_ui);
+        }
+
+        //---------------------------------------------------------------------------------
         // プレイヤーがピースを選択中ならエージェント情報を表示する
         //---------------------------------------------------------------------------------
         for(auto& obj : piece_ditail_ui_objects) {
