@@ -35,6 +35,7 @@ void ImageBuffer::Init()
     image_buffer_["attack_range_icon"]    = DxLib::LoadGraph("data/AutoChess/Image/AttackRangeIcon.png");                   // 攻撃範囲アイコン画像
     image_buffer_["attack_interval_icon"] = DxLib::LoadGraph("data/AutoChess/Image/AttackIntervalIcon.png");                // 攻撃間隔アイコン画像
     image_buffer_["chess_bishop_icon"]    = DxLib::LoadGraph("data/AutoChess/Image/PieceIcons/ChessBishopIcon.png");        // チェスのビショップアイコン画像
+                                                                                                                            // image_buffer_[""]
 }
 
 //---------------------------------------------------------------------------------
