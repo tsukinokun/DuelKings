@@ -14,6 +14,10 @@ class ChessBishopSkill : public ComponentActiveSkill
 {
 public:
     BP_COMPONENT_DECL(ChessBishopSkill, u8"チェスビショップのベースコンポーネントクラス");
+    //---------------------------------------------------------
+    // コンストラクタ
+    //---------------------------------------------------------
+    ChessBishopSkill();
 
     void Init() override;    //!< 初期化
 

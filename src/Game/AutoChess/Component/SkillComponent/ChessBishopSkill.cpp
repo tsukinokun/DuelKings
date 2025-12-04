@@ -8,12 +8,18 @@
 #include <System/Component/ComponentEffect.h>
 #include <Game/AutoChess/SkillObject/ChessBishopSkillObject.h>
 //---------------------------------------------------------
+// コンストラクタ
+//---------------------------------------------------------
+ChessBishopSkill::ChessBishopSkill()
+{
+    name_ = "ChessBishopSkill";
+}
+//---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
 void ChessBishopSkill::Init()
 {
     __super::Init();
-    SetName<ChessBishopSkill>("ChessBishopSkill");
     mp_ = 100;    // 初期状態でMPを最大にしておく(実験)
 }
 

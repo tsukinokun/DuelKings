@@ -26,15 +26,16 @@ void ImageBuffer::Init()
         DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/JapaneseChessSynergyIcon.png");                              // 将棋シナジーアイコン画像
     image_buffer_["chess_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChessSynergyIcon.png");    // チェスシナジーアイコン画像
     image_buffer_["chaturanga_synergy_icon"] =
-        DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChaturangaSynergyIcon.png");                                    // チャトランガシナジーアイコン画像
-    image_buffer_["makruk_synergy_icon"]  = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/MakrukSynergyIcon.png");    // マークルックシナジーアイコン画像
-    image_buffer_["level_up"]             = DxLib::LoadGraph("data/AutoChess/Image/LevelUP.png");                           // 追加画像
-    image_buffer_["sell_button"]          = DxLib::LoadGraph("data/AutoChess/Image/SellButton.png");                        // 売却ボタン画像
-    image_buffer_["piece_detail_back"]    = DxLib::LoadGraph("data/AutoChess/Image/PieceDetailBack.png");                   // ピース詳細背景画像
-    image_buffer_["attack_power_icon"]    = DxLib::LoadGraph("data/AutoChess/Image/AttackPowerIcon.png");                   // 攻撃力アイコン画像
-    image_buffer_["attack_range_icon"]    = DxLib::LoadGraph("data/AutoChess/Image/AttackRangeIcon.png");                   // 攻撃範囲アイコン画像
-    image_buffer_["attack_interval_icon"] = DxLib::LoadGraph("data/AutoChess/Image/AttackIntervalIcon.png");                // 攻撃間隔アイコン画像
-    image_buffer_["chess_bishop_icon"]    = DxLib::LoadGraph("data/AutoChess/Image/PieceIcons/ChessBishopIcon.png");        // チェスのビショップアイコン画像
+        DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChaturangaSynergyIcon.png");                                     // チャトランガシナジーアイコン画像
+    image_buffer_["makruk_synergy_icon"]   = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/MakrukSynergyIcon.png");    // マークルックシナジーアイコン画像
+    image_buffer_["level_up"]              = DxLib::LoadGraph("data/AutoChess/Image/LevelUP.png");                           // 追加画像
+    image_buffer_["sell_button"]           = DxLib::LoadGraph("data/AutoChess/Image/SellButton.png");                        // 売却ボタン画像
+    image_buffer_["piece_detail_back"]     = DxLib::LoadGraph("data/AutoChess/Image/PieceDetailBack.png");                   // ピース詳細背景画像
+    image_buffer_["attack_power_icon"]     = DxLib::LoadGraph("data/AutoChess/Image/AttackPowerIcon.png");                   // 攻撃力アイコン画像
+    image_buffer_["attack_range_icon"]     = DxLib::LoadGraph("data/AutoChess/Image/AttackRangeIcon.png");                   // 攻撃範囲アイコン画像
+    image_buffer_["attack_interval_icon"]  = DxLib::LoadGraph("data/AutoChess/Image/AttackIntervalIcon.png");                // 攻撃間隔アイコン画像
+    image_buffer_["chess_bishop_icon"]     = DxLib::LoadGraph("data/AutoChess/Image/PieceIcons/ChessBishopIcon.png");        // チェスのビショップアイコン画像
+    image_buffer_["physical_defense_icon"] = DxLib::LoadGraph("data/AutoChess/Image/PhysicalDefenceIcon.png");               // 物理防御力アイコン画像
 }
 
 //---------------------------------------------------------------------------------

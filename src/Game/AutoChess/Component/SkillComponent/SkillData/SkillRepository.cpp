@@ -29,7 +29,7 @@ bool SkillRepository::LoadFromJson(const std::string& path)
 const SkillData* SkillRepository::FindBySkillName(const std::string_view& skill_name) const
 {
     for(const auto& skill : skills_) {
-        if(skill.skill_name_ == skill_name) {
+        if(skill.skill_component_name_ == skill_name) {
             return &skill;
         }
     }
