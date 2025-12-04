@@ -52,6 +52,14 @@ int ComponentActiveSkill::GetMP() const
 }
 
 //----------------------------------------------------------
+//! @brief スキルの説明文を取得する関数
+//----------------------------------------------------------
+std::string ComponentActiveSkill::GetSkillDescription()
+{
+    return skill_data_.skill_description_;
+}
+
+//----------------------------------------------------------
 //! @brief 参照するマスターデータを設定する関数
 //----------------------------------------------------------
 void ComponentActiveSkill::SetMasterData(const SkillData* master)

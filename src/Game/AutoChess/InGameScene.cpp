@@ -33,6 +33,7 @@
 #include <Game/AutoChess/Piece/PieceData/LevelData.h>
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/SkillObject/SkillObjectBase.h>
+#include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -584,7 +585,7 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             auto magic_defense_icon_ui = Scene::Object::Create<UIImage>();
-            magic_defense_icon_ui->SetTranslate(float3(280.0f, 300.0f, 0.0f));
+            magic_defense_icon_ui->SetTranslate(float3(170.0f, 340.0f, 0.0f));
             magic_defense_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
             magic_defense_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             magic_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("magic_defense_icon"));
@@ -595,7 +596,7 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             auto magic_defense_ui = Scene::Object::Create<UIText>();
-            magic_defense_ui->SetTranslate(float3(310.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+            magic_defense_ui->SetTranslate(float3(130.0f, 340.0f, 0.0f));    //位置を左中央あたりに設定
             magic_defense_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             magic_defense_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             magic_defense_ui->SetFontSize(26);                                         //少しだけ大きく
@@ -604,11 +605,33 @@ bool InGameScene::Init()
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
                     auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
-                    magic_defense_ui->SetText(std::to_string(piece_data->magical_defense_));
+                    magic_defense_ui->SetText(std::format("{:.1f}", piece_data->attack_interval_));
                 }
             };
             magic_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
             piece_ditail_ui_objects.push_back(magic_defense_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // スキルの説明文UI
+        //---------------------------------------------------------------------------------
+        {
+            auto skill_description_ui = Scene::Object::Create<UIText>();
+            skill_description_ui->SetTranslate(float3(170.0f, 380.0f, 0.0f));              //位置を左中央あたりに設定
+            skill_description_ui->SetFontName("游明朝");                                   //フォントを設定
+            skill_description_ui->SetFontSize(18);                                         //フォントサイズ設定
+            skill_description_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            skill_description_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            auto update_proc = [skill_description_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
+                        //ピース情報UIに情報を設定
+                        skill_description_ui->SetText(skill_comp->GetSkillDescription());
+                    }
+                }
+            };
+            skill_description_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(skill_description_ui);
         }
 
         //---------------------------------------------------------------------------------
