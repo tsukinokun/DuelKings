@@ -44,6 +44,7 @@ bool Player::Init()
                                     piece_info.SetOwner(dynamic_pointer_cast<Player>(shared_from_this()));
                                     piece_info.SetTypeName(piece->GetNameDefault().data());
                                     piece_info.SetLevel(piece->GetLevel());
+                                    selected_piece_info_ = &board_info_.GetSquarePieceRef(file, rank);    //選択されているピース情報を更新
                                 }
                                 //ない場合は空の状態に変更
                                 SetBoardInfo(file, rank, piece_info);
@@ -75,6 +76,7 @@ bool Player::Init()
                                 //ピースが置かれている場合、情報を更新
                                 piece_info.SetOwner(dynamic_pointer_cast<Player>(shared_from_this()));
                                 piece_info.SetTypeName(piece->GetNameDefault().data());
+                                selected_piece_info_ = &stand_info_.GetStandPieceRef(index);    //選択されているピース情報を更新
                             }
                             //ない場合は空の状態に変更
                             stand_info_.SetPieceAt(index, piece_info);
@@ -261,6 +263,10 @@ bool Player::ReleaseSelectedPiece()
         selected_piece_->SetSelect(false);
         // 選択中のピースをクリア
         selected_piece_ = nullptr;
+        if(selected_piece_info_) {
+            *selected_piece_info_ = PieceInfo();    //選択中のピース情報もクリア
+            selected_piece_info_  = nullptr;
+        }
         return true;
     }
     return false;
@@ -306,8 +312,10 @@ void Player::Update()
                         if(auto piece = square->GetPutPiece().lock()) {
                             piece->SetSelect(false);
                             if(square->IsRayHit()) {
-                                selected_piece_    = piece;
-                                is_selecting_piece = true;
+                                selected_piece_       = piece;
+                                PieceInfo* piece_info = &stand_info_.GetStandPieceRef(i);
+                                selected_piece_info_  = piece_info;
+                                is_selecting_piece    = true;
                             }
                         }
                     }
@@ -321,8 +329,10 @@ void Player::Update()
                             if(auto piece = square->GetPutPiece().lock()) {
                                 piece->SetSelect(false);
                                 if(square->IsRayHit()) {
-                                    selected_piece_    = piece;
-                                    is_selecting_piece = true;
+                                    selected_piece_       = piece;
+                                    PieceInfo* piece_info = &board_info_.GetSquarePieceRef(f, r);
+                                    selected_piece_info_  = piece_info;
+                                    is_selecting_piece    = true;
                                 }
                             }
                         }
