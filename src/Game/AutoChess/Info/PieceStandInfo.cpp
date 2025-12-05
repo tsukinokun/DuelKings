@@ -74,3 +74,17 @@ bool PieceStandInfo::IsFull() const
     }
     return true;    // 全てのピースが存在する場合、満タン
 }
+
+//---------------------------------------------------------------------------
+//! 取得しているピースの個数を取得する関数
+//---------------------------------------------------------------------------
+int PieceStandInfo::GetOwnedPieceNum() const
+{
+    int count = 0;    // 取得しているピースの個数
+    for(const auto& pieces : pieces_) {
+        if(pieces.GetTypeName() != "") {
+            count++;
+        }
+    }
+    return count;
+}

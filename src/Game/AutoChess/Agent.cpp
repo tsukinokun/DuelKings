@@ -131,14 +131,26 @@ int Agent::GetCurrentExp() const
     return exp_ - used_exp;
 }
 //---------------------------------------------------------------------------------
-//! 置かれているピースの数を取得する関数
+//! チェスボードに置かれているピースの数を取得する関数
 //---------------------------------------------------------------------------------
 int Agent::GetPlacedPieceNum() const
 {
-    int placed_piece_num = 0;    // 置かれているピースの数
-    placed_piece_num     = board_info_.GetPieceNumOnSquares();
-    return placed_piece_num;
+    int placed_piece_num = 0;                                     // 置かれているピースの数
+    placed_piece_num     = board_info_.GetPieceNumOnSquares();    // チェスボードのピース数を加算
+    return placed_piece_num;                                      // 合計を返す
 }
+
+//-----------------------------------------------------------
+//! 取得しているピースの個数を取得する関数
+//-----------------------------------------------------------
+int Agent::GetOwnedPieceNum() const
+{
+    int owned_piece_num  = 0;                                     // 取得しているピースの数
+    owned_piece_num     += stand_info_.GetOwnedPieceNum();        // ピーススタンドのピース数を加算
+    owned_piece_num     += board_info_.GetPieceNumOnSquares();    // チェスボードのピース数を加算
+    return owned_piece_num;                                       // 合計を返す
+}
+
 //---------------------------------------------------------------------------------
 //! ショップに並んでいるピースを取得する関数
 //---------------------------------------------------------------------------------
