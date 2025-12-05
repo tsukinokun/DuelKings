@@ -241,7 +241,7 @@ void Piece::SetMasterData(const PieceData* master)
 }
 
 //----------------------------------------------------------
-// マスターデータを参照して、ピースステータスを更新する関数
+//! マスターデータを参照して、ピースステータスを更新する関数
 //----------------------------------------------------------
 void Piece::ApplyStatsFromMaster()
 {
@@ -257,4 +257,15 @@ void Piece::ApplyStatsFromMaster()
                   .PhysicalDefense(master_->physical_defense_)
                   .MagicalDefense(master_->magical_defense_)
                   .Build();
+}
+
+//----------------------------------------------------------
+//! ピースの価格を取得する関数
+//----------------------------------------------------------
+int Piece::GetPrice() const
+{
+    if(!master_) {
+        return 0;
+    }
+    return master_->price_;
 }

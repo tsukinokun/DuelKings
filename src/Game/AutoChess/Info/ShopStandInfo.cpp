@@ -7,6 +7,7 @@
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
 #include <Game/AutoChess/PiecePool.h>
+#include <Game/AutoChess/Agent.h>
 //---------------------------------------------------------------------------
 //!  オーナーのを設定
 //---------------------------------------------------------------------------
@@ -25,7 +26,9 @@ void ShopStandInfo::RerollShopPieces()
     }
     //仮でピースの基底クラスを入れておく
     for(int i = 0; i < shop_pieces_.size(); i++) {
-        shop_pieces_[i] = PiecePool::GetRandomPiece();    //ピース情報を更新
+        if(auto owner_agent = owner_agent_.lock()) {
+            shop_pieces_[i] = PiecePool::GetRandomPiece(owner_agent->GetAgentLevel());    //ピース情報を更新
+        }
     }
     return;
 }
