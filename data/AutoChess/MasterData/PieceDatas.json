@@ -362,7 +362,7 @@
             "attack_range_": 1.0,
             "physical_defense_": 8,
             "magical_defense_": 0.0,
-            "price_": 6
+            "price_": 5
         },
         {
             "type_name_": "ChessQueen",
