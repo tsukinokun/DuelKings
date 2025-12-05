@@ -22,6 +22,8 @@ const std::array<int, 5> piece_init_stock = {25, 20, 15, 10, 10};    //各レア
 int constexpr MAX_AGENT_HP = 100;
 //駒のレアリティ数
 constexpr int RARITIES = 5;
+//ピーススタンドのサイズ
+constexpr int PIECE_STAND_SIZE = 8;
 //---------------------------------------------------------------------------
 //  駒提供割合の定数
 //  [レベル][コスト] = 出現率（%）

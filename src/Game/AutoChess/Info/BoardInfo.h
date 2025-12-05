@@ -51,6 +51,7 @@ public:
     //! @param rank [in] ランク（行）
     //---------------------------------------------------------------------------
     void RemovePiece(int file, int rank);
+
     //@}
 private:
     std::weak_ptr<Agent>                    owner_;      //オーナーのウィークポインタ

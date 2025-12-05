@@ -75,7 +75,8 @@ bool InGameScene::Init()
     //  NPCの生成
     //---------------------------------------------------------------------------------
     for(int i = 0; i < AGENT_NUM - 1; i++) {
-        Scene::Object::Create<Npc>();
+        auto npc = Scene::Object::Create<Npc>();
+        npc->SetPieceRepository(&game_context_.GetPieceRepository());
     }
     Scene::Object::Create<MouseRay>();    //マウス光線
     //---------------------------------------------------------------------------------
@@ -895,6 +896,13 @@ void InGameScene::Update()
                 chess_board->SetBoardProcessEnable(true);
             }
             ++turn_count_;
+            //--------------------------------------------------------------------------------
+            // NPCが盤面を強化する処理
+            //--------------------------------------------------------------------------------
+            for(auto& npc : Scene::Object::GetArray<Npc>()) {
+                npc->OnTurnStart();
+            }
+
             has_battle_ended_ = false;    //バトル終了フラグをリセット
         }
         break;
