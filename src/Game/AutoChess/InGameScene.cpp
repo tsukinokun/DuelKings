@@ -76,7 +76,8 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     for(int i = 0; i < AGENT_NUM - 1; i++) {
         auto npc = Scene::Object::Create<Npc>();
-        npc->SetPieceRepository(&game_context_.GetPieceRepository());
+        npc->SetPieceRepository(&game_context_.GetPieceRepository());    //ピースリポジトリを設定
+        npc->OnTurnStart();                                              //ターン開始時処理を実行
     }
     Scene::Object::Create<MouseRay>();    //マウス光線
     //---------------------------------------------------------------------------------
