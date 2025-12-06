@@ -342,7 +342,15 @@ void Player::Update()
             should_select_piece_ = true;
             //ピースを選択していなければ、選択中のピースをクリア
             if(!is_selecting_piece) {
-                ReleaseSelectedPiece();
+                if(selected_piece_) {
+                    // 選択を解除
+                    selected_piece_->SetSelect(false);
+                    // 選択中のピースをクリア
+                    selected_piece_ = nullptr;
+                    if(selected_piece_info_) {
+                        selected_piece_info_ = nullptr;
+                    }
+                }
             }
         }
 
