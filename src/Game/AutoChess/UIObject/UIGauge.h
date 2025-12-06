@@ -44,7 +44,7 @@ public:
     //! @param smooth_color [in] 滑らかに変化する色(16進数で)
     //! @retval 自身のポインタ
     //---------------------------------------------------------------------------
-    std::shared_ptr<UIGauge> SetGaugeColor(int color, int smooth_color);
+    std::shared_ptr<UIGauge> SetGaugeColor(int color, int smooth_color = GetColor(255, 191, 0));
 
 private:
     std::weak_ptr<ComponentGauge>
