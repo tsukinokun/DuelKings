@@ -8,7 +8,7 @@
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
 //---------------------------------------------------------
-//! 初期化
+//! @brief 初期化
 //---------------------------------------------------------
 void PieceHPDisplayer::Init()
 {
@@ -17,7 +17,7 @@ void PieceHPDisplayer::Init()
     //---------------------------------------------------------------------------------
     // ピースにHPゲージの描画を追加
     //---------------------------------------------------------------------------------
-    auto hp_proc = [owner]() {
+    auto hp_proc = [owner, this]() {
         std::string hp_ui_name = std::string(owner->GetName()) + "hp_ui_name";
         //最大HP未満であれば描画をする。
         if(owner->GetHP() < (owner->GetMaxHP())) {
@@ -34,9 +34,10 @@ void PieceHPDisplayer::Init()
             }
             else {
                 //ゲージの表示
-                hp_ui                         = Scene::Object::Create<UIGauge>();    //HPゲージオブジェクトを生成
-                std::weak_ptr<Piece> owner_wp = owner;                               //オーナーの弱参照を取得
-                hp_ui->SetAutoReleaseTarget(owner_wp.lock());                        //オーナーが消えたら自分も消えるように設定
+                hp_ui = Scene::Object::Create<UIGauge>();    //HPゲージオブジェクトを生成
+                hp_ui->SetGaugeColor(hp_bar_color);
+                std::weak_ptr<Piece> owner_wp = owner;           //オーナーの弱参照を取得
+                hp_ui->SetAutoReleaseTarget(owner_wp.lock());    //オーナーが消えたら自分も消えるように設定
                 //ピースのスクリーン座標を取得
                 float2 screen_pos = WorldPositionToScreenPosition(owner->GetTranslate());
                 //少し上にずらす
@@ -54,4 +55,13 @@ void PieceHPDisplayer::Init()
         }
     };
     SetProc("hp_proc", hp_proc, ProcTiming::Update, ProcPriority::NONE);
+}
+
+//---------------------------------------------------------
+//! @brief HPバーの色を設定する関数
+//---------------------------------------------------------
+std::shared_ptr<PieceHPDisplayer> PieceHPDisplayer::SetHPBarColor(int color)
+{
+    hp_bar_color = color;
+    return std::dynamic_pointer_cast<PieceHPDisplayer>(shared_from_this());
 }
