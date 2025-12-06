@@ -13,7 +13,7 @@ bool ChessBishopSkillObject::Init()
 {
     __super::Init();
 
-    SetName(u8"ポイズン");
+    SetName(u8"闇の儀式");
     SetEffect(u8"data/AutoChess/Effect/ChessBishopSkill.efkefc");
     SetEffectPlaySpeed(0.05f);
 

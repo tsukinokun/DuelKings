@@ -36,6 +36,7 @@ void PieceHPDisplayer::Init()
                 //ゲージの表示
                 hp_ui = Scene::Object::Create<UIGauge>();    //HPゲージオブジェクトを生成
                 hp_ui->SetGaugeColor(hp_bar_color);
+                hp_ui->SetGaugeSize(int2(50, 10));
                 std::weak_ptr<Piece> owner_wp = owner;           //オーナーの弱参照を取得
                 hp_ui->SetAutoReleaseTarget(owner_wp.lock());    //オーナーが消えたら自分も消えるように設定
                 //ピースのスクリーン座標を取得

@@ -167,6 +167,8 @@ bool InGameScene::Init()
         };
         sell_button->SetClickFunc(click_func);
     }
+    //ボード制限に関するUIをベクターへ保管
+    std::vector<std::shared_ptr<UIObject>> board_limit_vector;
     //---------------------------------------------------------------------------------
     //  駒数UI
     //---------------------------------------------------------------------------------
@@ -195,8 +197,9 @@ bool InGameScene::Init()
             }
         };
         piece_num_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
-        piece_num_ui->SetTranslate(float3(WINDOW_W * 0.5f - 50.0f, WINDOW_H * 0.5f, 0.0f));
+        piece_num_ui->SetTranslate(float3(WINDOW_W * 0.5f - 50.0f, WINDOW_H * 0.5f - 100.0f, 0.0f));
         piece_num_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        board_limit_vector.push_back(piece_num_ui);
     }
     //---------------------------------------------------------------------------------
     //  割線UI
@@ -206,8 +209,9 @@ bool InGameScene::Init()
         line_ui->SetFontSize(80);                                         //フォントサイズ設定
         line_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
         line_ui->SetText("/");
-        line_ui->SetTranslate(float3(WINDOW_W * 0.5f, WINDOW_H * 0.5f, 0.0f));
+        line_ui->SetTranslate(float3(WINDOW_W * 0.5f, WINDOW_H * 0.5f - 100.0f, 0.0f));
         line_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        board_limit_vector.push_back(line_ui);
     }
     //---------------------------------------------------------------------------------
     //  駒数制限UI
@@ -223,8 +227,9 @@ bool InGameScene::Init()
             piece_max_ui->SetText(std::to_string(level));
         };
         piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
-        piece_max_ui->SetTranslate(float3(WINDOW_W * 0.5f + 50.0f, WINDOW_H * 0.5f, 0.0f));
+        piece_max_ui->SetTranslate(float3(WINDOW_W * 0.5f + 50.0f, WINDOW_H * 0.5f - 100.0f, 0.0f));
         piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        board_limit_vector.push_back(piece_max_ui);
     }
     //---------------------------------------------------------------------------------
     //  ターン数表示UI
@@ -704,7 +709,7 @@ bool InGameScene::Init()
     {
         auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
         purchase_window_filter->SetScaleAxisXYZ(15.0f);                    //大きさを画面全体に設定
-        purchase_window_filter->SetAlpha(128);                             //透明度を設定
+        purchase_window_filter->SetAlpha(168);                             //透明度を設定
         float x = WINDOW_W * 0.5f;
         float y = WINDOW_H * 0.5f;
         purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
@@ -930,13 +935,20 @@ void InGameScene::Update()
             TransitionTo(GameState::Setup);
             DestroyPiecesAfterBattlePhase();    //バトルフェーズ用に生成した駒を破棄する
             //---------------------------------------------------------------------------------
-            //  このタイミングで無料リロール
+            //  各エージェントに処理
             //---------------------------------------------------------------------------------
             for(auto& agent : Scene::Object::GetArray<Agent>()) {
+                //---------------------------------------------------------------------------------
+                //  このタイミングで無料リロール
+                //---------------------------------------------------------------------------------
                 //ショップがロックしてなければ
                 if(!agent->IsShopLocked()) {
                     agent->RerollShopPieces();    //ショップのピースをリロールする
                 }
+                //---------------------------------------------------------------------------------
+                // 経験値を与える(1)
+                //---------------------------------------------------------------------------------
+                agent->AddExp(1);
             }
             //---------------------------------------------------------------------------------
             // ボードと、ボードに配置されているピースの更新をonにする
@@ -951,7 +963,6 @@ void InGameScene::Update()
             for(auto& npc : Scene::Object::GetArray<Npc>()) {
                 npc->OnTurnStart();
             }
-
             has_battle_ended_ = false;    //バトル終了フラグをリセット
         }
         break;
@@ -1219,7 +1230,7 @@ void InGameScene::UpdateBattlePhase()
                             int hp = battle_npc->GetHP();
                             if(hp > 0) {
                                 //HPが0以下でなければ表示
-                                hp_ui->SetText(std::to_string(battle_npc->GetHP()));
+                                hp_ui->SetText(std::to_string(hp));
                             }
                             else {
                                 //0以下なら、敗北と表示
@@ -1248,7 +1259,7 @@ void InGameScene::UpdateBattlePhase()
                             int hp = player->GetHP();
                             if(hp > 0) {
                                 //HPが0以下でなければ表示
-                                hp_ui->SetText(std::to_string(battle_npc->GetHP()));
+                                hp_ui->SetText(std::to_string(hp));
                             }
                             else {
                                 //0以下なら、敗北と表示
