@@ -232,6 +232,22 @@ bool InGameScene::Init()
         board_limit_vector.push_back(piece_max_ui);
     }
     //---------------------------------------------------------------------------------
+    // 駒関係UIはバトルフェーズに非表示にする処理を登録
+    //---------------------------------------------------------------------------------
+    {
+        for(auto& ui_object : board_limit_vector) {
+            auto board_limit_update_proc = [this, ui_object]() {
+                if(game_state_ == GameState::Battle) {
+                    ui_object->SetStatus(Object::StatusBit::NoDraw, true);    //バトルフェーズなら非表示にする
+                }
+                else {
+                    ui_object->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                }
+            };
+            ui_object->SetProc("board_limit_update", board_limit_update_proc, ProcTiming::Update, ProcPriority::NONE);
+        };
+    }
+    //---------------------------------------------------------------------------------
     //  ターン数表示UI
     //---------------------------------------------------------------------------------
     {
