@@ -592,7 +592,7 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             auto magic_defense_icon_ui = Scene::Object::Create<UIImage>();
-            magic_defense_icon_ui->SetTranslate(float3(170.0f, 340.0f, 0.0f));
+            magic_defense_icon_ui->SetTranslate(float3(80.0f, 340.0f, 0.0f));
             magic_defense_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
             magic_defense_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             magic_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("magical_defense_icon"));
@@ -619,11 +619,54 @@ bool InGameScene::Init()
             piece_ditail_ui_objects.push_back(magic_defense_ui);
         }
         //---------------------------------------------------------------------------------
+        // スキルアイコンのパスUI
+        //---------------------------------------------------------------------------------
+        {
+            auto skill_icon_ui = Scene::Object::Create<UIImage>();
+            skill_icon_ui->SetTranslate(float3(80.0f, 380.0f, 0.0f));
+            skill_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            skill_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            auto update_proc = [skill_icon_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
+                        //ピース情報UIに情報を設定
+                        auto skill_icon_key = skill_comp->GetSkillIconKey();
+                        skill_icon_ui->SetImage(ImageBuffer::GetImageHandle(skill_icon_key));
+                    }
+                }
+            };
+            skill_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(skill_icon_ui);
+        }
+        //---------------------------------------------------------------------------------
+        // スキルの名前を表示するUI
+        //---------------------------------------------------------------------------------
+        {
+            auto skill_name_ui = Scene::Object::Create<UIText>();
+            skill_name_ui->SetTranslate(float3(130.0f, 380.0f, 0.0f));              //位置を左中央あたりに設定
+            skill_name_ui->SetFontName("游明朝");                                   //フォントを設定
+            skill_name_ui->SetFontSize(20);                                         //フォントサイズ設定
+            skill_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+            skill_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
+            auto update_proc = [skill_name_ui, piece_repository, player]() {
+                //選択されているピースを取得
+                if(auto piece = player->GetSelectedPiece()) {
+                    if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
+                        //ピース情報UIに情報を設定
+                        skill_name_ui->SetText(skill_comp->GetSkillName());
+                    }
+                }
+            };
+            skill_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_ditail_ui_objects.push_back(skill_name_ui);
+        }
+        //---------------------------------------------------------------------------------
         // スキルの説明文UI
         //---------------------------------------------------------------------------------
         {
             auto skill_description_ui = Scene::Object::Create<UIText>();
-            skill_description_ui->SetTranslate(float3(170.0f, 380.0f, 0.0f));              //位置を左中央あたりに設定
+            skill_description_ui->SetTranslate(float3(170.0f, 420.0f, 0.0f));              //位置を左中央あたりに設定
             skill_description_ui->SetFontName("游明朝");                                   //フォントを設定
             skill_description_ui->SetFontSize(18);                                         //フォントサイズ設定
             skill_description_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定

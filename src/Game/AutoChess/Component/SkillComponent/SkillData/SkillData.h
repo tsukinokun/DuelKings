@@ -10,6 +10,7 @@
 struct SkillData
 {
     float       max_cool_doen_time_   = 0.0f;                          //!< クールダウン最大値
+    std::string skill_icon_key_       = "";                            //!< スキルアイコンの画像キー
     std::string skill_component_name_ = "";                            //!< つけるスキルコンポーネントの名前
     std::string skill_name_           = "ActiveSkill";                 //!< スキル名
     std::string skill_description_    = "Active Skill Description";    //!< スキル説明文
@@ -22,6 +23,10 @@ struct SkillData
     template <class Archive>
     void serialize(Archive& ar)
     {
-        ar(CEREAL_NVP(max_cool_doen_time_), CEREAL_NVP(skill_component_name_), CEREAL_NVP(skill_name_), CEREAL_NVP(skill_description_));
+        ar(CEREAL_NVP(max_cool_doen_time_),
+           CEREAL_NVP(skill_icon_key_),
+           CEREAL_NVP(skill_component_name_),
+           CEREAL_NVP(skill_name_),
+           CEREAL_NVP(skill_description_));
     }
 };

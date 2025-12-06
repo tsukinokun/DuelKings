@@ -52,11 +52,27 @@ int ComponentActiveSkill::GetMP() const
 }
 
 //----------------------------------------------------------
+//! @brief スキル名を取得する関数
+//----------------------------------------------------------
+const std::string& ComponentActiveSkill::GetSkillName()
+{
+    return skill_data_.skill_name_;
+}
+
+//----------------------------------------------------------
 //! @brief スキルの説明文を取得する関数
 //----------------------------------------------------------
-std::string ComponentActiveSkill::GetSkillDescription()
+const std::string& ComponentActiveSkill::GetSkillDescription()
 {
     return skill_data_.skill_description_;
+}
+
+//----------------------------------------------------------
+//! @brief スキルアイコンのキーを取得する関数
+//----------------------------------------------------------
+const std::string& ComponentActiveSkill::GetSkillIconKey()
+{
+    return skill_data_.skill_icon_key_;
 }
 
 //----------------------------------------------------------

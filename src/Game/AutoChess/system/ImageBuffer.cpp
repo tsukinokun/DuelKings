@@ -37,6 +37,8 @@ void ImageBuffer::Init()
     image_buffer_["chess_bishop_icon"]     = DxLib::LoadGraph("data/AutoChess/Image/PieceIcons/ChessBishopIcon.png");        // チェスのビショップアイコン画像
     image_buffer_["physical_defense_icon"] = DxLib::LoadGraph("data/AutoChess/Image/PhysicalDefenceIcon.png");               // 物理防御力アイコン画像
     image_buffer_["magical_defense_icon"]  = DxLib::LoadGraph("data/AutoChess/Image/MagicalDefenceIcon.png");                // 物理防御力アイコン画像
+    image_buffer_["chess_bishop_skill_icon"] =
+        DxLib::LoadGraph("data/AutoChess/Image/SkillIcons/ChessBishopSkillIcon.png");    // チェスのビショップスキルアイコン画像
 }
 
 //---------------------------------------------------------------------------------
