@@ -93,7 +93,10 @@ bool InGameScene::Init()
         //クリック時の処理
         auto click_func = []() {
             if(auto player = Scene::Object::Get<Player>()) {
-                player->AddExp(4);    //経験値を4増やす
+                //4ゴールド以上所持しているなら経験値を増やす
+                if(player->GetGold() >= 4) {
+                    player->AddExp(4);    //経験値を4増やす
+                }
             }
         };
         exp_button->SetClickFunc(click_func);
@@ -592,7 +595,7 @@ bool InGameScene::Init()
             magic_defense_icon_ui->SetTranslate(float3(170.0f, 340.0f, 0.0f));
             magic_defense_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
             magic_defense_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            magic_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("magic_defense_icon"));
+            magic_defense_icon_ui->SetImage(ImageBuffer::GetImageHandle("magical_defense_icon"));
             piece_ditail_ui_objects.push_back(magic_defense_icon_ui);
         }
         //---------------------------------------------------------------------------------
