@@ -23,6 +23,7 @@ bool Piece::Init()
     //---------------------------------------------------------------------------------
     status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
 
+    status_modifier_.SetListener(this);    // ステータス変更リスナーを設定
     //---------------------------------------------------------------------------------
     // レベル表示画像の追加
     //---------------------------------------------------------------------------------
@@ -268,4 +269,191 @@ int Piece::GetPrice() const
         return 0;
     }
     return master_->price_;
+}
+
+//----------------------------------------------------------
+//! 最終的なピースステータス情報を更新する関数
+//----------------------------------------------------------
+void Piece::UpdateFinalStatus()
+{
+    // ステータス修正を反映して最終ステータスを計算
+    final_status_ =
+        PieceStatus::Create()
+            .Level(status_.GetLevel())
+            .HP(status_.GetMaxHP())
+            .AttackPower((status_.GetAttackPower() * (1.0f + status_modifier_.GetRateAttackPower())) + status_modifier_.GetAddAttackPower())
+            .AttackInterval((status_.GetAttackInterval() * (1.0f + status_modifier_.GetRateAttackInterval())) + status_modifier_.GetAddAttackInterval())
+            .AttackRange(status_.GetAttackRange())
+            .MoveSpeed(status_.GetMoveSpeed())
+            .PhysicalDefense((status_.GetPhysicalDefense() * (1.0f + status_modifier_.GetRatePhysicalDefense())) + status_modifier_.GetAddPhysicalDefense())
+            .MagicalDefense((status_.GetMagicalDefense() * (1.0f + status_modifier_.GetRateMagicalDefense())) + status_modifier_.GetAddMagicalDefense())
+            .Build();
+}
+
+//----------------------------------------------------------
+//! @brief status_modifier_が変化したときに呼ばれるコールバック関数
+//----------------------------------------------------------
+void Piece::OnModifierChanged()
+{
+    UpdateFinalStatus();    // Modifierが変わったら再計算
+}
+
+//---------------------------------------------------------------------------
+//! @brief 最大HP加算値を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddMaxHPModifier(int value)
+{
+    status_modifier_.AddMaxHP(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 最大HP加算値を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveMaxHPModifier(int value)
+{
+    status_modifier_.RemoveMaxHP(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 最大HP倍率を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddRateMaxHPModifier(float value)
+{
+    status_modifier_.AddRateMaxHP(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 最大HP倍率を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveRateMaxHPModifier(float value)
+{
+    status_modifier_.RemoveRateMaxHP(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃力加算値を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddAttackPowerModifier(int value)
+{
+    status_modifier_.AddAttackPower(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃力加算値を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveAttackPowerModifier(int value)
+{
+    status_modifier_.RemoveAttackPower(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃力倍率を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddRateAttackPowerModifier(float value)
+{
+    status_modifier_.AddRateAttackPower(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃力倍率を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveRateAttackPowerModifier(float value)
+{
+    status_modifier_.RemoveRateAttackPower(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃間隔加算値を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddAttackIntervalModifier(float value)
+{
+    status_modifier_.AddAttackInterval(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃間隔加算値を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveAttackIntervalModifier(float value)
+{
+    status_modifier_.RemoveAttackInterval(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃間隔倍率を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddRateAttackIntervalModifier(float value)
+{
+    status_modifier_.AddRateAttackInterval(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 攻撃間隔倍率を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveRateAttackIntervalModifier(float value)
+{
+    status_modifier_.RemoveRateAttackInterval(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 物理防御力加算値を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddPhysicalDefenseModifier(int value)
+{
+    status_modifier_.AddPhysicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 物理防御力加算値を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemovePhysicalDefenseModifier(int value)
+{
+    status_modifier_.RemovePhysicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 物理防御力倍率を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddRatePhysicalDefenseModifier(float value)
+{
+    status_modifier_.AddRatePhysicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 物理防御力倍率を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveRatePhysicalDefenseModifier(float value)
+{
+    status_modifier_.RemoveRatePhysicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 魔法防御力加算値を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddMagicalDefenseModifier(float value)
+{
+    status_modifier_.AddMagicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 魔法防御力加算値を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveMagicalDefenseModifier(float value)
+{
+    status_modifier_.RemoveMagicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 魔法防御力倍率を増やす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddRateMagicalDefenseModifier(float value)
+{
+    status_modifier_.AddRateMagicalDefense(value);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 魔法防御力倍率を減らす（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::RemoveRateMagicalDefenseModifier(float value)
+{
+    status_modifier_.RemoveRateMagicalDefense(value);
 }
