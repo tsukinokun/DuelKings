@@ -56,10 +56,10 @@ void PieceStand::Draw()
 {
     __super::Draw();
     for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
-        int color = GetColor(0, 255, 0);
+        int color = GetColor(255, 255, 255);
         //ファイルとランクの合計値が偶数なら白に
         if((s % 2) == 0) {
-            color = GetColor(0, 255, 255);
+            color = GetColor(0, 0, 0);
         }
         float3 curr_translate = GetTranslate();    //現在のポジションを取得
         float  x              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);

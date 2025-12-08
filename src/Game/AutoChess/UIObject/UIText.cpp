@@ -74,3 +74,14 @@ std::shared_ptr<UIText> UIText::SetEdgeSize(int edge_size)
     }
     return dynamic_pointer_cast<UIText>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief 文字の太さを設定
+//---------------------------------------------------------------------------
+std::shared_ptr<UIText> UIText::SetThickSize(int thick_size)
+{
+    if(auto text_comp = text_component_.lock()) {
+        text_comp->SetThickSize(thick_size);    // 文字の太さを設定
+    }
+    return dynamic_pointer_cast<UIText>(shared_from_this());
+}

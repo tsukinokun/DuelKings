@@ -13,7 +13,7 @@ USING_PTR(ChessBishopSkill);
 class ChessBishopSkill : public ComponentActiveSkill
 {
 public:
-    BP_COMPONENT_DECL(ChessBishopSkill, u8"チェスビショップのベースコンポーネントクラス");
+    BP_COMPONENT_DECL(ChessBishopSkill, u8"チェスビショップのスキルコンポーネントクラス");
     //---------------------------------------------------------
     // コンストラクタ
     //---------------------------------------------------------

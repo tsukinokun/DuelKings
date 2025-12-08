@@ -1,5 +1,4 @@
 ﻿//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
 //!	@file	Piece.h
 //! @brief	インゲームシーンのピースクラス
 //! @author 山﨑愛
@@ -9,11 +8,13 @@
 #include <Game/AutoChess/Info/PieceStatus.h>    // ピースステータス情報をインスタンスとして持つのでここでインクルード
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
 #include <Game/AutoChess/system/GameConst.h>
+#include <Game/AutoChess/Info/PieceStatusModifier.h>
+#include <Game/AutoChess/Info/IStatusModifierListener.h>
 class Agent;
 class UIImage;
 class ComponentActiveSkill;
 USING_PTR(Piece);
-class Piece : public Object {
+class Piece : public Object ,public IStatusModifierListener{
 public:
     BP_OBJECT_DECL(Piece, u8"インゲームシーンのピースクラス")
     //@{
@@ -127,10 +128,143 @@ public:
     //----------------------------------------------------------
     int GetPrice()const;
 
+    //----------------------------------------------------------
+    // 最終的なピースステータス情報を更新する関数
+    //----------------------------------------------------------
+    void UpdateFinalStatus();
+
+    //----------------------------------------------------------
+    // status_modifier_が変化したときに呼ばれるコールバック関数
+    //! @note IStatusModifierListenerの実装
+    //----------------------------------------------------------
+    void OnModifierChanged() override ;
+
+    //----------------------------------------------------------
+    // 最大HP加算値を増やす（modifier操作）
+    //! @param value 増加量
+    //----------------------------------------------------------
+    void AddMaxHPModifier(int value);
+
+    //----------------------------------------------------------
+    // 最大HP加算値を減らす（modifier操作）
+    //! @param value 減少量
+    //----------------------------------------------------------
+    void RemoveMaxHPModifier(int value);
+
+    //----------------------------------------------------------
+    // 最大HP倍率を増やす（modifier操作）
+    //! @param value 増加量(%)
+    //----------------------------------------------------------
+    void AddRateMaxHPModifier(float value);
+
+    //----------------------------------------------------------
+    // 最大HP倍率を減らす（modifier操作）
+    //! @param value 減少量(%)
+    //----------------------------------------------------------
+    void RemoveRateMaxHPModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃力加算値を増やす（modifier操作）
+    //! @param value 増加量
+    //----------------------------------------------------------
+    void AddAttackPowerModifier(int value);
+
+    //----------------------------------------------------------
+    // 攻撃力加算値を減らす（modifier操作）
+    //! @param value 減少量
+    //----------------------------------------------------------
+    void RemoveAttackPowerModifier(int value);
+
+    //----------------------------------------------------------
+    // 攻撃力倍率を増やす（modifier操作）
+    //! @param value 増加量(%)
+    //----------------------------------------------------------
+    void AddRateAttackPowerModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃力倍率を減らす（modifier操作）
+    //! @param value 減少量(%)
+    //----------------------------------------------------------
+    void RemoveRateAttackPowerModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃間隔加算値を増やす（modifier操作）
+    //! @param value 増加量(秒)
+    //----------------------------------------------------------
+    void AddAttackIntervalModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃間隔加算値を減らす（modifier操作）
+    //! @param value 減少量(秒)
+    //----------------------------------------------------------
+    void RemoveAttackIntervalModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃間隔倍率を増やす（modifier操作）
+    //! @param value 増加量(%)
+    //----------------------------------------------------------
+    void AddRateAttackIntervalModifier(float value);
+
+    //----------------------------------------------------------
+    // 攻撃間隔倍率を減らす（modifier操作）
+    //! @param value 減少量(%)
+    //----------------------------------------------------------
+    void RemoveRateAttackIntervalModifier(float value);
+
+    //----------------------------------------------------------
+    // 物理防御力加算値を増やす（modifier操作）
+    //! @param value 増加量
+    //----------------------------------------------------------
+    void AddPhysicalDefenseModifier(int value);
+
+    //----------------------------------------------------------
+    // 物理防御力加算値を減らす（modifier操作）
+    //! @param value 減少量
+    //----------------------------------------------------------
+    void RemovePhysicalDefenseModifier(int value);
+
+    //----------------------------------------------------------
+    // 物理防御力倍率を増やす（modifier操作）
+    //! @param value 増加量(%)
+    //----------------------------------------------------------
+    void AddRatePhysicalDefenseModifier(float value);
+
+    //----------------------------------------------------------
+    // 物理防御力倍率を減らす（modifier操作）
+    //! @param value 減少量(%)
+    //----------------------------------------------------------
+    void RemoveRatePhysicalDefenseModifier(float value);
+
+    //----------------------------------------------------------
+    // 魔法防御力加算値を増やす（modifier操作）
+    //! @param value 増加量
+    //----------------------------------------------------------
+    void AddMagicalDefenseModifier(float value);
+
+    //----------------------------------------------------------
+    // 魔法防御力加算値を減らす（modifier操作）
+    //! @param value 減少量
+    //----------------------------------------------------------
+    void RemoveMagicalDefenseModifier(float value);
+
+    //----------------------------------------------------------
+    // 魔法防御力倍率を増やす（modifier操作）
+    //! @param value 増加量(%)
+    //----------------------------------------------------------
+    void AddRateMagicalDefenseModifier(float value);
+
+    //----------------------------------------------------------
+    // 魔法防御力倍率を減らす（modifier操作）
+    //! @param value 減少量(%)
+    //----------------------------------------------------------
+    void RemoveRateMagicalDefenseModifier(float value);
+
     //@}
 protected:
     const PieceData* master_;                     //!< 参照マスターデータ
     PieceStatus          status_;                 //!< ピースステータス情報
+    PieceStatusModifier  status_modifier_;        //!< ピースステータスに対してのバフ・デバフ情報
+    PieceStatus          final_status_;           //!< 最終的なピースステータス情報
     std::weak_ptr<Agent> owner_;                  //!< 所有者エージェント
     std::weak_ptr<UIImage> level_ui_;              //!< レベル表示用UI画像コンポーネント
     std::weak_ptr<ComponentActiveSkill> active_skill_; //!< アクティブスキルコンポーネント

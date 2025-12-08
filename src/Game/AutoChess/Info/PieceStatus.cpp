@@ -11,12 +11,15 @@
 //-----------------------------------------------------------------------------
 PieceStatus::PieceStatus()
 {
-    level_        = 1;    //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
-    hp_           = 0;
-    max_hp_       = 0;
-    attack_power_ = 0;
-    attack_range_ = 0.0f;
-    move_speed_   = 0.0f;
+    level_            = 1;    //ピースのレベル、重ねた数、最大は3まで、これは必ず1から始まる
+    hp_               = 0;
+    max_hp_           = 0;
+    attack_power_     = 0;
+    attack_interval_  = 0.0f;
+    physical_defense_ = 0;
+    magical_defense_  = 0.0f;
+    attack_range_     = 0.0f;
+    move_speed_       = 0.0f;
 }
 //---------------------------------------------------------------------------
 // コンストラクタ（Builder からのみ呼ばれる）。

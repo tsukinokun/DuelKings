@@ -17,10 +17,11 @@ void ComponentText::Init()
     //  UI描画を登録
     //---------------------------------------------------------------------------
     auto draw_ui = [this]() {
-        DxLib::SetFontSize(font_size_);                                                                                          //フォントサイズに合わせる
-        auto   owner       = GetOwner();                                                                                         //オーナーを取得
-        float3 adjustment  = float3(0.0f, 0.0f, 0.0f);                                                                           // 調整値(Alignmentに合わせて)
-        int    font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
+        DxLib::SetFontSize(font_size_);                  //フォントサイズに合わせる
+        auto   owner      = GetOwner();                  //オーナーを取得
+        float3 adjustment = float3(0.0f, 0.0f, 0.0f);    // 調整値(Alignmentに合わせて)
+        int    font_handle =
+            FontBuffer::GetFontHandle(font_name_, font_size_, thick_size_, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
         if(auto comp_transform = owner->GetComponent<ComponentTransformUI>()) {
             ComponentTransformUI::Alignment alignment = comp_transform->GetAlignment();
             float                           hight     = 0;    //フォントサイズを取得(=高さ)
@@ -139,11 +140,27 @@ std::shared_ptr<ComponentText> ComponentText::SetFontSize(int font_size)
 }
 
 //---------------------------------------------------------------------------
-//エッジサイズの設定
+//! @brief  エッジサイズの設定
 //---------------------------------------------------------------------------
 std::shared_ptr<ComponentText> ComponentText::SetEdgeSize(int edge_size)
 {
     edge_size_ = edge_size;
+    return dynamic_pointer_cast<ComponentText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief 文字の太さを設定
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentText> ComponentText::SetThickSize(int thick_size)
+{
+    // 太さは1から9の間で設定
+    if(thick_size < 0) {
+        thick_size = 0;
+    }
+    else if(thick_size > 9) {
+        thick_size = 9;
+    }
+    thick_size_ = thick_size;
     return dynamic_pointer_cast<ComponentText>(shared_from_this());
 }
 
