@@ -1,18 +1,18 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	PieceAttacker.h
-//! @brief	ピースの攻撃機能クラス
+//!	@file	PieceTargetLocker.h
+//! @brief	ピースのターゲットロック機能クラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #pragma once
 
 #include <System/Component/Component.h>
+class Piece;
+USING_PTR(PieceTargetLocker);
 
-USING_PTR(PieceAttacker);
-class Piece;    //前方宣言
-class PieceAttacker : public Component
+class PieceTargetLocker : public Component
 {
 public:
-    BP_COMPONENT_DECL(PieceAttacker, u8"ピースの攻撃機能クラス");
+    BP_COMPONENT_DECL(PieceTargetLocker, u8"ピースのターゲットロック機能クラス");
 
     virtual void Init() override;    //!< 初期化
 
@@ -24,10 +24,9 @@ public:
     void LockTarget(Piece* target, float duration);
 
 private:
-    float  attack_timer_  = 0.0f;       //!< 攻撃クールタイムのタイマー
-    float  lock_timer_    = 0.0f;       //!< ターゲットロックが有効な時間
+    float  active_time_   = 0.0f;       //!< ターゲットロックが有効な時間
     Piece* locked_target_ = nullptr;    //!< ロックしているターゲットピース
 };
 
-CEREAL_REGISTER_TYPE(PieceAttacker)
-CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, PieceAttacker)
+CEREAL_REGISTER_TYPE(PieceTargetLocker)
+CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, PieceTargetLocker)

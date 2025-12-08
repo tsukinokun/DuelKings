@@ -7,6 +7,7 @@
 #include <Game/AutoChess/Piece/Piece.h>
 #include <System/Component/ComponentEffect.h>
 #include <Game/AutoChess/SkillObject/SkillObjectBase.h>
+#include <Game/AutoChess/Component/PieceAttacker.h>
 //---------------------------------------------------------
 // コンストラクタ
 //---------------------------------------------------------
@@ -57,7 +58,24 @@ void JapaneseChessPawnSkill::Activate()
     //---------------------------------------------------------
     // バフをかける
     //---------------------------------------------------------
-    int piece_level = owner->GetLevel();                                               //ピースのレベルを取得する
-    effect_timer_   = DURATION_OF_EFFECT_.at(piece_level - 1);                         //タイマーをセット
-    owner->AddPhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(piece_level - 1));    //物理防御バフを追加
+    int piece_level = owner->GetLevel();    //ピースのレベルを取得する
+    int index       = piece_level - 1;
+    effect_timer_   = DURATION_OF_EFFECT_.at(index);                         //タイマーをセット
+    owner->AddPhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(index));    //物理防御バフを追加
+    //---------------------------------------------------------
+    // 周囲1.0f以内の敵に自分をロックさせる
+    //---------------------------------------------------------
+    for(auto& piece : Scene::Object::GetArray<Piece>()) {
+        //敵であり、かつ自分からの距離が1.0f以内なら
+        if(piece->GetOwner() != owner->GetOwner()) {
+            float distance = length(piece->GetTranslate() - owner->GetTranslate());
+            if(distance <= 1.0f) {
+                //攻撃機能コンポーネントを取得
+                if(auto attacker = piece->GetComponent<PieceAttacker>()) {
+                    //自分をロックさせる
+                    attacker->LockTarget(owner.get(), DURATION_OF_EFFECT_.at(index));
+                }
+            }
+        }
+    }
 }
