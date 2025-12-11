@@ -44,7 +44,7 @@ private:
 
     //---------------------------------------------------------------------------
     // 任意のゲージ（HP/MP/スタミナなど）を更新する
-    //! @param owner             [in]ピースオブジェクト（ゲージの対象）
+    //! @param owner             [in] ピースオブジェクト（ゲージの対象）
     //! @param gauge_name_suffix [in] ゲージ名のサフィックス（例: "hp_ui_name", "mp_ui_name"）
     //! @param current_value     [in] 現在値（HPやMPなど）
     //! @param max_value         [in] 最大値（HPやMPなど）
