@@ -7,6 +7,7 @@
 #include <Game/AutoChess/Piece/Piece.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
+#include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 //---------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------
@@ -20,6 +21,10 @@ void PieceUIDisplayer::Init()
     auto hp_proc = [owner, this]() {
         // HPゲージの更新
         UpdateGauge(owner, "hp_ui", owner->GetHP(), owner->GetMaxHP(), hp_bar_color, int2(50, 10));
+        // MPゲージの更新
+        if(auto component_active_skill = owner->GetComponent<ComponentActiveSkill>()) {
+            UpdateGauge(owner, "mp_ui", component_active_skill->GetMP(), 100, GetColor(0, 128, 128), int2(50, 10), float2(0.0f, -15.0f));
+        }
     };
     SetProc("hp_proc", hp_proc, ProcTiming::Update, ProcPriority::NONE);
 }

@@ -30,8 +30,8 @@ void JapaneseChessPawnSkill::Init()
             effect_timer_ -= GetDeltaTime();
             //タイマーが0.0f以下になったら
             if(effect_timer_ <= 0.0f) {
-                int piece_level = owner->GetLevel();                                               //ピースのレベルを取得する
-                owner->AddPhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(piece_level - 1));    //物理防御バフを削除
+                int piece_level = owner->GetLevel();                                                  //ピースのレベルを取得する
+                owner->RemovePhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(piece_level - 1));    //物理防御バフを削除
             }
         }
     };

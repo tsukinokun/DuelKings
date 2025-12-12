@@ -10,6 +10,8 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
 #include <System/Component/ComponentEffect.h>
+#include <Game/AutoChess/system/Logic.h>
+#include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -191,22 +193,21 @@ void Piece::SetLevel(int level)
 void Piece::TakeDamage(int amount, DamageType damage_type)
 {
     // 最終的なダメージ量
-    int finalDamage = amount;
-    // 防御力を考慮したダメージ計算
-    if(damage_type == DamageType::Physical) {
-        int    armor      = status_.GetPhysicalDefense();
-        double multiplier = 1.0 - (0.052 * armor) / (0.9 + 0.048 * std::abs(armor));
-        finalDamage       = amount * multiplier;
-    }
-    else if(damage_type == DamageType::Magic) {
-        double resistance = status_.GetMagicalDefense();    // 例: 0.15 = 15%
-        double multiplier = 1.0 - resistance;
-        finalDamage       = amount * multiplier;
+    int final_damage = amount;
+    // 最低ダメージは1に設定
+    if(final_damage < 1)
+        final_damage = 1;
+
+    //----------------------------------------------------------
+    // MP回復
+    //----------------------------------------------------------
+    if(auto skill_component = GetComponent<ComponentActiveSkill>()) {
+        // MP回復量の計算
+        int cure_mp = CalculateMPGain(final_damage, damage_type, false);
+        skill_component->AddMP(cure_mp);
     }
 
-    if(finalDamage < 1)
-        finalDamage = 1;
-    status_.ApplyDamage(finalDamage);
+    status_.ApplyDamage(final_damage);
 }
 
 //----------------------------------------------------------
@@ -456,4 +457,12 @@ void Piece::AddRateMagicalDefenseModifier(float value)
 void Piece::RemoveRateMagicalDefenseModifier(float value)
 {
     status_modifier_.RemoveRateMagicalDefense(value);
+}
+
+//----------------------------------------------------------
+//! @brief 最終ステータスを取得する関数
+//----------------------------------------------------------
+PieceStatus Piece::GetFinalStatus() const
+{
+    return final_status_;
 }

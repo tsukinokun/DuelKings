@@ -6,6 +6,8 @@
 #include <Game/AutoChess/Component/PieceAttacker.h>
 #include <Game/AutoChess/Component/PieceSensor.h>
 #include <Game/AutoChess/Piece/Piece.h>
+#include <Game/AutoChess/system/Logic.h>
+#include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
@@ -39,9 +41,19 @@ void PieceAttacker::Init()
                 float distance = length(direction);
                 if(distance <= this_piece->GetAttackRange()) {
                     //攻撃力を取得
-                    int attack_power = this_piece->GetAttackPower();
+                    int         attack_power  = this_piece->GetAttackPower();
+                    PieceStatus target_status = locked_target_->GetFinalStatus();
+                    //最終的なダメージをこちらで計算(MP回復がしたいので)
+                    int final_damage = CalculateFinalDamage(attack_power, DamageType::Physical, target_status);
+                    //---------------------------------------------------------
+                    // MP回復処理
+                    //---------------------------------------------------------
+                    if(auto skill_component = this_piece->GetComponent<ComponentActiveSkill>()) {
+                        int mp_gain = CalculateMPGain(final_damage, DamageType::Physical, false);
+                        skill_component->AddMP(mp_gain);
+                    }
                     //敵のHPを減少させる
-                    locked_target_->TakeDamage(attack_power);
+                    locked_target_->TakeDamage(final_damage);
                     //攻撃クールタイムをリセット
                     attack_timer_ = this_piece->GetAttackInterval();
                 }
