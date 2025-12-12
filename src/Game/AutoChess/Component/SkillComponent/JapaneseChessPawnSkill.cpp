@@ -21,7 +21,6 @@ JapaneseChessPawnSkill::JapaneseChessPawnSkill()
 void JapaneseChessPawnSkill::Init()
 {
     __super::Init();
-    mp_              = 100;    // 初期状態でMPを最大にしておく(実験)
     auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
     auto update_proc = [owner, this]() {
         //タイマーが0.0fより大きければ

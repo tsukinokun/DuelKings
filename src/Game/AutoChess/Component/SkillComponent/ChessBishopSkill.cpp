@@ -20,7 +20,6 @@ ChessBishopSkill::ChessBishopSkill()
 void ChessBishopSkill::Init()
 {
     __super::Init();
-    mp_ = 100;    // 初期状態でMPを最大にしておく(実験)
 }
 
 //---------------------------------------------------------
