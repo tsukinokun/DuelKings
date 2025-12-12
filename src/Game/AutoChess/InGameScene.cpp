@@ -25,7 +25,7 @@
 #include <Game/AutoChess/Component/PieceMover.h>
 #include <Game/AutoChess/Component/PieceSensor.h>
 #include <Game/AutoChess/Component/PieceAttacker.h>
-#include <Game/AutoChess/Component/PieceHPDisplayer.h>
+#include <Game/AutoChess/Component/PieceUIDisplayer.h>
 #include <Game/AutoChess/Component/PieceSkillUser.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
@@ -1073,7 +1073,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     // HP表示するコンポーネントを追加
                     //---------------------------------------------------------------------------------
-                    piece->AddComponent<PieceHPDisplayer>();
+                    piece->AddComponent<PieceUIDisplayer>();
                     //---------------------------------------------------------------------------------
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
@@ -1118,7 +1118,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     // HP表示するコンポーネントを追加
                     //---------------------------------------------------------------------------------
-                    piece->AddComponent<PieceHPDisplayer>()->SetHPBarColor(GetColor(255, 0, 0));
+                    piece->AddComponent<PieceUIDisplayer>()->SetHPBarColor(GetColor(255, 0, 0));
                     //---------------------------------------------------------------------------------
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------

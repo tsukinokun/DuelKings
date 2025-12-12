@@ -21,7 +21,6 @@ JapaneseChessPawnSkill::JapaneseChessPawnSkill()
 void JapaneseChessPawnSkill::Init()
 {
     __super::Init();
-    mp_              = 100;    // 初期状態でMPを最大にしておく(実験)
     auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
     auto update_proc = [owner, this]() {
         //タイマーが0.0fより大きければ
@@ -30,8 +29,8 @@ void JapaneseChessPawnSkill::Init()
             effect_timer_ -= GetDeltaTime();
             //タイマーが0.0f以下になったら
             if(effect_timer_ <= 0.0f) {
-                int piece_level = owner->GetLevel();                                               //ピースのレベルを取得する
-                owner->AddPhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(piece_level - 1));    //物理防御バフを削除
+                int piece_level = owner->GetLevel();                                                  //ピースのレベルを取得する
+                owner->RemovePhysicalDefenseModifier(PHYSICAL_DEFENSE_BONUS_.at(piece_level - 1));    //物理防御バフを削除
             }
         }
     };

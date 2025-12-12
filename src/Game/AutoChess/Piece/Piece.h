@@ -259,6 +259,12 @@ public:
     //----------------------------------------------------------
     void RemoveRateMagicalDefenseModifier(float value);
 
+    //----------------------------------------------------------
+    // 最終ステータスを取得する関数
+    //! @retval 最終ステータス
+    //----------------------------------------------------------
+    PieceStatus GetFinalStatus() const;
+
     //@}
 protected:
     const PieceData* master_;                     //!< 参照マスターデータ
