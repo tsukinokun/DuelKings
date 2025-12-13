@@ -12,6 +12,7 @@
 #include <System/Component/ComponentEffect.h>
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
+#include <System/Component/ComponentCollisionCapsule.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -26,6 +27,12 @@ bool Piece::Init()
     status_ = PieceStatus::Create().HP(100).AttackPower(5).AttackRange(1.0f).MoveSpeed(1.0f).Build();
 
     status_modifier_.SetListener(this);    // ステータス変更リスナーを設定
+    //---------------------------------------------------------------------------------
+    // コリジョンを入れる
+    //---------------------------------------------------------------------------------
+    {
+        //auto col_comp =
+    }
     //---------------------------------------------------------------------------------
     // レベル表示画像の追加
     //---------------------------------------------------------------------------------

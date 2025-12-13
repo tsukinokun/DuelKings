@@ -20,7 +20,7 @@ void GuiMenuScene::GUI()
     };
 
     static Group groups[] = {
-        { "Tutorial",    u8"Tutorial / チュートリアル"},
+        { "Tutorial",     u8"Tutorial / チュートリアル"},
         {"SceneTest", u8"SceneTest / 使用方法サンプル"},
     };
 

@@ -651,9 +651,6 @@ std::shared_ptr<T> Scene::Base::GetObjectPtr(const std::string_view name)
 {
     if(name.empty()) {
         for(auto& obj : objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             auto cast = std::dynamic_pointer_cast<T>(obj);
 
             if(cast)
@@ -662,9 +659,6 @@ std::shared_ptr<T> Scene::Base::GetObjectPtr(const std::string_view name)
     }
     else {
         for(auto& obj : objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             if(name.compare(obj->GetNameDefault()) == 0) {
                 auto cast = std::dynamic_pointer_cast<T>(obj);
 
@@ -673,9 +667,6 @@ std::shared_ptr<T> Scene::Base::GetObjectPtr(const std::string_view name)
             }
         }
         for(auto& obj : objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             if(name.compare(obj->GetName()) == 0) {
                 auto cast = std::dynamic_pointer_cast<T>(obj);
 
@@ -686,9 +677,6 @@ std::shared_ptr<T> Scene::Base::GetObjectPtr(const std::string_view name)
 
         // 作成前Objectも検査する
         for(auto& obj : pre_objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             if(name.compare(obj->GetNameDefault()) == 0) {
                 auto cast = std::dynamic_pointer_cast<T>(obj);
 
@@ -697,9 +685,6 @@ std::shared_ptr<T> Scene::Base::GetObjectPtr(const std::string_view name)
             }
         }
         for(auto& obj : pre_objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             if(name.compare(obj->GetName()) == 0) {
                 auto cast = std::dynamic_pointer_cast<T>(obj);
 
@@ -722,9 +707,6 @@ std::vector<std::shared_ptr<T>> Scene::Base::GetObjectsPtr(const std::string_vie
 
     if(name == "") {
         for(auto& obj : objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
             auto cast = std::dynamic_pointer_cast<T>(obj);
             if(cast)
                 objects.push_back(cast);
@@ -732,9 +714,22 @@ std::vector<std::shared_ptr<T>> Scene::Base::GetObjectsPtr(const std::string_vie
     }
     else {
         for(auto& obj : objects_) {
-            if(!obj->GetStatus(::Object::StatusBit::Alive))
-                continue;
-
+            if(obj->GetNameDefault() == name) {
+                auto cast = std::dynamic_pointer_cast<T>(obj);
+                if(cast)
+                    objects.push_back(cast);
+            }
+        }
+    }
+    if(name == "") {
+        for(auto& obj : pre_objects_) {
+            auto cast = std::dynamic_pointer_cast<T>(obj);
+            if(cast)
+                objects.push_back(cast);
+        }
+    }
+    else {
+        for(auto& obj : pre_objects_) {
             if(obj->GetNameDefault() == name) {
                 auto cast = std::dynamic_pointer_cast<T>(obj);
                 if(cast)
