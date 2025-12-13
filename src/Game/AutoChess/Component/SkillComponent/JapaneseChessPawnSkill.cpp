@@ -1,6 +1,6 @@
 ﻿//---------------------------------------------------------------------------
 //!	@file	JapaneseChessPawnSkill.cpp
-//! @brief	チェスビショップのスキルコンポーネントクラス
+//! @brief	歩兵のスキルコンポーネントクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include <Game/AutoChess/Component/SkillComponent/JapaneseChessPawnSkill.h>
