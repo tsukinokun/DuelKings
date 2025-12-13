@@ -8,6 +8,13 @@
             "skill_description_": "自身の物理防御を10/15/20上昇させ、周囲1マス内の敵にこの駒への攻撃を強制させる。効果は2.5/3.5/4.5秒間持続する。"
         },
         {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "japanese_chess_lance_skill_icon",
+            "skill_component_name_": "JapaneseChessLanceSkill",
+            "skill_name_": "突進",
+            "skill_description_": "直線上にいる最も近い敵に向かって突進し、ヒットした敵に50/75/100ダメージを与える。"
+        },
+        {
             "max_cool_doen_time_": 15.0,
             "skill_icon_key_": "chess_bishop_skill_icon",
             "skill_component_name_": "ChessBishopSkill",
