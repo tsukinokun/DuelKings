@@ -72,6 +72,24 @@ bool InGameScene::Init()
         auto board = Scene::Object::Create<ChessBoard>();
     }
     //---------------------------------------------------------------------------------
+    // 机の生成
+    //---------------------------------------------------------------------------------
+    {
+        auto table = Scene::Object::Create<Object>();
+        auto model = table->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/table.mv1");
+        table->SetScaleAxisXYZ(4.0f);
+        table->SetTranslate(float3(-0.5f, -20.0f, 0.0f));
+    }
+    //---------------------------------------------------------------------------------
+    // 部屋の生成
+    //---------------------------------------------------------------------------------
+    {
+        auto room  = Scene::Object::Create<Object>();
+        auto model = room->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/Room.mv1");
+        room->SetScaleAxisXYZ(2.0f);
+        room->SetTranslate(float3(-0.5f, -20.0f, 0.0f));
+    }
+    //---------------------------------------------------------------------------------
     //  NPCの生成
     //---------------------------------------------------------------------------------
     for(int i = 0; i < AGENT_NUM - 1; i++) {

@@ -13,7 +13,7 @@ bool ChessRook::Init()
 {
     __super::Init();
     SetName("ChessRook");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessRook.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessRook.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

@@ -30,11 +30,11 @@ void PieceAttacker::Init()
             //---------------------------------------------------------
             //  ロックしているターゲットに攻撃を仕掛ける
             //---------------------------------------------------------
-            if(locked_target_) {
+            if(auto locked_target = locked_target_.lock()) {
                 //自分の位置を取得
                 float3 translate = this_piece->GetTranslate();
                 //敵の位置を取得
-                float3 locked_target_position = locked_target_->GetTranslate();
+                float3 locked_target_position = locked_target->GetTranslate();
                 //攻撃方向を計算
                 float3 direction = locked_target_position - translate;
                 //ベクトルの大きさが射程距離以下なら攻撃
@@ -42,7 +42,7 @@ void PieceAttacker::Init()
                 if(distance <= this_piece->GetAttackRange()) {
                     //攻撃力を取得
                     int         attack_power  = this_piece->GetAttackPower();
-                    PieceStatus target_status = locked_target_->GetFinalStatus();
+                    PieceStatus target_status = locked_target->GetFinalStatus();
                     //最終的なダメージをこちらで計算(MP回復がしたいので)
                     int final_damage = CalculateFinalDamage(attack_power, DamageType::Physical, target_status);
                     //---------------------------------------------------------
@@ -53,7 +53,7 @@ void PieceAttacker::Init()
                         skill_component->AddMP(mp_gain);
                     }
                     //敵のHPを減少させる
-                    locked_target_->TakeDamage(final_damage);
+                    locked_target->TakeDamage(final_damage);
                     //攻撃クールタイムをリセット
                     attack_timer_ = this_piece->GetAttackInterval();
                 }
@@ -90,7 +90,7 @@ void PieceAttacker::Init()
 //---------------------------------------------------------
 //! @brief  ターゲットをロックする関数
 //---------------------------------------------------------
-void PieceAttacker::LockTarget(Piece* target, float duration)
+void PieceAttacker::LockTarget(const std::shared_ptr<Piece>& target, float duration)
 {
     locked_target_ = target;
     lock_timer_    = duration;
