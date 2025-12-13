@@ -14,7 +14,7 @@ bool ChessBishop::Init()
 {
     __super::Init();
     SetName("ChessBishop");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessBishop.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessBishop.mv1");
     model->SetScaleAxisXYZ(0.005f);
     //---------------------------------------------------------------------------------
     // ビショップのスキルコンポーネントをつける

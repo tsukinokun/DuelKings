@@ -72,7 +72,7 @@ void JapaneseChessPawnSkill::Activate()
                 //攻撃機能コンポーネントを取得
                 if(auto attacker = piece->GetComponent<PieceAttacker>()) {
                     //自分をロックさせる
-                    attacker->LockTarget(owner.get(), DURATION_OF_EFFECT_.at(index));
+                    attacker->LockTarget(owner, DURATION_OF_EFFECT_.at(index));
                 }
             }
         }

@@ -13,7 +13,7 @@ bool MakrukMet::Init()
 {
     __super::Init();
     SetName("MakrukMet");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/MakrukMet.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/MakrukMet.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

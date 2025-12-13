@@ -13,7 +13,7 @@ bool ChaturangaMantri::Init()
 {
     __super::Init();
     SetName("ChaturangaMantri");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChaturangaMantri.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChaturangaMantri.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

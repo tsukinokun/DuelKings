@@ -13,7 +13,7 @@ bool ChessPawn::Init()
 {
     __super::Init();
     SetName("ChessPawn");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/ChessPawn.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessPawn.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

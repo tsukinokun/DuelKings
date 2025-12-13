@@ -21,12 +21,12 @@ public:
     //! @param target ロックするターゲットピース
     //! @param duration ロックする時間
     //---------------------------------------------------------
-    void LockTarget(Piece* target, float duration);
+    void LockTarget(const std::shared_ptr<Piece>& target, float duration);
 
 private:
-    float  attack_timer_  = 0.0f;       //!< 攻撃クールタイムのタイマー
-    float  lock_timer_    = 0.0f;       //!< ターゲットロックが有効な時間
-    Piece* locked_target_ = nullptr;    //!< ロックしているターゲットピース
+    float                attack_timer_ = 0.0f;    //!< 攻撃クールタイムのタイマー
+    float                lock_timer_   = 0.0f;    //!< ターゲットロックが有効な時間
+    std::weak_ptr<Piece> locked_target_;          //!< ロックしているターゲットピース
 };
 
 CEREAL_REGISTER_TYPE(PieceAttacker)

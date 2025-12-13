@@ -13,7 +13,7 @@ bool MakrukBia::Init()
 {
     __super::Init();
     SetName("MakrukBia");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Piece/MakrukBia.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/MakrukBia.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }
