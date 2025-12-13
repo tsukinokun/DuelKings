@@ -28,6 +28,8 @@ bool menu_active = false;
 bool menu_select = false;
 
 bool hide = false;
+
+float3 clear_color = {0.5f, 0.5f, 0.5f};
 //--------------------------------------------------------------
 //! @name   CPU負荷計測
 //--------------------------------------------------------------
@@ -102,8 +104,8 @@ f32 GetDeltaTime()
 f32 GetDeltaTime60()
 {
     f32 ps = delta_time_ * 60.0f;
-    if(ps > 3.0f)
-        ps = 1.0f;
+    if(ps > 3.0f)    // デバッグで止めたときの対処
+        ps = 0.01666f;
     return ps;
 }
 
@@ -314,6 +316,7 @@ void SystemInit()
         HideMouse();
         hide = true;
     }
+    clear_color = ini.GetFloat3("System", "ClearColor", clear_color);
 
     //----------------------------------------------------------
     // 物理シミュレーションを初期化
@@ -345,7 +348,7 @@ void SystemUpdate()
     //----------------------------------------------------------
     if constexpr(false) {
         // Altキーでメニューを開閉
-        if(IsKeyOn(KEY_INPUT_LALT) || IsKeyOn(KEY_INPUT_RALT)) {
+        if(IsKeyDown(KEY_INPUT_LALT) || IsKeyDown(KEY_INPUT_RALT)) {
             menu_active = !menu_active;
         }
     }
@@ -362,7 +365,7 @@ void SystemUpdate()
     }
 
     // F5キーでデバッグ表示変更
-    if(IsKeyOn(KEY_INPUT_F5)) {
+    if(IsKeyDown(KEY_INPUT_F5)) {
         show_debug = !show_debug;
         // show_debugにすべて合わせる(表示/非表示が反対状態になることを避けます)
         show_gui  = show_debug;
@@ -370,12 +373,12 @@ void SystemUpdate()
         show_fps  = show_debug;
     }
     // F4キーでカメラ変更
-    if(IsKeyOn(KEY_INPUT_F4)) {
+    if(IsKeyDown(KEY_INPUT_F4)) {
         auto debug_camera = !DebugCamera::IsUse();
         DebugCamera::Use(debug_camera);
     }
 
-    if(IsKeyOn(KEY_INPUT_F6)) {
+    if(IsKeyDown(KEY_INPUT_F6)) {
         hide = !hide;
         HideMouse(hide);
     }
@@ -490,7 +493,7 @@ void SystemDraw()
     // HDRの描画先を指定
     //----------------------------------------------------------
     SetRenderTarget(texture_hdr_.get(), GetDepthStencil());
-    ClearColor(texture_hdr_.get(), float4(0.5, 0.5f, 0.5f, 0.0f));
+    ClearColor(texture_hdr_.get(), float4(clear_color, 0.0f));
 
     //----------------------------------------------------------
     // グリッドを描画

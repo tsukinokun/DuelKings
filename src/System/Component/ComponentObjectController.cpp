@@ -41,7 +41,9 @@ void ComponentObjectController::Update()
 
         // モデルを移動の方向に向けます
         if(auto mdl = owner->GetComponent<ComponentModel>()) {
-            mdl->SetRotationToVectorWithLimit(dir, rot_speed_);
+            auto rot = quaternion::rotation_axis({0, 1, 0}, front_rot_ * DegToRad);    //< Y軸1度回転
+
+            mdl->SetRotationToVectorWithLimit(mul(dir, rot), rot_speed_);
             mdl->PlayAnimationNoSame("walk", true);
         }
     }
@@ -195,6 +197,11 @@ void ComponentObjectController::GUI()
     {
         ImGui::Separator();
         if(ImGui::TreeNode(u8"ObjectController")) {
+            // 有効/無効
+            bool enable = GetStatus(StatusBit::Enable);
+            if(ImGui::Checkbox(u8"有効", &enable))
+                SetStatus(StatusBit::Enable, enable);
+
             // GUI上でオーナーから自分(SampleObjectController)を削除します
             if(ImGui::Button(u8"削除"))
                 GetOwner()->RemoveComponent(shared_from_this());
@@ -210,6 +217,9 @@ void ComponentObjectController::GUI()
 
             ImGui::DragFloat(u8"見る方向上リミット", &limit_cam_up_);
             ImGui::DragFloat(u8"見る方向下リミット", &limit_cam_down_);
+
+            // 移動の基本情報
+            ImGui::DragFloat(u8"オブジェクト オフセット回転", &front_rot_, 1.0f);
 
             ImGui::TreePop();
         }

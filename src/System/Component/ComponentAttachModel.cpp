@@ -16,6 +16,8 @@ void ComponentAttachModel::Init()
     Scene::GetCurrentScene()->SetPriority(shared_from_this(), ProcTiming::PostUpdate, ProcPriority::LOWEST);
 
     SetAttachModelStatus(AttachModelBit::Initialized, true);
+
+    SetStatus(::Component::StatusBit::DisablePause, true);
 }
 
 //---------------------------------------------------------
@@ -85,8 +87,11 @@ void ComponentAttachModel::SetAttachObject(ObjectPtr object, std::string_view no
     object_           = object;
     object_name_      = object->GetName();
     object_node_name_ = node;
-    if(auto model = object->GetComponent<ComponentModel>())
+    if(auto model = object->GetComponent<ComponentModel>()) {
         object_node_index_ = model->GetNodeIndex(node);
+        float3 pos         = model->GetNodePosition(object_node_index_);
+        GetOwner()->SetTranslate(pos);
+    }
 
     GetOwner()->SetStatus(Object::StatusBit::Located, false);
 }

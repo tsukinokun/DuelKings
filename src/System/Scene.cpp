@@ -5,6 +5,8 @@
 #include <System/Component/Component.h>
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollision.h>
+#include <System/Component/ComponentCollisionModel.h>
+#include <System/Component/ComponentHitInfo.h>
 #include <System/Debug/DebugCamera.h>
 #include <System/SystemMain.h>    // ResetDeltaTime
 
@@ -996,7 +998,7 @@ void Scene::PreUpdate()
 
 #if 1
             // オブジェクトのUpdate
-            // TODO is_pause または NoUpdateが変化したときのみ処理をする
+            // TODO NoUpdate か is_pause が変化したときのみ処理をする
             if(obj->GetStatus(::Object::StatusBit::NoUpdate) || is_pause) {
                 for(auto& sig : obj->proc_timings_) {
                     if((int)sig.second.IsUpdate())
@@ -1005,9 +1007,11 @@ void Scene::PreUpdate()
 
                 // コンポーネントのUpdate
                 for(auto& component : obj->GetComponents()) {
-                    for(auto& sig : component->proc_timings_) {
-                        if((int)sig.second.IsUpdate())
-                            sig.second.connect_.block();
+                    if(!component->GetStatus(::Component::StatusBit::DisablePause)) {
+                        for(auto& sig : component->proc_timings_) {
+                            if((int)sig.second.IsUpdate())
+                                sig.second.connect_.block();
+                        }
                     }
                 }
             }
@@ -1019,9 +1023,17 @@ void Scene::PreUpdate()
 
                 // コンポーネントのUpdate
                 for(auto& component : obj->GetComponents()) {
-                    for(auto& sig : component->proc_timings_) {
-                        if((int)sig.second.IsUpdate())
-                            sig.second.connect_.unblock();
+                    if(component->GetStatus(::Component::StatusBit::Enable)) {
+                        for(auto& sig : component->proc_timings_) {
+                            if((int)sig.second.IsUpdate())
+                                sig.second.connect_.unblock();
+                        }
+                    }
+                    else {
+                        for(auto& sig : component->proc_timings_) {
+                            if((int)sig.second.IsUpdate())
+                                sig.second.connect_.block();
+                        }
                     }
                 }
             }
@@ -1050,11 +1062,18 @@ void Scene::PreUpdate()
                 }
 
                 // コンポーネント
-                // NoDrawはここでおさえない
                 for(auto& component : obj->GetComponents()) {
-                    for(auto& sig : component->proc_timings_) {
-                        if((int)sig.second.IsDraw())
-                            sig.second.connect_.unblock();
+                    if(component->GetStatus(::Component::StatusBit::Enable)) {
+                        for(auto& sig : component->proc_timings_) {
+                            if((int)sig.second.IsDraw())
+                                sig.second.connect_.unblock();
+                        }
+                    }
+                    else {
+                        for(auto& sig : component->proc_timings_) {
+                            if((int)sig.second.IsDraw())
+                                sig.second.connect_.block();
+                        }
                     }
                 }
             }
@@ -1407,63 +1426,132 @@ float Scene::GetTime()
 //! @brief ComponentCollisionの当たり判定を行う
 void Scene::CheckComponentCollisions()
 {
+    ObjectPtrVec objs;
+    ObjectPtrVec last_objs;
     // オブジェの数を取得
     int obj_num = (int)current_scene_->GetObjectPtrVec().size();
     for(int obj_index = 0; obj_index < obj_num; obj_index++) {
+        bool find = false;
         // 調べるオブジェクト
-        auto obj = current_scene_->GetObjectPtrVec()[obj_index];
+        auto obj  = current_scene_->GetObjectPtrVec()[obj_index];
+        auto cols = obj->GetComponents<ComponentCollision>();
+        for(auto col : cols) {
+            if(col->GetCollisionType() == ComponentCollision::CollisionType::MODEL) {
+                last_objs.push_back(obj);
+                find = true;
+                break;
+            }
+        }
+        if(!find)
+            objs.push_back(obj);
+    }
+    std::copy(last_objs.begin(), last_objs.end(), std::back_inserter(objs));
+
+    for(int obj_index = 0; obj_index < obj_num; obj_index++) {
+        // 調べるオブジェクト
+        auto obj = objs[obj_index];
 
         // コンポーネントコリジョン群の取得
         auto cols = obj->GetComponents<ComponentCollision>();
-        {
-            // コリジョンの検査
-            for(auto col_1 : cols) {
-                // 相手オブジェクトの取得
-                for(int other_index = obj_index + 1; other_index < obj_num; other_index++) {
-                    std::vector<ComponentCollision::HitInfo> hitInfos;
 
-                    // 相手オブジェクト
-                    auto obj2 = current_scene_->GetObjectPtrVec()[other_index];
+        ComponentPtrVec cmps1;
+        if(obj->GetStatus(::Object::StatusBit::OnHitAllComponent))
+            cmps1 = obj->GetComponents<Component>();
 
-                    auto cols2 = obj2->GetComponents<ComponentCollision>();
+        // コリジョンの検査
+        for(auto col_1 : cols) {
+            if(!col_1->GetStatus(Component::StatusBit::Enable))
+                continue;
 
-                    // 相手コリジョンの検査
-                    for(auto col_2 : cols2) {
-                        if(!col_1->IsGroupHit(col_2))
-                            continue;
+            // 相手オブジェクトの取得
+            for(int other_index = obj_index + 1; other_index < obj_num; other_index++) {
+                std::vector<ComponentCollision::HitInfo> hitInfos;
 
-                        // コリジョンどうしの当たりをチェックする
-                        ComponentCollision::HitInfo hitInfo;
-                        hitInfo = col_1->IsHit(col_2);
+                // 相手オブジェクト
+                auto obj2 = objs[other_index];
 
-                        if(hitInfo.hit_) {
-                            // 押し戻し量再計算
-                            float3 push{hitInfo.push_ * 0.5f};
-                            float3 other_push{-hitInfo.push_ * 0.5f};
-                            col_1->CalcPush(col_2, hitInfo.push_, &push, &other_push);
+                auto            cols2 = obj2->GetComponents<ComponentCollision>();
+                ComponentPtrVec cmps2;
+                if(obj2->GetStatus(::Object::StatusBit::OnHitAllComponent))
+                    cmps2 = obj2->GetComponents<Component>();
 
-                            // 相手か自分がオーバーラップする設定ならば押しあたりは発生しないようにする
-                            // オーバーラップする場合は当たりをすり抜ける
-                            if(col_1->IsOverlap(col_2->GetCollisionGroup())) {
-                                push       = {0, 0, 0};
-                                other_push = {0, 0, 0};
-                            }
+                // 相手コリジョンの検査
+                for(auto col_2 : cols2) {
+                    if(!col_1->IsGroupHit(col_2))
+                        continue;
 
-                            // 相手もオーバーラップする場合は当たりをすり抜ける
-                            if(col_2->IsOverlap(col_1->GetCollisionGroup())) {
-                                push       = {0, 0, 0};
-                                other_push = {0, 0, 0};
-                            }
+                    if(!col_2->GetStatus(Component::StatusBit::Enable))
+                        continue;
 
-                            hitInfo.collision_     = col_1;
-                            hitInfo.hit_collision_ = col_2;
-                            hitInfo.push_          = push;
-                            col_1->OnHit(hitInfo);
+                    // コリジョンどうしの当たりをチェックする
+                    ComponentCollision::HitInfo hitInfo;
+                    hitInfo = col_1->IsHit(col_2);
 
-                            hitInfo.collision_     = col_2;
-                            hitInfo.hit_collision_ = col_1;
-                            hitInfo.push_          = other_push;
-                            col_2->OnHit(hitInfo);
+                    if(hitInfo.hit_) {
+                        // 押し戻し量再計算
+                        float3 push{hitInfo.push_ * 0.5f};
+                        float3 other_push{-hitInfo.push_ * 0.5f};
+                        col_1->CalcPush(col_2, hitInfo.push_, &push, &other_push);
+
+                        // 相手か自分がオーバーラップする設定ならば押しあたりは発生しないようにする
+                        // オーバーラップする場合は当たりをすり抜ける
+                        if(col_1->IsOverlap(col_2->GetCollisionGroup())) {
+                            push       = {0, 0, 0};
+                            other_push = {0, 0, 0};
+                        }
+
+                        // 相手もオーバーラップする場合は当たりをすり抜ける
+                        if(col_2->IsOverlap(col_1->GetCollisionGroup())) {
+                            push       = {0, 0, 0};
+                            other_push = {0, 0, 0};
+                        }
+
+                        hitInfo.collision_     = col_1;
+                        hitInfo.hit_collision_ = col_2;
+                        hitInfo.push_          = push;
+                        col_1->OnHit(hitInfo);
+                        if(col_1->OnHitFunc)
+                            col_1->OnHitFunc(hitInfo);
+
+                        for(auto cmp : cmps1) {
+                            if(std::dynamic_pointer_cast<ComponentCollision>(cmp))
+                                continue;
+                            if(std::dynamic_pointer_cast<ComponentPhysics>(cmp))
+                                continue;
+
+                            Component::HitInfo hit_info{
+                                .hit_           = true,
+                                .collision_     = col_1,
+                                .hit_collision_ = col_2,
+                            };
+                            hit_info.hit_position_ = hitInfo.hit_position_;
+                            cmp->OnHitComponent(hit_info);
+                            if(cmp->OnHitComponentFunc)
+                                cmp->OnHitComponentFunc(hit_info);
+                        }
+
+                        hitInfo.collision_     = col_2;
+                        hitInfo.hit_collision_ = col_1;
+                        hitInfo.push_          = other_push;
+                        col_2->OnHit(hitInfo);
+                        if(col_2->OnHitFunc)
+                            col_2->OnHitFunc(hitInfo);
+
+                        for(auto cmp : cmps2) {
+                            if(std::dynamic_pointer_cast<ComponentCollision>(cmp))
+                                continue;
+                            if(std::dynamic_pointer_cast<ComponentPhysics>(cmp))
+                                continue;
+
+                            Component::HitInfo hit_info{
+                                .hit_           = true,
+                                .collision_     = col_2,
+                                .hit_collision_ = col_1,
+                            };
+                            hit_info.hit_position_ = hitInfo.hit_position_;
+                            cmp->OnHitComponent(hit_info);
+                            if(cmp->OnHitComponentFunc)
+                                cmp->OnHitComponentFunc(hit_info);
                         }
                     }
                 }
@@ -1567,8 +1655,10 @@ ObjectPtr Scene::PickObject(int x, int y)
             MV1_COLL_RESULT_POLY result = MV1CollCheck_Line(mdl->GetModel(), -1, cast(ray.start), cast(ray.end));
             if(result.HitFlag) {
                 float near_len = length(cast(result.HitPosition) - cam->GetPosition());
-                if(near_len < min)
+                if(near_len < min) {
                     min_obj = obj;
+                    min     = near_len;
+                }
             }
         }
     }

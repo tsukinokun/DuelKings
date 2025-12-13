@@ -328,7 +328,8 @@ void Object::RegisterCurrentScene(ObjectPtr obj)
 //! @param on 状態
 void Object::SetStatus(StatusBit b, bool on)
 {
-    on ? status_.on(b) : status_.off(b);
+    status_old_.set(b, status_.is(b));
+    status_.set(b, on);
 }
 
 //! @brief ステータス取得

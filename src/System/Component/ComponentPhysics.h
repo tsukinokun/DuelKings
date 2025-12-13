@@ -238,9 +238,19 @@ public:
     //! @param hit_info
     virtual void OnEndOverlap([[maybe_unused]] const ComponentPhysics::HitInfo& hit_info) {}
 
+    //! @brief ラムダ当たり処理実装
+    std::function<void(const HitInfo& hit_info)> OnHitFunc;
+
+    //! ComponentのOnHitは使用しない
+    void OnHitComponent(const Component::HitInfo&) { assert(!"この関数は使用できません。 OnHitを使用してください"); }
+
     //@}
 
+    void SetHitInfo(ComponentPhysics::HitInfo& info) { infos_.push_back(info); }
+
 private:
+    std::vector<ComponentPhysics::HitInfo> infos_;
+
     //! モデル用のトランスフォーム
     matrix physics_transform_     = matrix::scale(1.0f);
     matrix physics_transform_old_ = matrix::scale(1.0f);

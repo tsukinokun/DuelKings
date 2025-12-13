@@ -287,6 +287,17 @@ public:
     Component();
     virtual void Construct(ObjectPtr owner);
 
+    //! @brief 当たった情報はコールバックで送られてくる
+    //! @param hitInfo 当たった情報
+    //! @details 当たった回数分ここに来ます
+    struct HitInfo;
+    struct HitInfoPhysics;
+    virtual void OnHitComponent(const HitInfo&) {}
+    virtual void OnHitComponent(const HitInfoPhysics&) {}
+
+    std::function<void(const HitInfo& hit_info)>        OnHitComponentFunc;
+    std::function<void(const HitInfoPhysics& hit_info)> OnHitComponentPhysicsFunc;
+
 protected:
     ObjectPtr owner_ = nullptr;    //!< オーナー
     SlotProcs proc_timings_;       //!< 登録処理(update)

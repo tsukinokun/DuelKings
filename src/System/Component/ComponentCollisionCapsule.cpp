@@ -205,6 +205,11 @@ void ComponentCollisionCapsule::GUI()
         auto ui_name = std::string("Collision Capsule:") + std::to_string(collision_id_);
 
         if(ImGui::TreeNode(ui_name.c_str())) {
+            // 有効/無効
+            bool enable = GetStatus(StatusBit::Enable);
+            if(ImGui::Checkbox(u8"有効", &enable))
+                SetStatus(StatusBit::Enable, enable);
+
             if(ImGui::Button(u8"削除")) {
                 GetOwner()->RemoveComponent(shared_from_this());
             }

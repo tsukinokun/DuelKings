@@ -20,8 +20,25 @@ bool CheckIsNum(const std::string& check_string)
     return std::all_of(check_string.begin(), check_string.end(), [&check_string](auto c) { return (c >= '0' && c <= '9'); });
 }
 
-//! 要素(複数)が数値であるか
+//----------------------------------------------------------------------------
+//! @brief stringの要素が全てFloatで表現できる数値であるかどうかチェックします
+//! @param check_string チェックするstring型のデータ
+//! @return 全て数値であるかどうか
+//----------------------------------------------------------------------------
+bool CheckIsFloat(const std::string& check_string)
+{
+    try {
+        size_t pos;
+        float  f = std::stof(check_string, &pos);
+        f;
+        return pos == check_string.size();    // 全て変換できたか確認
+    }
+    catch(...) {
+        return false;
+    }
+}
 
+//! 要素(複数)が数値であるか
 //----------------------------------------------------------------------------
 //! @brief 各stringの要素が全て数値であるかどうかチェックします
 //! @param check_vars チェックするstring型のデータが入ったvector配列
@@ -30,6 +47,16 @@ bool CheckIsNum(const std::string& check_string)
 bool CheckIsNumForMultVar(const std::vector<std::string>& check_vars)
 {
     return std::all_of(check_vars.begin(), check_vars.end(), [&check_vars](auto s) { return (CheckIsNum(s)); });
+}
+
+//----------------------------------------------------------------------------
+//! @brief 各stringの要素が全て数値であるかどうかチェックします
+//! @param check_vars チェックするstring型のデータが入ったvector配列
+//! @return 全て数値であるかどうか
+//----------------------------------------------------------------------------
+bool CheckIsFloatForMultVar(const std::vector<std::string>& check_vars)
+{
+    return std::all_of(check_vars.begin(), check_vars.end(), [&check_vars](auto s) { return (CheckIsFloat(s)); });
 }
 
 //! 整数値取得
@@ -101,7 +128,7 @@ const float2 IniFileLib::GetFloat2(const std::string& section, const std::string
     str     = HelperLib::String::Trim(str, "{}; ");
     auto v2 = HelperLib::String::Split(str, ',');
 
-    if(!CheckIsNumForMultVar(v2))
+    if(!CheckIsFloatForMultVar(v2))
         return def;
 
     return float2(stof(v2[0]), stof(v2[1]));
@@ -126,7 +153,7 @@ const float3 IniFileLib::GetFloat3(const std::string& section, const std::string
     str     = HelperLib::String::Trim(str, "{}; ");
     auto v2 = HelperLib::String::Split(str, ',');
 
-    if(!CheckIsNumForMultVar(v2))
+    if(!CheckIsFloatForMultVar(v2))
         return def;
 
     return float3(stof(v2[0]), stof(v2[1]), stof(v2[2]));
@@ -151,7 +178,7 @@ const float4 IniFileLib::GetFloat4(const std::string& section, const std::string
     str     = HelperLib::String::Trim(str, "{}; ");
     auto v2 = HelperLib::String::Split(str, ',');
 
-    if(!CheckIsNumForMultVar(v2))
+    if(!CheckIsFloatForMultVar(v2))
         return def;
 
     return float4(stof(v2[0]), stof(v2[1]), stof(v2[2]), stof(v2[3]));

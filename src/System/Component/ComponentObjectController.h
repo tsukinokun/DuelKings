@@ -35,6 +35,9 @@ public:
     const float GetMoveSpeed() const;
     const float GetRotateSpeed() const;
 
+    inline const void  SetFrontRotate(float rotate) { front_rot_ = rotate; }
+    inline const float GetFrontRotate() const { return front_rot_; }
+
     bool IsUseMouse() const;
 
     void GUI() override;
@@ -63,6 +66,8 @@ private:
 
     float limit_cam_up_   = 5.0f;      //!< 上を眺める
     float limit_cam_down_ = -45.0f;    //!< 下を見る
+
+    float front_rot_ = 0.0f;    //!<前方ベクトルの回転角度(0-360度)
 
     ObjectWeakPtr target_;
     float         target_cam_side_speed_ = 3.0f;     //!< ロックオン時のカーソル移動速度
@@ -107,9 +112,12 @@ private:
                 CEREAL_NVP(mouse_up_down_),
                 CEREAL_NVP(mouse_left_right_));
         }
+        if(ver >= 4) {
+            arc(CEREAL_NVP(front_rot_));
+        }
 
         arc(cereal::make_nvp("Component", cereal::base_class<Component>(this)));
     }
 };
 
-CEREAL_CLASS_VERSION(ComponentObjectController, 3);
+CEREAL_CLASS_VERSION(ComponentObjectController, 4);

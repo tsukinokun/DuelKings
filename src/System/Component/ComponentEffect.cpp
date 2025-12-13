@@ -164,7 +164,7 @@ void ComponentEffect::PostUpdate()
         // アニメーションがあり再生している?
         effect_time_ += (delta * effect_speed_);
 
-#if 1
+#if 1    // Ownerマトリクスにコピーされているためオーナーのマトリクスのみ使用するように変更
         auto mat = GetOwner()->GetMatrix();
 #else
         auto mat  = effect_transform_;

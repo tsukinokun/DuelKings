@@ -6,6 +6,7 @@
 #include <System/Scene.h>
 #include <System/Component/ComponentPhysics.h>
 #include <System/Component/ComponentModel.h>
+#include <System/Component/ComponentHitInfo.h>
 
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/ContactListener.h>
@@ -24,8 +25,11 @@
 #include <Jolt/Physics/Collision/CollideShape.h>
 
 #include <algorithm>
+#include <unordered_map>
 
 namespace {
+std::unordered_map<JPH::BodyID, ComponentPhysicsWeakPtr> collisions_;
+
 constexpr const char* items[] = {
     "NONE",
     "BOX",
@@ -58,6 +62,8 @@ const unsigned int physics_color = GetColor(64, 64, 192);
 
 bool initialized = false;
 
+std::mutex mutex_infos_;
+
 // 共通の設定
 #if 0    // 内部のbroad_phase_layer_interface_設定が変更できないため、これが使えない…。
 	void _layerSettings()
@@ -83,8 +89,15 @@ public:
                                                   [[maybe_unused]] const JPH::CollideShapeResult& collision_result) override
     {
         // std::cout << "コールバックが有効か確認." << std::endl;
-        ComponentPhysics*               pd1 = (ComponentPhysics*)body1.GetUserData();
-        ComponentPhysics*               pd2 = (ComponentPhysics*)body2.GetUserData();
+        ComponentPhysicsWeakPtr pd1w = collisions_.at(body1.GetID());
+        ComponentPhysicsWeakPtr pd2w = collisions_.at(body2.GetID());
+        ComponentPhysicsPtr     pd1  = pd1w.lock();
+        ComponentPhysicsPtr     pd2  = pd2w.lock();
+        if(pd1 == nullptr)
+            return JPH::ValidateResult::RejectContact;
+        if(pd2 == nullptr)
+            return JPH::ValidateResult::RejectContact;
+
         ComponentPhysics::CollisionType ct1 = pd1->GetCollisionType();
         ComponentPhysics::CollisionType ct2 = pd2->GetCollisionType();
 
@@ -94,16 +107,24 @@ public:
             return JPH::ValidateResult::RejectAllContactsForThisBodyPair;
         }
 
-        ComponentPhysics::HitInfo info;
-        info.hit_           = true;
-        info.collision_     = pd1;
-        info.hit_collision_ = pd2;
-        pd1->OnHit(info);
-
-        info.hit_           = true;
-        info.collision_     = pd2;
-        info.hit_collision_ = pd1;
-        pd2->OnHit(info);
+        {
+            ComponentPhysics::HitInfo info;
+            info.hit_           = true;
+            info.collision_     = pd1.get();
+            info.hit_collision_ = pd2.get();
+            //pd1->OnHit( info );		// ここで呼ぶことができません
+            std::scoped_lock lock(mutex_infos_);
+            pd1->SetHitInfo(info);
+        }
+        {
+            ComponentPhysics::HitInfo info;
+            info.hit_           = true;
+            info.collision_     = pd2.get();
+            info.hit_collision_ = pd1.get();
+            //pd2->OnHit( info );		// ここで呼ぶことができません
+            std::scoped_lock lock(mutex_infos_);
+            pd2->SetHitInfo(info);
+        }
 
         // どちらかの指定でオーバーラップするか?
         if(pd1->GetOverlapCollision() & (u16)ct2 || pd2->GetOverlapCollision() & (u16)ct1) {
@@ -531,6 +552,39 @@ void ComponentPhysics::PostPhysics()
     //auto mat = mul( inverse( physics_transform_ ), body_->worldMatrix() );
     mat = mul(inverse(physics_transform_), mat);
     GetOwner()->SetMatrix(mat);
+
+    ComponentPtrVec cmps;
+    if(GetOwner()->GetStatus(::Object::StatusBit::OnHitAllComponent))
+        cmps = GetOwner()->GetComponents<Component>();
+
+    std::scoped_lock lock(mutex_infos_);
+    for(int i = 0; i < infos_.size(); i++) {
+        auto info = infos_[i];
+        OnHit(info);
+        if(OnHitFunc)
+            OnHitFunc(info);
+        GetOwner()->OnHitPhysics(info);
+        if(GetOwner()->OnHitPhysicsFunc)
+            GetOwner()->OnHitPhysicsFunc(info);
+
+        for(auto cmp : cmps) {
+            if(std::dynamic_pointer_cast<ComponentCollision>(cmp))
+                continue;
+            if(std::dynamic_pointer_cast<ComponentPhysics>(cmp))
+                continue;
+
+            Component::HitInfoPhysics hit_info{
+                .hit_ = true,
+            };
+            hit_info.collision_     = info.collision_;
+            hit_info.hit_collision_ = info.hit_collision_;
+            hit_info.hit_position_  = info.hit_position_;
+            cmp->OnHitComponent(hit_info);
+            if(cmp->OnHitComponentPhysicsFunc)
+                cmp->OnHitComponentPhysicsFunc(hit_info);
+        }
+    }
+    infos_.clear();
 }
 
 void ComponentPhysics::Draw()
@@ -643,6 +697,9 @@ void ComponentPhysics::Exit()
         physics::Engine::physicsSystem()->RemoveConstraint(constraint_);
         constraint_ = nullptr;
     }
+    if(body_)
+        collisions_.erase(GetBodyID(body_));
+
     body_ = nullptr;
 
     if(debug_ref_count <= 0) {
@@ -986,7 +1043,8 @@ bool ComponentPhysics::CreateBox(float3 size, float density)
     size.z = std::max((float)size.z, 0.1f);
 
     body_ = physics::createRigidBody(shape::Box{size}, physics::ObjectLayers::MOVING, physics::MotionType::Dynamic, density);
-    body_->setData((intptr_t)this);
+    collisions_.insert(std::pair(GetBodyID(body_), SharedThis()));
+    //body_->setData( (intptr_t)this );
     body_->setGravityFactor(gravity_factor_);
     density_ = density;
 
@@ -1005,7 +1063,8 @@ bool ComponentPhysics::CreateSphere(float3 center, float radius, float density)
     radius = std::max(radius, 0.1f);
 
     body_ = physics::createRigidBody(shape::Sphere{center, radius}, physics::ObjectLayers::MOVING, physics::MotionType::Dynamic, density);
-    body_->setData((intptr_t)this);
+    collisions_.insert(std::pair(GetBodyID(body_), SharedThis()));
+    //body_->setData( (intptr_t)this );
     body_->setGravityFactor(gravity_factor_);
     density_ = density;
 
@@ -1027,7 +1086,8 @@ bool ComponentPhysics::CreateCapsule(float half_height, float radius, float dens
         radius = 0.1f;
 
     body_ = physics::createRigidBody(shape::Capsule{half_height, radius}, physics::ObjectLayers::MOVING, physics::MotionType::Dynamic, density);
-    body_->setData((intptr_t)this);
+    collisions_.insert(std::pair(GetBodyID(body_), SharedThis()));
+    //body_->setData( (intptr_t)this );
     body_->setGravityFactor(gravity_factor_);
     density_ = density;
 
@@ -1048,7 +1108,8 @@ bool ComponentPhysics::CreateCylinder(float half_height, float radius, float den
         radius = 0.1f;
 
     body_ = physics::createRigidBody(shape::Cylinder{half_height, radius}, physics::ObjectLayers::MOVING, physics::MotionType::Dynamic, density);
-    body_->setData((intptr_t)this);
+    collisions_.insert(std::pair(GetBodyID(body_), SharedThis()));
+    //body_->setData( (intptr_t)this );
     body_->setGravityFactor(gravity_factor_);
     density_ = density;
 
@@ -1076,7 +1137,8 @@ bool ComponentPhysics::CreateMesh(ComponentModelPtr model, float scale)
     constraint_ = nullptr;
 
     body_ = physics::createRigidBody(shape::Mesh{model->GetModelClass(), scale}, physics::ObjectLayers::NON_MOVING);
-    body_->setData((intptr_t)this);
+    collisions_.insert(std::pair(GetBodyID(body_), SharedThis()));
+    //body_->setData( (intptr_t)this );
 
     SetPhysicsStatus(ComponentPhysics::PhysicsBit::Static, true);
     SetPhysicsMatrix(GetWorldMatrix());

@@ -5,6 +5,7 @@
 #pragma once
 
 #include <System/Component/Component.h>
+#include <System/Component/ComponentHitInfo.h>
 #include <ImGuizmo/ImGuizmo.h>
 
 #ifdef USE_JOLT_PHYSICS
@@ -60,6 +61,9 @@ public:
     //! @param hitInfo 当たった情報
     //! @details 当たった回数分ここに来ます
     virtual void OnHit(const HitInfo& hitInfo);
+
+    //! @brief ラムダ当たり処理実装
+    std::function<void(const HitInfo& hit_info)> OnHitFunc;
 
 #if 0    // 通常コンポーネントへ移動
     void SetName(std::string_view name);
@@ -443,10 +447,10 @@ protected:
     matrix attach_node_matrix_ = matrix::identity();
 
     bool         use_gravity_  = false;
-    const float3 k_gravity_    = {0, 8, 0};    // 前の状態に合わせるための係数
+    const float3 k_gravity_    = {0, 100, 0};    // 前の状態に合わせるための係数
     float3       gravity_      = {0.0f, -0.98f, 0.0f};
     float3       now_gravity_  = {0.0f, 0.0f, 0.0f};
-    float3       calc_gravity_ = {0.0f, 0.0f, 0.0f};
+    float3       prev_gravity_ = {0.0f, 0.0f, 0.0f};
 
     float difficult_to_climb_ = 1.0f;
 

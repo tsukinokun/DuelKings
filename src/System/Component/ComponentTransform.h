@@ -168,9 +168,9 @@ public:
     auto SetRotationToPosition(float3 position, float3 up = {0, 1, 0}, bool up_change = false)
     {
         if(!up_change)
-            position.y = GetMatrix().translate().y;
+            position.y = GetWorldMatrix().translate().y;
 
-        float3 vec = position - GetMatrix().translate();
+        float3 vec = position - GetWorldMatrix().translate();
         return SetRotationToVectorOnParent(vec, up, up_change);
     }
 

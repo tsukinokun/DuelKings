@@ -64,25 +64,40 @@ void ComponentCollision::Construct(ObjectPtr owner)
 void ComponentCollision::OnHit(const HitInfo& hitInfo)
 {
     auto obj = GetOwner();
+#if 1
+    auto  contact_dir  = normalize(obj->GetTranslate() - obj->GetOldWorldMatrix().translate());
+    auto  gravity_dir  = normalize(now_gravity_);
+    float vertical_dot = dot(contact_dir, float3(0.0f, 1.0f, 0.0f));    // Y軸との一致度
 
+    if(hitInfo.hit_collision_->GetMass() < 0) {
+        const float contact_threshold = 0.7f;                            // Y軸方向にある程度近い接触のみ処理する
+        if(vertical_dot <= contact_threshold && gravity_dir.y < 0.0f)    // 下向き時のみ
+        {
+            now_gravity_  = float3(0.0f, 0.0f, 0.0f);
+            prev_gravity_ = float3(0.0f, 0.0f, 0.0f);
+            GetOwner()->SetGravity(now_gravity_);
+        }
+    }
+#else
     // Staticな物質にぶつかった場合、gravity_を下げる
     if(hitInfo.hit_collision_->GetMass() < 0) {
         auto   vec = obj->GetTranslate() - obj->GetOldWorldMatrix().translate();
         float3 nvc = {0.0f, -1.0f, 0.0f};
         if(length(vec).x <= 0 || length(now_gravity_).x <= 0) {
-            now_gravity_  = 0.0f;
-            calc_gravity_ = 0.0f;
-            GetOwner()->SetGravity(calc_gravity_);
+            now_gravity_  = {0.0f, 0.0f, 0.0f};
+            prev_gravity_ = {0.0f, 0.0f, 0.0f};
+            GetOwner()->SetGravity(now_gravity_);
         }
         else {
             nvc           = normalize(vec);
             float d       = dot(normalize(now_gravity_), nvc);
             now_gravity_ *= ((1 - (d * d)) * 0.1f);
-            //GetOwner()->SetGravity( calc_gravity_ );
         }
     }
-
+#endif
     obj->OnHit(hitInfo);
+    if(obj->OnHitFunc)
+        obj->OnHitFunc(hitInfo);
 }
 
 #if 0
@@ -132,15 +147,21 @@ void ComponentCollision::LateUpdate()
     }
 #ifdef USE_JOLT_PHYSICS
 #else
-    // 重力加速度
     if(use_gravity_) {
-        float  old_flg      = now_gravity_.y > 0 ? 1.0f : -1.0f;
-        float3 old_gravity  = ((now_gravity_ * now_gravity_ * k_gravity_ * k_gravity_) * old_flg) / 2;
-        now_gravity_       += gravity_ * GetDeltaTime() / GetDeltaTime60();
+        float delta = GetDeltaTime();    // 実フレーム時間
 
-        float flg     = now_gravity_.y > 0 ? 1.0f : -1.0f;
-        calc_gravity_ = ((now_gravity_ * now_gravity_ * k_gravity_ * k_gravity_) * flg) / 2 - old_gravity;
-        GetOwner()->SetGravity(calc_gravity_);
+        // 速度として重力を積分
+        now_gravity_ += gravity_ * delta * k_gravity_;
+
+        // 台形積分で位置変化分を算出（中間速度 × 時間）
+        float3 avg_velocity = (prev_gravity_ + now_gravity_) * 0.5f;
+        float3 displacement = avg_velocity * delta;
+
+        // Owner に重力分の移動量をセット
+        GetOwner()->SetGravity(displacement);
+
+        // 状態更新
+        prev_gravity_ = now_gravity_;
     }
 #endif
 }
@@ -163,6 +184,12 @@ void ComponentCollision::AttachToModel(int node)
     if(GetRigidBody())
         GetRigidBody()->setGravityFactor(0.0f);
 #endif USE_JOLT_PHYSICS
+    if(attach_node_ >= 0) {
+        attach_node_matrix_ = matrix::identity();
+        if(auto mdl = GetOwner()->GetComponent<ComponentModel>()) {
+            attach_node_matrix_ = MV1GetFrameLocalWorldMatrix(mdl->GetModel(), attach_node_);
+        }
+    }
 }
 
 void ComponentCollision::AttachToModel(const std::string_view name)
@@ -173,6 +200,12 @@ void ComponentCollision::AttachToModel(const std::string_view name)
         if(GetRigidBody())
             GetRigidBody()->setGravityFactor(0.0f);
 #endif USE_JOLT_PHYSICS
+    }
+    if(attach_node_ >= 0) {
+        attach_node_matrix_ = matrix::identity();
+        if(auto mdl = GetOwner()->GetComponent<ComponentModel>()) {
+            attach_node_matrix_ = MV1GetFrameLocalWorldMatrix(mdl->GetModel(), attach_node_);
+        }
     }
 }
 
@@ -826,78 +859,27 @@ ComponentCollision::HitInfo ComponentCollision::isHit(ComponentCollisionCapsuleP
 
     float radius = col1->GetRadius() * scale;
 
-    MV1_COLL_RESULT_POLY hit_poly{};
-    float3               bottom = cpos;     //-float3{ 0, col1->GetRadius() * scale, 0 };
-    float3               top    = opos1;    // bottom + float3{ 0, col1->GetRadius() * scale * 2, 0 };
-    hit_poly                    = MV1CollCheck_Line(mdl->GetModel(), -1, cast(top), cast(bottom));
+#if 1
+    {
+        MV1_COLL_RESULT_POLY hit_poly{};
+        float3               bottom = cpos;     //-float3{ 0, col1->GetRadius() * scale, 0 };
+        float3               top    = opos1;    // bottom + float3{ 0, col1->GetRadius() * scale * 2, 0 };
+        hit_poly                    = MV1CollCheck_Line(mdl->GetModel(), -1, cast(top), cast(bottom));
 
-    if(hit_poly.HitFlag != 0) {
-        float3 pos = cast(hit_poly.HitPosition);
+        if(hit_poly.HitFlag != 0) {
+            float3 pos = cast(hit_poly.HitPosition);
 
-        // 半径分押し戻し
-        float3 vec = pos - cpos;
+            // 半径分押し戻し
+            //float3 vec = pos - cpos;
+            float3 vec = cast(hit_poly.Normal) * length(pos - cpos);
 
-        // 一旦1つ目の当たりだけで返してみる
-        // このpush_は、調べたほうの押し戻し方向100%で作成する
-        info.push_         = vec;
-        info.hit_          = true;
-        info.hit_position_ = pos;
+            // 一旦1つ目の当たりだけで返してみる
+            // このpush_は、調べたほうの押し戻し方向100%で作成する
+            info.push_         = vec;
+            info.hit_          = true;
+            info.hit_position_ = pos;
+        }
     }
-#if 0
-	// 下の球当たりの確認
-	{
-		// 戻し量
-		float3 vh = 0;
-
-		MV1_COLL_RESULT_POLY_DIM hit_poly_dim{};
-
-		float3 oc = opos + float3( 0, radius, 0 );
-		float3 cc = cpos + float3( 0, radius, 0 ) - now_gravity_;
-
-		//DrawCapsule3D( cast( oc ), cast( cc ), radius, 10, GetColor( 0, 0, 255 ), GetColor( 0, 0, 255 ), FALSE );
-
-		hit_poly_dim = MV1CollCheck_Capsule( mdl->GetModel(), -1, cast( oc ), cast( cc ), radius );
-		for( int i = 0; i < hit_poly_dim.HitNum; i++ )
-		{
-			SEGMENT_TRIANGLE_RESULT result{};
-
-			VECTOR v1 = cast( oc );
-			VECTOR v2 = cast( cc );
-			DxLib::Segment_Triangle_Analyse( &v1,
-											 &v2,
-											 &hit_poly_dim.Dim[ i ].Position[ 0 ],
-											 &hit_poly_dim.Dim[ i ].Position[ 1 ],
-											 &hit_poly_dim.Dim[ i ].Position[ 2 ],
-											 &result );
-
-			float3 line_pos = cast( result.Seg_MinDist_Pos );
-			float3 tri_pos	= cast( result.Tri_MinDist_Pos );
-
-			// カプセルへの戻し方向
-			if( HelperLib::Math::NearlyEqual( length( line_pos - tri_pos ), 0 ) )
-			{
-				float3 v = ( tri_pos - cpos );
-				vh		 = merge( vh, v );
-			}
-			else
-			{
-				float3 vec = normalize( line_pos - tri_pos );
-				// 戻し量
-				float  len = radius - length( line_pos - tri_pos );
-				float3 v   = vec * len;
-				vh		   = merge( vh, v );
-			}
-		}
-
-		if( hit_poly_dim.HitNum > 0 )
-		{
-			info.push_		   += vh;
-			info.hit_		   = true;
-			info.hit_position_ += cpos - vh;
-		}
-		MV1CollResultPolyDimTerminate( hit_poly_dim );
-	}
-#endif
     // 上の球当たりの確認
     {
         // 戻し量
@@ -935,6 +917,7 @@ ComponentCollision::HitInfo ComponentCollision::isHit(ComponentCollisionCapsuleP
                 vh         = merge(vh, v);
             }
         }
+        vh.y = 0;
         if(hit_poly_dim.HitNum > 0) {
             info.push_         += vh;
             info.hit_           = true;
@@ -942,56 +925,140 @@ ComponentCollision::HitInfo ComponentCollision::isHit(ComponentCollisionCapsuleP
         }
         MV1CollResultPolyDimTerminate(hit_poly_dim);
     }
+#endif
 
+#if 1
     // 当たりの確認(通常カプセル)
     float3 nyopos = opos;
     float3 nycpos = cpos;
     nyopos.y      = 0;
     nycpos.y      = 0;
-    if(!HelperLib::Math::NearlyEqual(length(nyopos - nycpos), 0)) {
+    //if( !HelperLib::Math::NearlyEqual( length( nyopos - nycpos ), 0 ) )
+    {
         // 戻し量
         float3 vh = 0;
 
         MV1_COLL_RESULT_POLY_DIM hit_poly_dim{};
 
-        float3 bottomx = cpos + info.push_ + float3(0, radius, 0);
-        float3 topx    = cpos1 - float3(0, radius, 0);
+        float3 bottom_e = cpos + info.push_ + float3(0, radius, 0);
+        float3 top_e    = cpos1 + info.push_ - float3(0, radius, 0);
 
-        // DrawCapsule3D( cast( topx ), cast( bottomx ), radius, 10, GetColor( 0, 0, 255 ), GetColor( 0, 0, 255 ), FALSE );
+        float3 bottom_s = opos + info.push_ + float3(0, radius, 0);
+        float3 top_s    = opos1 + info.push_ - float3(0, radius, 0);
 
-        hit_poly_dim = MV1CollCheck_Capsule(mdl->GetModel(), -1, cast(topx), cast(bottomx), radius);
-        for(int i = 0; i < hit_poly_dim.HitNum; i++) {
-            SEGMENT_TRIANGLE_RESULT result{};
+        float radiusx = radius;
+        if(radius > 0.02f)
+            radiusx = radius - 0.01f;
 
-            VECTOR v1 = cast(topx);
-            VECTOR v2 = cast(bottomx);
-            DxLib::Segment_Triangle_Analyse(
-                &v1, &v2, &hit_poly_dim.Dim[i].Position[0], &hit_poly_dim.Dim[i].Position[1], &hit_poly_dim.Dim[i].Position[2], &result);
+        float3 bottom_len = (bottom_e - bottom_s);
+        float3 top_len    = (top_e - top_s);
+        float3 front      = normalize(bottom_len);
 
-            float3 line_pos = cast(result.Seg_MinDist_Pos);
-            float3 tri_pos  = cast(result.Tri_MinDist_Pos);
+        //printfDx( "LEN: %2.2f\n", (float)length( bottom_len ) );
 
-            // カプセルへの戻し方向
-            if(HelperLib::Math::NearlyEqual(length(line_pos - tri_pos), 0)) {
-                float3 v = (tri_pos - cpos);
+        //for( int j = 0; j < count; j++ )
+        {
+            float3 bottomx = bottom_e + vh;    //+bottom_len*( (float)( j + 1 ) / (float)count ) + vh;
+            float3 topx    = top_e + vh;       // + top_len * ( (float)( j + 1 ) / (float)count ) + vh;
+
+            //DrawCapsule3D( cast( topx ), cast( bottomx ), radius, 10, GetColor( 0, 0, 255 ), GetColor( 0, 0, 255 ), TRUE );
+
+            hit_poly_dim = MV1CollCheck_Capsule(mdl->GetModel(), -1, cast(topx), cast(bottomx), radius);
+            for(int i = 0; i < hit_poly_dim.HitNum; i++) {
+                SEGMENT_TRIANGLE_RESULT result{};
+
+                VECTOR v1 = cast(topx);
+                VECTOR v2 = cast(bottomx);
+                DxLib::Segment_Triangle_Analyse(
+                    &v1, &v2, &hit_poly_dim.Dim[i].Position[0], &hit_poly_dim.Dim[i].Position[1], &hit_poly_dim.Dim[i].Position[2], &result);
+
+                float3 line_pos = cast(result.Seg_MinDist_Pos);
+                float3 tri_pos  = cast(result.Tri_MinDist_Pos);
+
+                float  per       = length(line_pos - topx) / length(bottomx - topx);
+                float3 oline_pos = (bottom_s - top_s) * per + top_s;
+                float  len       = radius - length(line_pos - tri_pos);
+                bool   over      = dot(line_pos - tri_pos, oline_pos - tri_pos) < (float1)0.0f;
+    #if 0
+				float3 l1 = cast( hit_poly_dim.Dim[ i ].Position[ 0 ] ) - cast( hit_poly_dim.Dim[ i ].Position[ 2 ] );
+				float3 l2 = cast( hit_poly_dim.Dim[ i ].Position[ 1 ] ) - cast( hit_poly_dim.Dim[ i ].Position[ 2 ] );
+				float3 n = cross( normalize(l1), normalize(l2) );
+    #else
+                float3 n = {0, 0, 0};
+                if(!HelperLib::Math::NearlyEqual(length(line_pos - tri_pos), 0))
+                    n = normalize(line_pos - tri_pos);
+    #endif
+                if(over) {
+                    len = radius + length(line_pos - tri_pos);
+                    n   = -n;
+                }
+                //if( dot( front, n ) > (float1)0.3f )
+                //	continue;
+
+                // カプセルへの戻し方向
+                //if( HelperLib::Math::NearlyEqual( length( line_pos - tri_pos ), 0 ) )
+                float3 v = n * len;
                 vh       = merge(vh, v);
+                vh.y     = 0;
             }
-            else {
-                float3 vec = normalize(line_pos - tri_pos);
-                // 戻し量
-                float  len = radius - length(line_pos - tri_pos);
-                float3 v   = vec * len;
-                vh         = merge(vh, v);
-            }
-        }
-        if(hit_poly_dim.HitNum > 0) {
-            info.push_         += vh;
-            info.hit_           = true;
-            info.hit_position_ += (cpos - vh);
-        }
-        MV1CollResultPolyDimTerminate(hit_poly_dim);
-    }
 
+            int hit = hit_poly_dim.HitNum;
+            if(hit > 0) {
+                info.push_         += vh;
+                info.hit_           = true;
+                info.hit_position_ += (cpos - vh);
+            }
+            MV1CollResultPolyDimTerminate(hit_poly_dim);
+        }
+    }
+#endif
+
+#if 1
+    // 下あたり
+    {
+        MV1_COLL_RESULT_POLY hit_poly{};
+        float3               bottom = cpos + info.push_;    //-float3{ 0, col1->GetRadius() * scale, 0 };
+        float3               top    = opos1;                //+ info.push_;	 // bottom + float3{ 0, col1->GetRadius() * scale * 2, 0 };
+        hit_poly                    = MV1CollCheck_Line(mdl->GetModel(), -1, cast(top), cast(bottom));
+
+        if(hit_poly.HitFlag != 0) {
+            float3 pos = cast(hit_poly.HitPosition);
+
+            // 半径分押し戻し
+            float3 vec = pos - bottom;
+
+            // 一旦1つ目の当たりだけで返してみる
+            // このpush_は、調べたほうの押し戻し方向100%で作成する
+            info.push_         += vec;
+            info.hit_           = true;
+            info.hit_position_ += pos;
+        }
+    }
+#endif
+
+#if 0
+	// 上あたり
+	{
+		MV1_COLL_RESULT_POLY hit_poly{};
+		float3				 bottom = opos + info.push_;	 //-float3{ 0, col1->GetRadius() * scale, 0 };
+		float3				 top	= cpos1 + info.push_;	 // bottom + float3{ 0, col1->GetRadius() * scale * 2, 0 };
+		hit_poly					= MV1CollCheck_Line( mdl->GetModel(), -1, cast( bottom ), cast( top ) );
+
+		if( hit_poly.HitFlag != 0 )
+		{
+			float3 pos = cast( hit_poly.HitPosition );
+
+			// 半径分押し戻し
+			float3 vec = pos - top;
+
+			// 一旦1つ目の当たりだけで返してみる
+			// このpush_は、調べたほうの押し戻し方向100%で作成する
+			info.push_		   += vec;
+			info.hit_			= true;
+			info.hit_position_ += pos;
+		}
+	}
+#endif
     return info;
 }
 
