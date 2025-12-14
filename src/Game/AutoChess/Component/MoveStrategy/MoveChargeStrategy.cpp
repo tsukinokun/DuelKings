@@ -29,9 +29,9 @@ void MoveChargeStrategy::Move(Piece* piece, float delta_time)
     //突進速度を計算
     float charge_speed = piece->GetMoveSpeed() * charge_speed_multiplier_;
     //移動方向に突進速度を掛けたベクトルを取得
-    float3 move_vector = charge_direction_ * piece->GetMoveSpeed() * charge_speed * delta_time;
+    float3 move_vector = charge_direction_ * charge_speed * delta_time;
     //ピースの位置を更新
-    piece->AddTranslate(move_vector);
+    piece->AddTranslate(move_vector, false, true);
 }
 
 //---------------------------------------------------------------------------

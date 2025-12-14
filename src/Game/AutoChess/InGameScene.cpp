@@ -1108,6 +1108,8 @@ void InGameScene::CreatePiecesForBattlePhase()
                         col_comp->SetName("PieceCollision");
                         col_comp->SetRadius(0.3f);
                         col_comp->SetHeight(1.0f);
+                        col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
                     }
                 }
             }
@@ -1162,6 +1164,8 @@ void InGameScene::CreatePiecesForBattlePhase()
                         col_comp->SetName("PieceCollision");
                         col_comp->SetRadius(0.3f);
                         col_comp->SetHeight(1.0f);
+                        col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
                     }
                 }
             }

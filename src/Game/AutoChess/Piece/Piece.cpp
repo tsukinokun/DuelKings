@@ -20,6 +20,7 @@ bool Piece::Init()
 {
     __super::Init();
     SetTranslate(float3(0.0f, 0.5f, 0.0f));    // 初期位置を設定
+    SetStatus(::Object::StatusBit::OnHitAllComponent, true);
     SetName("Piece");
     //---------------------------------------------------------------------------------
     // ピースのステータス情報を設定(Pieceの基底クラスなので、とりあえず参照しても大丈夫なように値を入れて置きます。)

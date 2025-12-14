@@ -25,7 +25,10 @@ JapaneseChessLanceSkill::JapaneseChessLanceSkill()
 void JapaneseChessLanceSkill::Init()
 {
     __super::Init();
-    auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    //---------------------------------------------------------
+    // 更新処理
+    //---------------------------------------------------------
     auto update_proc = [owner, this]() {
         //タイマーが0.0fより大きければ
         if(effect_timer_ > 0.0f) {
@@ -33,6 +36,7 @@ void JapaneseChessLanceSkill::Init()
             effect_timer_ -= GetDeltaTime();
             //タイマーが0.0f以下になったら
             if(effect_timer_ <= 0.0f) {
+                hit_pieces_.clear();    //当たったピースのリストをクリア
                 //移動コンポーネントを取得
                 if(auto piece_mover = owner->GetComponent<PieceMover>()) {
                     // 移動ストラテジーを通常移動ストラテジーへ変更
@@ -42,6 +46,45 @@ void JapaneseChessLanceSkill::Init()
         }
     };
     SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NONE);
+    //---------------------------------------------------------------------------
+    // ラムダ式にヒット時のコールバックを
+    //---------------------------------------------------------------------------
+    OnHitComponentFunc = [this](const HitInfo& hit_info) {
+        // 自分のオーナーピースを取得
+        auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+        // 当たったコリジョンのオーナーを取得
+        auto hit_owner = hit_info.hit_collision_->GetOwnerPtr();
+        // 当たった相手がピースだったら
+        if(auto hit_piece = dynamic_pointer_cast<Piece>(hit_owner)) {
+            // ピースのオーナーエージェントを取得
+            auto hit_piece_owner_agent = hit_piece->GetOwner();
+            // 自分のオーナーエージェントを取得
+            auto owner_agent = owner->GetOwner();
+            // オーナーエージェントが異なっていたら
+            if(hit_piece_owner_agent != owner_agent) {
+                // すでに当たっているピースなら処理を抜ける
+                for(auto hit_piece_in_list : hit_pieces_) {
+                    if(hit_piece_in_list == hit_piece.get()) {
+                        return;
+                    }
+                }
+                // そうでなければダメージを与える
+                int damage = DAMAGE_VALUES_[owner->GetLevel() - 1];    //ダメージ量を取得
+                hit_piece->TakeDamage(damage, DamageType::Physical);
+                hit_pieces_.push_back(hit_piece.get());    //当たったピースをリストに追加
+                //---------------------------------------------------------
+                // エフェクトのオブジェクトを生成
+                //---------------------------------------------------------
+                float3 pos   = owner->GetTranslate();
+                auto   skill = Scene::Object::Create<SkillObjectBase>();
+                skill->SetEffect("data/AutoChess/Effect/JapaneseChessLanceSkill.efkefc");
+                skill->SetEffectPlaySpeed(1.0f);
+                skill->SetScaleAxisXYZ(1.0f);
+                skill->SetTranslate(pos);
+                skill->SetSkillOwner(owner->GetOwner());
+            }
+        }
+    };
     mp_ = 90;    //初期MPを設定
 }
 

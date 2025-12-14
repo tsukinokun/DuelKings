@@ -40,5 +40,5 @@ public:
 
 private:
     float3      charge_direction_{0.0f, 0.0f, 0.0f};    //突進する方向
-    const float charge_speed_multiplier_ = 100.0f;      //突進速度倍率
+    const float charge_speed_multiplier_ = 2.0f;        //突進速度倍率
 };
