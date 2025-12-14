@@ -57,7 +57,7 @@ void PieceStand::Draw()
     __super::Draw();
     for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
         int color = GetColor(255, 255, 255);
-        //ファイルとランクの合計値が偶数なら白に
+        //インデックスが偶数なら色を白に変える
         if((s % 2) == 0) {
             color = GetColor(0, 0, 0);
         }

@@ -74,21 +74,24 @@ void PieceUIDisplayer::UpdateGauge(const std::shared_ptr<Piece>& owner,
                                    const int2&                   gauge_size,
                                    const float2&                 offset)
 {
+    // ゲージのUIオブジェクト名を作成
     std::string ui_name = std::string(owner->GetName()) + gauge_name_suffix;
-
+    // 現在値が最大値未満の場合、ゲージを表示・更新
     if(current_value < max_value) {
+        // ゲージオブジェクトを取得、存在しない場合は新規作成
         auto ui_gauge = Scene::Object::Get<UIGauge>(ui_name);
         if(!ui_gauge) {
             ui_gauge = CreateGauge(ui_name, owner, gauge_color, gauge_size);
         }
-
+        // ゲージの位置を更新
         float2 screen_pos = GetScreenPositionWithOffset(owner.get(), offset);
         ui_gauge->SetTranslate(float3(screen_pos.x, screen_pos.y, 0.0f));
-
+        // ゲージの割合を更新
         float rate = static_cast<float>(current_value) / static_cast<float>(max_value);
         ui_gauge->SetGaugeRate(rate);
     }
     else {
+        // 現在値が最大値以上の場合、ゲージを非表示にする
         if(auto ui_gauge = Scene::Object::Get<UIGauge>(ui_name)) {
             Scene::Object::Release(ui_gauge);
         }

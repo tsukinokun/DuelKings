@@ -27,6 +27,8 @@ public:
     void Activate() override;
 
 private:
+    const float DURATION_OF_EFFECT_ = 3.0f;    //効果時間
+    float       effect_timer_       = 0.0f;    //効果時間タイマー
 };
 
 CEREAL_REGISTER_TYPE(JapaneseChessLanceSkill)
