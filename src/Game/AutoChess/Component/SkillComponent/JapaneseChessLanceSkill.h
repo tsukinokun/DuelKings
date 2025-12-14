@@ -9,7 +9,7 @@
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 
 USING_PTR(JapaneseChessLanceSkill);
-
+class Piece;    // 前方宣言
 class JapaneseChessLanceSkill : public ComponentActiveSkill
 {
 public:
@@ -27,6 +27,10 @@ public:
     void Activate() override;
 
 private:
+    const std::array<int, 3> DAMAGE_VALUES_      = {50, 75, 100};    //ダメージ量
+    const float              DURATION_OF_EFFECT_ = 3.0f;             //効果時間
+    float                    effect_timer_       = 0.0f;             //効果時間タイマー
+    std::vector<Piece*>      hit_pieces_;                            //当たったピースのリスト
 };
 
 CEREAL_REGISTER_TYPE(JapaneseChessLanceSkill)

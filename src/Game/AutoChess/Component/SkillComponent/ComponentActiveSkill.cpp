@@ -28,8 +28,8 @@ void ComponentActiveSkill::Init()
 //---------------------------------------------------------
 void ComponentActiveSkill::Activate()
 {
-    mp_             = 0;       // 発動したらMPをリセット
-    cool_doen_time_ = 0.0f;    // 発動したらクールダウンをリセット
+    mp_             = 0;                                  // 発動したらMPをリセット
+    cool_doen_time_ = skill_data_.max_cool_doen_time_;    // 発動したらクールダウンをリセット
 }
 
 //---------------------------------------------------------

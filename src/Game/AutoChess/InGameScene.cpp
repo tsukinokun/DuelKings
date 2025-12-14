@@ -34,6 +34,8 @@
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/SkillObject/SkillObjectBase.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
+#include <Game/AutoChess/Funiture/Glass.h>
+#include <System/Component/ComponentCollisionCapsule.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -75,10 +77,11 @@ bool InGameScene::Init()
     // 机の生成
     //---------------------------------------------------------------------------------
     {
-        auto table = Scene::Object::Create<Object>();
-        auto model = table->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/table.mv1");
-        table->SetScaleAxisXYZ(4.0f);
-        table->SetTranslate(float3(-0.5f, -20.0f, 0.0f));
+        //auto table = Scene::Object::Create<Object>();
+        //auto model = table->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/table.mv1");
+        //table->SetScaleAxisXYZ(4.0f);
+        //table->SetTranslate(float3(-0.5f, -20.0f, 0.0f));
+        auto table = Scene::Object::Create<Glass>();
     }
     //---------------------------------------------------------------------------------
     // 部屋の生成
@@ -114,6 +117,7 @@ bool InGameScene::Init()
                 //4ゴールド以上所持しているなら経験値を増やす
                 if(player->GetGold() >= 4) {
                     player->AddExp(4);    //経験値を4増やす
+                    player->SpendGold(4);
                 }
             }
         };
@@ -1096,6 +1100,17 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // コリジョンを入れる
+                    //---------------------------------------------------------------------------------
+                    {
+                        auto col_comp = piece->AddComponent<ComponentCollisionCapsule>();
+                        col_comp->SetName("PieceCollision");
+                        col_comp->SetRadius(0.3f);
+                        col_comp->SetHeight(1.0f);
+                        col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+                    }
                 }
             }
         }
@@ -1141,6 +1156,17 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // コリジョンを入れる
+                    //---------------------------------------------------------------------------------
+                    {
+                        auto col_comp = piece->AddComponent<ComponentCollisionCapsule>();
+                        col_comp->SetName("PieceCollision");
+                        col_comp->SetRadius(0.3f);
+                        col_comp->SetHeight(1.0f);
+                        col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
+                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+                    }
                 }
             }
         }
