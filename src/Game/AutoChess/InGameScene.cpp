@@ -35,6 +35,7 @@
 #include <Game/AutoChess/SkillObject/SkillObjectBase.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <Game/AutoChess/Funiture/Glass.h>
+#include <System/Component/ComponentCollisionCapsule.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -116,6 +117,7 @@ bool InGameScene::Init()
                 //4ゴールド以上所持しているなら経験値を増やす
                 if(player->GetGold() >= 4) {
                     player->AddExp(4);    //経験値を4増やす
+                    player->SpendGold(4);
                 }
             }
         };
@@ -1098,6 +1100,15 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // コリジョンを入れる
+                    //---------------------------------------------------------------------------------
+                    {
+                        auto col_comp = piece->AddComponent<ComponentCollisionCapsule>();
+                        col_comp->SetName("PieceCollision");
+                        col_comp->SetRadius(0.3f);
+                        col_comp->SetHeight(1.0f);
+                    }
                 }
             }
         }
@@ -1143,6 +1154,15 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // コリジョンを入れる
+                    //---------------------------------------------------------------------------------
+                    {
+                        auto col_comp = piece->AddComponent<ComponentCollisionCapsule>();
+                        col_comp->SetName("PieceCollision");
+                        col_comp->SetRadius(0.3f);
+                        col_comp->SetHeight(1.0f);
+                    }
                 }
             }
         }

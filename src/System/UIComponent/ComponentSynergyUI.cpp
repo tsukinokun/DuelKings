@@ -39,7 +39,7 @@ void ComponentSynergyUI::Init()
         //---------------------------------------------------------------------------
         // 下に現在の数と次のレベルまでの必要数を表示する
         //---------------------------------------------------------------------------
-        int font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
+        int         font_handle = FontBuffer::GetFontHandle(font_name_, font_size_, 1, DX_FONTTYPE_ANTIALIASING_EDGE, edge_size_);    //フォントのハンドルを取得
         std::string synergy_text = std::to_string(synergy_count_) + " / " + std::to_string(next_count_);
         //フォントが存在しているかで分岐
         if(font_handle != -1) {
