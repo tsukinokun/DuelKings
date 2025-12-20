@@ -461,6 +461,7 @@ config_project("BaseProject", "WindowedApp")
 		DXLIB_PATH,				-- DXライブラリ Effekseer
 		IMGUI_PATH,				-- ImGui
 		"opensource",			-- オープンソース
+		"external",
 		"opensource/cereal/include",
 		"opensource/JoltPhysics",
 		"external/TsukinoDIContainer/include",

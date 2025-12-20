@@ -7,7 +7,7 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/system/Timer.h>
 #include <Game/AutoChess/Context/GameContext.h>
-#include <TsukinoDIcontainer/TsukinoDIcontainer.hpp>
+#include <TsukinoDIContainer/TsukinoDIContainer.hpp>
 //前方宣言
 class Agent;
 class InGameScene : public Scene::Base
