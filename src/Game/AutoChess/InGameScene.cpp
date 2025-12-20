@@ -36,12 +36,14 @@
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <Game/AutoChess/Funiture/Glass.h>
 #include <System/Component/ComponentCollisionCapsule.h>
+#include <TsukinoEventBus/TsukinoEventBus.hpp>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
 bool InGameScene::Init()
 {
     __super::Init();
+    TsukinoEventBus::EventBus event_bus;    // イベントバスの作成
     game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json",
                                    "data/AutoChess/MasterData/SynergyDatas.json",
                                    "data/AutoChess/MasterData/SkillDatas.json");    //マスターデータの読み込み
