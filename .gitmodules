@@ -1,0 +1,3 @@
+[submodule "external/TsukinoEventBus"]
+	path = external/TsukinoEventBus
+	url = https://github.com/tsukinokun/TsukinoEventBus.git
