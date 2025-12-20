@@ -43,7 +43,9 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    TsukinoEventBus::EventBus event_bus;    // イベントバスの作成
+    //コンテナにイベントバスを登録(シングルトン)
+    di_container_.registerType<TsukinoEventBus::EventBus, TsukinoEventBus::EventBus>(TsukinoDIContainer::Lifecycle::Singleton);
+    // リポジトリを読み込み、初期化する
     game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json",
                                    "data/AutoChess/MasterData/SynergyDatas.json",
                                    "data/AutoChess/MasterData/SkillDatas.json");    //マスターデータの読み込み
