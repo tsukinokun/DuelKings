@@ -395,6 +395,7 @@ config_project("TsukinoDIContainer", "StaticLib")
 	-- "" インクルードパス
 	includedirs {
 		SOURCE_PATH,
+		path.join(SOURCE_PATH, "include"),
 	}
 
 	-- 除去するファイル
