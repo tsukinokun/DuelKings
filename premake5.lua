@@ -379,7 +379,7 @@ config_project("cereal", "StaticLib")
 -----------------------------------------------------------------
 config_project("TsukinoDIContainer", "StaticLib")
 
-	local SOURCE_PATH = "external/TsukinoDIContainer"
+	local SOURCE_PATH = "opensource/TsukinoDIContainer"
 
    	warnings "Default"
 
@@ -465,7 +465,7 @@ config_project("BaseProject", "WindowedApp")
 		"external",
 		"opensource/cereal/include",
 		"opensource/JoltPhysics",
-		"external/TsukinoDIContainer/include",
+		"opensource/TsukinoDIContainer/include",
 		"external/TsukinoEventBus/include",
 		SAMPLE_PATH,
 		

@@ -68,13 +68,16 @@ void ComponentText::Init()
         }
         float3 pos = float3(0.0f, 0.0f, 0.0f);
         pos        = owner->GetTranslate() + adjustment;
+
+        //折り返し処理
+        std::string wrapped_text = WrapText(font_handle);
         //フォントが存在しているかで分岐
         if(font_handle != -1) {
-            DrawStringToHandle(pos.x, pos.y, str_.data(), text_color_, font_handle, edge_color_);
+            DrawStringToHandle(pos.x, pos.y, wrapped_text.data(), text_color_, font_handle, edge_color_);
         }
         else {
             //存在しない
-            DrawString(pos.x, pos.y, str_.data(), text_color_, edge_color_);
+            DrawString(pos.x, pos.y, wrapped_text.data(), text_color_, edge_color_);
         }
         DxLib::SetFontSize(DEFAULT_FONT_SIZE);    //フォントサイズを元に戻す
     };
@@ -161,6 +164,60 @@ std::shared_ptr<ComponentText> ComponentText::SetThickSize(int thick_size)
         thick_size = 9;
     }
     thick_size_ = thick_size;
+    return dynamic_pointer_cast<ComponentText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief テキストの折り返し処理
+//---------------------------------------------------------------------------
+std::string ComponentText::WrapText(int font_handle)
+{
+    std::string result;
+    std::string current_line;
+    std::string current_word;
+
+    for(char c : str_) {
+        current_word += c;
+
+        // 改行文字が来たら強制改行
+        if(c == '\n') {
+            result += current_line + current_word;
+            current_line.clear();
+            current_word.clear();
+            continue;
+        }
+
+        // 現在の行 + 次の文字の幅を計測
+        std::string test_line = current_line + current_word;
+
+        int width = 0;
+        if(font_handle != -1) {
+            width = GetDrawStringWidthToHandle(test_line.c_str(), test_line.size(), font_handle);
+        }
+        else {
+            width = GetDrawStringWidth(test_line.c_str(), test_line.size());
+        }
+
+        // 幅オーバーなら改行
+        if(width > max_width_) {
+            result       += current_line + "\n";
+            current_line  = current_word;
+            current_word.clear();
+        }
+    }
+
+    // 残りを追加
+    result += current_line + current_word;
+
+    return result;
+}
+
+//---------------------------------------------------------------------------
+//! @brief 折り返し幅を設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentText> ComponentText::SetWrapWidth(int max_width)
+{
+    max_width_ = max_width;
     return dynamic_pointer_cast<ComponentText>(shared_from_this());
 }
 
