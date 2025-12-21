@@ -71,6 +71,7 @@ void ComponentText::Init()
 
         //折り返し処理
         std::string wrapped_text = WrapText(font_handle);
+        wrapped_text.insert(0, "\n");
         //フォントが存在しているかで分岐
         if(font_handle != -1) {
             DrawStringToHandle(pos.x, pos.y, wrapped_text.data(), text_color_, font_handle, edge_color_);
@@ -167,6 +168,17 @@ std::shared_ptr<ComponentText> ComponentText::SetThickSize(int thick_size)
     return dynamic_pointer_cast<ComponentText>(shared_from_this());
 }
 
+size_t Utf8CharLen(unsigned char c)
+{
+    if((c & 0x80) == 0x00)
+        return 1;
+    if((c & 0xE0) == 0xC0)
+        return 2;
+    if((c & 0xF0) == 0xE0)
+        return 3;
+    return 4;
+}
+
 //---------------------------------------------------------------------------
 //! @brief テキストの折り返し処理
 //---------------------------------------------------------------------------
@@ -174,41 +186,36 @@ std::string ComponentText::WrapText(int font_handle)
 {
     std::string result;
     std::string current_line;
-    std::string current_word;
 
-    for(char c : str_) {
-        current_word += c;
+    size_t i = 0;
+    while(i < str_.size()) {
+        size_t      len  = Utf8CharLen((unsigned char)str_[i]);
+        std::string ch   = str_.substr(i, len);
+        i               += len;
 
-        // 改行文字が来たら強制改行
-        if(c == '\n') {
-            result += current_line + current_word;
+        // 改行
+        if(ch == "\n") {
+            result += current_line + "\n";
             current_line.clear();
-            current_word.clear();
             continue;
         }
 
-        // 現在の行 + 次の文字の幅を計測
-        std::string test_line = current_line + current_word;
+        // 幅チェック
+        std::string test_line = current_line + ch;
 
-        int width = 0;
-        if(font_handle != -1) {
-            width = GetDrawStringWidthToHandle(test_line.c_str(), test_line.size(), font_handle);
-        }
-        else {
-            width = GetDrawStringWidth(test_line.c_str(), test_line.size());
-        }
+        int width = (font_handle != -1) ? GetDrawStringWidthToHandle(test_line.c_str(), test_line.size(), font_handle)
+                                        : GetDrawStringWidth(test_line.c_str(), test_line.size());
 
-        // 幅オーバーなら改行
         if(width > max_width_) {
             result       += current_line + "\n";
-            current_line  = current_word;
-            current_word.clear();
+            current_line  = ch;
+        }
+        else {
+            current_line = test_line;
         }
     }
 
-    // 残りを追加
-    result += current_line + current_word;
-
+    result += current_line;
     return result;
 }
 
