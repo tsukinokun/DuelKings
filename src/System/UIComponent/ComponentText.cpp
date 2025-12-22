@@ -71,7 +71,6 @@ void ComponentText::Init()
 
         //折り返し処理
         std::string wrapped_text = WrapText(font_handle);
-        wrapped_text.insert(0, "\n");
         //フォントが存在しているかで分岐
         if(font_handle != -1) {
             DrawStringToHandle(pos.x, pos.y, wrapped_text.data(), text_color_, font_handle, edge_color_);
