@@ -60,6 +60,13 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<UIText> SetThickSize(int thick_size);
 
+    //---------------------------------------------------------------------------
+    // 折り返し幅を設定する関数
+    //! @param max_width [in] 折り返しを行う最大幅
+    //! @retval 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<UIText> SetWrapWidth(int max_width);
+
 private:
     std::weak_ptr<ComponentText>
         text_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

@@ -85,3 +85,14 @@ std::shared_ptr<UIText> UIText::SetThickSize(int thick_size)
     }
     return dynamic_pointer_cast<UIText>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief 折り返し幅を設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<UIText> UIText::SetWrapWidth(int max_width)
+{
+    if(auto text_comp = text_component_.lock()) {
+        text_comp->SetWrapWidth(max_width);    // 折り返し幅を設定
+    }
+    return dynamic_pointer_cast<UIText>(shared_from_this());
+}
