@@ -43,7 +43,9 @@
 bool InGameScene::Init()
 {
     __super::Init();
-    TsukinoEventBus::EventBus event_bus;    // イベントバスの作成
+    //コンテナにイベントバスを登録(シングルトン)
+    di_container_.registerType<TsukinoEventBus::EventBus, TsukinoEventBus::EventBus>(TsukinoDIContainer::Lifecycle::Singleton);
+    // リポジトリを読み込み、初期化する
     game_context_.LoadRepositories("data/AutoChess/MasterData/PieceDatas.json",
                                    "data/AutoChess/MasterData/SynergyDatas.json",
                                    "data/AutoChess/MasterData/SkillDatas.json");    //マスターデータの読み込み
@@ -711,11 +713,12 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             auto skill_description_ui = Scene::Object::Create<UIText>();
-            skill_description_ui->SetTranslate(float3(170.0f, 420.0f, 0.0f));              //位置を左中央あたりに設定
+            skill_description_ui->SetTranslate(float3(30.0f, 420.0f, 0.0f));               //位置を左中央あたりに設定
             skill_description_ui->SetFontName("游明朝");                                   //フォントを設定
             skill_description_ui->SetFontSize(18);                                         //フォントサイズ設定
             skill_description_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
-            skill_description_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            skill_description_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
+            skill_description_ui->SetWrapWidth(250);
             auto update_proc = [skill_description_ui, piece_repository, player]() {
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {

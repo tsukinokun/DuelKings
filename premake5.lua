@@ -373,6 +373,54 @@ config_project("cereal", "StaticLib")
 	{
 		path.join(SOURCE_PATH, "include/**.hpp"),
 	}
+	
+-----------------------------------------------------------------
+-- TsukinoDIContainer
+-----------------------------------------------------------------
+config_project("TsukinoDIContainer", "StaticLib")
+
+	local SOURCE_PATH = "opensource/TsukinoDIContainer"
+
+   	warnings "Default"
+
+	-- 追加するソースコード
+	-- *=フォルダ内 **=フォルダ内とその階層下サブフォルダ内
+    files {
+		path.join(SOURCE_PATH, "**.c"),
+		path.join(SOURCE_PATH, "**.cpp"),
+		path.join(SOURCE_PATH, "**.h"),
+		path.join(SOURCE_PATH, "**.hpp"),
+	}
+	
+	-- "" インクルードパス
+	includedirs {
+		SOURCE_PATH,
+		path.join(SOURCE_PATH, "include"),
+	}
+
+	-- 除去するファイル
+	removefiles {
+	}
+
+	-- プリプロセッサ #define
+   	defines {
+	}
+
+	-- フォルダ分け
+	vpaths {
+		["ヘッダー ファイル/*"] = {
+			path.join(SOURCE_PATH, "**.h"),
+			path.join(SOURCE_PATH, "**.hxx"),
+			path.join(SOURCE_PATH, "**.hpp"),
+			path.join(SOURCE_PATH, "**.inl")
+		},
+		["ソース ファイル/*"] = {
+			path.join(SOURCE_PATH, "**.c"),
+			path.join(SOURCE_PATH, "**.cxx"),
+			path.join(SOURCE_PATH, "**.cpp")
+		},
+	}
+
 
 --============================================================================
 -- プロジェクトファイル
@@ -414,8 +462,11 @@ config_project("BaseProject", "WindowedApp")
 		DXLIB_PATH,				-- DXライブラリ Effekseer
 		IMGUI_PATH,				-- ImGui
 		"opensource",			-- オープンソース
+		"external",
 		"opensource/cereal/include",
 		"opensource/JoltPhysics",
+		"opensource/TsukinoDIContainer/include",
+		"external/TsukinoEventBus/include",
 		SAMPLE_PATH,
 		
 	}
@@ -472,4 +523,5 @@ config_project("BaseProject", "WindowedApp")
 		"im-neo-sequencer",
 		"JoltPhysics",
 		"meshoptimizer",
+		"TsukinoDIContainer",
 	}
