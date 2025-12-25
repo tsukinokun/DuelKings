@@ -18,5 +18,4 @@ void ChessKnightSkill::Init()
 //---------------------------------------------------------
 void ChessKnightSkill::Activate()
 {
-    // ベースクラスでは何もしない
 }
