@@ -15,11 +15,172 @@
             "skill_description_": "直線上にいる最も近い敵に向かって突進し、ヒットした敵に50/75/100ダメージを与える。"
         },
         {
+            "max_cool_doen_time_": 5.0,
+            "skill_icon_key_": "japanese_chess_knight_skill_icon",
+            "skill_component_name_": "JapaneseChessKnightSkill",
+            "skill_name_": "跳躍",
+            "skill_description_": "魔法弾を発射し、ルート上の敵全員に100/150/200の魔法ダメージを与える。"
+        },
+        {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "japanese_chess_silver_skill_icon",
+            "skill_component_name_": "JapaneseChessSilverSkill",
+            "skill_name_": "神速の一撃",
+            "skill_description_": "ランダムな敵1体に狙いをつけ、400/600/800の魔法ダメージを与える。"
+        },
+        {
+            "max_cool_doen_time_": 5.0,
+            "skill_icon_key_": "japanese_chess_gold_skill_icon",
+            "skill_component_name_": "JapaneseChessGoldSkill",
+            "skill_name_": "神出鬼没",
+            "skill_description_": "ランダムな敵一体に200/250/300の固定ダメージを与え、自身と位置を交換する"
+        },
+        {
+            "max_cool_doen_time_": 8.0,
+            "skill_icon_key_": "japanese_chess_bishop_skill_icon",
+            "skill_component_name_": "JapaneseChessBishopSkill",
+            "skill_name_": "衝撃波",
+            "skill_description_": "衝撃波を撃ち、ルート上の敵全員に最大で300/450/750の魔法ダメージを与える。"
+        },
+        {
+            "max_cool_doen_time_": 12.0,
+            "skill_icon_key_": "japanese_chess_rook_skill_icon",
+            "skill_component_name_": "JapaneseChessRookSkill",
+            "skill_name_": "裁きの雷",
+            "skill_description_": "敵の駒それぞれに対して、50%の確率で300/400/600＋残りHPの15/25/35%の魔法ダメージを与える。"
+        },
+        {
+            "max_cool_doen_time_": 5.0,
+            "skill_icon_key_": "japanese_chess_king_skill_icon",
+            "skill_component_name_": "JapaneseChessKingSkill",
+            "skill_name_": "掌握",
+            "skill_description_": "周囲3マス内の敵全員に100/175/250の魔法ダメージを与え、周囲3マス内の味方全員のHPを100/150/200回復する。"
+        },
+        {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "chess_pawn_skill_icon",
+            "skill_component_name_": "ChessPawnSkill",
+            "skill_name_": "強撃",
+            "skill_description_": "通常の3 / 4 / 6倍の攻撃を敵一体に行う"
+        },
+        {
             "max_cool_doen_time_": 15.0,
             "skill_icon_key_": "chess_bishop_skill_icon",
             "skill_component_name_": "ChessBishopSkill",
             "skill_name_": "闇の儀式",
             "skill_description_": "周囲3マスの味方に1.5秒ごとに15/30/45回復を行う。"
+        },
+        {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "chess_knight_skill_icon",
+            "skill_component_name_": "ChessKnightSkill",
+            "skill_name_": "洗礼",
+            "skill_description_": "味方1体のHPを200/400/720回復し、その周囲2マス内の敵全員に200/400/720の固定ダメージを与える。"
+        },
+        {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "chess_rool_skill_icon",
+            "skill_component_name_": "ChessRookSkill",
+            "skill_name_": "粉砕",
+            "skill_description_": "ランダムな敵ユニット1体に向かって移動し、その方向に2/3/4回攻撃を行う"
+        },
+        {
+            "max_cool_doen_time_": 12.0,
+            "skill_icon_key_": "chess_king_skill_icon",
+            "skill_component_name_": "ChessKingSkill",
+            "skill_name_": "権力",
+            "skill_description_": "ランダムな敵1体のいるマスを対象に鈍器を振りおろし、その半径2.5マス内の敵全員に200/300/500の魔法ダメージと1/1.5/2秒のスタンを与える。"
+        },
+        {
+            "max_cool_doen_time_": 20.0,
+            "skill_icon_key_": "chess_queen_skill_icon",
+            "skill_component_name_": "ChessQueenSkill",
+            "skill_name_": "ブラックホール",
+            "skill_description_": "直線上の敵全員に150/225/350の魔法ダメージを与え、2/3/4秒間移動速度を30%減少させる。"
+        },
+        {
+            "max_cool_doen_time_": 5.0,
+            "skill_icon_key_": "chatrang_padati_skill_icon",
+            "skill_component_name_": "ChatrangPadatiSkill",
+            "skill_name_": "不意打ち",
+            "skill_description_": "ランダムな敵1体に200/400/600の魔法ダメージと0.1秒間のスタンを与える。"
+        },
+        {
+            "max_cool_doen_time_": 8.0,
+            "skill_icon_key_": "chatrang_ashva_skill_icon",
+            "skill_component_name_": "ChatrangAshvaSkill",
+            "skill_name_": "疾風突進",
+            "skill_description_": "最も遠い敵の背後に移動し、移動ルート上にいる敵全員に150/250/350の魔法ダメージと1.5秒のスタンを与える。"
+        },
+        {
+            "max_cool_doen_time_": 5.0,
+            "skill_icon_key_": "chatrang_gaja_skill_icon",
+            "skill_component_name_": "ChatrangGajaSkill",
+            "skill_name_": "大地の怒り",
+            "skill_description_": "ランダムな敵1体に50/100/150～200/300/400の魔法ダメージと1～2/3/4秒間のスタンを与える"
+        },
+        {
+            "max_cool_doen_time_": 20.0,
+            "skill_icon_key_": "chatrang_mantri_skill_icon",
+            "skill_component_name_": "ChatrangMantriSkill",
+            "skill_name_": "精神支配",
+            "skill_description_": "0.25秒ごとに周囲3マス内のランダムな敵1体に15/20/30の魔法ダメージを与え、自身のHPを与えたダメージと同じだけ回復する。効果は5秒間持続する。"
+        },
+        {
+            "max_cool_doen_time_": 20.0,
+            "skill_icon_key_": "chatrang_ratha_skill_icon",
+            "skill_component_name_": "ChatrangRathaSkill",
+            "skill_name_": "残虐",
+            "skill_description_": "周囲3/5/6マス内の敵全員に100/200/300の魔法ダメージと2/2.5/3.5秒のスタンを与える。"
+        },
+        {
+            "max_cool_doen_time_": 15.0,
+            "skill_icon_key_": "chatrang_raja_skill_icon",
+            "skill_component_name_": "ChatrangRajaSkill",
+            "skill_name_": "王の威厳",
+            "skill_description_": "前方に光線を発生させ、ルート上にいる敵の駒に100/150/200の魔法ダメージを与える。ダメージは命中した駒1個につき30/45/60増加する。"
+        },
+        {
+            "max_cool_doen_time_": 8.0,
+            "skill_icon_key_": "makruk_bia_skill_icon",
+            "skill_component_name_": "MakrukBiaSkill",
+            "skill_name_": "プッシュ",
+            "skill_description_": "最も近い敵1体に100/200/400の物理ダメージを与ええ、ノックバックさせる。"
+        },
+        {
+            "max_cool_doen_time_": 4.0,
+            "skill_icon_key_": "makruk_met_skill_icon",
+            "skill_component_name_": "MakrukMetSkill",
+            "skill_name_": "腐食",
+            "skill_description_": "最も近い敵1体の物理防御を20秒間15/30/45低下させる。"
+        },
+        {
+            "max_cool_doen_time_": 7.0,
+            "skill_icon_key_": "makruk_khon_skill_icon",
+            "skill_component_name_": "MakrukKhonSkill",
+            "skill_name_": "アルカロイド",
+            "skill_description_": "ランダムな敵1体に毒液を浴びせる。毎秒150/250/350の魔法ダメージを与え、攻撃速度を40/60/80%低下させる。効果は5秒間持続する。"
+        },
+        {
+            "max_cool_doen_time_": 12.0,
+            "skill_icon_key_": "makruk_ma_skill_icon",
+            "skill_component_name_": "MakrukMaSkill",
+            "skill_name_": "幻影",
+            "skill_description_": "4/5/6秒間、受けるダメージを無効化して反射し、攻撃者を1/1.5/2.5秒間スタンさせる。同じ攻撃者に対しては1回しか作用しない。"
+        },
+        {
+            "max_cool_doen_time_": 10.0,
+            "skill_icon_key_": "makruk_rua_skill_icon",
+            "skill_component_name_": "MakrukRuaSkill",
+            "skill_name_": "邪知暴\虐",
+            "skill_description_": "攻撃速度が600%上昇し攻撃距離が8マスになる。1発ごとに175/250/350の物理ダメージを与え、対象の攻撃速度を3/4/5秒間25%低下させる（効果は累積する）。8秒間または10 / 15 / 25回攻撃するまでこのスキルの効果が持続する。"
+        },
+        {
+            "max_cool_doen_time_": 4.0,
+            "skill_icon_key_": "makruk_khun_skill_icon",
+            "skill_component_name_": "MakrukKhunSkill",
+            "skill_name_": "終焉の時",
+            "skill_description_": "周囲5マスの敵のMPを50/75/100蒸発させ、蒸発した分の200/267/300%の魔法ダメージを与える。"
         }
     ]
 }

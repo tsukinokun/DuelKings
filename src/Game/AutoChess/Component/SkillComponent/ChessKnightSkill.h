@@ -13,7 +13,7 @@ USING_PTR(ChessKnightSkill);
 class ChessKnightSkill : public ComponentActiveSkill
 {
 public:
-    BP_COMPONENT_DECL(ChessKnightSkill, u8"チェスナイトのベースコンポーネントクラス");
+    BP_COMPONENT_DECL(ChessKnightSkill, u8"チェスナイトのスキルコンポーネントクラス");
 
     void Init() override;    //!< 初期化
 
