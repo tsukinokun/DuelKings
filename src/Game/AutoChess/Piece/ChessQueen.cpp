@@ -13,7 +13,7 @@ bool ChessQueen::Init()
 {
     __super::Init();
     SetName("ChessQueen");
-    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Model/Piece/ChessQueen.mv1");
+    auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessQueen.mv1");
     model->SetScaleAxisXYZ(0.005f);
     return true;
 }

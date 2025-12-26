@@ -74,7 +74,17 @@ void PieceAttacker::Init()
                     float distance = length(direction);
                     if(distance <= this_piece->GetAttackRange()) {
                         //攻撃力を取得
-                        int attack_power = this_piece->GetAttackPower();
+                        int         attack_power  = this_piece->GetAttackPower();
+                        PieceStatus target_status = nearest_enemy->GetFinalStatus();
+                        //最終的なダメージをこちらで計算(MP回復がしたいので)
+                        int final_damage = CalculateFinalDamage(attack_power, DamageType::Physical, target_status);
+                        //---------------------------------------------------------
+                        // MP回復処理
+                        //---------------------------------------------------------
+                        if(auto skill_component = this_piece->GetComponent<ComponentActiveSkill>()) {
+                            int mp_gain = CalculateMPGain(final_damage, DamageType::Physical, false);
+                            skill_component->AddMP(mp_gain);
+                        }
                         //敵のHPを減少させる
                         nearest_enemy->TakeDamage(attack_power);
                         //攻撃クールタイムをリセット
