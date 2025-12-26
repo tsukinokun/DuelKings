@@ -1,6 +1,6 @@
 ﻿//---------------------------------------------------------------------------
 //!	@file	JapaneseChessBishopSkill.cpp
-//! @brief	香車のスキルコンポーネントクラス
+//! @brief	角行のスキルコンポーネントクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
 #include <Game/AutoChess/Component/SkillComponent/JapaneseChessBishopSkill.h>
@@ -23,7 +23,6 @@ JapaneseChessBishopSkill::JapaneseChessBishopSkill()
 void JapaneseChessBishopSkill::Init()
 {
     __super::Init();
-    mp_ = 90;    //初期MPを設定
 }
 
 //---------------------------------------------------------
