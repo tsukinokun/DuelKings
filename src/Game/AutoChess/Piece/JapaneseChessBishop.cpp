@@ -6,6 +6,7 @@
 #include "JapaneseChessBishop.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/Component/SkillComponent/JapaneseChessBishopSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -16,6 +17,9 @@ bool JapaneseChessBishop::Init()
     auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/JapaneseChessBishop.mv1");
     model->SetScaleAxisXYZ(0.005f);
     model->SetRotationAxisXYZ(float3(0.0f, 90.0f, 0.0f));
-
+    //---------------------------------------------------------------------------------
+    // スキルコンポーネントを追加
+    //---------------------------------------------------------------------------------
+    AddComponent<JapaneseChessBishopSkill>();
     return true;
 }
