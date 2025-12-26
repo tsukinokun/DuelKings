@@ -1,9 +1,9 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	JapaneseChessSilverSkill.cpp
-//! @brief	銀将のスキルコンポーネントクラス
+//!	@file	JapaneseChessGoldSkill.cpp
+//! @brief	金将のスキルコンポーネントクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include <Game/AutoChess/Component/SkillComponent/JapaneseChessSilverSkill.h>
+#include <Game/AutoChess/Component/SkillComponent/JapaneseChessGoldSkill.h>
 #include <Game/AutoChess/Piece/Piece.h>
 #include <System/Component/ComponentEffect.h>
 #include <Game/AutoChess/Component/PieceSensor.h>
@@ -12,22 +12,23 @@
 //---------------------------------------------------------
 // コンストラクタ
 //---------------------------------------------------------
-JapaneseChessSilverSkill::JapaneseChessSilverSkill()
+JapaneseChessGoldSkill::JapaneseChessGoldSkill()
 {
-    name_ = "JapaneseChessSilverSkill";
+    name_ = "JapaneseChessGoldSkill";
 }
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
-void JapaneseChessSilverSkill::Init()
+void JapaneseChessGoldSkill::Init()
 {
     __super::Init();
+    mp_ = 90;
 }
 
 //---------------------------------------------------------
 //! @brief スキル発動処理
 //---------------------------------------------------------
-void JapaneseChessSilverSkill::Activate()
+void JapaneseChessGoldSkill::Activate()
 {
     __super::Activate();
     auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
@@ -62,12 +63,29 @@ void JapaneseChessSilverSkill::Activate()
         //---------------------------------------------------------
         // エフェクトのオブジェクトを生成
         //---------------------------------------------------------
-        float3 pos   = enemy->GetTranslate();
-        auto   skill = Scene::Object::Create<SkillObjectBase>();
-        skill->SetEffect("data/AutoChess/Effect/JapaneseChessSilverSkill.efkefc");
-        skill->SetEffectPlaySpeed(3.0f);
-        skill->SetScaleAxisXYZ(1.0f);
-        skill->SetTranslate(pos);
-        skill->SetSkillOwner(owner->GetOwner());
+        //敵
+        float3 enemy_pos = enemy->GetTranslate();
+        CreateSkillObject(enemy_pos, owner);
+        //自分
+        float3 this_piece_pos = owner->GetTranslate();
+        CreateSkillObject(this_piece_pos, owner);
+        //---------------------------------------------------------
+        // 位置を交換する
+        //---------------------------------------------------------
+        enemy->SetTranslate(this_piece_pos);
+        owner->SetTranslate(enemy_pos);
     }
+}
+
+//---------------------------------------------------------
+//! @brief スキルオブジェクト生成処理
+//---------------------------------------------------------
+void JapaneseChessGoldSkill::CreateSkillObject(const float3& position, std::shared_ptr<Piece> owner)
+{
+    auto skill = Scene::Object::Create<SkillObjectBase>();
+    skill->SetEffect("data/AutoChess/Effect/JapaneseChessGoldSkill.efkefc");
+    skill->SetEffectPlaySpeed(3.0f);
+    skill->SetScaleAxisXYZ(1.0f);
+    skill->SetTranslate(position);
+    skill->SetSkillOwner(owner->GetOwner());
 }

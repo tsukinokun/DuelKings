@@ -195,7 +195,7 @@ void Piece::SetLevel(int level)
 void Piece::TakeDamage(int amount, DamageType damage_type)
 {
     // 最終的なダメージ量
-    int final_damage = amount;
+    int final_damage = CalculateFinalDamage(amount, damage_type, final_status_);
     // 最低ダメージは1に設定
     if(final_damage < 1)
         final_damage = 1;

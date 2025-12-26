@@ -71,6 +71,9 @@ int CalculateFinalDamage(int amount, DamageType damage_type, const PieceStatus& 
         float multiplier = 1.0f - resistance;
         final_damage     = amount * multiplier;
     }
+    else if(damage_type == DamageType::Fixed) {
+        // 固定ダメージは防御力を無視、そのまま適用
+    }
 
     // 最低ダメージは1に設定
     if(final_damage < 1.0)
