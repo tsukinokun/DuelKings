@@ -21,7 +21,6 @@ JapaneseChessKnightSkill::JapaneseChessKnightSkill()
 void JapaneseChessKnightSkill::Init()
 {
     __super::Init();
-    mp_ = 90;
 }
 
 //---------------------------------------------------------
