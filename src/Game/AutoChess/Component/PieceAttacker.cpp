@@ -53,7 +53,7 @@ void PieceAttacker::Init()
                         skill_component->AddMP(mp_gain);
                     }
                     //敵のHPを減少させる
-                    locked_target->TakeDamage(final_damage);
+                    locked_target->TakeDamage(attack_power);
                     //攻撃クールタイムをリセット
                     attack_timer_ = this_piece->GetAttackInterval();
                 }

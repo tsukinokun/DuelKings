@@ -50,4 +50,5 @@ enum class DamageType
 {
     Physical,    //物理攻撃
     Magic,       //魔法攻撃
+    Fixed,       //固定ダメージ
 };
