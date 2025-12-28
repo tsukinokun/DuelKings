@@ -96,7 +96,7 @@
             "skill_icon_key_": "chess_queen_skill_icon",
             "skill_component_name_": "ChessQueenSkill",
             "skill_name_": "ブラックホール",
-            "skill_description_": "直線上の敵全員に150/225/350の魔法ダメージを与え、2/3/4秒間移動速度を30%減少させる。"
+            "skill_description_": "半径3マス範囲のブラックホールを設置し、範囲内の敵全員に毎秒最大HPの4/6/8%の固定ダメージを与える。効果は8秒間持続する。"
         },
         {
             "max_cool_doen_time_": 5.0,

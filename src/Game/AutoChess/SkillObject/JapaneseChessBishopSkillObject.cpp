@@ -39,6 +39,7 @@ bool JapaneseChessBishopSkillObject::Init()
 //---------------------------------------------------------------------------
 void JapaneseChessBishopSkillObject::OnHit(const ComponentCollision::HitInfo& hit_info)
 {
+    __super::OnHit(hit_info);
     // 当たったコリジョンのオーナーを取得
     auto hit_owner = hit_info.hit_collision_->GetOwnerPtr();
     // 当たった相手がピースだったら
