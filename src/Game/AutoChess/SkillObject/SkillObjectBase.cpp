@@ -41,11 +41,11 @@ bool SkillObjectBase::Init()
 //---------------------------------------------------------------------------
 //!	@brief エフェクトを設定
 //---------------------------------------------------------------------------
-std::shared_ptr<SkillObjectBase> SkillObjectBase::SetEffect(const std::string_view effect_name)
+std::shared_ptr<SkillObjectBase> SkillObjectBase::SetEffect(const std::string_view effect_name, bool is_loop)
 {
     if(auto eff = effect_component_.lock()) {
         eff->Load(effect_name);
-        eff->Play();    // ロードと同時にエフェクトを再生
+        eff->Play(is_loop);    // ロードと同時にエフェクトを再生
     }
     return dynamic_pointer_cast<SkillObjectBase>(shared_from_this());
 }

@@ -20,10 +20,11 @@ public:
 
     //---------------------------------------------------------------------------
     // エフェクトを設定
-    //! @param effect_name エフェクト名
+    //! @param effect_name [in] エフェクト名
+    //! @param is_loop     [in] ループするかどうか
     //! @return 自分自身のshared_ptr
     //---------------------------------------------------------------------------
-    std::shared_ptr<SkillObjectBase> SetEffect(const std::string_view effect_name);
+    std::shared_ptr<SkillObjectBase> SetEffect(const std::string_view effect_name, bool is_loop = false);
 
     //---------------------------------------------------------------------------
     // スキル使用者のオーナーエージェントを設定する
