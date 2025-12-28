@@ -22,7 +22,6 @@ ChessKnightSkill::ChessKnightSkill()
 void ChessKnightSkill::Init()
 {
     __super::Init();
-    mp_ = 90;
 }
 
 //---------------------------------------------------------
