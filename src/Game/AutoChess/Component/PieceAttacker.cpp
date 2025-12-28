@@ -8,6 +8,7 @@
 #include <Game/AutoChess/Piece/Piece.h>
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
+#include <Game/AutoChess/Component/StatusEffect/StunStatus.h>
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
@@ -18,10 +19,16 @@ void PieceAttacker::Init()
     // 攻撃処理
     //---------------------------------------------------------
     auto attack_proc = [this]() {
+        auto this_piece = dynamic_pointer_cast<Piece>(GetOwnerPtr());    //ピースであることが前提
+        //---------------------------------------------------------
+        // スタンチェックをして、スタン中なら処理を抜ける
+        //---------------------------------------------------------
+        if(this_piece->GetComponent<StunStatus>()) {
+            return;
+        }
         //---------------------------------------------------------
         //  通常攻撃
         //---------------------------------------------------------
-        auto this_piece  = dynamic_pointer_cast<Piece>(GetOwnerPtr());    //ピースであることが前提
         auto delta_time  = GetDeltaTime();
         attack_timer_   -= delta_time;
         lock_timer_     -= delta_time;

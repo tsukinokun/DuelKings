@@ -6,6 +6,7 @@
 #include "ChessKing.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/Component/SkillComponent/ChessKingSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -15,5 +16,9 @@ bool ChessKing::Init()
     SetName("ChessKing");
     auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessKing.mv1");
     model->SetScaleAxisXYZ(0.005f);
+    //---------------------------------------------------------------------------------
+    // スキルコンポーネントの追加
+    //---------------------------------------------------------------------------------
+    AddComponent<ChessKingSkill>();
     return true;
 }
