@@ -47,7 +47,7 @@ void JapaneseChessLanceSkill::Init()
     };
     SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NONE);
     //---------------------------------------------------------------------------
-    // ラムダ式にヒット時のコールバックを
+    // ラムダ式にヒット時のコールバックを登録
     //---------------------------------------------------------------------------
     OnHitComponentFunc = [this](const HitInfo& hit_info) {
         // 自分のオーナーピースを取得
