@@ -107,8 +107,8 @@
         },
         {
             "max_cool_doen_time_": 8.0,
-            "skill_icon_key_": "chaturang_ashva_skill_icon",
-            "skill_component_name_": "ChaturangaAshvaSkill",
+            "skill_icon_key_": "chaturang_asva_skill_icon",
+            "skill_component_name_": "ChaturangaAsvaSkill",
             "skill_name_": "疾風突進",
             "skill_description_": "最も遠い敵の背後に移動し、移動ルート上にいる敵全員に150/250/350の魔法ダメージと1.5秒のスタンを与える。"
         },
