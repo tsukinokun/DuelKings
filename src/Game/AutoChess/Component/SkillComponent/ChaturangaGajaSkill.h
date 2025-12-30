@@ -27,7 +27,7 @@ public:
     void Activate() override;
 
 private:
-    const std::array<int, 3>   DAMAGE_VALUES_  = {200, 400, 600};       //ダメージ倍率
+    const std::array<int, 3>   DAMAGE_VALUES_  = {200, 400, 600};       //ダメージ
     const std::array<float, 3> STUN_DURATIONS_ = {2.0f, 3.0f, 4.0f};    //スタン時間
 };
 
