@@ -62,10 +62,10 @@ void ChaturangaPadatiSkill::Activate()
         //---------------------------------------------------------
         float damage = DAMAGE_VALUES_.at(owner->GetLevel() - 1);                  // ダメージ量計算
         target_piece->TakeDamage(static_cast<int>(damage), DamageType::Magic);    // ダメージを与える
-        target_piece->AddComponent<StunStatus>(STUN_DURATION_);                   // スタンを与える
         //---------------------------------------------------------
         // 0.1秒間スタンさせる
         //---------------------------------------------------------
+        target_piece->AddComponent<StunStatus>(STUN_DURATION_);    // スタンを与える
         //---------------------------------------------------------
         // エフェクトを生成
         //---------------------------------------------------------

@@ -22,7 +22,6 @@ JapaneseChessGoldSkill::JapaneseChessGoldSkill()
 void JapaneseChessGoldSkill::Init()
 {
     __super::Init();
-    mp_ = 90;
 }
 
 //---------------------------------------------------------

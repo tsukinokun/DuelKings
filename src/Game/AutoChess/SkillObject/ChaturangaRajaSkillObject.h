@@ -1,18 +1,18 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	JapaneseChessKnightSkillObject.h
-//! @brief	桂馬のスキルのオブジェクト
+//!	@file	ChaturangaRajaSkillObject.h
+//! @brief	ラジャのスキルのオブジェクト
 //! @auther 山﨑愛
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
 #include "SkillObjectBase.h"
 //前方宣言
-USING_PTR(JapaneseChessKnightSkillObject);
-class Piece;    // 前方宣言
-class JapaneseChessKnightSkillObject : public SkillObjectBase
+USING_PTR(ChaturangaRajaSkillObject);
+class Piece;
+class ChaturangaRajaSkillObject : public SkillObjectBase
 {
 public:
-    BP_OBJECT_DECL(JapaneseChessKnightSkillObject, u8"桂馬のスキルのオブジェクト")
+    BP_OBJECT_DECL(ChaturangaRajaSkillObject, u8"ラジャのスキルのオブジェクト")
 
     //@
     bool Init() override;    //!< 初期化
@@ -35,8 +35,15 @@ public:
     //---------------------------------------------------------------------------
     void SetAttackPower(int power);
 
+    //---------------------------------------------------------------------------
+    // 増加攻撃力を設定する関数
+    //! @param power [in] 増加攻撃力
+    //---------------------------------------------------------------------------
+    void SetIncreasePower(int power);
+
 private:
-    float3              move_vector_  = float3{0.0f, 0.0f, 0.0f};    // 移動ベクトル
-    int                 attack_power_ = 0;                           // 攻撃力
-    std::vector<Piece*> hit_pieces_;                                 // 当たったピースのリスト
+    float3              move_vector_    = float3{0.0f, 0.0f, 0.0f};    // 移動ベクトル
+    int                 attack_power_   = 0;                           // 攻撃力
+    int                 increase_power_ = 0;                           // 増加攻撃力
+    std::vector<Piece*> hit_pieces_;                                   // 当たったピースのリスト
 };
