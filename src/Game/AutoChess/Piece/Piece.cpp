@@ -461,6 +461,22 @@ void Piece::RemoveRateMagicalDefenseModifier(float value)
     status_modifier_.RemoveRateMagicalDefense(value);
 }
 
+//---------------------------------------------------------------------------
+//! @brief 他のmodifierの内容を加算する（modifier操作）
+//---------------------------------------------------------------------------
+void Piece::AddModifier(const PieceStatusModifier& other)
+{
+    status_modifier_.AddModifier(other);
+}
+
+//---------------------------------------------------------------------------
+//! @brief 他のmodifierの内容を減算する
+//---------------------------------------------------------------------------
+void Piece::RemoveModifier(const PieceStatusModifier& other)
+{
+    status_modifier_.RemoveModifier(other);
+}
+
 //----------------------------------------------------------
 //! @brief 最終ステータスを取得する関数
 //----------------------------------------------------------

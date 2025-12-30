@@ -275,6 +275,42 @@ float PieceStatusModifier::GetRateMagicalDefense() const
 }
 
 //---------------------------------------------------------------------------
+//! @brief 他のmodifierの内容を加算する
+//---------------------------------------------------------------------------
+void PieceStatusModifier::AddModifier(const PieceStatusModifier& other)
+{
+    add_max_hp_            += other.add_max_hp_;
+    rate_max_hp_           += other.rate_max_hp_;
+    add_attack_power_      += other.add_attack_power_;
+    rate_attack_power_     += other.rate_attack_power_;
+    add_attack_interval_   += other.add_attack_interval_;
+    rate_attack_interval_  += other.rate_attack_interval_;
+    add_physical_defense_  += other.add_physical_defense_;
+    rate_physical_defense_ += other.rate_physical_defense_;
+    add_magical_defense_   += other.add_magical_defense_;
+    rate_magical_defense_  += other.rate_magical_defense_;
+    NotifyChanged();
+}
+
+//---------------------------------------------------------------------------
+//! @brief 他のmodifierの内容を減算する
+//---------------------------------------------------------------------------
+void PieceStatusModifier::RemoveModifier(const PieceStatusModifier& other)
+{
+    add_max_hp_            -= other.add_max_hp_;
+    rate_max_hp_           -= other.rate_max_hp_;
+    add_attack_power_      -= other.add_attack_power_;
+    rate_attack_power_     -= other.rate_attack_power_;
+    add_attack_interval_   -= other.add_attack_interval_;
+    rate_attack_interval_  -= other.rate_attack_interval_;
+    add_physical_defense_  -= other.add_physical_defense_;
+    rate_physical_defense_ -= other.rate_physical_defense_;
+    add_magical_defense_   -= other.add_magical_defense_;
+    rate_magical_defense_  -= other.rate_magical_defense_;
+    NotifyChanged();
+}
+
+//---------------------------------------------------------------------------
 //! @brief ステータス変更通知をリスナーへ送る
 //---------------------------------------------------------------------------
 void PieceStatusModifier::NotifyChanged()
