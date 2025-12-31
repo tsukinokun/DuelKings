@@ -125,7 +125,7 @@ bool Player::Init()
                 synergy_index++;
             }
         };
-        SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NONE);
+        SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NORMAL);
     }
     return true;
 }

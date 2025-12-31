@@ -23,6 +23,6 @@ bool PieceMaxText::Init()
     //    int  level  = player->GetAgentLevel();
     //    SetText(std::to_string(level));
     //};
-    //SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+    //SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
     return true;
 }

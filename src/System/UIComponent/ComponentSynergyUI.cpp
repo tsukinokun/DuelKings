@@ -50,7 +50,7 @@ void ComponentSynergyUI::Init()
             DrawString(pos.x, pos.y, synergy_text.data(), text_color_, edge_color_);
         }
     };
-    SetProc("DrawSynergyUI", draw_proc, ProcTiming::UI, ProcPriority::NONE);
+    SetProc("DrawSynergyUI", draw_proc, ProcTiming::UI, ProcPriority::NORMAL);
 }
 
 //---------------------------------------------------------------------------

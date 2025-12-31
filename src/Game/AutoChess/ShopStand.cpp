@@ -51,7 +51,7 @@ bool ShopStand::Init()
             }
         }
     };
-    SetProc("update", update, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("update", update, ProcTiming::Update, ProcPriority::NORMAL);
     return true;
 }
 //---------------------------------------------------------------------------------

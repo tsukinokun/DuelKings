@@ -33,7 +33,7 @@ void PieceMover::Init()
             move_strategy_->Move(this_piece.get(), update_delta_time_);
         }
     };
-    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
 }
 
 //---------------------------------------------------------------------------

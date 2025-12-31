@@ -19,7 +19,7 @@ bool Glass::Init()
         model_->setWorldMatrix(mat);
         model_->render();
     };
-    SetProc("render_proc", render_proc, ProcTiming::HDR, ProcPriority::NONE);
+    SetProc("render_proc", render_proc, ProcTiming::HDR, ProcPriority::NORMAL);
     SetName("Glass");
     return true;
 }

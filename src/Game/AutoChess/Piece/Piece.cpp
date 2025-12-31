@@ -62,7 +62,7 @@ bool Piece::Init()
             float2 pixel_position = WorldPositionToScreenPosition(GetTranslate());
             level_image->SetTranslate(float3(pixel_position.xy, 0.0f));
         };
-        level_image->SetProc("update", update_proc);
+        level_image->SetProc("update", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         level_ui_ = level_image;    // レベル表示画像をメンバ変数に保存
     }
 

@@ -45,7 +45,7 @@ bool ChessBoard::Init()
             }
         }
     };
-    SetProc("Update", update, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("Update", update, ProcTiming::Update, ProcPriority::NORMAL);
     return true;
 }
 //---------------------------------------------------------------------------------

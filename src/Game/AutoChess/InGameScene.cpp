@@ -144,7 +144,7 @@ bool InGameScene::Init()
                     //必要な経験値を表示
                     curr_exp_ui->SetText(std::to_string(current_exp));
                 };
-                curr_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+                curr_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
             }
             //割線
             {
@@ -168,7 +168,7 @@ bool InGameScene::Init()
                     //必要な経験値を表示
                     next_exp_ui->SetText(std::to_string(next_level_exp));
                 };
-                next_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+                next_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
             }
         }
     }
@@ -222,7 +222,7 @@ bool InGameScene::Init()
                 piece_num_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));
             }
         };
-        piece_num_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+        piece_num_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
         piece_num_ui->SetTranslate(float3(WINDOW_W * 0.5f - 50.0f, WINDOW_H * 0.5f - 100.0f, 0.0f));
         piece_num_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
         board_limit_vector.push_back(piece_num_ui);
@@ -252,7 +252,7 @@ bool InGameScene::Init()
             int  level  = player->GetAgentLevel();
             piece_max_ui->SetText(std::to_string(level));
         };
-        piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+        piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
         piece_max_ui->SetTranslate(float3(WINDOW_W * 0.5f + 50.0f, WINDOW_H * 0.5f - 100.0f, 0.0f));
         piece_max_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
         board_limit_vector.push_back(piece_max_ui);
@@ -270,7 +270,7 @@ bool InGameScene::Init()
                     ui_object->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
                 }
             };
-            ui_object->SetProc("board_limit_update", board_limit_update_proc, ProcTiming::Update, ProcPriority::NONE);
+            ui_object->SetProc("board_limit_update", board_limit_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         };
     }
     //---------------------------------------------------------------------------------
@@ -284,7 +284,7 @@ bool InGameScene::Init()
         turn_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //左上寄せに設定
         //更新処理
         auto set_text_proc = [this, turn_ui]() { turn_ui->SetText("Turn: " + std::to_string(turn_count_)); };
-        turn_ui->SetProc("set_turn", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+        turn_ui->SetProc("set_turn", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
     //  フェーズタイマーUI
@@ -310,7 +310,7 @@ bool InGameScene::Init()
             }
             phase_timer_ui->SetText("Time : " + std::to_string(time_left) + "s");
         };
-        phase_timer_ui->SetProc("set_phase_timer", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+        phase_timer_ui->SetProc("set_phase_timer", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
     //  フェーズ表示UI
@@ -334,7 +334,7 @@ bool InGameScene::Init()
                 break;
             }
         };
-        phase_ui->SetProc("set_phase", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+        phase_ui->SetProc("set_phase", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
     //  Agent表示UI
@@ -367,7 +367,7 @@ bool InGameScene::Init()
             auto set_text_proc = [agent, gold_ui]() {
                 gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
-            gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NONE);
+            gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
             agent_ui_objects.push_back(gold_ui);
             //---------------------------------------------------------------------------------
             // エージェントのHP表示UI
@@ -380,7 +380,7 @@ bool InGameScene::Init()
                 float hp_ratio = static_cast<float>(agent->GetHP()) / static_cast<float>(MAX_AGENT_HP);
                 hp_gauge->SetGaugeRate(hp_ratio);
             };
-            hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NONE);
+            hp_gauge->SetProc("set_hp_gauge", set_gauge_proc, ProcTiming::Update, ProcPriority::NORMAL);
             agent_ui_objects.push_back(hp_gauge);
             //---------------------------------------------------------------------------------
             // エージェントのHP数値表示UI
@@ -402,7 +402,7 @@ bool InGameScene::Init()
                 obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
             };
             // 処理を登録
-            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NONE);
+            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         }
     }
     //---------------------------------------------------------------------------------
@@ -442,7 +442,7 @@ bool InGameScene::Init()
                     piece_name_ui->SetText(piece_data->display_name_);
                 }
             };
-            piece_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(piece_name_ui);
         }
         //---------------------------------------------------------------------------------
@@ -462,7 +462,7 @@ bool InGameScene::Init()
                     piece_level_ui->SetImage(ImageBuffer::GetImageHandle(std::string("level" + std::to_string(piece_level) + "_star")));
                 }
             };
-            piece_level_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_level_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(piece_level_ui);
         }
         //---------------------------------------------------------------------------------
@@ -481,7 +481,7 @@ bool InGameScene::Init()
                     piece_icon_ui->SetImage(ImageBuffer::GetImageHandle(piece_data->icon_path_));
                 }
             };
-            piece_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(piece_icon_ui);
         }
 
@@ -504,7 +504,7 @@ bool InGameScene::Init()
                     piece_hp_ui->SetGaugeRate(hp_ratio);
                 }
             };
-            piece_hp_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            piece_hp_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(piece_hp_ui);
         }
         //---------------------------------------------------------------------------------
@@ -538,7 +538,7 @@ bool InGameScene::Init()
                     attack_power_ui->SetText(std::to_string(piece_level_datas[index].attack_));
                 }
             };
-            attack_power_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            attack_power_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(attack_power_ui);
         }
         //---------------------------------------------------------------------------------
@@ -569,7 +569,7 @@ bool InGameScene::Init()
                     attack_interval_ui->SetText(std::format("{:.1f}", piece_data->attack_interval_));
                 }
             };
-            attack_interval_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            attack_interval_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(attack_interval_ui);
         }
         //---------------------------------------------------------------------------------
@@ -600,7 +600,7 @@ bool InGameScene::Init()
                     attack_range_ui->SetText(std::format("{:.1f}", piece_data->attack_range_));
                 }
             };
-            attack_range_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            attack_range_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(attack_range_ui);
         }
         //---------------------------------------------------------------------------------
@@ -631,7 +631,7 @@ bool InGameScene::Init()
                     physical_defense_ui->SetText(std::to_string(piece_data->physical_defense_));
                 }
             };
-            physical_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            physical_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(physical_defense_ui);
         }
         //---------------------------------------------------------------------------------
@@ -662,7 +662,7 @@ bool InGameScene::Init()
                     magic_defense_ui->SetText(std::format("{:.1f}", piece_data->attack_interval_));
                 }
             };
-            magic_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            magic_defense_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(magic_defense_ui);
         }
         //---------------------------------------------------------------------------------
@@ -683,7 +683,7 @@ bool InGameScene::Init()
                     }
                 }
             };
-            skill_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            skill_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_icon_ui);
         }
         //---------------------------------------------------------------------------------
@@ -705,7 +705,7 @@ bool InGameScene::Init()
                     }
                 }
             };
-            skill_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            skill_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_name_ui);
         }
         //---------------------------------------------------------------------------------
@@ -728,7 +728,7 @@ bool InGameScene::Init()
                     }
                 }
             };
-            skill_description_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NONE);
+            skill_description_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_description_ui);
         }
 
@@ -742,7 +742,7 @@ bool InGameScene::Init()
                 obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
             };
             // 処理を登録
-            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NONE);
+            obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         }
     }
     std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
@@ -830,7 +830,7 @@ bool InGameScene::Init()
                     SetupCamera_ProjectionMatrix(prev_proj_mat);    //遠近法投影行列を戻す
                 }
             };
-            piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NONE);
+            piece_purchase_button->SetProc("draw_target", draw_target, ProcTiming::Draw, ProcPriority::NORMAL);
             purchase_window_objects.push_back(piece_purchase_button);    //購入画面のウィンドウ群に追加
         }
     }
@@ -865,7 +865,7 @@ bool InGameScene::Init()
                     }
                 }
             };
-            piece_name_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NONE);
+            piece_name_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NORMAL);
             purchase_window_objects.push_back(piece_name_text);    //購入画面のウィンドウ群に追加
         }
     }

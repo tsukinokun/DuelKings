@@ -45,6 +45,6 @@ std::shared_ptr<UIObject> UIObject::SetAutoReleaseTarget(const std::weak_ptr<Obj
             Scene::Object::Release(shared_from_this());
         }
     };
-    SetProc("auto_release_p@roc", release_proc, ProcTiming::Update, ProcPriority::HIGH);
+    SetProc("auto_release_proc", release_proc, ProcTiming::Update, ProcPriority::HIGH);
     return std::dynamic_pointer_cast<UIObject>(shared_from_this());
 }

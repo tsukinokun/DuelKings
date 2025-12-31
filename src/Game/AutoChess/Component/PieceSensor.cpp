@@ -65,5 +65,5 @@ void PieceSensor::Init()
 //----------------------------------------------------------
 std::shared_ptr<Piece> PieceSensor::GetNearestEnemy() const
 {
-    return nearest_enemy_.lock();    //weak_ptrを共有ポインタに変換して返す
+    return nearest_enemy_.lock();    //weak_ptrを共有ポインタに変換
 }

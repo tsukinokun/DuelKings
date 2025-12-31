@@ -26,7 +26,7 @@ void PieceUIDisplayer::Init()
             UpdateGauge(owner, "mp_ui", component_active_skill->GetMP(), 100, GetColor(0, 128, 128), int2(50, 10), float2(0.0f, -15.0f));
         }
     };
-    SetProc("hp_proc", hp_proc, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("hp_proc", hp_proc, ProcTiming::Update, ProcPriority::NORMAL);
 }
 
 //---------------------------------------------------------
