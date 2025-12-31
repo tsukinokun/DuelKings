@@ -1,26 +1,28 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	ChaturangaGajaSkill.cpp
-//! @brief	ガジャのスキルコンポーネントクラス
+//!	@file	MakrukKhonSkill.cpp
+//! @brief	コーンのスキルコンポーネントクラス
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include <Game/AutoChess/Component/SkillComponent/ChaturangaGajaSkill.h>
+#include <Game/AutoChess/Component/SkillComponent/MakrukKhonSkill.h>
 #include <Game/AutoChess/Piece/Piece.h>
 #include <System/Component/ComponentEffect.h>
 #include <Game/AutoChess/Component/PieceSensor.h>
 #include <Game/AutoChess/SkillObject/SkillObjectBase.h>
-#include <Game/AutoChess/Component/StatusEffect/StunStatus.h>
+#include <Game/AutoChess/Component/StatusEffect/KnockbackStatus.h>
+#include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
+#include <Game/AutoChess/Info/PieceStatusModifier.h>
 #include <random>
 //---------------------------------------------------------
 // コンストラクタ
 //---------------------------------------------------------
-ChaturangaGajaSkill::ChaturangaGajaSkill()
+MakrukKhonSkill::MakrukKhonSkill()
 {
-    name_ = "ChaturangaGajaSkill";
+    name_ = "MakrukKhonSkill";
 }
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
-void ChaturangaGajaSkill::Init()
+void MakrukKhonSkill::Init()
 {
     __super::Init();
 }
@@ -28,7 +30,7 @@ void ChaturangaGajaSkill::Init()
 //---------------------------------------------------------
 //! @brief スキル発動処理
 //---------------------------------------------------------
-void ChaturangaGajaSkill::Activate()
+void MakrukKhonSkill::Activate()
 {
     __super::Activate();
     auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
@@ -64,16 +66,18 @@ void ChaturangaGajaSkill::Activate()
         float damage      = DAMAGE_VALUES_.at(level_index);                       // ダメージ量計算
         target_piece->TakeDamage(static_cast<int>(damage), DamageType::Magic);    // ダメージを与える
         //---------------------------------------------------------
-        // スタンさせる
+        // 物理防御力ダウンのデバフを付与
         //---------------------------------------------------------
-        target_piece->AddComponent<StunStatus>(STUN_DURATIONS_.at(level_index));    // スタンを与える
+        PieceStatusModifier status_modifier;
+        status_modifier.RemovePhysicalDefense(PHYSICAL_DOWN_VALUES_.at(level_index));    // 物理防御力ダウン値設定
+        target_piece->AddComponent<ModifierStatus>(status_modifier, EFFECT_DURATION_);
         //---------------------------------------------------------
         // エフェクトを生成
         //---------------------------------------------------------
         float3 pos   = target_piece->GetTranslate();
         auto   skill = Scene::Object::Create<SkillObjectBase>();    // スキルオブジェクト生成
         {
-            skill->SetEffect("data/AutoChess/Effect/ChaturangaGajaSkill.efkefc");
+            skill->SetEffect("data/AutoChess/Effect/MakrukKhonSkill.efkefc");
             skill->SetEffectPlaySpeed(2.0f);
             skill->SetScaleAxisXYZ(1.0f);
             skill->SetTranslate(pos);
