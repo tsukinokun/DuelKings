@@ -166,7 +166,7 @@
             "skill_icon_key_": "makruk_ma_skill_icon",
             "skill_component_name_": "MakrukMaSkill",
             "skill_name_": "幻影",
-            "skill_description_": "4/5/6秒間、受けるダメージを無効化して反射し、攻撃者を1/1.5/2.5秒間スタンさせる。同じ攻撃者に対しては1回しか作用しない。"
+            "skill_description_": "HPを200/300/400回復する。15秒間の間、攻撃間隔が0.7/0.6/0.5になり、周囲4マス内の敵の物理防御力を4/7/10低下させる。"
         },
         {
             "max_cool_doen_time_": 10.0,
