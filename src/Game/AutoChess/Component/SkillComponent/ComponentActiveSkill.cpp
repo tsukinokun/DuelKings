@@ -44,6 +44,17 @@ void ComponentActiveSkill::AddMP(int amount)
 }
 
 //---------------------------------------------------------
+//! @brief MPを減少させる関数
+//---------------------------------------------------------
+void ComponentActiveSkill::RemoveMP(int amount)
+{
+    mp_ -= amount;
+    if(mp_ < 0) {
+        mp_ = 0;    // MPの下限は0
+    }
+}
+
+//---------------------------------------------------------
 //! @brief MPを取得する関数
 //---------------------------------------------------------
 int ComponentActiveSkill::GetMP() const
