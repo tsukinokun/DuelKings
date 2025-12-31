@@ -21,7 +21,7 @@ void StatusEffectBase::Init()
             RemoveThisComponent();    // コンポーネントを削除する
         }
     };
-    SetProc("remove_timer_proc", remove_timer_proc, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("remove_timer_proc", remove_timer_proc, ProcTiming::Update, ProcPriority::NORMAL);
     //---------------------------------------------------------
     // 同じコンポーネントを許容する
     //---------------------------------------------------------

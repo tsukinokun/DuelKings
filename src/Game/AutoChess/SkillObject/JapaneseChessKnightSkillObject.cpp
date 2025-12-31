@@ -29,7 +29,7 @@ bool JapaneseChessKnightSkillObject::Init()
         //移動処理
         AddTranslate(move_vector_);
     };
-    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
 
     return true;
 }

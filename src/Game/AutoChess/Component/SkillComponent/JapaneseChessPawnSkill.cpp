@@ -34,7 +34,7 @@ void JapaneseChessPawnSkill::Init()
             }
         }
     };
-    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
 }
 
 //---------------------------------------------------------

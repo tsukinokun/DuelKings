@@ -20,7 +20,7 @@ void KnockbackStatus::Init()
         //---------------------------------------------------------
         owner->AddTranslate(knockback_vector_, false, true);
     };
-    SetProc("knockback_proc", knockback_proc, ProcTiming::PreUpdate, ProcPriority::NONE);
+    SetProc("knockback_proc", knockback_proc, ProcTiming::PreUpdate, ProcPriority::NORMAL);
 }
 
 //---------------------------------------------------------------------------

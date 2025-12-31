@@ -45,7 +45,7 @@ bool PieceStand::Init()
             }
         }
     };
-    SetProc("Update", update, ProcTiming::Update, ProcPriority::NONE);
+    SetProc("Update", update, ProcTiming::Update, ProcPriority::NORMAL);
     return true;
 }
 
@@ -319,7 +319,7 @@ void PieceStand::AddPiece(std::shared_ptr<Piece> piece)
                         }
                     }
                 };
-                piece->SetProc("level_up_proc", level_up_proc, ProcTiming::Update, ProcPriority::NONE);
+                piece->SetProc("level_up_proc", level_up_proc, ProcTiming::Update, ProcPriority::NORMAL);
                 square->SetPutPiece(piece);    //バッファにポインタを登録
                 //一度生成したらリターンする
                 return;
