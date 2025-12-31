@@ -47,12 +47,6 @@ void MakrukRuaSkill::Init()
                         //---------------------------------------------------------
                         target_enemy->TakeDamage(DAMAGE_VALUES_.at(level_index), DamageType::Physical);    //ダメージを与える
                         //---------------------------------------------------------
-                        // 対象の敵に攻撃速度を25%下げる状態異常を付与
-                        //---------------------------------------------------------
-                        PieceStatusModifier status_modifier;
-                        status_modifier.RemoveRateAttackInterval(ATTACK_INTERVAL_DOWN_VALUE_ * -1.0f);
-                        target_enemy->AddComponent<ModifierStatus>(status_modifier, ATTACK_INTERVAL_DOWN_TIME_.at(level_index));
-                        //---------------------------------------------------------
                         // エフェクトを生成
                         //---------------------------------------------------------
                         float3 pos   = target_enemy->GetTranslate();
