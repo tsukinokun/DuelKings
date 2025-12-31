@@ -6,6 +6,7 @@
 #include "MakrukMa.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
+#include <Game/AutoChess/Component/SkillComponent/MakrukMaSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -15,5 +16,9 @@ bool MakrukMa::Init()
     SetName("MakrukMa");
     auto model = AddComponent<ComponentModel>("data/AutoChess/Model/Piece/MakrukMa.mv1");
     model->SetScaleAxisXYZ(0.005f);
+    //---------------------------------------------------------------------------------
+    // スキルコンポーネントの追加
+    //---------------------------------------------------------------------------------
+    AddComponent<MakrukMaSkill>();
     return true;
 }
