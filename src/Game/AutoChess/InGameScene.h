@@ -8,6 +8,7 @@
 #include <Game/AutoChess/system/Timer.h>
 #include <Game/AutoChess/Context/GameContext.h>
 #include <TsukinoDIContainer/TsukinoDIContainer.hpp>
+#include <TsukinoEventBus/TsukinoEventBus.hpp>
 //前方宣言
 class Agent;
 class InGameScene : public Scene::Base
@@ -57,13 +58,14 @@ private:
 
     //@}
 private:
-    TsukinoDIContainer::Container di_container_;    //DIコンテナ
-    Timer                         phase_timer_;
-    GameContext                   game_context_;                           //マスターデータなどの管理クラス
-    GameState                     game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
-    float                         state_timer_      = 0.0f;                // 状態経過時間（秒）
-    bool                          is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
-    bool                          has_battle_ended_ = false;               //バトルが終了したかどうか
-    int                           turn_count_       = 1;                   // 現在のターン数
-    std::weak_ptr<Agent>          battle_agent_;                           //バトル中のエージェント
+    TsukinoDIContainer::Container                    di_container_;    //DIコンテナ
+    Timer                                            phase_timer_;
+    GameContext                                      game_context_;                           //マスターデータなどの管理クラス
+    GameState                                        game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
+    float                                            state_timer_      = 0.0f;                // 状態経過時間（秒）
+    bool                                             is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    bool                                             has_battle_ended_ = false;               //バトルが終了したかどうか
+    int                                              turn_count_       = 1;                   // 現在のターン数
+    std::weak_ptr<Agent>                             battle_agent_;                           //バトル中のエージェント
+    std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;                          //イベントハンドル群
 };

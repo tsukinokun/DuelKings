@@ -52,3 +52,14 @@ std::shared_ptr<UIImage> UIImage::SetAlpha(int alpha)
     }
     return dynamic_pointer_cast<UIImage>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief フィルターか否かをセットする関数
+//---------------------------------------------------------------------------
+std::shared_ptr<UIImage> UIImage::SetIsFilter(bool is_filter)
+{
+    if(auto image_comp = image_component_.lock()) {
+        image_comp->SetIsFilter(is_filter);    // 画像コンポーネントにフィルター設定
+    }
+    return dynamic_pointer_cast<UIImage>(shared_from_this());
+}

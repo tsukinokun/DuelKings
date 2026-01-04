@@ -69,6 +69,12 @@ public:
     //----------------------------------------------------------
     void SetMasterData(const SkillData* master);
 
+    //----------------------------------------------------------
+    // マスターデータを返す関数
+    //! @retval スキルのマスターデータ
+    //----------------------------------------------------------
+    const SkillData& GetMasterData() const;
+
 protected:
     SkillData skill_data_;               //!< スキルデータ
     int       mp_             = 0;       //!< スキルMP

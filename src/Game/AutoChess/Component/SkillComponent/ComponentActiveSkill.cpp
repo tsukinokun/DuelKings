@@ -97,6 +97,14 @@ void ComponentActiveSkill::SetMasterData(const SkillData* master)
     }
 }
 
+//----------------------------------------------------------
+//! @brief マスターデータを返す関数
+//----------------------------------------------------------
+const SkillData& ComponentActiveSkill::GetMasterData() const
+{
+    return skill_data_;
+}
+
 //---------------------------------------------------------
 //  スキル発動可能かを返す関数
 //!  @return スキル発動可能ならtrue、不可ならfalse

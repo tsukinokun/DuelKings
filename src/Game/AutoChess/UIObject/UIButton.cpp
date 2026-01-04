@@ -89,3 +89,14 @@ int UIButton::GetImageHandle()
     }
     return -1;
 }
+
+//---------------------------------------------------------------------------
+//! @brief フィルターか否かをセットする関数
+//---------------------------------------------------------------------------
+std::shared_ptr<UIButton> UIButton::SetIsFilter(bool is_filter)
+{
+    if(auto image_comp = image_component_.lock()) {
+        image_comp->SetIsFilter(is_filter);    // 画像コンポーネントにフィルター設定
+    }
+    return dynamic_pointer_cast<UIButton>(shared_from_this());
+}

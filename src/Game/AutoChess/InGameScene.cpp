@@ -37,6 +37,8 @@
 #include <Game/AutoChess/Funiture/Glass.h>
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
+#include <Game/AutoChess/Events/SkillClickEvent.h>
+#include <Game/AutoChess/system/UIHitManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -57,6 +59,7 @@ bool InGameScene::Init()
     auto player = Scene::Object::Create<Player>();          //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
     player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
+    auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------
@@ -418,6 +421,7 @@ bool InGameScene::Init()
             auto piece_detail_back = Scene::Object::Create<UIImage>();
             piece_detail_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_detail_back->SetImage(ImageBuffer::GetImageHandle("piece_detail_back"));
+            piece_detail_back->SetIsFilter(true);                             //フィルターに設定
             piece_detail_back->SetTranslate(float3(170.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
             piece_detail_back->SetAlpha(128);                                 //透明度を設定
             piece_detail_back->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
@@ -666,12 +670,12 @@ bool InGameScene::Init()
             piece_ditail_ui_objects.push_back(magic_defense_ui);
         }
         //---------------------------------------------------------------------------------
-        // スキルアイコンのパスUI
+        // スキルアイコンのUI
         //---------------------------------------------------------------------------------
         {
-            auto skill_icon_ui = Scene::Object::Create<UIImage>();
-            skill_icon_ui->SetTranslate(float3(80.0f, 380.0f, 0.0f));
-            skill_icon_ui->SetScaleAxisXYZ(0.2f);    //大きさを少し小さく設定
+            auto skill_icon_ui = Scene::Object::Create<UIButton>();
+            skill_icon_ui->SetTranslate(float3(170.0f, 410.0f, 0.0f));
+            skill_icon_ui->SetScaleAxisXYZ(0.4f);    //大きさを少し小さく設定
             skill_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             auto update_proc = [skill_icon_ui, piece_repository, player]() {
                 //選択されているピースを取得
@@ -683,19 +687,29 @@ bool InGameScene::Init()
                     }
                 }
             };
+            skill_icon_ui->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
             skill_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_icon_ui);
+            //クリック時の処理を設定
+            auto click_func = [event_bus, player]() {
+                auto select_piece = player->GetSelectedPiece();
+                if(auto skill_comp = select_piece->GetComponent<ComponentActiveSkill>()) {
+                    auto skill_data = skill_comp->GetMasterData();
+                    event_bus->publish(SkillClickEvent(skill_data));
+                }
+            };
+            skill_icon_ui->SetClickFunc(click_func);
         }
         //---------------------------------------------------------------------------------
         // スキルの名前を表示するUI
         //---------------------------------------------------------------------------------
         {
             auto skill_name_ui = Scene::Object::Create<UIText>();
-            skill_name_ui->SetTranslate(float3(130.0f, 380.0f, 0.0f));              //位置を左中央あたりに設定
+            skill_name_ui->SetTranslate(float3(170.0f, 450.0f, 0.0f));              //位置を左中央あたりに設定
             skill_name_ui->SetFontName("游明朝");                                   //フォントを設定
-            skill_name_ui->SetFontSize(20);                                         //フォントサイズ設定
+            skill_name_ui->SetFontSize(25);                                         //フォントサイズ設定
             skill_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
-            skill_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
+            skill_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             auto update_proc = [skill_name_ui, piece_repository, player]() {
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
@@ -708,30 +722,6 @@ bool InGameScene::Init()
             skill_name_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_name_ui);
         }
-        //---------------------------------------------------------------------------------
-        // スキルの説明文UI
-        //---------------------------------------------------------------------------------
-        {
-            auto skill_description_ui = Scene::Object::Create<UIText>();
-            skill_description_ui->SetTranslate(float3(30.0f, 420.0f, 0.0f));               //位置を左中央あたりに設定
-            skill_description_ui->SetFontName("游明朝");                                   //フォントを設定
-            skill_description_ui->SetFontSize(18);                                         //フォントサイズ設定
-            skill_description_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
-            skill_description_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
-            skill_description_ui->SetWrapWidth(250);
-            auto update_proc = [skill_description_ui, piece_repository, player]() {
-                //選択されているピースを取得
-                if(auto piece = player->GetSelectedPiece()) {
-                    if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
-                        //ピース情報UIに情報を設定
-                        skill_description_ui->SetText(skill_comp->GetSkillDescription());
-                    }
-                }
-            };
-            skill_description_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
-            piece_ditail_ui_objects.push_back(skill_description_ui);
-        }
-
         //---------------------------------------------------------------------------------
         // プレイヤーがピースを選択中ならエージェント情報を表示する
         //---------------------------------------------------------------------------------
@@ -938,6 +928,118 @@ bool InGameScene::Init()
             }
         };
         piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
+    }
+    //---------------------------------------------------------------------------------
+    // スキル表示UIの作成
+    //---------------------------------------------------------------------------------
+    {
+        std::vector<std::shared_ptr<UIObject>> skill_detail_ui_objects;    //スキル詳細UIオブジェクト群
+        //---------------------------------------------------------------------------------
+        // 背景画像
+        //---------------------------------------------------------------------------------
+        auto skill_detail_back = Scene::Object::Create<UIImage>();
+        skill_detail_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        skill_detail_back->SetImage(ImageBuffer::GetImageHandle("piece_detail_back"));
+        skill_detail_back->SetIsFilter(true);                             //フィルターに設定
+        skill_detail_back->SetTranslate(float3(470.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+        skill_detail_back->SetAlpha(128);                                 //透明度を設定
+        skill_detail_back->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        skill_detail_back->SetScaleAxisXYZ(1.5f);    //大きさを少し大さく設定
+        skill_detail_ui_objects.push_back(skill_detail_back);
+        //---------------------------------------------------------------------------------
+        // スキルアイコンのUI
+        //---------------------------------------------------------------------------------
+        auto skill_icon_ui = Scene::Object::Create<UIImage>();
+        skill_icon_ui->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        skill_icon_ui->SetTranslate(float3(380.0f, 165.0f, 0.0f));
+        skill_icon_ui->SetScaleAxisXYZ(0.25f);    //大きさを少し小さく設定
+        skill_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        skill_detail_ui_objects.push_back(skill_icon_ui);
+
+        //---------------------------------------------------------------------------------
+        // スキルの名前を表示するUI
+        //---------------------------------------------------------------------------------
+        auto skill_name_ui = Scene::Object::Create<UIText>();
+        skill_name_ui->SetStatus(Object::StatusBit::NoDraw, true);                   //初期状態では非表示にしておく
+        skill_name_ui->SetTranslate(float3(430.0f, 170.0f, 0.0f));                   //位置を左中央あたりに設定
+        skill_name_ui->SetFontName("游明朝");                                        //フォントを設定
+        skill_name_ui->SetFontSize(20);                                              //フォントサイズ設定
+        skill_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));         //文字色設定
+        skill_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);    //左寄せに設定
+        skill_detail_ui_objects.push_back(skill_name_ui);
+
+        //---------------------------------------------------------------------------------
+        // クールタイム表示UI
+        //---------------------------------------------------------------------------------
+        auto skill_cooltime_ui = Scene::Object::Create<UIText>();
+        skill_cooltime_ui->SetStatus(Object::StatusBit::NoDraw, true);                     //初期状態では非表示にしておく
+        skill_cooltime_ui->SetTranslate(float3(470.0f, 210.0f, 0.0f));                     //位置を左中央あたりに設定
+        skill_cooltime_ui->SetFontName("游明朝");                                          //フォントを設定
+        skill_cooltime_ui->SetFontSize(18);                                                //フォントサイズ設定
+        skill_cooltime_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));           //文字色設定
+        skill_cooltime_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //左寄せに設定
+        skill_detail_ui_objects.push_back(skill_cooltime_ui);
+
+        //---------------------------------------------------------------------------------
+        // スキルの説明文UI
+        //---------------------------------------------------------------------------------
+        auto skill_description_ui = Scene::Object::Create<UIText>();
+        skill_description_ui->SetStatus(Object::StatusBit::NoDraw, true);                   //初期状態では非表示にしておく
+        skill_description_ui->SetTranslate(float3(365.0f, 270.0f, 0.0f));                   //位置を左中央あたりに設定
+        skill_description_ui->SetFontName("游明朝");                                        //フォントを設定
+        skill_description_ui->SetFontSize(22);                                              //フォントサイズ設定
+        skill_description_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));         //文字色設定
+        skill_description_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);    //左寄せに設定
+        skill_description_ui->SetWrapWidth(230);
+        skill_detail_ui_objects.push_back(skill_description_ui);
+        //---------------------------------------------------------------------------------
+        // スキル詳細UIの非表示
+        //---------------------------------------------------------------------------------
+        for(auto& obj : skill_detail_ui_objects) {
+            auto skill_ui_update_proc = [obj, player]() {
+                //左クリックであれば
+                if(IsMouseOn(MOUSE_INPUT_LEFT)) {
+                    if(!UIHitManager::IsMouseHitUIFilter()) {
+                        //スキル詳細UI群の非表示
+                        obj->SetStatus(Object::StatusBit::NoDraw, true);
+                    }
+                }
+            };
+            // 処理を登録
+            obj->SetProc("skill_ui_update_proc", skill_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        }
+
+        //---------------------------------------------------------------------------------
+        // クリックイベントの登録
+        //---------------------------------------------------------------------------------
+        auto skill_click_event = [skill_detail_back, skill_icon_ui, skill_name_ui, skill_cooltime_ui, skill_description_ui](const SkillClickEvent& e) {
+            //---------------------------------------------------------------------------------
+            // 背景画像の表示
+            //---------------------------------------------------------------------------------
+            skill_detail_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
+            //---------------------------------------------------------------------------------
+            // スキルアイコンのUI
+            //---------------------------------------------------------------------------------
+            skill_icon_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキルアイコンUIを表示する
+            skill_icon_ui->SetImage(ImageBuffer::GetImageHandle(e.skill_data_.skill_icon_key_));
+            //---------------------------------------------------------------------------------
+            // スキルの名前UI
+            //---------------------------------------------------------------------------------
+            skill_name_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキル名UIを表示する
+            skill_name_ui->SetText(e.skill_data_.skill_name_);
+            //---------------------------------------------------------------------------------
+            // クールタイム表示UI
+            //---------------------------------------------------------------------------------
+            skill_cooltime_ui->SetStatus(Object::StatusBit::NoDraw, false);    //クールタイムUIを表示する
+            skill_cooltime_ui->SetText(std::format("クールタイム: {:.1f}秒", e.skill_data_.max_cool_doen_time_));
+            //---------------------------------------------------------------------------------
+            // スキルの説明文UI
+            //---------------------------------------------------------------------------------
+            skill_description_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            skill_description_ui->SetText(e.skill_data_.skill_description_);
+        };
+        auto skill_click_event_handle = event_bus->subscribe<SkillClickEvent>(skill_click_event, 0);
+        event_handles_.push_back(std::move(skill_click_event_handle));
     }
     return true;
 }
