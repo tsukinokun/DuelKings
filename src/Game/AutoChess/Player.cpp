@@ -15,6 +15,7 @@
 #include <Game/AutoChess/Info/PieceInfo.h>
 #include <Game/AutoChess/UIObject/UISynergy.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
+#include <Game/AutoChess/system/UIHitManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -306,6 +307,9 @@ void Player::Update()
         bool is_selecting_piece = false;    //ピース選択を行ったかどうかのフラグ
         //左クリックで選択
         if(IsMouseDown(MOUSE_INPUT_LEFT)) {
+            if(UIHitManager::IsMouseHitUIFilter()) {
+                return;
+            }
             if(auto stand = Scene::Object::Get<PieceStand>()) {
                 auto stand_squares_ = stand->GetSquarePtrArray();
                 for(int i = 0; i < stand_squares_.size(); i++) {

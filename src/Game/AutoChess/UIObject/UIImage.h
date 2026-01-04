@@ -37,6 +37,12 @@ public:
 	//---------------------------------------------------------------------------
 	std::shared_ptr<UIImage> SetAlpha(int alpha);
 
+	//---------------------------------------------------------------------------
+	// フィルターか否かをセットする関数
+	//! @param is_filter [in] フィルターにするかどうか
+	//---------------------------------------------------------------------------
+	std::shared_ptr<UIImage> SetIsFilter(bool is_filter);
+
 private:
 	std::weak_ptr<ComponentImage>
 		image_component_;	// 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

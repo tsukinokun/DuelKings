@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include "ComponentImage.h"
 #include "ComponentTransformUI.h"
+#include <Game/AutoChess/system/HlslppUseful.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 //---------------------------------------------------------------------------
 //! @brief	初期化関数
@@ -64,6 +65,28 @@ std::shared_ptr<ComponentImage> ComponentImage::SetImage(int image)
     image_ = image;    // 画像ハンドルを設定
     return dynamic_pointer_cast<ComponentImage>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief  マウスがボタンに触れているかを返す関数
+//---------------------------------------------------------------------------
+bool ComponentImage::IsMouseOver()
+{
+    // とりあえずオーナーを取得
+    auto owner = GetOwner();
+    //マウス座標を取得
+    float2 mouse_pos = GetMouseFloat2();
+    //オーナー(UI)座標を取得
+    float3 translate = owner->GetTranslate() + GetAdjustment();
+    float2 ui_pos    = float2(translate.x, translate.y);
+    //UIサイズを取得
+    float2 ui_size = float2(0.0f, 0.0f);      //とりあえず宣言
+    ui_size        = GetScreenImageSize();    //サイズ取得
+    if(CheckBoxPointHit(ui_pos, ui_size, mouse_pos)) {
+        return true;
+    }
+    return false;
+}
+
 //---------------------------------------------------------------------------
 //画像ハンドルの取得
 //---------------------------------------------------------------------------
@@ -145,6 +168,23 @@ std::shared_ptr<ComponentImage> ComponentImage::SetAlpha(int alpha)
 {
     alpha_ = alpha;
     return dynamic_pointer_cast<ComponentImage>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief この関数がフィルターとして機能するかどうかを設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentImage> ComponentImage::SetIsFilter(bool is_filter)
+{
+    is_filter_ = is_filter;
+    return dynamic_pointer_cast<ComponentImage>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief この関数がフィルターとして機能するかどうかを取得する関数
+//---------------------------------------------------------------------------
+bool ComponentImage::GetIsFilter() const
+{
+    return is_filter_;
 }
 
 CEREAL_REGISTER_TYPE(ComponentImage)
