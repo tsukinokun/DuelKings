@@ -53,7 +53,6 @@ bool InGameScene::Init()
                                    "data/AutoChess/MasterData/SkillDatas.json");    //マスターデータの読み込み
     PieceFactory::SetPieceRepository(&game_context_.GetPieceRepository());
     PieceFactory::SetSkillRepository(&game_context_.GetSkillRepository());
-    ImageBuffer::Init();                                    //画像バッファの初期化
     PiecePool::Init(game_context_.GetPieceRepository());    //駒プールの初期化
     Scene::Object::Create<Camera>();                        //カメラ
     auto player = Scene::Object::Create<Player>();          //プレイヤー
