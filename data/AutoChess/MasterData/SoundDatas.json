@@ -1,0 +1,16 @@
+{
+    "value0": {
+        "se": [
+            {
+                "key": "attack",
+                "value": "data/AutoChess/Sound/attack.mp3"
+            }
+        ],
+        "bgm": [
+            {
+                "key": "setup",
+                "value": "data/AutoChess/Sound/setup_bgm.mp3"
+            }
+        ]
+    }
+}
