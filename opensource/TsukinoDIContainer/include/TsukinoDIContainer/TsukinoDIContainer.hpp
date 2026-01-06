@@ -1,7 +1,7 @@
-//-------------------------------------------------------------
+ï»¿//-------------------------------------------------------------
 //! @file   TsukinoDIContainer.hpp
-//! @brief  ˆË‘¶«’“üƒRƒ“ƒeƒiƒ‰ƒCƒuƒ‰ƒŠ
-//! @author Rú±ˆ¤ ( Qiita:tsukino_   github:tsukino)
+//! @brief  ä¾å­˜æ€§æ³¨å…¥ã‚³ãƒ³ãƒ†ãƒŠãƒ©ã‚¤ãƒ–ãƒ©ãƒª
+//! @author å±±ï¨‘æ„› ( Qiita:tsukino_   github:tsukino)
 //-------------------------------------------------------------
 #pragma once
 #include <memory>
@@ -15,183 +15,183 @@
 #include <algorithm>
 #include <mutex>
 #include <shared_mutex>
-//éŒ¾•”
+//å®£è¨€éƒ¨
 namespace TsukinoDIContainer {
 	//-------------------------------------------------------------
 	//! @enum   Lifecycle
-	//! @brief  ƒCƒ“ƒXƒ^ƒ“ƒX‚Ìƒ‰ƒCƒtƒTƒCƒNƒ‹ŠÇ—•û–@
+	//! @brief  ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã®ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ç®¡ç†æ–¹æ³•
 	//-------------------------------------------------------------
 	enum class Lifecycle {
-		Transient,  //!< –ˆ‰ñV‚µ‚¢ƒCƒ“ƒXƒ^ƒ“ƒX
-		Singleton,  //!< ‘S‘Ì‚Å‹¤—L
-		Scoped      //!< ƒXƒR[ƒv‚²‚Æ‚É‹¤—L
+		Transient,  //!< æ¯å›æ–°ã—ã„ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		Singleton,  //!< å…¨ä½“ã§å…±æœ‰
+		Scoped      //!< ã‚¹ã‚³ãƒ¼ãƒ—ã”ã¨ã«å…±æœ‰
 	};
 
 	//-------------------------------------------------------------
 	//! @class  ResolveException
-	//! @brief  ‰ğŒˆƒGƒ‰[—áŠOƒNƒ‰ƒX
+	//! @brief  è§£æ±ºã‚¨ãƒ©ãƒ¼ä¾‹å¤–ã‚¯ãƒ©ã‚¹
 	//-------------------------------------------------------------
 	class ResolveException : public std::runtime_error {
 	public:
 		//-------------------------------------------------------------
-		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		//! @param  msg ƒGƒ‰[ƒƒbƒZ[ƒW
+		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+		//! @param  msg ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 		//-------------------------------------------------------------
 		explicit ResolveException(const std::string& msg);
 	};
 
-	class Container; // ‘O•ûéŒ¾
+	class Container; // å‰æ–¹å®£è¨€
 
 	//-------------------------------------------------------------
 	//! @class ScopedContext
-	//! @brief Scoped ƒ‰ƒCƒtƒ^ƒCƒ€ŠÇ——p RAII ƒNƒ‰ƒX
+	//! @brief Scoped ãƒ©ã‚¤ãƒ•ã‚¿ã‚¤ãƒ ç®¡ç†ç”¨ RAII ã‚¯ãƒ©ã‚¹
 	//-------------------------------------------------------------
 	class ScopedContext {
 	public:
 		//-------------------------------------------------------------
-		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		//! @param  container  [in] Š‘®‚·‚éƒRƒ“ƒeƒi
+		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+		//! @param  container  [in] æ‰€å±ã™ã‚‹ã‚³ãƒ³ãƒ†ãƒŠ
 		//-------------------------------------------------------------
 		explicit ScopedContext(Container& container);
 
 		//-------------------------------------------------------------
-		// ƒfƒXƒgƒ‰ƒNƒ^
+		// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 		//-------------------------------------------------------------
 		~ScopedContext();
 
 		//-------------------------------------------------------------
-		// ƒRƒs[‹Ö~
+		// ã‚³ãƒ”ãƒ¼ç¦æ­¢
 		//-------------------------------------------------------------
 		ScopedContext(const ScopedContext&) = delete;
 
 		//-------------------------------------------------------------
-		// ƒRƒs[‹Ö~
+		// ã‚³ãƒ”ãƒ¼ç¦æ­¢
 		//-------------------------------------------------------------
 		ScopedContext& operator=(const ScopedContext&) = delete;
 
 		//-------------------------------------------------------------
-		// ƒ€[ƒuƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		//! @param	 other  [in] ˆÚ“®Œ³ƒIƒuƒWƒFƒNƒg
-		//! @details ƒ€[ƒuŒãAˆÚ“®Œ³‚ÌƒfƒXƒgƒ‰ƒNƒ^‚Å‚ÍƒXƒR[ƒvI—¹ˆ—‚ğs‚í‚È‚¢
-		//! @details ƒ€[ƒuŒ³‚ÌƒIƒuƒWƒFƒNƒg‚ğg—p‚µ‚È‚¢‚Å‰º‚³‚¢
+		// ãƒ ãƒ¼ãƒ–ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+		//! @param	 other  [in] ç§»å‹•å…ƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+		//! @details ãƒ ãƒ¼ãƒ–å¾Œã€ç§»å‹•å…ƒã®ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§ã¯ã‚¹ã‚³ãƒ¼ãƒ—çµ‚äº†å‡¦ç†ã‚’è¡Œã‚ãªã„
+		//! @details ãƒ ãƒ¼ãƒ–å…ƒã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½¿ç”¨ã—ãªã„ã§ä¸‹ã•ã„
 		//-------------------------------------------------------------
 		ScopedContext(ScopedContext&& other) noexcept;
 
 		//-------------------------------------------------------------
-		// ˆË‘¶ŠÖŒW‚Ì‰ğŒˆ
-		//! @tparam  TInterface ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @return  ‰ğŒˆ‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @throws	 ResolveException –¢“o˜^Œ^AzŠÂˆË‘¶A–¢’mƒ‰ƒCƒtƒTƒCƒNƒ‹‚Ìê‡
-		//! @details ƒRƒ“ƒeƒi‚Ì Resolve ‚ğŒÄ‚Ño‚·
+		// ä¾å­˜é–¢ä¿‚ã®è§£æ±º
+		//! @tparam  TInterface æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @return  è§£æ±ºã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @throws	 ResolveException æœªç™»éŒ²å‹ã€å¾ªç’°ä¾å­˜ã€æœªçŸ¥ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã®å ´åˆ
+		//! @details ã‚³ãƒ³ãƒ†ãƒŠã® Resolve ã‚’å‘¼ã³å‡ºã™
 		//-------------------------------------------------------------
 		template<typename TInterface>
 		std::shared_ptr<TInterface> resolve();
 
 	private:
-		Container& container_;	// Š‘®‚·‚éƒRƒ“ƒeƒi‚Ö‚ÌQÆ
-		std::unordered_map<std::type_index, std::shared_ptr<void>> scoped_instances_;	// ƒXƒR[ƒvƒCƒ“ƒXƒ^ƒ“ƒXƒ}ƒbƒv
-		bool active_;			// ƒXƒR[ƒv‚ª—LŒø‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+		Container& container_;	// æ‰€å±ã™ã‚‹ã‚³ãƒ³ãƒ†ãƒŠã¸ã®å‚ç…§
+		std::unordered_map<std::type_index, std::shared_ptr<void>> scoped_instances_;	// ã‚¹ã‚³ãƒ¼ãƒ—ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒƒãƒ—
+		bool active_;			// ã‚¹ã‚³ãƒ¼ãƒ—ãŒæœ‰åŠ¹ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
 	};
 
 	//-------------------------------------------------------------
 	//! @class   Container
-	//! @brief   ˆË‘¶«’“üƒRƒ“ƒeƒiƒNƒ‰ƒX
-	//! @details Œ^“o˜^A‰ğŒˆAƒXƒR[ƒvŠÇ—‚ğ’ñ‹Ÿ
+	//! @brief   ä¾å­˜æ€§æ³¨å…¥ã‚³ãƒ³ãƒ†ãƒŠã‚¯ãƒ©ã‚¹
+	//! @details å‹ç™»éŒ²ã€è§£æ±ºã€ã‚¹ã‚³ãƒ¼ãƒ—ç®¡ç†ã‚’æä¾›
 	//-------------------------------------------------------------
 	class Container {
-		friend class ScopedContext; // ScopedContext ‚É“à•”ƒAƒNƒZƒX‚ğ‹–‰Â
+		friend class ScopedContext; // ScopedContext ã«å†…éƒ¨ã‚¢ã‚¯ã‚»ã‚¹ã‚’è¨±å¯
 	public:
 		//-------------------------------------------------------------
-		// Œ^“o˜^
-		//! @tparam  TInterface			 ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @tparam  TImplementation	 ‹ïÛŒ^À‘•
-		//! @param   cycle_  [in]        ƒ‰ƒCƒtƒTƒCƒNƒ‹ŠÇ—•û–@iƒfƒtƒHƒ‹ƒg‚ÍTransientj
-		//! @throws	 ResolveException Šù‚É“o˜^Ï‚İ‚Ìê‡
-		//! @details “o˜^Ï‚İ‚Ìê‡‚Í—áŠO‚ğ“Š‚°‚éBã‘‚«‚µ‚½‚¢ê‡‚ÍReplace‚ğg—p‚µ‚Ä‚­‚¾‚³‚¢B
+		// å‹ç™»éŒ²
+		//! @tparam  TInterface			 æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @tparam  TImplementation	 å…·è±¡å‹å®Ÿè£…
+		//! @param   cycle_  [in]        ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ç®¡ç†æ–¹æ³•ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯Transientï¼‰
+		//! @throws	 ResolveException æ—¢ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆ
+		//! @details ç™»éŒ²æ¸ˆã¿ã®å ´åˆã¯ä¾‹å¤–ã‚’æŠ•ã’ã‚‹ã€‚ä¸Šæ›¸ãã—ãŸã„å ´åˆã¯Replaceã‚’ä½¿ç”¨ã—ã¦ãã ã•ã„ã€‚
 		//-------------------------------------------------------------
 		template<typename TInterface, typename TImplementation>
 		void registerType(Lifecycle cycle_ = Lifecycle::Transient);
 
 		//-------------------------------------------------------------
-		// Œ^“o˜^ã‘‚«
-		//! @tparam  TInterface			 ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @tparam  TImplementation	 ‹ïÛŒ^À‘•
-		//! @param   cycle_  [in]        ƒ‰ƒCƒtƒTƒCƒNƒ‹ŠÇ—•û–@iƒfƒtƒHƒ‹ƒg‚ÍTransientj
-		//! @details Šù‚É“o˜^Ï‚İ‚Ìê‡‚Å‚àã‘‚«‚·‚éB–¢“o˜^‚Ìê‡‚ÍV‹K“o˜^‚Æ‚È‚éB
+		// å‹ç™»éŒ²ä¸Šæ›¸ã
+		//! @tparam  TInterface			 æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @tparam  TImplementation	 å…·è±¡å‹å®Ÿè£…
+		//! @param   cycle_  [in]        ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ç®¡ç†æ–¹æ³•ï¼ˆãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯Transientï¼‰
+		//! @details æ—¢ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆã§ã‚‚ä¸Šæ›¸ãã™ã‚‹ã€‚æœªç™»éŒ²ã®å ´åˆã¯æ–°è¦ç™»éŒ²ã¨ãªã‚‹ã€‚
 		//-------------------------------------------------------------
 		template<typename TInterface, typename TImplementation>
 		void replaceType(Lifecycle cycle_ = Lifecycle::Transient);
 
 		//-------------------------------------------------------------
-		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ•â•
-		//! @tparam TImplementation ‹ïÛŒ^À‘•
-		//! @tparam TDeps         ˆË‘¶Œ^ƒŠƒXƒg
-		//! @param  args          [in] ˆË‘¶ƒCƒ“ƒXƒ^ƒ“ƒXƒŠƒXƒg
-		//! @param  I             ƒCƒ“ƒfƒbƒNƒXƒV[ƒPƒ“ƒX
-		//! @return ¶¬‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @details ˆË‘¶ƒCƒ“ƒXƒ^ƒ“ƒX‚ğÃ“Iƒ|ƒCƒ“ƒ^ƒLƒƒƒXƒg‚µ‚ÄƒRƒ“ƒXƒgƒ‰ƒNƒ^‚É“n‚·
+		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—è£œåŠ©
+		//! @tparam TImplementation å…·è±¡å‹å®Ÿè£…
+		//! @tparam TDeps         ä¾å­˜å‹ãƒªã‚¹ãƒˆ
+		//! @param  args          [in] ä¾å­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒªã‚¹ãƒˆ
+		//! @param  I             ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚·ãƒ¼ã‚±ãƒ³ã‚¹
+		//! @return ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @details ä¾å­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’é™çš„ãƒã‚¤ãƒ³ã‚¿ã‚­ãƒ£ã‚¹ãƒˆã—ã¦ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«æ¸¡ã™
 		//-------------------------------------------------------------
 		template<typename TInterface, typename TImplementation, typename... TDeps>
 		inline void registerCtor(Lifecycle cycle);
 
 		//-------------------------------------------------------------
-		// ƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ•â•ã‘‚«
-		//! @tparam TImplementation ‹ïÛŒ^À‘•
-		//! @tparam TDeps         ˆË‘¶Œ^ƒŠƒXƒg
-		//! @param  args          [in] ˆË‘¶ƒCƒ“ƒXƒ^ƒ“ƒXƒŠƒXƒg
-		//! @return ¶¬‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @details Šù‚É“o˜^Ï‚İ‚Ìê‡‚Å‚àã‘‚«‚·‚éB–¢“o˜^‚Ìê‡‚ÍV‹K“o˜^‚Æ‚È‚éB
+		// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—è£œåŠ©ä¸Šæ›¸ã
+		//! @tparam TImplementation å…·è±¡å‹å®Ÿè£…
+		//! @tparam TDeps         ä¾å­˜å‹ãƒªã‚¹ãƒˆ
+		//! @param  args          [in] ä¾å­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒªã‚¹ãƒˆ
+		//! @return ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @details æ—¢ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆã§ã‚‚ä¸Šæ›¸ãã™ã‚‹ã€‚æœªç™»éŒ²ã®å ´åˆã¯æ–°è¦ç™»éŒ²ã¨ãªã‚‹ã€‚
 		//-------------------------------------------------------------
 		template<typename TInterface, typename TImplementation, typename... TDeps>
 		void replaceCtor(Lifecycle cycle_ = Lifecycle::Transient);
 
 		//-------------------------------------------------------------
-		// ƒCƒ“ƒXƒ^ƒ“ƒX“o˜^
-		//! @tparam TInterface ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @param  instance   [in] ‹ïÛŒ^ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @throws	 ResolveException Šù‚É“o˜^Ï‚İ‚Ìê‡
-		//! @details ƒVƒ“ƒOƒ‹ƒgƒ“‚Æ‚µ‚Ä“o˜^‚³‚ê‚é
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç™»éŒ²
+		//! @tparam TInterface æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @param  instance   [in] å…·è±¡å‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @throws	 ResolveException æ—¢ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆ
+		//! @details ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã¨ã—ã¦ç™»éŒ²ã•ã‚Œã‚‹
 		//-------------------------------------------------------------
 		template<typename TInterface>
 		void registerInstance(std::shared_ptr<TInterface> instance);
 
 		//-------------------------------------------------------------
-		// ƒCƒ“ƒXƒ^ƒ“ƒX“o˜^ã‘‚«
-		//! @tparam TInterface ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @param  instance   [in] ‹ïÛŒ^ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @details Šù‚É“o˜^Ï‚İ‚Ìê‡‚Å‚àã‘‚«‚·‚éB–¢“o˜^‚Ìê‡‚ÍV‹K“o˜^‚Æ‚È‚éB
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç™»éŒ²ä¸Šæ›¸ã
+		//! @tparam TInterface æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @param  instance   [in] å…·è±¡å‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @details æ—¢ã«ç™»éŒ²æ¸ˆã¿ã®å ´åˆã§ã‚‚ä¸Šæ›¸ãã™ã‚‹ã€‚æœªç™»éŒ²ã®å ´åˆã¯æ–°è¦ç™»éŒ²ã¨ãªã‚‹ã€‚
 		//-------------------------------------------------------------
 		template<typename TInterface>
 		void replaceInstance(std::shared_ptr<TInterface> instance);
 
 		//-------------------------------------------------------------
-		// Œ^‰ğŒˆizŠÂˆË‘¶ŒŸo•t‚«j
-		//! @tparam TInterface ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @return ‰ğŒˆ‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @throws ResolveException –¢“o˜^Œ^AzŠÂˆË‘¶A–¢’mƒ‰ƒCƒtƒTƒCƒNƒ‹‚Ìê‡
+		// å‹è§£æ±ºï¼ˆå¾ªç’°ä¾å­˜æ¤œå‡ºä»˜ãï¼‰
+		//! @tparam TInterface æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @return è§£æ±ºã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @throws ResolveException æœªç™»éŒ²å‹ã€å¾ªç’°ä¾å­˜ã€æœªçŸ¥ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã®å ´åˆ
 		//-------------------------------------------------------------
 		template<typename TInterface>
 		std::shared_ptr<TInterface> resolve();
 
 		//-------------------------------------------------------------
-		// Œ^‚ª“o˜^Ï‚İ‚©Šm”F
-		//! @tparam TInterface ’ŠÛŒ^ƒCƒ“ƒ^[ƒtƒF[ƒX
-		//! @return “o˜^Ï‚İ‚È‚ç trueA–¢“o˜^‚È‚ç false
+		// å‹ãŒç™»éŒ²æ¸ˆã¿ã‹ç¢ºèª
+		//! @tparam TInterface æŠ½è±¡å‹ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
+		//! @return ç™»éŒ²æ¸ˆã¿ãªã‚‰ trueã€æœªç™»éŒ²ãªã‚‰ false
 		//-------------------------------------------------------------
 		template<typename TInterface>
 		bool isRegistered() const;
 
 		//-------------------------------------------------------------
-		// ƒL[‚É‚æ‚éŒ^‰ğŒˆizŠÂˆË‘¶ŒŸo•t‚«j
-		//! @param  key  [in] Œ^‚ÌƒL[itype_indexj
-		//! @return  ‰ğŒˆ‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
-		//! @throws ResolveException –¢“o˜^Œ^AzŠÂˆË‘¶A–¢’mƒ‰ƒCƒtƒTƒCƒNƒ‹‚Ìê‡
+		// ã‚­ãƒ¼ã«ã‚ˆã‚‹å‹è§£æ±ºï¼ˆå¾ªç’°ä¾å­˜æ¤œå‡ºä»˜ãï¼‰
+		//! @param  key  [in] å‹ã®ã‚­ãƒ¼ï¼ˆtype_indexï¼‰
+		//! @return  è§£æ±ºã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+		//! @throws ResolveException æœªç™»éŒ²å‹ã€å¾ªç’°ä¾å­˜ã€æœªçŸ¥ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã®å ´åˆ
 		//-------------------------------------------------------------
 		std::shared_ptr<void> resolveByKey(const std::type_index& key);
 
 		//-------------------------------------------------------------
-		// ScopedContext ‚ğ¶¬
-		//! @return ScopedContext RAII ƒXƒR[ƒvƒIƒuƒWƒFƒNƒg
+		// ScopedContext ã‚’ç”Ÿæˆ
+		//! @return ScopedContext RAII ã‚¹ã‚³ãƒ¼ãƒ—ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 		//-------------------------------------------------------------
 		ScopedContext createScope();
 
@@ -199,140 +199,140 @@ namespace TsukinoDIContainer {
 
 		//---------------------------------------------------------
 		//! @struct Registration
-		//! @brief  “o˜^î•ñ\‘¢‘Ì
-		//! @details ƒ‰ƒCƒtƒTƒCƒNƒ‹‚Æƒtƒ@ƒNƒgƒŠŠÖ”‚ğ•Û
+		//! @brief  ç™»éŒ²æƒ…å ±æ§‹é€ ä½“
+		//! @details ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«ã¨ãƒ•ã‚¡ã‚¯ãƒˆãƒªé–¢æ•°ã‚’ä¿æŒ
 		//---------------------------------------------------------
 		struct Registration {
-			Lifecycle cycle_ = Lifecycle::Transient;												// ƒ‰ƒCƒtƒTƒCƒNƒ‹(ƒfƒtƒHƒ‹ƒg‚ÍTransient)
-			std::vector<std::type_index> deps_;														// ˆË‘¶Œ^ƒŠƒXƒgi‹ó‚È‚çˆø”‚È‚µj
-			std::function<std::shared_ptr<void>(const std::vector<std::shared_ptr<void>>&)> ctor_;	// ƒtƒ@ƒNƒgƒŠŠÖ”
+			Lifecycle cycle_ = Lifecycle::Transient;												// ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯Transient)
+			std::vector<std::type_index> deps_;														// ä¾å­˜å‹ãƒªã‚¹ãƒˆï¼ˆç©ºãªã‚‰å¼•æ•°ãªã—ï¼‰
+			std::function<std::shared_ptr<void>(const std::vector<std::shared_ptr<void>>&)> ctor_;	// ãƒ•ã‚¡ã‚¯ãƒˆãƒªé–¢æ•°
 		};
 
-		std::unordered_map<std::type_index, Registration> registrations_;				// “o˜^î•ñƒ}ƒbƒv
-		std::unordered_map<std::type_index, std::shared_ptr<void>> singletons_;			// ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒXƒ}ƒbƒv
-		mutable std::shared_mutex mutex_;												// ƒXƒŒƒbƒhƒZ[ƒt—pƒ~ƒ…[ƒeƒbƒNƒX
+		std::unordered_map<std::type_index, Registration> registrations_;				// ç™»éŒ²æƒ…å ±ãƒãƒƒãƒ—
+		std::unordered_map<std::type_index, std::shared_ptr<void>> singletons_;			// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒãƒƒãƒ—
+		mutable std::shared_mutex mutex_;												// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•ç”¨ãƒŸãƒ¥ãƒ¼ãƒ†ãƒƒã‚¯ã‚¹
 	};
 
 	//---------------------------------------------------------
 	//! @struct  ResolvingGuardTL
-	//! @brief   zŠÂˆË‘¶ŒŸo—pƒK[ƒhƒNƒ‰ƒXiƒXƒŒƒbƒhƒ[ƒJƒ‹j
-	//! @details ƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ÅƒXƒ^ƒbƒN‚ÉŒ^‚ğƒvƒbƒVƒ…AƒfƒXƒgƒ‰ƒNƒ^‚Åƒ|ƒbƒv
+	//! @brief   å¾ªç’°ä¾å­˜æ¤œå‡ºç”¨ã‚¬ãƒ¼ãƒ‰ã‚¯ãƒ©ã‚¹ï¼ˆã‚¹ãƒ¬ãƒƒãƒ‰ãƒ­ãƒ¼ã‚«ãƒ«ï¼‰
+	//! @details ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§ã‚¹ã‚¿ãƒƒã‚¯ã«å‹ã‚’ãƒ—ãƒƒã‚·ãƒ¥ã€ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§ãƒãƒƒãƒ—
 	//---------------------------------------------------------
 	struct ResolvingGuardTL {
-		std::type_index type_;	// ƒK[ƒh‘ÎÛ‚ÌŒ^
-		bool active_{ false };	// ƒK[ƒh‚ª—LŒø‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+		std::type_index type_;	// ã‚¬ãƒ¼ãƒ‰å¯¾è±¡ã®å‹
+		bool active_{ false };	// ã‚¬ãƒ¼ãƒ‰ãŒæœ‰åŠ¹ã‹ã©ã†ã‹ã®ãƒ•ãƒ©ã‚°
 
 		//---------------------------------------------------------
-		//! @brief  ƒRƒ“ƒXƒgƒ‰ƒNƒ^
-		//! @param  t  [in] ƒK[ƒh‘ÎÛ‚ÌŒ^
-		//! @throws ResolveException zŠÂˆË‘¶‚ªŒŸo‚³‚ê‚½ê‡
+		//! @brief  ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+		//! @param  t  [in] ã‚¬ãƒ¼ãƒ‰å¯¾è±¡ã®å‹
+		//! @throws ResolveException å¾ªç’°ä¾å­˜ãŒæ¤œå‡ºã•ã‚ŒãŸå ´åˆ
 		//---------------------------------------------------------
 		explicit ResolvingGuardTL(std::type_index t);
 
 		//---------------------------------------------------------
-		//! @brief  ƒfƒXƒgƒ‰ƒNƒ^
-		//! @details ƒXƒ^ƒbƒN‚©‚çŒ^‚ğƒ|ƒbƒv
+		//! @brief  ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+		//! @details ã‚¹ã‚¿ãƒƒã‚¯ã‹ã‚‰å‹ã‚’ãƒãƒƒãƒ—
 		//---------------------------------------------------------
 		~ResolvingGuardTL();
 	};
 
 } // namespace TsukinoDIContainer
 
-//À‘••”
+//å®Ÿè£…éƒ¨
 namespace TsukinoDIContainer
 {
 	//-------------------------------------------------------------
-	// ResolveExceptionƒNƒ‰ƒX‚ÌÀ‘•
+	// ResolveExceptionã‚¯ãƒ©ã‚¹ã®å®Ÿè£…
 	//-------------------------------------------------------------
 
 	//-------------------------------------------------------------
-	//! @brief  ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//! @brief  ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//-------------------------------------------------------------
 	inline ResolveException::ResolveException(const std::string& msg)
 		: std::runtime_error("TsukinoDIContainer Resolve Error: " + msg) {
 	}
 
 	//-------------------------------------------------------------
-	// ScopedContextƒNƒ‰ƒX‚ÌÀ‘•
+	// ScopedContextã‚¯ãƒ©ã‚¹ã®å®Ÿè£…
 	//-------------------------------------------------------------
 
 	//-------------------------------------------------------------
-	//! @brief  ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//! @brief  ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//-------------------------------------------------------------
 	inline ScopedContext::ScopedContext(Container& container)
 		: container_(container), active_(true) {
 	}
 
 	//-------------------------------------------------------------
-	//! @brief  ƒfƒXƒgƒ‰ƒNƒ^
+	//! @brief  ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//-------------------------------------------------------------
 	inline ScopedContext::~ScopedContext() {
-		scoped_instances_.clear(); // ©•ªê—p‚Ìƒ}ƒbƒv‚ğ”jŠü
+		scoped_instances_.clear(); // è‡ªåˆ†å°‚ç”¨ã®ãƒãƒƒãƒ—ã‚’ç ´æ£„
 	}
 
 	//-------------------------------------------------------------
-	//! @brief  ƒ€[ƒuƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//! @brief  ãƒ ãƒ¼ãƒ–ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//-------------------------------------------------------------
 	inline ScopedContext::ScopedContext(ScopedContext&& other) noexcept
 		: container_(other.container_), active_(std::exchange(other.active_, false)) {
 	}
 
 	//-------------------------------------------------------------
-	//! @brief   ˆË‘¶ŠÖŒW‚Ì‰ğŒˆ
+	//! @brief   ä¾å­˜é–¢ä¿‚ã®è§£æ±º
 	//-------------------------------------------------------------
 	template<typename TInterface>
 	std::shared_ptr<TInterface> ScopedContext::resolve() {
 		const auto type = std::type_index(typeid(TInterface));
 
-		// Šù‚ÉƒXƒR[ƒv“à‚É‘¶İ‚·‚éê‡‚Í‚»‚ê‚ğ•Ô‚·
+		// æ—¢ã«ã‚¹ã‚³ãƒ¼ãƒ—å†…ã«å­˜åœ¨ã™ã‚‹å ´åˆã¯ãã‚Œã‚’è¿”ã™
 		auto it = scoped_instances_.find(type);
 		if (it != scoped_instances_.end()) {
 			return std::static_pointer_cast<TInterface>(it->second);
 		}
-		// ƒRƒ“ƒeƒi‚É“o˜^‚³‚ê‚Ä‚¢‚é‚©Šm”F
+		// ã‚³ãƒ³ãƒ†ãƒŠã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã‹ç¢ºèª
 		if (!container_.isRegistered<TInterface>()) {
 			throw ResolveException("Type not registered in container: " + std::string(type.name()));
 		}
-		// “o˜^î•ñ‚ÌƒXƒiƒbƒvƒVƒ‡ƒbƒg‚ğæ“¾iƒƒbƒN•t‚«j
+		// ç™»éŒ²æƒ…å ±ã®ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆã‚’å–å¾—ï¼ˆãƒ­ãƒƒã‚¯ä»˜ãï¼‰
 		Container::Registration reg_copy;
 		{
 			std::shared_lock<std::shared_mutex> lock(container_.mutex_);
 			reg_copy = container_.registrations_.at(type);
 		}
-		// ˆË‘¶‚ğÄ‹A“I‚É‰ğŒˆ
+		// ä¾å­˜ã‚’å†å¸°çš„ã«è§£æ±º
 		std::vector<std::shared_ptr<void>> args;
 		args.reserve(reg_copy.deps_.size());
 		for (auto& depKey : reg_copy.deps_) {
 			args.push_back(container_.resolveByKey(depKey));
 		}
-		// ƒCƒ“ƒXƒ^ƒ“ƒX¶¬iƒƒbƒNŠOj
+		// ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç”Ÿæˆï¼ˆãƒ­ãƒƒã‚¯å¤–ï¼‰
 		auto instance = std::static_pointer_cast<TInterface>(reg_copy.ctor_(args));
-		// ƒXƒR[ƒv“à‚É•Û‘¶
+		// ã‚¹ã‚³ãƒ¼ãƒ—å†…ã«ä¿å­˜
 		scoped_instances_[type] = instance;
-		// ¶¬‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX‚ğ•Ô‚·
+		// ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’è¿”ã™
 		return instance;
 	}
 
 	//-------------------------------------------------------------
-	// ContainerƒNƒ‰ƒX‚ÌÀ‘•
+	// Containerã‚¯ãƒ©ã‚¹ã®å®Ÿè£…
 	//-------------------------------------------------------------
-	static thread_local std::vector<std::type_index> g_resolving_stack; // zŠÂˆË‘¶ŒŸo—pƒXƒ^ƒbƒN
+	static thread_local std::vector<std::type_index> g_resolving_stack; // å¾ªç’°ä¾å­˜æ¤œå‡ºç”¨ã‚¹ã‚¿ãƒƒã‚¯
 	//-------------------------------------------------------------
-	//! @brief Œ^“o˜^
+	//! @brief å‹ç™»éŒ²
 	//-------------------------------------------------------------
 	template<typename TInterface, typename TImplementation>
 	inline void Container::registerType(Lifecycle cycle_) {
-		std::unique_lock<std::shared_mutex> lock(mutex_); // ƒXƒŒƒbƒhƒZ[ƒt
-		// “o˜^Ï‚İŠm”F
+		std::unique_lock<std::shared_mutex> lock(mutex_); // ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•
+		// ç™»éŒ²æ¸ˆã¿ç¢ºèª
 		const auto type = std::type_index(typeid(TInterface));
 		if (registrations_.find(type) != registrations_.end()) {
-			// Šù‚É“o˜^Ï‚İ‚È‚ç—áŠOAã‘‚«‚µ‚½‚¢ê‡‚ÍReplace‚ğg—p‚³‚¹‚éB
+			// æ—¢ã«ç™»éŒ²æ¸ˆã¿ãªã‚‰ä¾‹å¤–ã€ä¸Šæ›¸ãã—ãŸã„å ´åˆã¯Replaceã‚’ä½¿ç”¨ã•ã›ã‚‹ã€‚
 			throw ResolveException("Type already registered: " + std::string(type.name()));
 		}
-		// “o˜^ˆ—
+		// ç™»éŒ²å‡¦ç†
 		registrations_[type] = {
 			cycle_,
-			{}, // ˆË‘¶‚È‚µ
+			{}, // ä¾å­˜ãªã—
 			[](const std::vector<std::shared_ptr<void>>&) {
 				return std::make_shared<TImplementation>();
 			}
@@ -340,74 +340,74 @@ namespace TsukinoDIContainer
 	}
 
 	//-------------------------------------------------------------
-	//! @brief Œ^“o˜^ã‘‚«
+	//! @brief å‹ç™»éŒ²ä¸Šæ›¸ã
 	//-------------------------------------------------------------
 	template<typename TInterface, typename TImplementation>
 	inline void Container::replaceType(Lifecycle cycle_) {
-		std::unique_lock<std::shared_mutex> lock(mutex_); // ƒXƒŒƒbƒhƒZ[ƒt
-		//Œ^‚ğƒnƒbƒVƒ…ƒL[‚Æ‚µ‚Äæ“¾
+		std::unique_lock<std::shared_mutex> lock(mutex_); // ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•
+		//å‹ã‚’ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼ã¨ã—ã¦å–å¾—
 		const auto type = std::type_index(typeid(TInterface));
-		// “o˜^ˆ—
+		// ç™»éŒ²å‡¦ç†
 		registrations_[type] = {
 			cycle_,
-			{}, // ˆË‘¶‚È‚µ
+			{}, // ä¾å­˜ãªã—
 			[](const std::vector<std::shared_ptr<void>>&) {
 				return std::make_shared<TImplementation>();
 			}
 		};
-		// ‹Œ Singleton ‚ğ•K‚¸”jŠüiŸ‰ñ‰ğŒˆ‚ÅV‹K¶¬j 
+		// æ—§ Singleton ã‚’å¿…ãšç ´æ£„ï¼ˆæ¬¡å›è§£æ±ºã§æ–°è¦ç”Ÿæˆï¼‰ 
 		singletons_.erase(type);
 	}
 
 	//-------------------------------------------------------------
-	//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ•â•
-	//! @tparam TImplementation ‹ïÛŒ^À‘•
-	//! @tparam TDeps         ˆË‘¶Œ^ƒŠƒXƒg
-	//! @param  args          [in] ˆË‘¶ƒCƒ“ƒXƒ^ƒ“ƒXƒŠƒXƒg
-	//! @param  I             ƒCƒ“ƒfƒbƒNƒXƒV[ƒPƒ“ƒX
-	//! @return ¶¬‚³‚ê‚½ƒCƒ“ƒXƒ^ƒ“ƒX
+	//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—è£œåŠ©
+	//! @tparam TImplementation å…·è±¡å‹å®Ÿè£…
+	//! @tparam TDeps         ä¾å­˜å‹ãƒªã‚¹ãƒˆ
+	//! @param  args          [in] ä¾å­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ãƒªã‚¹ãƒˆ
+	//! @param  I             ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚·ãƒ¼ã‚±ãƒ³ã‚¹
+	//! @return ç”Ÿæˆã•ã‚ŒãŸã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 	//-------------------------------------------------------------
 	template<typename TImplementation, typename... TDeps, std::size_t... I>
 	static std::shared_ptr<void> callCtorImpl(
 		const std::vector<std::shared_ptr<void>>& args,
 		std::index_sequence<I...>)
 	{
-		// ˆË‘¶ƒCƒ“ƒXƒ^ƒ“ƒX‚ğÃ“Iƒ|ƒCƒ“ƒ^ƒLƒƒƒXƒg‚µ‚ÄƒRƒ“ƒXƒgƒ‰ƒNƒ^‚É“n‚·
+		// ä¾å­˜ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’é™çš„ãƒã‚¤ãƒ³ã‚¿ã‚­ãƒ£ã‚¹ãƒˆã—ã¦ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã«æ¸¡ã™
 		return std::make_shared<TImplementation>(
 			std::static_pointer_cast<TDeps>(args[I])...
 		);
 	}
 
 	//-------------------------------------------------------------
-	//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ•â•
+	//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—è£œåŠ©
 	//-------------------------------------------------------------
 	template<typename TInterface, typename TImplementation, typename... TDeps>
 	inline void Container::registerCtor(Lifecycle cycle) {
-		std::unique_lock<std::shared_mutex> lock(mutex_);	// ƒXƒŒƒbƒhƒZ[ƒt
-		// Œ^‚ğƒnƒbƒVƒ…ƒL[‚Æ‚µ‚Äæ“¾
+		std::unique_lock<std::shared_mutex> lock(mutex_);	// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•
+		// å‹ã‚’ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼ã¨ã—ã¦å–å¾—
 		const auto type = std::type_index(typeid(TInterface));
-		//“o˜^Ï‚İ‚È‚ç—áŠO
+		//ç™»éŒ²æ¸ˆã¿ãªã‚‰ä¾‹å¤–
 		if (registrations_.find(type) != registrations_.end()) {
-			// Šù‚É“o˜^Ï‚İ‚È‚ç—áŠOAã‘‚«‚µ‚½‚¢ê‡‚ÍReplaceCtor‚ğg—p‚³‚¹‚éB
+			// æ—¢ã«ç™»éŒ²æ¸ˆã¿ãªã‚‰ä¾‹å¤–ã€ä¸Šæ›¸ãã—ãŸã„å ´åˆã¯ReplaceCtorã‚’ä½¿ç”¨ã•ã›ã‚‹ã€‚
 			throw ResolveException("Type already registered: " + std::string(type.name()));
 		}
-		// “o˜^ˆ—
+		// ç™»éŒ²å‡¦ç†
 		registrations_[type] = Registration{
-			cycle,								   // ƒ‰ƒCƒtƒTƒCƒNƒ‹	
-			{ std::type_index(typeid(TDeps))... }, // ˆË‘¶Œ^ƒŠƒXƒg
+			cycle,								   // ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«	
+			{ std::type_index(typeid(TDeps))... }, // ä¾å­˜å‹ãƒªã‚¹ãƒˆ
 			[](const std::vector<std::shared_ptr<void>>& args) {
 				return callCtorImpl<TImplementation, TDeps...>(
 					args, std::index_sequence_for<TDeps...>{});
 			}
 		};
-		// Singleton ‚Ìê‡‚ÍŒÃ‚¢ƒCƒ“ƒXƒ^ƒ“ƒX‚ğÁ‹
+		// Singleton ã®å ´åˆã¯å¤ã„ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’æ¶ˆå»
 		if (cycle == Lifecycle::Singleton) {
 			singletons_.erase(type);
 		}
 	}
 
 	//-------------------------------------------------------------
-	//! @brief ƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ•â•ã‘‚«
+	//! @brief ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—è£œåŠ©ä¸Šæ›¸ã
 	//-------------------------------------------------------------
 	template<typename TInterface, typename TImplementation, typename... TDeps>
 	inline void Container::replaceCtor(Lifecycle cycle_) {
@@ -421,52 +421,52 @@ namespace TsukinoDIContainer
 					args, std::index_sequence_for<TDeps...>{});
 			}
 		};
-		// ‹Œ Singleton ‚ğ•K‚¸”jŠü
+		// æ—§ Singleton ã‚’å¿…ãšç ´æ£„
 		singletons_.erase(type);
 	}
 
 	//-------------------------------------------------------------
-	//! @brief ƒCƒ“ƒXƒ^ƒ“ƒX“o˜^
+	//! @brief ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç™»éŒ²
 	//-------------------------------------------------------------
 	template<typename TInterface>
 	inline void Container::registerInstance(std::shared_ptr<TInterface> instance) {
-		std::unique_lock<std::shared_mutex> lock(mutex_); // ƒXƒŒƒbƒhƒZ[ƒt
-		// Œ^‚ğƒnƒbƒVƒ…ƒL[‚Æ‚µ‚Äæ“¾
+		std::unique_lock<std::shared_mutex> lock(mutex_); // ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•
+		// å‹ã‚’ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼ã¨ã—ã¦å–å¾—
 		const auto type = std::type_index(typeid(TInterface));
-		// “o˜^Ï‚İŠm”F
+		// ç™»éŒ²æ¸ˆã¿ç¢ºèª
 		if (registrations_.find(type) != registrations_.end()) {
-			// Šù‚É“o˜^Ï‚İ‚È‚ç—áŠOAã‘‚«‚µ‚½‚¢ê‡‚ÍReplaceInstance‚ğg—p‚³‚¹‚éB
+			// æ—¢ã«ç™»éŒ²æ¸ˆã¿ãªã‚‰ä¾‹å¤–ã€ä¸Šæ›¸ãã—ãŸã„å ´åˆã¯ReplaceInstanceã‚’ä½¿ç”¨ã•ã›ã‚‹ã€‚
 			throw ResolveException("Type already registered: " + std::string(type.name()));
 		}
-		// “o˜^ˆ—
+		// ç™»éŒ²å‡¦ç†
 		registrations_[type] = {
-			Lifecycle::Singleton,														// ƒ‰ƒCƒtƒTƒCƒNƒ‹
-			{},																			// ˆË‘¶‚È‚µ
-			[instance](const std::vector<std::shared_ptr<void>>&) { return instance; }	// ƒtƒ@ƒNƒgƒŠŠÖ”
+			Lifecycle::Singleton,														// ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«
+			{},																			// ä¾å­˜ãªã—
+			[instance](const std::vector<std::shared_ptr<void>>&) { return instance; }	// ãƒ•ã‚¡ã‚¯ãƒˆãƒªé–¢æ•°
 		};
-		singletons_[typeid(TInterface)] = instance;  // ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Æ‚µ‚Ä•Û‘¶
+		singletons_[typeid(TInterface)] = instance;  // ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¨ã—ã¦ä¿å­˜
 	}
 
 	//-------------------------------------------------------------
-	//! @brief ƒCƒ“ƒXƒ^ƒ“ƒX“o˜^ã‘‚«
+	//! @brief ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ç™»éŒ²ä¸Šæ›¸ã
 	//-------------------------------------------------------------
 	template<typename TInterface>
 	inline void Container::replaceInstance(std::shared_ptr<TInterface> instance) {
-		std::unique_lock<std::shared_mutex> lock(mutex_); // ƒXƒŒƒbƒhƒZ[ƒt
-		// Œ^‚ğƒnƒbƒVƒ…ƒL[‚Æ‚µ‚Äæ“¾
+		std::unique_lock<std::shared_mutex> lock(mutex_); // ã‚¹ãƒ¬ãƒƒãƒ‰ã‚»ãƒ¼ãƒ•
+		// å‹ã‚’ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼ã¨ã—ã¦å–å¾—
 		const auto type = std::type_index(typeid(TInterface));
-		// “o˜^ˆ—
+		// ç™»éŒ²å‡¦ç†
 		registrations_[type] = {
-			Lifecycle::Singleton,														// ƒ‰ƒCƒtƒTƒCƒNƒ‹
-			{},																			// ˆË‘¶‚È‚µ
-			[instance](const std::vector<std::shared_ptr<void>>&) { return instance; }	// ƒtƒ@ƒNƒgƒŠŠÖ”
+			Lifecycle::Singleton,														// ãƒ©ã‚¤ãƒ•ã‚µã‚¤ã‚¯ãƒ«
+			{},																			// ä¾å­˜ãªã—
+			[instance](const std::vector<std::shared_ptr<void>>&) { return instance; }	// ãƒ•ã‚¡ã‚¯ãƒˆãƒªé–¢æ•°
 		};
-		// ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX‚Æ‚µ‚Ä•Û‘¶
+		// ã‚·ãƒ³ã‚°ãƒ«ãƒˆãƒ³ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã¨ã—ã¦ä¿å­˜
 		singletons_[type] = instance;
 	}
 
 	//-------------------------------------------------------------
-	//! @brief Œ^‰ğŒˆizŠÂˆË‘¶ŒŸo•t‚«j
+	//! @brief å‹è§£æ±ºï¼ˆå¾ªç’°ä¾å­˜æ¤œå‡ºä»˜ãï¼‰
 	//-------------------------------------------------------------
 	template<typename TInterface>
 	inline std::shared_ptr<TInterface> Container::resolve() {
@@ -475,22 +475,22 @@ namespace TsukinoDIContainer
 	}
 
 	//-------------------------------------------------------------
-	//! @brief Œ^‚ª“o˜^Ï‚İ‚©Šm”F
+	//! @brief å‹ãŒç™»éŒ²æ¸ˆã¿ã‹ç¢ºèª
 	//-------------------------------------------------------------
 	template<typename TInterface>
 	inline bool Container::isRegistered() const {
-		std::shared_lock<std::shared_mutex> lock(mutex_); // “Ç‚İæ‚èê—pƒƒbƒN
-		// Œ^‚ğƒnƒbƒVƒ…ƒL[‚Æ‚µ‚Äæ“¾
+		std::shared_lock<std::shared_mutex> lock(mutex_); // èª­ã¿å–ã‚Šå°‚ç”¨ãƒ­ãƒƒã‚¯
+		// å‹ã‚’ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼ã¨ã—ã¦å–å¾—
 		const auto type = std::type_index(typeid(TInterface));
-		// “o˜^î•ñƒ}ƒbƒv‚É‘¶İ‚·‚é‚©Šm”F
+		// ç™»éŒ²æƒ…å ±ãƒãƒƒãƒ—ã«å­˜åœ¨ã™ã‚‹ã‹ç¢ºèª
 		return registrations_.find(type) != registrations_.end();
 	}
 
 	//-------------------------------------------------------------
-	//! @brief Œ^Á‹‚Å‚Ì“à•”‰ğŒˆƒwƒ‹ƒp[
+	//! @brief å‹æ¶ˆå»ã§ã®å†…éƒ¨è§£æ±ºãƒ˜ãƒ«ãƒ‘ãƒ¼
 	//-------------------------------------------------------------
 	inline std::shared_ptr<void> Container::resolveByKey(const std::type_index& key) {
-		// “o˜^Šm”F
+		// ç™»éŒ²ç¢ºèª
 		{
 			std::shared_lock<std::shared_mutex> lock(mutex_);
 			if (registrations_.find(key) == registrations_.end()) {
@@ -498,65 +498,65 @@ namespace TsukinoDIContainer
 			}
 		}
 
-		// RAII ƒK[ƒh‚Å push/pop ‚ğ©“®‰»
+		// RAII ã‚¬ãƒ¼ãƒ‰ã§ push/pop ã‚’è‡ªå‹•åŒ–
 		ResolvingGuardTL guard(key);
 
-		// “o˜^î•ñƒXƒiƒbƒvƒVƒ‡ƒbƒg
+		// ç™»éŒ²æƒ…å ±ã‚¹ãƒŠãƒƒãƒ—ã‚·ãƒ§ãƒƒãƒˆ
 		Registration reg_copy;
 		{
 			std::shared_lock<std::shared_mutex> lock(mutex_);
 			reg_copy = registrations_.at(key);
 		}
 
-		// Šù‘¶ Singleton ‚ª‚ ‚ê‚Î•Ô‚·
+		// æ—¢å­˜ Singleton ãŒã‚ã‚Œã°è¿”ã™
 		if (reg_copy.cycle_ == Lifecycle::Singleton) {
 			std::shared_lock<std::shared_mutex> lock(mutex_);
 			auto it = singletons_.find(key);
 			if (it != singletons_.end() && it->second) {
-				return it->second; // guard ‚ª©“®‚Å pop
+				return it->second; // guard ãŒè‡ªå‹•ã§ pop
 			}
 		}
 
-		// ˆË‘¶‚ğÄ‹A“I‚É‰ğŒˆ
+		// ä¾å­˜ã‚’å†å¸°çš„ã«è§£æ±º
 		std::vector<std::shared_ptr<void>> args;
 		args.reserve(reg_copy.deps_.size());
 		for (auto& depKey : reg_copy.deps_) {
 			args.push_back(resolveByKey(depKey));
 		}
 
-		// \’z
+		// æ§‹ç¯‰
 		std::shared_ptr<void> created = reg_copy.ctor_(args);
 
-		// Singleton ‚Ìê‡‚ÍƒLƒƒƒbƒVƒ…‚É•Û‘¶
+		// Singleton ã®å ´åˆã¯ã‚­ãƒ£ãƒƒã‚·ãƒ¥ã«ä¿å­˜
 		if (reg_copy.cycle_ == Lifecycle::Singleton) {
 			std::unique_lock<std::shared_mutex> lock(mutex_);
 			auto& slot = singletons_[key];
 			if (!slot) slot = created;
-			return slot; // guard ‚ª©“®‚Å pop
+			return slot; // guard ãŒè‡ªå‹•ã§ pop
 		}
 
-		// Scoped / Transient ‚Í‚»‚Ì‚Ü‚Ü•Ô‚·
-		return created; // guard ‚ª©“®‚Å pop
+		// Scoped / Transient ã¯ãã®ã¾ã¾è¿”ã™
+		return created; // guard ãŒè‡ªå‹•ã§ pop
 	}
 
 
 	//-------------------------------------------------------------
-	//! @brief ScopedContext‚ğ¶¬
+	//! @brief ScopedContextã‚’ç”Ÿæˆ
 	//-------------------------------------------------------------
 	inline ScopedContext Container::createScope() {
-		return ScopedContext(*this);	// ScopedContext ‚ğ•Ô‚·
+		return ScopedContext(*this);	// ScopedContext ã‚’è¿”ã™
 	}
 
 	//---------------------------------------------------------
-	// ResolvingGuardTLƒNƒ‰ƒX‚ÌÀ‘•
+	// ResolvingGuardTLã‚¯ãƒ©ã‚¹ã®å®Ÿè£…
 	//---------------------------------------------------------
 
 	//---------------------------------------------------------
-	//! @brief  ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	//! @brief  ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	//---------------------------------------------------------
-	ResolvingGuardTL::ResolvingGuardTL(std::type_index t)
+	inline ResolvingGuardTL::ResolvingGuardTL(std::type_index t)
 		: type_(t) {
-		// zŠÂˆË‘¶ŒŸo
+		// å¾ªç’°ä¾å­˜æ¤œå‡º
 		if (std::find(g_resolving_stack.begin(), g_resolving_stack.end(), type_) != g_resolving_stack.end()) {
 			std::string chain;
 			for (auto& x : g_resolving_stack) {
@@ -571,10 +571,10 @@ namespace TsukinoDIContainer
 	}
 
 	//---------------------------------------------------------
-	//! @brief  ƒfƒXƒgƒ‰ƒNƒ^
-	//! @details ƒXƒ^ƒbƒN‚©‚çŒ^‚ğƒ|ƒbƒv
+	//! @brief  ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
+	//! @details ã‚¹ã‚¿ãƒƒã‚¯ã‹ã‚‰å‹ã‚’ãƒãƒƒãƒ—
 	//---------------------------------------------------------
-	ResolvingGuardTL::~ResolvingGuardTL() {
+	inline ResolvingGuardTL::~ResolvingGuardTL() {
 		if (active_) {
 			g_resolving_stack.pop_back();
 		}
