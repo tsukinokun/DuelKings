@@ -6,6 +6,7 @@
 #include "ComponentSynergyUI.h"
 #include <System/UIComponent/ComponentTransformUI.h>
 #include <Game/AutoChess/system/FontBuffer.h>
+#include <Game/AutoChess/system/HlslppUseful.h>
 //---------------------------------------------------------------------------
 //! @brief	初期化関数
 //---------------------------------------------------------------------------
@@ -51,6 +52,65 @@ void ComponentSynergyUI::Init()
         }
     };
     SetProc("DrawSynergyUI", draw_proc, ProcTiming::UI, ProcPriority::NORMAL);
+}
+
+//---------------------------------------------------------------------------
+//! @brief	クリックされているかを返す関数
+//---------------------------------------------------------------------------
+bool ComponentSynergyUI::IsClick()
+{
+    //左クリックされていれば
+    if(IsMouseDown(MOUSE_INPUT_LEFT)) {
+        return IsMouseOver();    //マウスがボタンに触れているかを返す
+    }
+    return false;
+}
+//---------------------------------------------------------------------------
+//  マウスがボタンに触れているかを返す関数
+//! @return マウスがボタンに触れているか
+//---------------------------------------------------------------------------
+bool ComponentSynergyUI::IsMouseOver()
+{
+    // とりあえずオーナーを取得
+    auto owner = GetOwner();
+    //マウス座標を取得
+    float2 mouse_pos = GetMouseFloat2();
+    //オーナー(UI)座標を取得
+    float3 translate = owner->GetTranslate() + GetAdjustment();
+    float2 ui_pos    = float2(translate.x, translate.y);
+    //UIサイズを取得
+    float2 ui_size = float2(0.0f, 0.0f);      //とりあえず宣言
+    ui_size        = GetScreenImageSize();    //サイズ取得
+    if(CheckBoxPointHit(ui_pos, ui_size, mouse_pos)) {
+        return true;
+    }
+    return false;
+}
+
+//---------------------------------------------------------------------------
+//! @brief	画面にうつる画像のサイズを取得する関数
+//---------------------------------------------------------------------------
+float2 ComponentSynergyUI::GetScreenImageSize()
+{
+    float width = 0;                                  // 幅
+    float hight = 0;                                  //高さ
+    GetGraphSizeF(synergy_image_, &width, &hight);    // 画像のサイズを取得
+    auto   owner = GetOwner();                        //オーナーを取得
+    float3 scale = owner->GetScaleAxisXYZ();
+    //サイズは、Transformの平均
+    float size  = (scale.x + scale.y + scale.z) / 3.0f;    // 平均値をとる
+    width      *= size;                                    // 幅にサイズをかける
+    hight      *= size;                                    // 高さにサイズをかける
+    return float2(width, hight);                           // 画像のサイズをfloat2で返す
+}
+
+//---------------------------------------------------------------------------
+//!  マウスをクリックした時に行う処理の設定
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentSynergyUI> ComponentSynergyUI::SetClickFunc(const std::function<void()>& click_func)
+{
+    click_func_ = click_func;
+    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
 }
 
 //---------------------------------------------------------------------------

@@ -31,8 +31,8 @@ bool BootScene::Init()
     static SoundManager sound_manager_instance;
     //SoundManager に渡してロード
     SoundManager::instance()->LoadFromData(sound_data);
-    // 4. 必要なら起動時にBGMを再生
-    SoundManager::instance()->PlayBGM("setup");
+    //必要なら起動時にBGMを再生
+    //SoundManager::instance()->PlayBGM("setup");
     Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
     return true;
 }

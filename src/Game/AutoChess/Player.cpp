@@ -62,6 +62,7 @@ bool Player::Init()
             //ボードに変更があった場合の処理
             if(has_board_changes) {
                 synergy_system_.UpdateSynergys(board_info_);    //変更された駒があった場合はシナジー情報を更新
+                UpdateSynergysUI();                             //シナジーUIを更新
             }
 
             //ピーススタンドにもかける
@@ -90,43 +91,6 @@ bool Player::Init()
             }
         };
         SetProc("Update", update, ProcTiming::Update, ProcPriority::NORMAL);
-        //---------------------------------------------------------------------------------
-        // シナジーに合わせてUIを更新する処理
-        //---------------------------------------------------------------------------------
-        auto update_ui = [this]() {
-            //シナジー情報を取得
-            auto synergys = synergy_system_.GetSynergys();
-            //既存のシナジーUIを全て削除
-            for(auto& synergy_ui : Scene::Object::GetArray<UISynergy>()) {
-                Scene::Object::Release(synergy_ui);
-            }
-            //TODO: シナジー情報に合わせてUIを更新する処理
-            int synergy_index = 0;
-            for(auto& synergy : synergys) {
-                //IDを取得
-                SynergyID synergy_id = synergy.GetID();
-                //そのシナジーデータを取得
-                auto synergy_data = synergy_system_.GetSynergyData(synergy_id);
-                auto synergy_ui   = Scene::Object::Create<UISynergy>();
-                synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
-                synergy_ui->SetTranslate(float3(800.0f, 100.0f + (synergy_index * 100.0f), 0.0f));    //位置を右上あたりに設定
-                synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
-                //シナジーの数を取得
-                int synergy_count = synergy.GetSynergyCount();
-                synergy_ui->SetSynergyCount(synergy_count);    //シナジーの数を設定
-                int next_count = 0;                            // 次のレベルまでの必要数を計算
-                for(int i = 0; i < synergy_data->level_thresholds_.size(); i++) {
-                    //現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入してループを抜ける
-                    if(synergy_count < synergy_data->level_thresholds_[i]) {
-                        next_count = synergy_data->level_thresholds_[i];
-                        break;
-                    }
-                }
-                synergy_ui->SetNextCount(next_count);    //次のレベルまでの必要数を設定
-                synergy_index++;
-            }
-        };
-        SetProc("UpdateUI", update_ui, ProcTiming::Update, ProcPriority::NORMAL);
     }
     return true;
 }
@@ -283,8 +247,7 @@ void Player::SetIsPurchaseOpenFlag(bool* is_purchase_open)
 }
 
 //-----------------------------------------------------------
-// ピースを選択中かを返す関数
-//! @retval ピースを選択中ならtrue、そうでなければfalse
+//! @brief ピースを選択中かを返す関数
 //-----------------------------------------------------------
 bool Player::IsSelectingPiece() const
 {
@@ -292,6 +255,53 @@ bool Player::IsSelectingPiece() const
         return true;
     }
     return false;
+}
+
+//-----------------------------------------------------------
+//! @brief シナジー情報のUIを更新する関数
+//-----------------------------------------------------------
+void Player::UpdateSynergysUI()
+{
+    //シナジー情報を取得
+    auto synergys = synergy_system_.GetSynergys();
+    //既存のシナジーUIを全て削除
+    for(auto& synergy_ui : Scene::Object::GetArray<UISynergy>()) {
+        Scene::Object::Release(synergy_ui);
+    }
+    //TODO: シナジー情報に合わせてUIを更新する処理
+    int synergy_index = 0;
+    for(auto& synergy : synergys) {
+        //IDを取得
+        SynergyID synergy_id = synergy.GetID();
+        //そのシナジーデータを取得
+        auto synergy_data = synergy_system_.GetSynergyData(synergy_id);
+        auto synergy_ui   = Scene::Object::Create<UISynergy>();
+        synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
+        synergy_ui->SetTranslate(float3(800.0f + (synergy_index * 100.0f), 200.0f, 0.0f));    //位置を右上あたりに設定
+        synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
+        synergy_ui->SetScaleAxisXYZ(0.7f);
+        //シナジーの数を取得
+        int synergy_count = synergy.GetSynergyCount();
+        synergy_ui->SetSynergyCount(synergy_count);    //シナジーの数を設定
+        int next_count = 0;                            // 次のレベルまでの必要数を計算
+        for(int i = 0; i < synergy_data->level_thresholds_.size(); i++) {
+            //現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入してループを抜ける
+            if(synergy_count < synergy_data->level_thresholds_[i]) {
+                next_count = synergy_data->level_thresholds_[i];
+                break;
+            }
+        }
+        synergy_ui->SetNextCount(next_count);    //次のレベルまでの必要数を設定
+        synergy_index++;
+    }
+}
+
+//-----------------------------------------------------------
+//! @brief イベントバスのポインタを設定する関数
+//-----------------------------------------------------------
+void Player::SetEventBus(TsukinoEventBus::EventBus* event_bus)
+{
+    event_bus_ = event_bus;
 }
 
 //---------------------------------------------------------------------------------

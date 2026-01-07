@@ -55,10 +55,11 @@ bool InGameScene::Init()
     PieceFactory::SetSkillRepository(&game_context_.GetSkillRepository());
     PiecePool::Init(game_context_.GetPieceRepository());    //駒プールの初期化
     Scene::Object::Create<Camera>();                        //カメラ
-    auto player = Scene::Object::Create<Player>();          //プレイヤー
-    player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
-    player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
     auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+    auto player    = Scene::Object::Create<Player>();    //プレイヤー
+    player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
+    player->SetEventBus(event_bus.get());                 //イベントバスのポインタを設定
+    player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
     //---------------------------------------------------------------------------------
     //  ピーススタンドの生成
     //---------------------------------------------------------------------------------

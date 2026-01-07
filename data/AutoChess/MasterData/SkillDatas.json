@@ -4,183 +4,183 @@
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "japanese_chess_pawn_skill_icon",
             "skill_component_name_": "JapaneseChessPawnSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½gï¿½Ì•ï¿½ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½10/15/20ï¿½ã¸ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½1ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½É‚ï¿½ï¿½Ì‹ï¿½Ö‚ÌUï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ê‚ï¿½2.5/3.5/4.5ï¿½bï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "’§”­",
+            "skill_description_": "©g‚Ì•¨—–hŒä‚ğ10/15/20ã¸‚³‚¹AüˆÍ1ƒ}ƒX“à‚Ì“G‚É‚±‚Ì‹î‚Ö‚ÌUŒ‚‚ğ‹­§‚³‚¹‚éBŒø‰Ê‚Í2.5/3.5/4.5•bŠÔ‘±‚·‚éB"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "japanese_chess_lance_skill_icon",
             "skill_component_name_": "JapaneseChessLanceSkill",
-            "skill_name_": "ï¿½Ëi",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É‚ï¿½ï¿½ï¿½Å‚ï¿½ß‚ï¿½ï¿½Gï¿½ÉŒï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä“Ëiï¿½ï¿½ï¿½Aï¿½qï¿½bï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½ï¿½50/75/100ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "“Ëi",
+            "skill_description_": "’¼üã‚É‚¢‚éÅ‚à‹ß‚¢“G‚ÉŒü‚©‚Á‚Ä“Ëi‚µAƒqƒbƒg‚µ‚½“G‚É50/75/100ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 5.0,
             "skill_icon_key_": "japanese_chess_knight_skill_icon",
             "skill_component_name_": "JapaneseChessKnightSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½@ï¿½eï¿½ğ”­Ë‚ï¿½ï¿½Aï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ï¿½100/150/200ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "’µ–ô",
+            "skill_description_": "–‚–@’e‚ğ”­Ë‚µAƒ‹[ƒgã‚Ì“G‘Sˆõ‚É100/150/200‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "japanese_chess_silver_skill_icon",
             "skill_component_name_": "JapaneseChessSilverSkill",
-            "skill_name_": "ï¿½_ï¿½ï¿½ï¿½ÌˆêŒ‚",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚É‘_ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½A400/600/800ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "_‘¬‚ÌˆêŒ‚",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚É‘_‚¢‚ğ‚Â‚¯A400/600/800‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 5.0,
             "skill_icon_key_": "japanese_chess_gold_skill_icon",
             "skill_component_name_": "JapaneseChessGoldSkill",
-            "skill_name_": "ï¿½_ï¿½oï¿½Sï¿½v",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“Gï¿½ï¿½Ì‚ï¿½200/250/300ï¿½ÌŒÅ’ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½gï¿½ÆˆÊ’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½"
+            "skill_name_": "_o‹S–v",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“Gˆê‘Ì‚É200/250/300‚ÌŒÅ’èƒ_ƒ[ƒW‚ğ—^‚¦A©g‚ÆˆÊ’u‚ğŒğŠ·‚·‚é"
         },
         {
             "max_cool_doen_time_": 8.0,
             "skill_icon_key_": "japanese_chess_bishop_skill_icon",
             "skill_component_name_": "JapaneseChessBishopSkill",
-            "skill_name_": "ï¿½ÕŒï¿½ï¿½g",
-            "skill_description_": "ï¿½ÕŒï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ÉÅ‘ï¿½ï¿½300/450/750ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "ÕŒ‚”g",
+            "skill_description_": "ÕŒ‚”g‚ğŒ‚‚¿Aƒ‹[ƒgã‚Ì“G‘Sˆõ‚ÉÅ‘å‚Å300/450/750‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 12.0,
             "skill_icon_key_": "japanese_chess_rook_skill_icon",
             "skill_component_name_": "JapaneseChessRookSkill",
-            "skill_name_": "ï¿½Ù‚ï¿½ï¿½Ì—ï¿½",
-            "skill_description_": "ï¿½Gï¿½Ì‹î‚»ï¿½ê‚¼ï¿½ï¿½É‘Î‚ï¿½ï¿½ÄA50%ï¿½ÌŠmï¿½ï¿½ï¿½ï¿½300/400/600ï¿½{ï¿½cï¿½ï¿½HPï¿½ï¿½15/25/35%ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "Ù‚«‚Ì—‹",
+            "skill_description_": "“G‚Ì‹î‚»‚ê‚¼‚ê‚É‘Î‚µ‚ÄA50%‚ÌŠm—¦‚Å300/400/600{c‚èHP‚Ì15/25/35%‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 5.0,
             "skill_icon_key_": "japanese_chess_king_skill_icon",
             "skill_component_name_": "JapaneseChessKingSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½3ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ï¿½100/175/250ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½3ï¿½}ï¿½Xï¿½ï¿½Ì–ï¿½ï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½HPï¿½ï¿½100/150/200ï¿½ñ•œ‚ï¿½ï¿½ï¿½B"
+            "skill_name_": "¶ˆ¬",
+            "skill_description_": "üˆÍ3ƒ}ƒX“à‚Ì“G‘Sˆõ‚É100/175/250‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦AüˆÍ3ƒ}ƒX“à‚Ì–¡•û‘Sˆõ‚ÌHP‚ğ100/150/200‰ñ•œ‚·‚éB"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "chess_pawn_skill_icon",
             "skill_component_name_": "ChessPawnSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½Êï¿½ï¿½3 / 4 / 6ï¿½{ï¿½ÌUï¿½ï¿½ï¿½ï¿½Gï¿½ï¿½Ì‚Ésï¿½ï¿½"
+            "skill_name_": "‹­Œ‚",
+            "skill_description_": "’Êí‚Ì3 / 4 / 6”{‚ÌUŒ‚‚ğ“Gˆê‘Ì‚És‚¤"
         },
         {
             "max_cool_doen_time_": 15.0,
             "skill_icon_key_": "chess_bishop_skill_icon",
             "skill_component_name_": "ChessBishopSkill",
-            "skill_name_": "ï¿½Å‚Ì‹Vï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½3ï¿½}ï¿½Xï¿½Ì–ï¿½ï¿½ï¿½ï¿½ï¿½1.5ï¿½bï¿½ï¿½ï¿½Æ‚ï¿½15/30/45ï¿½ñ•œ‚ï¿½sï¿½ï¿½ï¿½B"
+            "skill_name_": "ˆÅ‚Ì‹V®",
+            "skill_description_": "üˆÍ3ƒ}ƒX‚Ì–¡•û‚É1.5•b‚²‚Æ‚É15/30/45‰ñ•œ‚ğs‚¤B"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "chess_knight_skill_icon",
             "skill_component_name_": "ChessKnightSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½1ï¿½Ì‚ï¿½HPï¿½ï¿½200/400/720ï¿½ñ•œ‚ï¿½ï¿½Aï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½2ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ï¿½200/400/720ï¿½ÌŒÅ’ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "ô—ç",
+            "skill_description_": "–¡•û1‘Ì‚ÌHP‚ğ200/400/720‰ñ•œ‚µA‚»‚ÌüˆÍ2ƒ}ƒX“à‚Ì“G‘Sˆõ‚É200/400/720‚ÌŒÅ’èƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "chess_rool_skill_icon",
             "skill_component_name_": "ChessRookSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“Gï¿½ï¿½ï¿½jï¿½bï¿½g1ï¿½Ì‚ÉŒï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÄˆÚ“ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½2/3/4ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½sï¿½ï¿½"
+            "skill_name_": "•²Ó",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“Gƒ†ƒjƒbƒg1‘Ì‚ÉŒü‚©‚Á‚ÄˆÚ“®‚µA‚»‚Ì•ûŒü‚É2/3/4‰ñUŒ‚‚ğs‚¤"
         },
         {
             "max_cool_doen_time_": 12.0,
             "skill_icon_key_": "chess_king_skill_icon",
             "skill_component_name_": "ChessKingSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚Ì‚ï¿½ï¿½ï¿½}ï¿½Xï¿½ï¿½ÎÛ‚É“İŠï¿½ï¿½Uï¿½è‚¨ï¿½ë‚µï¿½Aï¿½ï¿½ï¿½Ì”ï¿½ï¿½a2.5ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ï¿½200/300/500ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½1/1.5/2ï¿½bï¿½ÌƒXï¿½^ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "Œ —Í",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚Ì‚¢‚éƒ}ƒX‚ğ‘ÎÛ‚É“İŠí‚ğU‚è‚¨‚ë‚µA‚»‚Ì”¼Œa2.5ƒ}ƒX“à‚Ì“G‘Sˆõ‚É200/300/500‚Ì–‚–@ƒ_ƒ[ƒW‚Æ1/1.5/2•b‚ÌƒXƒ^ƒ“‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 20.0,
             "skill_icon_key_": "chess_queen_skill_icon",
             "skill_component_name_": "ChessQueenSkill",
-            "skill_name_": "ï¿½uï¿½ï¿½ï¿½bï¿½Nï¿½zï¿½[ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½a3ï¿½}ï¿½Xï¿½ÍˆÍ‚Ìƒuï¿½ï¿½ï¿½bï¿½Nï¿½zï¿½[ï¿½ï¿½ï¿½ï¿½İ’uï¿½ï¿½ï¿½Aï¿½ÍˆÍ“ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½É–ï¿½ï¿½bï¿½Å‘ï¿½HPï¿½ï¿½4/6/8%ï¿½ÌŒÅ’ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ê‚ï¿½8ï¿½bï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "ƒuƒ‰ƒbƒNƒz[ƒ‹",
+            "skill_description_": "”¼Œa3ƒ}ƒX”ÍˆÍ‚Ìƒuƒ‰ƒbƒNƒz[ƒ‹‚ğİ’u‚µA”ÍˆÍ“à‚Ì“G‘Sˆõ‚É–ˆ•bÅ‘åHP‚Ì4/6/8%‚ÌŒÅ’èƒ_ƒ[ƒW‚ğ—^‚¦‚éBŒø‰Ê‚Í8•bŠÔ‘±‚·‚éB"
         },
         {
             "max_cool_doen_time_": 5.0,
             "skill_icon_key_": "chaturang_padati_skill_icon",
             "skill_component_name_": "ChaturangaPadatiSkill",
-            "skill_name_": "ï¿½sï¿½Ó‘Å‚ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚ï¿½200/400/600ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½0.1ï¿½bï¿½Ô‚ÌƒXï¿½^ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "•sˆÓ‘Å‚¿",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚É200/400/600‚Ì–‚–@ƒ_ƒ[ƒW‚Æ0.1•bŠÔ‚ÌƒXƒ^ƒ“‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 8.0,
             "skill_icon_key_": "chaturang_asva_skill_icon",
             "skill_component_name_": "ChaturangaAsvaSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ï¿½ï¿½Ëi",
-            "skill_description_": "ï¿½Å‚ï¿½ï¿½ï¿½ï¿½ï¿½Gï¿½Ì”wï¿½ï¿½ÉˆÚ“ï¿½ï¿½ï¿½ï¿½Aï¿½Ú“ï¿½ï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½É‚ï¿½ï¿½ï¿½Gï¿½Sï¿½ï¿½ï¿½ï¿½150/250/350ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½1.5ï¿½bï¿½ÌƒXï¿½^ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "¾•—“Ëi",
+            "skill_description_": "Å‚à‰“‚¢“G‚Ì”wŒã‚ÉˆÚ“®‚µAˆÚ“®ƒ‹[ƒgã‚É‚¢‚é“G‘Sˆõ‚É150/250/350‚Ì–‚–@ƒ_ƒ[ƒW‚Æ1.5•b‚ÌƒXƒ^ƒ“‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 5.0,
             "skill_icon_key_": "chaturang_gaja_skill_icon",
             "skill_component_name_": "ChaturangaGajaSkill",
-            "skill_name_": "ï¿½ï¿½nï¿½Ì“{ï¿½ï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚ï¿½100/200/300ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½2/3/4ï¿½bï¿½Ô‚ÌƒXï¿½^ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½"
+            "skill_name_": "‘å’n‚Ì“{‚è",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚É100/200/300‚Ì–‚–@ƒ_ƒ[ƒW‚Æ2/3/4•bŠÔ‚ÌƒXƒ^ƒ“‚ğ—^‚¦‚é"
         },
         {
             "max_cool_doen_time_": 20.0,
             "skill_icon_key_": "chaturang_mantri_skill_icon",
             "skill_component_name_": "ChaturangaMantriSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½_ï¿½xï¿½z",
-            "skill_description_": "0.25ï¿½bï¿½ï¿½ï¿½Æ‚Éï¿½ï¿½ï¿½3ï¿½}ï¿½Xï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚ï¿½15/20/30ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½gï¿½ï¿½HPï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½Æ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ•œ‚ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ê‚ï¿½5ï¿½bï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "¸_x”z",
+            "skill_description_": "0.25•b‚²‚Æ‚ÉüˆÍ3ƒ}ƒX“à‚Ìƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚É15/20/30‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦A©g‚ÌHP‚ğ—^‚¦‚½ƒ_ƒ[ƒW‚Æ“¯‚¶‚¾‚¯‰ñ•œ‚·‚éBŒø‰Ê‚Í5•bŠÔ‘±‚·‚éB"
         },
         {
             "max_cool_doen_time_": 20.0,
             "skill_icon_key_": "chaturang_ratha_skill_icon",
             "skill_component_name_": "ChaturangaRathaSkill",
-            "skill_name_": "ï¿½cï¿½s",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½3/5/6ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½Sï¿½ï¿½ï¿½ï¿½100/200/300ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½2/2.5/3.5ï¿½bï¿½ÌƒXï¿½^ï¿½ï¿½ï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "c‹s",
+            "skill_description_": "üˆÍ3/5/6ƒ}ƒX“à‚Ì“G‘Sˆõ‚É100/200/300‚Ì–‚–@ƒ_ƒ[ƒW‚Æ2/2.5/3.5•b‚ÌƒXƒ^ƒ“‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 15.0,
             "skill_icon_key_": "chaturang_raja_skill_icon",
             "skill_component_name_": "ChaturangaRajaSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½ÌˆĞŒï¿½",
-            "skill_description_": "ï¿½Oï¿½ï¿½ï¿½ÉŒï¿½ï¿½ï¿½ï¿½ğ”­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½[ï¿½gï¿½ï¿½É‚ï¿½ï¿½ï¿½Gï¿½Ì‹ï¿½ï¿½100/150/200ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½Bï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½Í–ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½Â‚É‚Â‚ï¿½30/45/60ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "‰¤‚ÌˆĞŒµ",
+            "skill_description_": "‘O•û‚ÉŒõü‚ğ”­¶‚³‚¹Aƒ‹[ƒgã‚É‚¢‚é“G‚Ì‹î‚É100/150/200‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éBƒ_ƒ[ƒW‚Í–½’†‚µ‚½‹î1ŒÂ‚É‚Â‚«30/45/60‘‰Á‚·‚éB"
         },
         {
             "max_cool_doen_time_": 8.0,
             "skill_icon_key_": "makruk_bia_skill_icon",
             "skill_component_name_": "MakrukBiaSkill",
-            "skill_name_": "ï¿½vï¿½bï¿½Vï¿½ï¿½",
-            "skill_description_": "ï¿½Å‚ï¿½ß‚ï¿½ï¿½G1ï¿½Ì‚ï¿½100/200/400ï¿½Ì•ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½mï¿½bï¿½Nï¿½oï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "ƒvƒbƒVƒ…",
+            "skill_description_": "Å‚à‹ß‚¢“G1‘Ì‚É100/200/400‚Ì•¨—ƒ_ƒ[ƒW‚ğ—^‚¦AƒmƒbƒNƒoƒbƒN‚³‚¹‚éB"
         },
         {
             "max_cool_doen_time_": 4.0,
             "skill_icon_key_": "makruk_met_skill_icon",
             "skill_component_name_": "MakrukMetSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½H",
-            "skill_description_": "ï¿½Å‚ï¿½ß‚ï¿½ï¿½G1ï¿½Ì‚Ì•ï¿½ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½20ï¿½bï¿½ï¿½15/30/45ï¿½á‰ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "•…H",
+            "skill_description_": "Å‚à‹ß‚¢“G1‘Ì‚Ì•¨—–hŒä‚ğ20•bŠÔ15/30/45’á‰º‚³‚¹‚éB"
         },
         {
             "max_cool_doen_time_": 7.0,
             "skill_icon_key_": "makruk_khon_skill_icon",
             "skill_component_name_": "MakrukKhonSkill",
-            "skill_name_": "ï¿½Aï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½Cï¿½h",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“G1ï¿½Ì‚É“Å‰tï¿½ğ—‚Ñ‚ï¿½ï¿½ï¿½B150/250/350ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½hï¿½ï¿½ï¿½10/20/30ï¿½á‰ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½Ê‚ï¿½5ï¿½bï¿½Ôï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "ƒAƒ‹ƒJƒƒCƒh",
+            "skill_description_": "ƒ‰ƒ“ƒ_ƒ€‚È“G1‘Ì‚É“Å‰t‚ğ—‚Ñ‚¹‚éB150/250/350‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦A•¨—–hŒä‚ğ10/20/30’á‰º‚³‚¹‚éBŒø‰Ê‚Í5•bŠÔ‘±‚·‚éB"
         },
         {
             "max_cool_doen_time_": 12.0,
             "skill_icon_key_": "makruk_ma_skill_icon",
             "skill_component_name_": "MakrukMaSkill",
-            "skill_name_": "ï¿½ï¿½ï¿½e",
-            "skill_description_": "HPï¿½ï¿½200/300/400ï¿½ñ•œ‚ï¿½ï¿½ï¿½B15ï¿½bï¿½Ô‚ÌŠÔAï¿½Uï¿½ï¿½ï¿½ÔŠuï¿½ï¿½0.7/0.6/0.5ï¿½É‚È‚ï¿½Aï¿½ï¿½ï¿½ï¿½4ï¿½}ï¿½Xï¿½ï¿½Ì“Gï¿½Ì•ï¿½ï¿½ï¿½ï¿½hï¿½ï¿½Í‚ï¿½4/7/10ï¿½á‰ºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "Œ¶‰e",
+            "skill_description_": "HP‚ğ200/300/400‰ñ•œ‚·‚éB15•bŠÔ‚ÌŠÔAUŒ‚ŠÔŠu‚ª0.7/0.6/0.5‚É‚È‚èAüˆÍ4ƒ}ƒX“à‚Ì“G‚Ì•¨—–hŒä—Í‚ğ4/7/10’á‰º‚³‚¹‚éB"
         },
         {
             "max_cool_doen_time_": 10.0,
             "skill_icon_key_": "makruk_rua_skill_icon",
             "skill_component_name_": "MakrukRuaSkill",
-            "skill_name_": "ï¿½×’mï¿½\\ï¿½s",
-            "skill_description_": "10/15/25ï¿½ï¿½Aï¿½Å‚ï¿½ß‚ï¿½ï¿½Gï¿½ï¿½175/250/350ï¿½Ì•ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "×’m–\\‹s",
+            "skill_description_": "10/15/25‰ñAÅ‚à‹ß‚¢“G‚É175/250/350‚Ì•¨—ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         },
         {
             "max_cool_doen_time_": 4.0,
             "skill_icon_key_": "makruk_khun_skill_icon",
             "skill_component_name_": "MakrukKhunSkill",
-            "skill_name_": "ï¿½Iï¿½ï¿½Ìï¿½",
-            "skill_description_": "ï¿½ï¿½ï¿½ï¿½5ï¿½}ï¿½Xï¿½Ì“Gï¿½ï¿½MPï¿½ï¿½50/75/100ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½200/267/300%ï¿½Ì–ï¿½ï¿½@ï¿½_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½B"
+            "skill_name_": "Ià‚Ì",
+            "skill_description_": "üˆÍ5ƒ}ƒX‚Ì“G‚ÌMP‚ğ50/75/100ö”­‚³‚¹Aö”­‚µ‚½•ª‚Ì200/267/300%‚Ì–‚–@ƒ_ƒ[ƒW‚ğ—^‚¦‚éB"
         }
     ]
 }
