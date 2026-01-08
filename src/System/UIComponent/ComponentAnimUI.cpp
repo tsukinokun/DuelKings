@@ -27,7 +27,7 @@ void ComponentAnimUI::Init()
             Reset();    //もしずらした先が画像サイズをはみ出ていたら1毎目に戻す
         }
     };
-    SetProc("Update", update, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("Update", update, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
     //---------------------------------------------------------------------------
     //  UI描画を登録
     //---------------------------------------------------------------------------
@@ -45,7 +45,7 @@ void ComponentAnimUI::Init()
                            img_,
                            TRUE);
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 //---------------------------------------------------------------------------
 //! @brief	ImGui

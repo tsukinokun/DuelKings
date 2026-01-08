@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <System/Scene.h>
 #include <System/Component/Component.h>
-
+#include <Game/AutoChess/Synergy/SynergyData.h>
 USING_PTR(ComponentSynergyUI);
 
 class ComponentSynergyUI : public Component
@@ -62,6 +62,12 @@ public:
     //--------------------------------------------------------------------
     std::shared_ptr<ComponentSynergyUI> SetSynergyCount(int synergy_count);
 
+    //--------------------------------------------------------------------
+    // シナジーデータへのポインタを設定する関数
+    //! @param synergy_data シナジーデータへのポインタ
+    //--------------------------------------------------------------------
+    void SetSynergyData(const SynergyData* synergy_data);
+
     //! @}
 private:
     //--------------------------------------------------------------------
@@ -71,6 +77,7 @@ private:
     float3 GetAdjustment() const;
 
 private:
+    const SynergyData*    synergy_data_  = nullptr;                    //!< シナジーデータへのポインタ
     int                   synergy_image_ = -1;                         //!< シナジー画像ID
     int                   max_level_     = 0;                          //!< シナジー最大値
     int                   level_         = 0;                          //!< シナジーレベル

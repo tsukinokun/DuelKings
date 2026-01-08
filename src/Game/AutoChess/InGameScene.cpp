@@ -1041,6 +1041,54 @@ bool InGameScene::Init()
         auto skill_click_event_handle = event_bus->subscribe<SkillClickEvent>(skill_click_event, 0);
         event_handles_.push_back(std::move(skill_click_event_handle));
     }
+    //---------------------------------------------------------------------------------
+    // シナジー情報のUI作成
+    //---------------------------------------------------------------------------------
+    {
+        std::vector<std::shared_ptr<Object>> synergy_ui_objects;    //シナジー情報UIオブジェクト群
+        //---------------------------------------------------------------------------------
+        // シナジー情報背景UI
+        //---------------------------------------------------------------------------------
+        auto synergy_info_back = Scene::Object::Create<UIImage>();
+        //synergy_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        synergy_info_back->SetImage(ImageBuffer::GetImageHandle("piece_detail_back"));
+        synergy_info_back->SetIsFilter(true);                             //フィルターに設定
+        synergy_info_back->SetTranslate(float3(900.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
+        synergy_info_back->SetAlpha(128);                                 //透明度を設定
+        synergy_info_back->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        synergy_info_back->SetScaleAxisXYZ(1.5f);    //大きさを少し大さく設定
+        synergy_ui_objects.push_back(synergy_info_back);
+        //---------------------------------------------------------------------------------
+        // シナジー情報テキストUI
+        //---------------------------------------------------------------------------------
+        auto synergy_info_text = Scene::Object::Create<UIText>();
+        //synergy_info_text->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_text->SetTranslate(float3(900.0f, 150.0f, 0.0f));    //位置を左中央あたりに設定
+        synergy_info_text->SetFontName("游明朝");                         //フォントを設定
+        synergy_info_text->SetFontSize(22);                               //フォントサイズ設定
+        synergy_info_text->SetColor(GetColor(255, 255, 255));
+        synergy_info_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
+        synergy_ui_objects.push_back(synergy_info_text);
+        //---------------------------------------------------------------------------------
+        // シナジー情報更新処理の登録
+        //---------------------------------------------------------------------------------
+        for(auto& obj : synergy_ui_objects) {
+            auto skill_ui_update_proc = [obj, player]() {
+                //左クリックであれば
+                if(IsMouseOn(MOUSE_INPUT_LEFT)) {
+                    if(!UIHitManager::IsMouseHitUIFilter()) {
+                        //スキル詳細UI群の非表示
+                        obj->SetStatus(Object::StatusBit::NoDraw, true);
+                    }
+                }
+            };
+            // 処理を登録
+            obj->SetProc("skill_ui_update_proc", skill_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        }
+        //---------------------------------------------------------------------------------
+        // シナジーUIクリック時の処理登録
+        //---------------------------------------------------------------------------------
+    }
     return true;
 }
 
