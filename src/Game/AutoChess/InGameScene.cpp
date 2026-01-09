@@ -41,6 +41,8 @@
 #include <Game/AutoChess/Events/SkillClickEvent.h>
 #include <Game/AutoChess/Events/SynergyClickEvent.h>
 #include <Game/AutoChess/system/UIHitManager.h>
+#include <Game/AutoChess/Info/SynergyModifierData.h>
+#include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1052,7 +1054,7 @@ bool InGameScene::Init()
         // シナジー情報背景UI
         //---------------------------------------------------------------------------------
         auto synergy_info_back = Scene::Object::Create<UIImage>();
-        //synergy_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        synergy_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         synergy_info_back->SetImage(ImageBuffer::GetImageHandle("piece_detail_back"));
         synergy_info_back->SetIsFilter(true);                             //フィルターに設定
         synergy_info_back->SetTranslate(float3(900.0f, 300.0f, 0.0f));    //位置を左中央あたりに設定
@@ -1064,7 +1066,7 @@ bool InGameScene::Init()
         // シナジーの画像UI
         //---------------------------------------------------------------------------------
         auto synergy_info_image = Scene::Object::Create<UIImage>();
-        //synergy_info_image->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_image->SetStatus(Object::StatusBit::NoDraw, true);
         synergy_info_image->SetTranslate(float3(815.0f, 160.0f, 0.0f));
         synergy_info_image->SetScaleAxisXYZ(0.25f);    //大き
         synergy_info_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
@@ -1074,7 +1076,7 @@ bool InGameScene::Init()
         // シナジーの名前テキストUI
         //---------------------------------------------------------------------------------
         auto synergy_info_text = Scene::Object::Create<UIText>();
-        //synergy_info_text->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_text->SetStatus(Object::StatusBit::NoDraw, true);
         synergy_info_text->SetTranslate(float3(900.0f, 150.0f, 0.0f));    //位置を左中央あたりに設定
         synergy_info_text->SetFontName("游明朝");                         //フォントを設定
         synergy_info_text->SetFontSize(22);                               //フォントサイズ設定
@@ -1085,7 +1087,7 @@ bool InGameScene::Init()
         // シナジー説明文UI
         //---------------------------------------------------------------------------------
         auto synergy_info_description = Scene::Object::Create<UIText>();
-        //synergy_info_description->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_description->SetStatus(Object::StatusBit::NoDraw, true);
         synergy_info_description->SetTranslate(float3(1030.0f, 210.0f, 0.0f));    //位置を左中央あたりに設定
         synergy_info_description->SetFontName("游明朝");                          //フォントを設定
         synergy_info_description->SetFontSize(20);                                //フォントサイズ設定
@@ -1321,6 +1323,23 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // シナジーを付与
+                    //---------------------------------------------------------------------------------
+                    for(auto& active_synergy : player->GetActiveSynergy()) {
+                        int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
+                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        //レベルは3まで
+                        if(synergy_level > 3) {
+                            synergy_level = 3;
+                        }
+                        //レベルが1以上なら付与
+                        if(synergy_level >= 1) {
+                            auto instance = SynergyModifierData::instance();
+                            auto mod_data = instance->GetModifierData(active_synergy.GetID());
+                            piece->AddComponent<ModifierStatus>(mod_data.at(synergy_level), 100.0f);    //応急処置で第二引数に大きい数を入れておく
+                        }
+                    }
                     //---------------------------------------------------------------------------------
                     // コリジョンを入れる
                     //---------------------------------------------------------------------------------

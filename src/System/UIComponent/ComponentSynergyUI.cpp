@@ -118,6 +118,10 @@ bool ComponentSynergyUI::IsMouseOver()
 {
     // とりあえずオーナーを取得
     auto owner = GetOwner();
+    // 描画しない設定なら触れていない
+    if(GetStatus(Component::StatusBit::NoDraw) || owner->GetStatus(Object::StatusBit::NoDraw)) {
+        return false;
+    }
     //マウス座標を取得
     float2 mouse_pos = GetMouseFloat2();
     //オーナー(UI)座標を取得

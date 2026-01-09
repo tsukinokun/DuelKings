@@ -332,6 +332,14 @@ void Agent::SetSynergySystemRepository(const SynergyRepository* synergy_reposito
     synergy_system_.SetRepository(synergy_repository, piece_repository);
 }
 
+//-----------------------------------------------------------
+//! @brief 発動中のシナジー効果を取得する関数
+//-----------------------------------------------------------
+std::vector<Synergy> Agent::GetActiveSynergy() const
+{
+    return synergy_system_.GetSynergys();
+}
+
 //---------------------------------------------------------------------------
 //! @brief  勝敗結果を更新する関数
 //---------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/system/SoundData.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
+#include <Game/AutoChess/Info/SynergyModifierData.h>
 #include <Game/AutoChess/InGameScene.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -14,7 +15,8 @@
 bool BootScene::Init()
 {
     __super::Init();
-    ImageBuffer::Init();    //画像バッファの初期化
+    static SynergyModifierData synergy_modifier_data_instance;    //シナジーモディファイアデータのシングルトン生成
+    ImageBuffer::Init();                                          //画像バッファの初期化
 
     //JSONファイルを開く
     std::ifstream ifs("data/AutoChess/MasterData/SoundDatas.json");
