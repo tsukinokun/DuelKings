@@ -29,6 +29,7 @@
 #include <Game/AutoChess/Component/PieceSkillUser.h>
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/UIObject/UISynergy.h>
 #include <Game/AutoChess/Piece/PieceData/PieceData.h>
 #include <Game/AutoChess/Piece/PieceData/LevelData.h>
 #include <Game/AutoChess/system/Logic.h>
@@ -38,6 +39,7 @@
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
 #include <Game/AutoChess/Events/SkillClickEvent.h>
+#include <Game/AutoChess/Events/SynergyClickEvent.h>
 #include <Game/AutoChess/system/UIHitManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -1059,7 +1061,17 @@ bool InGameScene::Init()
         synergy_info_back->SetScaleAxisXYZ(1.5f);    //大きさを少し大さく設定
         synergy_ui_objects.push_back(synergy_info_back);
         //---------------------------------------------------------------------------------
-        // シナジー情報テキストUI
+        // シナジーの画像UI
+        //---------------------------------------------------------------------------------
+        auto synergy_info_image = Scene::Object::Create<UIImage>();
+        //synergy_info_image->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_image->SetTranslate(float3(815.0f, 160.0f, 0.0f));
+        synergy_info_image->SetScaleAxisXYZ(0.25f);    //大き
+        synergy_info_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        synergy_ui_objects.push_back(synergy_info_image);
+
+        //---------------------------------------------------------------------------------
+        // シナジーの名前テキストUI
         //---------------------------------------------------------------------------------
         auto synergy_info_text = Scene::Object::Create<UIText>();
         //synergy_info_text->SetStatus(Object::StatusBit::NoDraw, true);
@@ -1070,6 +1082,19 @@ bool InGameScene::Init()
         synergy_info_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
         synergy_ui_objects.push_back(synergy_info_text);
         //---------------------------------------------------------------------------------
+        // シナジー説明文UI
+        //---------------------------------------------------------------------------------
+        auto synergy_info_description = Scene::Object::Create<UIText>();
+        //synergy_info_description->SetStatus(Object::StatusBit::NoDraw, true);
+        synergy_info_description->SetTranslate(float3(1030.0f, 210.0f, 0.0f));    //位置を左中央あたりに設定
+        synergy_info_description->SetFontName("游明朝");                          //フォントを設定
+        synergy_info_description->SetFontSize(20);                                //フォントサイズ設定
+        synergy_info_description->SetColor(GetColor(255, 255, 255));
+        synergy_info_description->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央
+        synergy_info_description->SetWrapWidth(250);
+        synergy_ui_objects.push_back(synergy_info_description);
+
+        //---------------------------------------------------------------------------------
         // シナジー情報更新処理の登録
         //---------------------------------------------------------------------------------
         for(auto& obj : synergy_ui_objects) {
@@ -1077,8 +1102,13 @@ bool InGameScene::Init()
                 //左クリックであれば
                 if(IsMouseOn(MOUSE_INPUT_LEFT)) {
                     if(!UIHitManager::IsMouseHitUIFilter()) {
-                        //スキル詳細UI群の非表示
+                        //シナジー詳細UI群の非表示
                         obj->SetStatus(Object::StatusBit::NoDraw, true);
+                        //シナジーアイコン群の表示
+                        auto synergies = Scene::Object::GetArray<UISynergy>();
+                        for(auto synergie : synergies) {
+                            synergie->SetStatus(Object::StatusBit::NoDraw, false);
+                        }
                     }
                 }
             };
@@ -1088,6 +1118,42 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // シナジーUIクリック時の処理登録
         //---------------------------------------------------------------------------------
+        auto synergy_ui_click_event = [synergy_info_back, synergy_info_text, synergy_info_image, synergy_info_description](const SynergyClickEvent& e) {
+            //---------------------------------------------------------------------------------
+            //シナジーアイコン群の非表示
+            //---------------------------------------------------------------------------------
+            auto synergies = Scene::Object::GetArray<UISynergy>();
+            for(auto synergie : synergies) {
+                synergie->SetStatus(Object::StatusBit::NoDraw, true);
+            }
+            //---------------------------------------------------------------------------------
+            // シナジー情報背景UIの表示
+            //---------------------------------------------------------------------------------
+            synergy_info_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
+            //---------------------------------------------------------------------------------
+            // シナジーの名前テキストUIの表示
+            //---------------------------------------------------------------------------------
+            synergy_info_text->SetStatus(Object::StatusBit::NoDraw, false);
+            synergy_info_text->SetText(e.synergy_data_->name_);
+            //---------------------------------------------------------------------------------
+            // シナジーの画像UIの表示
+            //---------------------------------------------------------------------------------
+            synergy_info_image->SetStatus(Object::StatusBit::NoDraw, false);
+            synergy_info_image->SetImage(ImageBuffer::GetImageHandle(e.synergy_data_->icon_path_));
+            //---------------------------------------------------------------------------------
+            // 説明文の作成
+            //---------------------------------------------------------------------------------
+            auto level_thresholds = e.synergy_data_->level_thresholds_;
+            synergy_info_description->SetStatus(Object::StatusBit::NoDraw, false);
+            std::string description;
+            for(int i = 0; i < level_thresholds.size(); i++) {
+                std::string level_description  = std::format("{}:{}", level_thresholds[i], (e.synergy_data_->descriptions_.at(i) + "\n"));
+                description                   += level_description;
+            }
+            synergy_info_description->SetText(description);
+        };
+        auto synergy_click_event_handle = event_bus->subscribe<SynergyClickEvent>(synergy_ui_click_event, 0);
+        event_handles_.push_back(std::move(synergy_click_event_handle));
     }
     return true;
 }
