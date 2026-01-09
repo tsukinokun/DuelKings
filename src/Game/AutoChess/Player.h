@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #pragma once
 #include <System/Scene.h>
+#include <TsukinoEventBus/TsukinoEventBus.hpp>
 #include "Agent.h"
 class ChessBoard;
 class Piece;
@@ -76,11 +77,23 @@ public:
     //-----------------------------------------------------------
     bool IsSelectingPiece() const;
 
+    //-----------------------------------------------------------
+    // シナジー情報のUIを更新する関数
+    //-----------------------------------------------------------
+    void UpdateSynergysUI();
+
+    //-----------------------------------------------------------
+    // イベントバスのポインタを設定する関数
+    //! @param event_bus [in] イベントバスのポインタ
+    //-----------------------------------------------------------
+    void SetEventBus(TsukinoEventBus::EventBus* event_bus);
+
     //@}
 private:
-    bool                   should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数
-    bool                   should_drop_piece_   = false;      //このフレームで、OnHitのドロップを行うか否かを保持する変数
-    std::shared_ptr<Piece> selected_piece_      = nullptr;    //選択されているピースデータのポインタ
-    PieceInfo*             selected_piece_info_ = nullptr;    //選択されているピース情報へのポインタ
-    bool*                  is_purchase_open_    = nullptr;    //ピース購入画面が開いているかどうかのフラグへのポインタ
+    bool                       should_select_piece_ = false;      //このフレームで、OnHitの選択を行うか否かを保持する変数
+    bool                       should_drop_piece_   = false;      //このフレームで、OnHitのドロップを行うか否かを保持する変数
+    std::shared_ptr<Piece>     selected_piece_      = nullptr;    //選択されているピースデータのポインタ
+    PieceInfo*                 selected_piece_info_ = nullptr;    //選択されているピース情報へのポインタ
+    bool*                      is_purchase_open_    = nullptr;    //ピース購入画面が開いているかどうかのフラグへのポインタ
+    TsukinoEventBus::EventBus* event_bus_           = nullptr;    // イベントバスのポインタ
 };

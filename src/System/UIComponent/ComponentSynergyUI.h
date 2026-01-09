@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <System/Scene.h>
 #include <System/Component/Component.h>
-
+#include <Game/AutoChess/Synergy/SynergyData.h>
 USING_PTR(ComponentSynergyUI);
 
 class ComponentSynergyUI : public Component
@@ -12,6 +12,31 @@ public:
     //! @{
     //	初期化処理
     void Init() override;
+
+    //---------------------------------------------------------------------------
+    //  クリックされているかを返す関数
+    //! @return クリックされているか
+    //---------------------------------------------------------------------------
+    bool IsClick();
+
+    //---------------------------------------------------------------------------
+    //  マウスがボタンに触れているかを返す関数
+    //! @return マウスがボタンに触れているか
+    //---------------------------------------------------------------------------
+    bool IsMouseOver();
+
+    //---------------------------------------------------------------------------
+    //  マウスをクリックした時に行う処理の設定
+    //! @param info [in] クリック時の関数
+    //! @return 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<ComponentSynergyUI> SetClickFunc(const std::function<void()>& click_func);
+
+    //---------------------------------------------------------------------------
+    //スクリーンにうつる画像の大きさを取得する関数
+    //! @retval スクリーンにうつる画像の大きさ
+    //---------------------------------------------------------------------------
+    float2 GetScreenImageSize();
 
     //ImGui
     void GUI() override;
@@ -37,6 +62,12 @@ public:
     //--------------------------------------------------------------------
     std::shared_ptr<ComponentSynergyUI> SetSynergyCount(int synergy_count);
 
+    //--------------------------------------------------------------------
+    // シナジーデータへのポインタを設定する関数
+    //! @param synergy_data シナジーデータへのポインタ
+    //--------------------------------------------------------------------
+    void SetSynergyData(const SynergyData* synergy_data);
+
     //! @}
 private:
     //--------------------------------------------------------------------
@@ -46,16 +77,19 @@ private:
     float3 GetAdjustment() const;
 
 private:
-    int         synergy_image_ = -1;                         //!< シナジー画像ID
-    int         max_level_     = 0;                          //!< シナジー最大値
-    int         level_         = 0;                          //!< シナジーレベル
-    int         next_count_    = 0;                          //!< 次のレベルまでの必要数
-    int         synergy_count_ = 0;                          //!< このシナジーを発動させている駒の数
-    std::string font_name_     = "Book Antiqua";             //フォントの名前
-    int         font_size_     = DEFAULT_FONT_SIZE;          //フォントサイズ
-    int         text_color_    = GetColor(255, 255, 255);    //文字の色
-    int         edge_color_    = 0;                          //文字の縁の色
-    int         edge_size_     = 1;                          //ふちの幅
+    const SynergyData*    synergy_data_  = nullptr;                    //!< シナジーデータへのポインタ
+    int                   synergy_image_ = -1;                         //!< シナジー画像ID
+    int                   max_level_     = 0;                          //!< シナジー最大値
+    int                   level_         = 0;                          //!< シナジーレベル
+    int                   next_count_    = 0;                          //!< 次のレベルまでの必要数
+    int                   synergy_count_ = 0;                          //!< このシナジーを発動させている駒の数
+    std::string           font_name_     = "Book Antiqua";             //フォントの名前
+    int                   font_size_     = DEFAULT_FONT_SIZE;          //フォントサイズ
+    int                   text_color_    = GetColor(255, 255, 255);    //文字の色
+    int                   edge_color_    = 0;                          //文字の縁の色
+    int                   edge_size_     = 1;                          //ふちの幅
+    std::function<void()> click_func_    = []() {};                    //ボタンをクリックしたときの処理
+
     //--------------------------------------------------------------------
     //! @name Cereal処理
     //--------------------------------------------------------------------

@@ -25,32 +25,54 @@ bool UISynergy::Init()
 //-------------------------------------------------
 //! @brief シナジー画像の設定関数
 //-------------------------------------------------
-std::shared_ptr<ComponentSynergyUI> UISynergy::SetSynergyImage(int image_handle)
+std::shared_ptr<UISynergy> UISynergy::SetSynergyImage(int image_handle)
 {
     if(auto synergy_comp = synergy_component_.lock()) {
         synergy_comp->SetSynergyImage(image_handle);    // 画像コンポーネントに画像を設定
     }
-    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+    return dynamic_pointer_cast<UISynergy>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief マウスをクリックした時に行う処理の設定
+//---------------------------------------------------------------------------
+std::shared_ptr<UISynergy> UISynergy::SetClickFunc(const std::function<void()>& click_func)
+{
+    if(auto synergy_comp = synergy_component_.lock()) {
+        synergy_comp->SetClickFunc(click_func);    // クリック時の関数を設定
+    }
+    return dynamic_pointer_cast<UISynergy>(shared_from_this());
 }
 
 //-------------------------------------------------
 //! @brief 次のレベルまでの必要数を設定する関数
 //-------------------------------------------------
-std::shared_ptr<ComponentSynergyUI> UISynergy::SetNextCount(int next_count)
+std::shared_ptr<UISynergy> UISynergy::SetNextCount(int next_count)
 {
     if(auto synergy_comp = synergy_component_.lock()) {
         synergy_comp->SetNextCount(next_count);    // 次のレベルまでの必要数を設定
     }
-    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+    return dynamic_pointer_cast<UISynergy>(shared_from_this());
 }
 
 //-------------------------------------------------
 //! @brief シナジーの数を設定する関数
 //-------------------------------------------------
-std::shared_ptr<ComponentSynergyUI> UISynergy::SetSynergyCount(int synergy_count)
+std::shared_ptr<UISynergy> UISynergy::SetSynergyCount(int synergy_count)
 {
     if(auto synergy_comp = synergy_component_.lock()) {
         synergy_comp->SetSynergyCount(synergy_count);    // シナジーの数を設定
     }
-    return dynamic_pointer_cast<ComponentSynergyUI>(shared_from_this());
+    return dynamic_pointer_cast<UISynergy>(shared_from_this());
+}
+
+//-------------------------------------------------
+//! @brief シナジーデータのポインタを設定する関数
+//-------------------------------------------------
+std::shared_ptr<UISynergy> UISynergy::SetSynergyData(const SynergyData* synergy_data)
+{
+    if(auto synergy_comp = synergy_component_.lock()) {
+        synergy_comp->SetSynergyData(synergy_data);    // シナジーデータのポインタを設定
+    }
+    return dynamic_pointer_cast<UISynergy>(shared_from_this());
 }

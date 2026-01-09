@@ -194,6 +194,12 @@ public:
     void SetSynergySystemRepository(const SynergyRepository* synergy_repository, const PieceRepository* piece_repository);
 
     //-----------------------------------------------------------
+    // 発動中のシナジー効果を取得する関数
+    //! @retval 発動中のシナジー効果の配列
+    //-----------------------------------------------------------
+    std::vector<Synergy> GetActiveSynergy() const;
+
+    //-----------------------------------------------------------
     // ダメージを受ける関数
     //! @param amount [in] ダメージ量
     //-----------------------------------------------------------
