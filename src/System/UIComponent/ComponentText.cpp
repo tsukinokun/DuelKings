@@ -81,7 +81,7 @@ void ComponentText::Init()
         }
         DxLib::SetFontSize(DEFAULT_FONT_SIZE);    //フォントサイズを元に戻す
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 
 //---------------------------------------------------------------------------

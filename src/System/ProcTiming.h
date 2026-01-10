@@ -150,6 +150,12 @@ public:
         proc_     = func;
     }
 
+    void SetPriority(ProcPriority prio)
+    {
+        priority_ = prio;
+        dirty_    = true;
+    }
+
     ProcTimingFunc& GetProc() { return proc_; }
 
     void SetAddProc(std::shared_ptr<Callable> func, ProcTiming timing, ProcPriority prio)

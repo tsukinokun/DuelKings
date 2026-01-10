@@ -40,9 +40,11 @@
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
 #include <Game/AutoChess/Events/SkillClickEvent.h>
 #include <Game/AutoChess/Events/SynergyClickEvent.h>
+#include <Game/AutoChess/Events/PiecePurchaseOpenClickEvent.h>
 #include <Game/AutoChess/system/UIHitManager.h>
 #include <Game/AutoChess/Info/SynergyModifierData.h>
 #include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
+#include <System/UIComponent/ComponentImage.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -750,6 +752,7 @@ bool InGameScene::Init()
         float x = WINDOW_W * 0.5f;
         float y = WINDOW_H * 0.5f;
         purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
+        //purchase_window_filter->GetComponent<ComponentImage>()->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
         purchase_window_objects.push_back(purchase_window_filter);    //購入画面のウィンドウ群に追加
     }
     //---------------------------------------------------------------------------------
@@ -915,7 +918,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
-        auto click_func                 = [this, purchase_window_objects]() {
+        auto click_func                 = [this, purchase_window_objects, event_bus]() {
             is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
             //ウィンドウ群に対して開閉処理を行う
             if(is_purchase_open_) {
@@ -930,6 +933,8 @@ bool InGameScene::Init()
                     obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
                 }
             }
+            //購入クリックイベントを発行
+            event_bus->publish(PiecePurchaseOpenClickEvent());
         };
         piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
     }

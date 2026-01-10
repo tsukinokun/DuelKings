@@ -249,6 +249,13 @@ public:
         return proc;
     }
 
+    SlotProc& SetPriority(std::string proc_name, ProcTiming timing = ProcTiming::Update, ProcPriority prio = ProcPriority::NORMAL)
+    {
+        auto& proc = GetProc(proc_name, timing);
+        proc.SetPriority(prio);
+        return proc;
+    }
+
     void ResetProc(std::string proc_name)
     {
         auto itr = proc_timings_.find(proc_name);

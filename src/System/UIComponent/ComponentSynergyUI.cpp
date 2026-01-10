@@ -56,7 +56,7 @@ void ComponentSynergyUI::Init()
             click_func_();    //クリック時の関数を実行
         }
     };
-    SetProc("ClickProc", click_proc, ProcTiming::Update, static_cast<ProcPriority>(NONE));
+    SetProc("ClickProc", click_proc, ProcTiming::Update, static_cast<ProcPriority>(NORMAL));
 
     //---------------------------------------------------------------------------
     // 描画処理の追加
