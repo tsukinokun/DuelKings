@@ -55,8 +55,8 @@ public:
                     // DirectX11では構造化バッファを頂点バッファで利用できない
                     // 代わりにByteAddressBufferでバインドします。
                     D3D11_BUFFER_DESC desc{
-                        .ByteWidth           = sizeof(float4) * vertex_count,                            // バッファーのサイズ (バイト単位)
-                        .Usage               = D3D11_USAGE_DEFAULT,                                      // メモリの配置場所 (読み取りと書き込み方法)
+                        .ByteWidth           = sizeof(float4) * vertex_count,    // バッファーのサイズ (バイト単位)
+                        .Usage               = D3D11_USAGE_DEFAULT,              // メモリの配置場所 (読み取りと書き込み方法)
                         .BindFlags           = D3D11_BIND_STREAM_OUTPUT | D3D11_BIND_SHADER_RESOURCE,    // バインド用途
                         .CPUAccessFlags      = 0,                                                        // CPUアクセス許可フラグ (殆どの場合0)
                         .MiscFlags           = D3D11_RESOURCE_MISC_BUFFER_ALLOW_RAW_VIEWS,               // ByteAddressBuffer
@@ -197,9 +197,9 @@ bool Model::load(std::string_view path)
             static_cast<u32>(std::size(so_declaration_entry)),    // [in]  StreamOut用のバッファ出力レイアウト配列数
             strides.data(),                                       // [in]  バッファーストライドの配列
             static_cast<u32>(strides.size()),                     // [in]  バッファーストライドの配列数
-            D3D11_SO_NO_RASTERIZED_STREAM,                        // [in]  ラスタライザーステージに送信されるストリームのインデックス番号
-            nullptr,                                              // [in]  ID3D11ClassLinkageのポインタ
-            &d3d_shader_gs_streamout_position_);                  // [out] D3Dジオメトリシェーダー
+            D3D11_SO_NO_RASTERIZED_STREAM,          // [in]  ラスタライザーステージに送信されるストリームのインデックス番号
+            nullptr,                                // [in]  ID3D11ClassLinkageのポインタ
+            &d3d_shader_gs_streamout_position_);    // [out] D3Dジオメトリシェーダー
 
         if(hr != S_OK) {
             return false;
