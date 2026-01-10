@@ -22,10 +22,6 @@ void StatusEffectBase::Init()
         }
     };
     SetProc("remove_timer_proc", remove_timer_proc, ProcTiming::Update, ProcPriority::NORMAL);
-    //---------------------------------------------------------
-    // 同じコンポーネントを許容する
-    //---------------------------------------------------------
-    SetStatus(Component::StatusBit::SameType, true);
 }
 
 //---------------------------------------------------------------------------

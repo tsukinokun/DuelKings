@@ -48,7 +48,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_lance.png",
+            "icon_path_": "japanese_chess_lance_icon",
             "description_": "オーガメイジ",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
@@ -76,7 +76,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_knight.png",
+            "icon_path_": "japanese_chess_knight_icon",
             "description_": "ライトドラゴン",
             "attack_interval_": 1.5,
             "attack_range_": 2.0,
@@ -104,7 +104,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_silver.png",
+            "icon_path_": "japanese_chess_silver_icon",
             "description_": "ライフルマン",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,
@@ -132,7 +132,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_gold.png",
+            "icon_path_": "japanese_chess_gold_icon",
             "description_": "宝石マジシャン",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
@@ -160,7 +160,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_bishop.png",
+            "icon_path_": "japanese_chess_bishop_icon",
             "description_": "亀乗りの長老",
             "attack_interval_": 1.5,
             "attack_range_": 4.0,
@@ -188,7 +188,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_rook.png",
+            "icon_path_": "japanese_chess_rook_icon",
             "description_": "雷神",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
@@ -216,7 +216,7 @@
             "synergies_": [
                 0
             ],
-            "icon_path_": "icons/shogi_king.png",
+            "icon_path_": "japanese_chess_king_icon",
             "description_": "不死の教皇",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 3.0,
@@ -244,7 +244,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_pawn.png",
+            "icon_path_": "chess_pawn_icon",
             "description_": "セイウチボクサー",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
@@ -300,7 +300,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_knight.png",
+            "icon_path_": "chess_knight_icon",
             "description_": "羊の騎士",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 1.0,
@@ -328,7 +328,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_rook.png",
+            "icon_path_": "chess_rook_icon",
             "description_": "赤狐の剣士",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
@@ -356,7 +356,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_king.png",
+            "icon_path_": "chess_king_icon",
             "description_": "海賊王",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
@@ -384,7 +384,7 @@
             "synergies_": [
                 1
             ],
-            "icon_path_": "icons/chess_queen.png",
+            "icon_path_": "chess_queen_icon",
             "description_": "闇のスピリット",
             "attack_interval_": 1.5,
             "attack_range_": 3.0,
@@ -412,7 +412,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_padati.png",
+            "icon_path_": "chaturanga_padati_icon",
             "description_": "ソ\ウルテイカー",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
@@ -440,7 +440,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_asva.png",
+            "icon_path_": "chaturanga_asva_icon",
             "description_": "スパイダークイーン",
             "attack_interval_": 1.5,
             "attack_range_": 1.0,
@@ -468,7 +468,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_gaja.png",
+            "icon_path_": "chaturanga_gaja_icon",
             "description_": "煉獄の騎士",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
@@ -496,7 +496,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_mantri.png",
+            "icon_path_": "chaturanga_mantri_icon",
             "description_": "大樹の賢者",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
@@ -524,7 +524,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_rata.png",
+            "icon_path_": "chaturanga_ratha_icon",
             "description_": "アクアハンター",
             "attack_interval_": 2.0,
             "attack_range_": 1.0,
@@ -552,7 +552,7 @@
             "synergies_": [
                 2
             ],
-            "icon_path_": "icons/chaturanga_raja.png",
+            "icon_path_": "chaturanga_raja_icon",
             "description_": "グリムタッチ",
             "attack_interval_": 1.399999976158142,
             "attack_range_": 3.0,
@@ -580,7 +580,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_bia.png",
+            "icon_path_": "makruk_bia_icon",
             "description_": "岩のスピリット",
             "attack_interval_": 1.7999999523162842,
             "attack_range_": 1.0,
@@ -608,7 +608,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_met.png",
+            "icon_path_": "makruk_met_icon",
             "description_": "深海の守護者",
             "attack_interval_": 1.2000000476837159,
             "attack_range_": 1.0,
@@ -636,7 +636,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_khon.png",
+            "icon_path_": "makruk_khon_icon",
             "description_": "毒竜",
             "attack_interval_": 1.0,
             "attack_range_": 3.0,
@@ -664,7 +664,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_ma.png",
+            "icon_path_": "makruk_ma_icon",
             "description_": "とげの密猟者",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 1.0,
@@ -692,7 +692,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_ruea.png",
+            "icon_path_": "makruk_ruea_icon",
             "description_": "キャノングラニー",
             "attack_interval_": 1.2999999523162842,
             "attack_range_": 4.0,
@@ -720,7 +720,7 @@
             "synergies_": [
                 3
             ],
-            "icon_path_": "icons/makruk_khun.png",
+            "icon_path_": "makruk_khun_icon",
             "description_": "占星術師",
             "attack_interval_": 1.100000023841858,
             "attack_range_": 4.0,

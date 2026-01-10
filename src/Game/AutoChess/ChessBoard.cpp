@@ -53,6 +53,7 @@ bool ChessBoard::Init()
 //---------------------------------------------------------------------------------
 void ChessBoard::Draw()
 {
+    DxLib::SetUseLighting(FALSE);
     __super::Draw();
     for(int f = 0; f < FILE_HALF_; f++) {
         for(int r = 0; r < RANK_MAX_; r++) {
@@ -74,6 +75,7 @@ void ChessBoard::Draw()
             DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
         }
     }
+    DxLib::SetUseLighting(TRUE);
 }
 
 //---------------------------------------------------------------------------------
