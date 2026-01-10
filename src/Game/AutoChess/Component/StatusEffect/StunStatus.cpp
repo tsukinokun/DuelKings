@@ -20,4 +20,8 @@ void StunStatus::Construct(ObjectPtr owner, float effect_duration)
     __super::Construct(owner);
     effect_duration_ = effect_duration;
     effect_timer_    = 0.0f;
+    //---------------------------------------------------------
+    // 同じコンポーネントを許容する
+    //---------------------------------------------------------
+    SetStatus(Component::StatusBit::SameType, true);
 }

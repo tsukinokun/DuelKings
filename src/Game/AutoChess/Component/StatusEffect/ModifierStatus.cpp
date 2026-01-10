@@ -27,6 +27,10 @@ void ModifierStatus::Construct(ObjectPtr owner, const PieceStatusModifier& piece
     status_modifier_ = piece_modifier;
     effect_duration_ = effect_duration;
     effect_timer_    = 0.0f;
+    //---------------------------------------------------------
+    // 同じコンポーネントを許容する
+    //---------------------------------------------------------
+    SetStatus(Component::StatusBit::SameType, true);
 }
 
 //---------------------------------------------------------------------------

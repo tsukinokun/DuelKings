@@ -1328,7 +1328,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;

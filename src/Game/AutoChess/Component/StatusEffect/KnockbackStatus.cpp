@@ -32,4 +32,8 @@ void KnockbackStatus::Construct(ObjectPtr owner, float3 knockback_vector, float 
     knockback_vector_ = knockback_vector;
     effect_duration_  = effect_duration;
     effect_timer_     = 0.0f;
+    //---------------------------------------------------------
+    // 同じコンポーネントを許容する
+    //---------------------------------------------------------
+    SetStatus(Component::StatusBit::SameType, true);
 }

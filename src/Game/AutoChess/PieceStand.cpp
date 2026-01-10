@@ -54,6 +54,7 @@ bool PieceStand::Init()
 //---------------------------------------------------------------------------------
 void PieceStand::Draw()
 {
+    DxLib::SetUseLighting(FALSE);
     __super::Draw();
     for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
         int color = GetColor(255, 255, 255);
@@ -67,6 +68,7 @@ void PieceStand::Draw()
         float3 p2             = float3(x + SQUARE_HALF, 0.1f, SQUARE_HALF) + curr_translate;
         DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
     }
+    DxLib::SetUseLighting(TRUE);
 }
 
 //---------------------------------------------------------------------------------

@@ -100,42 +100,42 @@
         },
         {
             "max_cool_doen_time_": 5.0,
-            "skill_icon_key_": "chaturang_padati_skill_icon",
+            "skill_icon_key_": "chaturanga_padati_skill_icon",
             "skill_component_name_": "ChaturangaPadatiSkill",
             "skill_name_": "不意打ち",
             "skill_description_": "ランダムな敵1体に200/400/600の魔法ダメージと0.1秒間のスタンを与える。"
         },
         {
             "max_cool_doen_time_": 8.0,
-            "skill_icon_key_": "chaturang_asva_skill_icon",
+            "skill_icon_key_": "chaturanga_asva_skill_icon",
             "skill_component_name_": "ChaturangaAsvaSkill",
             "skill_name_": "疾風突進",
             "skill_description_": "最も遠い敵の背後に移動し、移動ルート上にいる敵全員に150/250/350の魔法ダメージと1.5秒のスタンを与える。"
         },
         {
             "max_cool_doen_time_": 5.0,
-            "skill_icon_key_": "chaturang_gaja_skill_icon",
+            "skill_icon_key_": "chaturanga_gaja_skill_icon",
             "skill_component_name_": "ChaturangaGajaSkill",
             "skill_name_": "大地の怒り",
             "skill_description_": "ランダムな敵1体に100/200/300の魔法ダメージと2/3/4秒間のスタンを与える"
         },
         {
             "max_cool_doen_time_": 20.0,
-            "skill_icon_key_": "chaturang_mantri_skill_icon",
+            "skill_icon_key_": "chaturanga_mantri_skill_icon",
             "skill_component_name_": "ChaturangaMantriSkill",
             "skill_name_": "精神支配",
             "skill_description_": "0.25秒ごとに周囲3マス内のランダムな敵1体に15/20/30の魔法ダメージを与え、自身のHPを与えたダメージと同じだけ回復する。効果は5秒間持続する。"
         },
         {
             "max_cool_doen_time_": 20.0,
-            "skill_icon_key_": "chaturang_ratha_skill_icon",
+            "skill_icon_key_": "chaturanga_ratha_skill_icon",
             "skill_component_name_": "ChaturangaRathaSkill",
             "skill_name_": "残虐",
             "skill_description_": "周囲3/5/6マス内の敵全員に100/200/300の魔法ダメージと2/2.5/3.5秒のスタンを与える。"
         },
         {
             "max_cool_doen_time_": 15.0,
-            "skill_icon_key_": "chaturang_raja_skill_icon",
+            "skill_icon_key_": "chaturanga_raja_skill_icon",
             "skill_component_name_": "ChaturangaRajaSkill",
             "skill_name_": "王の威厳",
             "skill_description_": "前方に光線を発生させ、ルート上にいる敵の駒に100/150/200の魔法ダメージを与える。ダメージは命中した駒1個につき30/45/60増加する。"
@@ -170,7 +170,7 @@
         },
         {
             "max_cool_doen_time_": 10.0,
-            "skill_icon_key_": "makruk_rua_skill_icon",
+            "skill_icon_key_": "makruk_ruea_skill_icon",
             "skill_component_name_": "MakrukRuaSkill",
             "skill_name_": "邪知暴\虐",
             "skill_description_": "10/15/25回、最も近い敵に175/250/350の物理ダメージを与える。"
