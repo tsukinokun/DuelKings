@@ -16,6 +16,8 @@ void ImageBuffer::Init()
     image_buffer_["piece_purchase_open_button"] = DxLib::LoadGraph("data/AutoChess/Image/PiecePurchaseOpenButton.png");    // ピース購入画面を開くUI画像
     image_buffer_["left_click_anim"]            = DxLib::LoadGraph("data/AutoChess/Image/LeftClickAnim.png");              // 左クリックアニメーション画像
     image_buffer_["exp_button"]                 = DxLib::LoadGraph("data/AutoChess/Image/EXPButton.png");                  // 経験値ボタン画像
+    image_buffer_["gold_icon"]                  = DxLib::LoadGraph("data/AutoChess/Image/GoldIcon.png");                   // ゴールドアイコン画像
+    image_buffer_["gold_detail_back"]           = DxLib::LoadGraph("data/AutoChess/Image/GoldDetailBack.png");             // ゴールド詳細背景画像
     image_buffer_["reroll_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Reroll.png");                     // リロールボタン画像
     image_buffer_["locked_button"]              = DxLib::LoadGraph("data/AutoChess/Image/Locked.png");                     // ロックボタン画像
     image_buffer_["unlocked_button"]            = DxLib::LoadGraph("data/AutoChess/Image/Unlocked.png");                   // アンロックボタン画像

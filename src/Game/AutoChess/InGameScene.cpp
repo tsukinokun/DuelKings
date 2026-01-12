@@ -45,6 +45,7 @@
 #include <Game/AutoChess/Info/SynergyModifierData.h>
 #include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
 #include <System/UIComponent/ComponentImage.h>
+#include <Game/AutoChess/Events/GoldClickEvent.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1213,6 +1214,237 @@ bool InGameScene::Init()
         };
         auto synergy_click_event_handle = event_bus->subscribe<SynergyClickEvent>(synergy_ui_click_event, 0);
         event_handles_.push_back(std::move(synergy_click_event_handle));
+    }
+    //---------------------------------------------------------------------------------
+    // 自分のgoldを表示するUI
+    //---------------------------------------------------------------------------------
+    {
+        //goldボタンUI
+        auto gold_ui = Scene::Object::Create<UIButton>();
+        gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        gold_ui->SetTranslate(float3(800.0f, 50.0f, 0.0f));    //位置を画面左上あたりに設定
+        gold_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+        gold_ui->SetScaleAxisXYZ(0.2f);    //大きさ
+        gold_ui->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //クリック時の処理
+        auto gold_click_func = [event_bus]() { event_bus->publish(GoldClickEvent()); };
+        gold_ui->SetClickFunc(gold_click_func);
+        //goldテキストUI
+        auto gold_text_ui = Scene::Object::Create<UIText>();
+        gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        gold_text_ui->SetTranslate(float3(830.0f, 50.0f, 0.0f));               //位置を画面左上あたりに設定
+        gold_text_ui->SetFontName("游明朝");                                   //フォントを設定
+        gold_text_ui->SetFontSize(24);                                         //フォントサイズ設定
+        gold_text_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+        gold_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
+        //gold更新処理
+        auto gold_update_proc = [gold_text_ui, player]() {
+            //gold情報UIに情報を設定
+            gold_text_ui->SetText(std::format("{}", player->GetGold()));
+        };
+        gold_text_ui->SetProc("update_gold_ui", gold_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // 購入画面を押したときにGoldUIを非表示にする処理登録
+        //---------------------------------------------------------------------------------
+        auto gold_ui_hide_proc = [gold_ui, gold_text_ui](const PiecePurchaseOpenClickEvent& e) {
+            if(e.is_open_) {
+                //購入画面が開かれたらGoldUIを非表示にする
+                gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
+                gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            }
+            else {
+                //購入画面が閉じられたらGoldUIを表示する
+                gold_ui->SetStatus(Object::StatusBit::NoDraw, false);
+                gold_text_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            }
+        };
+        auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(gold_ui_hide_proc, 0);
+        event_handles_.push_back(std::move(event_handle));
+    }
+    //---------------------------------------------------------------------------------
+    // Gold説明UI
+    //---------------------------------------------------------------------------------
+    {
+        std::vector<std::shared_ptr<UIObject>> gold_info_ui_objects;    //gold説明UIオブジェクト群
+        //説明の背景テキストUI
+        auto gold_info_back = Scene::Object::Create<UIImage>();
+        //gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        gold_info_back->SetImage(ImageBuffer::GetImageHandle("gold_detail_back"));
+        gold_info_back->SetAlpha(200);
+        gold_info_back->SetScaleAxisXYZ(2.0f);
+        gold_info_back->SetIsFilter(true);                                         //フィルターに設定
+        gold_info_back->SetTranslate(float3(WINDOW_W / 2, WINDOW_H / 2, 0.0f));    //位置を中央あたりに設定
+        gold_info_ui_objects.push_back(gold_info_back);
+        //予想収益と表示するテキストUI
+        auto gold_info_text = Scene::Object::Create<UIText>();
+        //gold_info_text->SetStatus(Object::StatusBit::NoDraw, true);                   //初期状態では非表示にしておく
+        gold_info_text->SetTranslate(float3(460.0f, 230.0f, 0.0f));    //位置を中央あたりに設定
+        gold_info_text->SetFontName("游明朝");                         //フォントを設定
+        gold_info_text->SetFontSize(22);                               //フォントサイズ設定
+        gold_info_text->SetColor(GetColor(255, 255, 255));
+        gold_info_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央
+        gold_info_text->SetText("予想収益");
+        gold_info_ui_objects.push_back(gold_info_text);
+        //基礎収益テキストUI
+        auto base_income_text = Scene::Object::Create<UIText>();
+        //base_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_text->SetTranslate(float3(440.0f, 280.0f, 0.0f));
+        base_income_text->SetFontName("游明朝");    //フォントを設定
+        base_income_text->SetFontSize(20);          //フォントサイズ設定
+        base_income_text->SetColor(GetColor(255, 255, 255));
+        base_income_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央
+        base_income_text->SetText("基礎");
+        gold_info_ui_objects.push_back(base_income_text);
+        //基礎収益予想テキストUI
+        auto base_income_detail_text = Scene::Object::Create<UIText>();
+        //base_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_detail_text->SetTranslate(float3(440.0f, 435.0f, 0.0f));
+        base_income_detail_text->SetFontName("游明朝");    //フォントを設定
+        base_income_detail_text->SetFontSize(16);          //フォントサイズ設定
+        base_income_detail_text->SetColor(GetColor(255, 255, 255));
+        base_income_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //
+        base_income_detail_text->SetText("+2");
+        gold_info_ui_objects.push_back(base_income_detail_text);
+        //利子収益テキストUI
+        auto interest_income_text = Scene::Object::Create<UIText>();
+        //interest_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_text->SetTranslate(float3(540.0f, 280.0f, 0.0f));
+        interest_income_text->SetFontName("游明朝");    //フォントを設定
+        interest_income_text->SetFontSize(20);          //フォントサイズ設定
+        interest_income_text->SetColor(GetColor(255, 255, 255));
+        interest_income_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央
+        interest_income_text->SetText("利子");
+        gold_info_ui_objects.push_back(interest_income_text);
+        //利子収益予想テキストUI
+        auto interest_income_detail_text = Scene::Object::Create<UIText>();
+        //interest_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_detail_text->SetTranslate(float3(540.0f, 435.0f, 0.0f));
+        interest_income_detail_text->SetFontName("游明朝");    //フォントを設定
+        interest_income_detail_text->SetFontSize(16);          //フォントサイズ設定
+        interest_income_detail_text->SetColor(GetColor(255, 255, 255));
+        interest_income_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        auto interest_income_update_proc = [interest_income_detail_text, player]() {
+            int player_gold     = player->GetGold();
+            int interest_income = std::min(player_gold / 10, 5);
+            interest_income_detail_text->SetText(std::format("+{}", interest_income));
+        };
+        interest_income_detail_text->SetProc("update_interest_income_ui", interest_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        gold_info_ui_objects.push_back(interest_income_detail_text);
+        //勝利ボーナステキストUI
+        auto win_bonus_text = Scene::Object::Create<UIText>();
+        //win_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_text->SetTranslate(float3(640.0f, 280.0f, 0.0f));
+        win_bonus_text->SetFontName("游明朝");    //フォントを設定
+        win_bonus_text->SetFontSize(20);          //フォントサイズ設定
+        win_bonus_text->SetColor(GetColor(255, 255, 255));
+        win_bonus_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央
+        win_bonus_text->SetText("勝利");
+        gold_info_ui_objects.push_back(win_bonus_text);
+        //勝利ボーナス予想テキストUI
+        auto win_bonus_detail_text = Scene::Object::Create<UIText>();
+        //win_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_detail_text->SetTranslate(float3(640.0f, 435.0f, 0.0f));
+        win_bonus_detail_text->SetFontName("游明朝");
+        win_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
+        win_bonus_detail_text->SetColor(GetColor(255, 255, 255));
+        win_bonus_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        win_bonus_detail_text->SetText("+1");
+        gold_info_ui_objects.push_back(win_bonus_detail_text);
+        //連勝ボーナステキストUI
+        auto win_streak_bonus_text = Scene::Object::Create<UIText>();
+        //win_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_streak_bonus_text->SetTranslate(float3(740.0f, 280.0f, 0.0f));
+        win_streak_bonus_text->SetFontName("游明朝");    //フォントを設定
+        win_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
+        win_streak_bonus_text->SetColor(GetColor(255, 255, 255));
+        win_streak_bonus_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        win_streak_bonus_text->SetText("連勝");
+        gold_info_ui_objects.push_back(win_streak_bonus_text);
+        //連勝ボーナス予想テキストUI
+        auto win_streak_bonus_detail_text = Scene::Object::Create<UIText>();
+        //win_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        win_streak_bonus_detail_text->SetTranslate(float3(740.0f, 435.0f, 0.0f));
+        win_streak_bonus_detail_text->SetFontName("游明朝");
+        win_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
+        win_streak_bonus_detail_text->SetColor(GetColor(255, 255, 255));
+        win_streak_bonus_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        gold_info_ui_objects.push_back(win_streak_bonus_detail_text);
+        //更新処理の登録
+        auto win_streak_income_update_proc = [win_streak_bonus_detail_text, player]() {
+            int win_streak = player->GetWinStreak();
+            int bonus      = 0;
+            if(win_streak >= 3) {
+                bonus = win_streak;
+            }
+            win_streak = std::min(win_streak, 5);
+            win_streak_bonus_detail_text->SetText(std::format("+{}", bonus));
+        };
+        win_streak_bonus_detail_text->SetProc("update_win_streak_income_ui", win_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //連敗ボーナステキストUI
+        auto loss_streak_bonus_text = Scene::Object::Create<UIText>();
+        //loss_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true
+        loss_streak_bonus_text->SetTranslate(float3(840.0f, 280.0f, 0.0f));
+        loss_streak_bonus_text->SetFontName("游明朝");    //フォント
+        loss_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
+        loss_streak_bonus_text->SetColor(GetColor(255, 255, 255));
+        loss_streak_bonus_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        loss_streak_bonus_text->SetText("連敗");
+        gold_info_ui_objects.push_back(loss_streak_bonus_text);
+        //連敗ボーナス予想テキストUI
+        auto loss_streak_bonus_detail_text = Scene::Object::Create<UIText>();
+        //loss_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        loss_streak_bonus_detail_text->SetTranslate(float3(840.0f, 435.0f, 0.0f));
+        loss_streak_bonus_detail_text->SetFontName("游明朝");
+        loss_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ
+        loss_streak_bonus_detail_text->SetColor(GetColor(255, 255, 255));
+        loss_streak_bonus_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        gold_info_ui_objects.push_back(loss_streak_bonus_detail_text);
+        //更新処理の登録
+        auto loss_streak_income_update_proc = [loss_streak_bonus_detail_text, player]() {
+            int loss_streak = player->GetLoseStreak();
+            int bonus       = 0;
+            if(loss_streak >= 3) {
+                bonus = loss_streak;
+            }
+            loss_streak = std::min(loss_streak, 5);
+            loss_streak_bonus_detail_text->SetText(std::format("+{}", bonus));
+        };
+        loss_streak_bonus_detail_text->SetProc("update_loss_streak_income_ui", loss_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //ゴールド画像UI
+        for(int i = 0; i < 5; i++) {
+            auto gold_info_icon = Scene::Object::Create<UIImage>();
+            //gold_info_icon->SetStatus(Object::StatusBit::NoDraw, true);
+            gold_info_icon->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+            gold_info_icon->SetScaleAxisXYZ(0.2f);
+            gold_info_icon->SetTranslate(float3(440.0f + i * 100.0f, 380.0f, 0.0f));
+            gold_info_ui_objects.push_back(gold_info_icon);
+        }
+        //---------------------------------------------------------------------------------
+        // goldUI群の非表示処理登録
+        //---------------------------------------------------------------------------------
+        for(auto& obj : gold_info_ui_objects) {
+            auto skill_ui_update_proc = [obj, player]() {
+                //左クリックであれば
+                if(IsMouseOn(MOUSE_INPUT_LEFT)) {
+                    if(!UIHitManager::IsMouseHitUIFilter()) {
+                        //スキル詳細UI群の非表示
+                        obj->SetStatus(Object::StatusBit::NoDraw, true);
+                    }
+                }
+            };
+            // 処理を登録
+            obj->SetProc("skill_ui_update_proc", skill_ui_update_proc, ProcTiming::PreUpdate, ProcPriority::NORMAL);
+        }
+        //---------------------------------------------------------------------------------
+        // Gold説明UIの表示処理登録
+        //---------------------------------------------------------------------------------
+        auto gold_click_proc = [gold_info_ui_objects, this](const GoldClickEvent& e) {
+            for(auto& obj : gold_info_ui_objects) {
+                obj->SetStatus(Object::StatusBit::NoDraw, false);
+            }
+        };
+        auto gold_info_event_handle = event_bus->subscribe<GoldClickEvent>(gold_click_proc, 0);
+        event_handles_.push_back(std::move(gold_info_event_handle));
     }
     return true;
 }
