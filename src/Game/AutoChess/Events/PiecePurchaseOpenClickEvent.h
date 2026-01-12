@@ -9,8 +9,14 @@
 class PiecePurchaseOpenClickEvent : public TsukinoEventBus::BaseEvent
 {
 public:
+    bool is_open_ = true;    // ピース購入画面が開いたかどうかのフラグ
+
     //---------------------------------------------------------------------------
     //! @brief コンストラクタ
+    //! @param is_open ピース購入画面が開いたかどうかのフラグ
     //---------------------------------------------------------------------------
-    PiecePurchaseOpenClickEvent() {}
+    PiecePurchaseOpenClickEvent(bool is_open)
+        : is_open_(is_open)
+    {
+    }
 };

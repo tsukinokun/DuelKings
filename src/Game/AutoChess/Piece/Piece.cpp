@@ -13,6 +13,7 @@
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <System/Component/ComponentCollisionCapsule.h>
+#include <system/UIComponent/ComponentImage.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -34,9 +35,13 @@ bool Piece::Init()
     {
         auto level_image = Scene::Object::Create<UIImage>();    //レベル表示用の画像オブジェクトを生成
         level_image->SetName("PieceLevelImage");
-        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));                          //レベル1の画像を設定
-        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);                   //中央に表示
-        level_image->SetScaleAxisXYZ(0.1f);                                                         //画像を小さくする
+        level_image->SetImage(ImageBuffer::GetImageHandle("level1_star"));           //レベル1の画像を設定
+        level_image->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央に表示
+        level_image->SetScaleAxisXYZ(0.1f);
+        auto image_comp = level_image->GetComponent<ComponentImage>();
+        image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::HIGH);
+
+        //画像を小さくする
         std::weak_ptr<Piece> weak_piece  = std::dynamic_pointer_cast<Piece>(shared_from_this());    // 自分の弱参照を取得
         auto                 update_proc = [level_image, this, weak_piece]() {
             //---------------------------------------------------------------------------------
