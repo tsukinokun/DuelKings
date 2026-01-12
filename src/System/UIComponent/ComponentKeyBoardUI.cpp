@@ -85,7 +85,7 @@ void ComponentKeyBoardUI::Init()
             DrawString(text_pos.x, text_pos.y, text_.data(), GetColor(0, 0, 0), GetColor(0, 0, 0));
         }
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 //---------------------------------------------------------------------------
 //! @brief	ImGui

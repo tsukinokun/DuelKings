@@ -58,7 +58,7 @@ void ComponentGauge::Init()
             DxLib::DrawLineBox(x1, y1, x2, y2, GetColor(0, 0, 0));
         }
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 
 //---------------------------------------------------------------------------

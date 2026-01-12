@@ -40,9 +40,11 @@
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
 #include <Game/AutoChess/Events/SkillClickEvent.h>
 #include <Game/AutoChess/Events/SynergyClickEvent.h>
+#include <Game/AutoChess/Events/PiecePurchaseOpenClickEvent.h>
 #include <Game/AutoChess/system/UIHitManager.h>
 #include <Game/AutoChess/Info/SynergyModifierData.h>
 #include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
+#include <System/UIComponent/ComponentImage.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -117,6 +119,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
+        exp_button->SetStatus(Object::StatusBit::NoDraw, true);
         exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
         exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
         exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面左下あたりに設定
@@ -138,52 +141,70 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         {
             //現在の経験値
-            {
-                auto curr_exp_ui = Scene::Object::Create<UIText>();
-                curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
-                curr_exp_ui->SetTranslate(float3(100.0f, 500.0f, 0.0f));                    //位置を設定
-                curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
-                curr_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
-                //更新処理
-                auto set_text_proc = [curr_exp_ui]() {
-                    auto player      = Scene::Object::Get<Player>();
-                    int  current_exp = player->GetCurrentExp();    //現在の経験値を取得
-                    //必要な経験値を表示
-                    curr_exp_ui->SetText(std::to_string(current_exp));
-                };
-                curr_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
-            }
+            auto curr_exp_ui = Scene::Object::Create<UIText>();
+            curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleRight);    //左寄せに設定
+            curr_exp_ui->SetTranslate(float3(100.0f, 500.0f, 0.0f));                    //位置を設定
+            curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
+            curr_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+            //更新処理
+            auto set_text_proc = [curr_exp_ui]() {
+                auto player      = Scene::Object::Get<Player>();
+                int  current_exp = player->GetCurrentExp();    //現在の経験値を取得
+                //必要な経験値を表示
+                curr_exp_ui->SetText(std::to_string(current_exp));
+            };
+            curr_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
             //割線
-            {
-                auto line_ui = Scene::Object::Create<UIText>();
-                line_ui->SetTranslate(float3(130.0f, 500.0f, 0.0f));                    //位置を設定
-                line_ui->SetFontSize(30);                                               //フォントサイズ設定
-                line_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
-                line_ui->SetText("/");                                                  //割線を表示
-            }
+            auto line_ui = Scene::Object::Create<UIText>();
+            curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+            line_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            line_ui->SetTranslate(float3(150.0f, 500.0f, 0.0f));                    //位置を設定
+            line_ui->SetFontSize(30);                                               //フォントサイズ設定
+            line_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+            line_ui->SetText("/");                                                  //割線を表示
             //次のレベルまでに必要な経験値
-            {
-                auto next_exp_ui = Scene::Object::Create<UIText>();
-                next_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
-                next_exp_ui->SetTranslate(float3(170.0f, 500.0f, 0.0f));                    //位置を設定
-                next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
-                next_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
-                //更新処理
-                auto set_text_proc = [next_exp_ui]() {
-                    auto player         = Scene::Object::Get<Player>();
-                    int  next_level_exp = player->GetNextLevelExp();    //次のレベルまでに必要な経験値を取得
-                    //必要な経験値を表示
-                    next_exp_ui->SetText(std::to_string(next_level_exp));
-                };
-                next_exp_ui->SetProc("set_text", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
-            }
+            auto next_exp_ui = Scene::Object::Create<UIText>();
+            next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            next_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
+            next_exp_ui->SetTranslate(float3(170.0f, 500.0f, 0.0f));                    //位置を設定
+            next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
+            next_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
+            //更新処理
+            auto set_next_text_proc = [next_exp_ui]() {
+                auto player         = Scene::Object::Get<Player>();
+                int  next_level_exp = player->GetNextLevelExp();    //次のレベルまでに必要な経験値を取得
+                //必要な経験値を表示
+                next_exp_ui->SetText(std::to_string(next_level_exp));
+            };
+            next_exp_ui->SetProc("set_text", set_next_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
+            //---------------------------------------------------------------------------------
+            // ピース購入画面を開くボタンを押したときに、経験値UIを非表示にする処理を登録
+            //---------------------------------------------------------------------------------
+            auto exp_button_hide_proc = [exp_button, curr_exp_ui, line_ui, next_exp_ui](const PiecePurchaseOpenClickEvent& e) {
+                if(e.is_open_) {
+                    exp_button->SetStatus(Object::StatusBit::NoDraw, true);     //ピース購入画面が開いているなら非表示にする
+                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                    line_ui->SetStatus(Object::StatusBit::NoDraw, true);        //ピース購入画面が開いているなら非表示にする
+                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                }
+                else {
+                    exp_button->SetStatus(Object::StatusBit::NoDraw, false);     //それ以外なら表示する
+                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                    line_ui->SetStatus(Object::StatusBit::NoDraw, false);        //それ以外なら表示する
+                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                }
+            };
+            auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(exp_button_hide_proc, 0);
+            event_handles_.push_back(std::move(event_handle));
         }
     }
     //---------------------------------------------------------------------------------
     //  売却ボタン
     //---------------------------------------------------------------------------------
     {
-        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        auto sell_button = Scene::Object::Create<UIButton>();       //売却ボタン
+        sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
         sell_button->SetTranslate(float3(1050.0f, 500.0f, 0.0f));    //位置を画面右下あたりに設定
@@ -199,6 +220,19 @@ bool InGameScene::Init()
             }
         };
         sell_button->SetClickFunc(click_func);
+        //---------------------------------------------------------------------------------
+        // ピース購入画面を開くボタンを押したときに、売却ボタンを非表示にする処理を登録
+        //---------------------------------------------------------------------------------
+        auto sell_button_hide_proc = [sell_button](const PiecePurchaseOpenClickEvent& e) {
+            if(e.is_open_) {
+                sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+            }
+            else {
+                sell_button->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+            }
+        };
+        auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(sell_button_hide_proc, 0);
+        event_handles_.push_back(std::move(event_handle));
     }
     //ボード制限に関するUIをベクターへ保管
     std::vector<std::shared_ptr<UIObject>> board_limit_vector;
@@ -750,6 +784,7 @@ bool InGameScene::Init()
         float x = WINDOW_W * 0.5f;
         float y = WINDOW_H * 0.5f;
         purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
+        auto image_comp = purchase_window_filter->GetComponent<ComponentImage>();
         purchase_window_objects.push_back(purchase_window_filter);    //購入画面のウィンドウ群に追加
     }
     //---------------------------------------------------------------------------------
@@ -915,7 +950,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
-        auto click_func                 = [this, purchase_window_objects]() {
+        auto click_func                 = [this, purchase_window_objects, event_bus]() {
             is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
             //ウィンドウ群に対して開閉処理を行う
             if(is_purchase_open_) {
@@ -930,8 +965,28 @@ bool InGameScene::Init()
                     obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
                 }
             }
+            //購入クリックイベントを発行
+            event_bus->publish(PiecePurchaseOpenClickEvent(is_purchase_open_));
         };
         piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
+        //---------------------------------------------------------------------------------
+        // ピース購入ボタンを押したときにシナジーアイコン群を非表示にする処理登録
+        //---------------------------------------------------------------------------------
+        auto synergy_hide_proc = [piece_purchase_open_button](const PiecePurchaseOpenClickEvent& e) {
+            auto synergy_icons = Scene::Object::GetArray<UISynergy>();
+            for(auto& icon : synergy_icons) {
+                if(e.is_open_) {
+                    //購入画面が開かれたらシナジーアイコンを非表示にする
+                    icon->SetStatus(Object::StatusBit::NoDraw, true);
+                }
+                else {
+                    //購入画面が閉じられたらシナジーアイコンを表示する
+                    icon->SetStatus(Object::StatusBit::NoDraw, false);
+                }
+            };
+        };
+        auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(synergy_hide_proc, 0);
+        event_handles_.push_back(std::move(event_handle));
     }
     //---------------------------------------------------------------------------------
     // スキル表示UIの作成
@@ -1100,16 +1155,18 @@ bool InGameScene::Init()
         // シナジー情報更新処理の登録
         //---------------------------------------------------------------------------------
         for(auto& obj : synergy_ui_objects) {
-            auto skill_ui_update_proc = [obj, player]() {
+            auto skill_ui_update_proc = [obj, player, this]() {
                 //左クリックであれば
                 if(IsMouseOn(MOUSE_INPUT_LEFT)) {
                     if(!UIHitManager::IsMouseHitUIFilter()) {
                         //シナジー詳細UI群の非表示
                         obj->SetStatus(Object::StatusBit::NoDraw, true);
-                        //シナジーアイコン群の表示
-                        auto synergies = Scene::Object::GetArray<UISynergy>();
-                        for(auto synergie : synergies) {
-                            synergie->SetStatus(Object::StatusBit::NoDraw, false);
+                        if(!is_purchase_open_) {
+                            //シナジーアイコン群の表示
+                            auto synergies = Scene::Object::GetArray<UISynergy>();
+                            for(auto synergie : synergies) {
+                                synergie->SetStatus(Object::StatusBit::NoDraw, false);
+                            }
                         }
                     }
                 }
@@ -1328,7 +1385,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;

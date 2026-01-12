@@ -21,7 +21,7 @@ void ComponentButton::Init()
     //----------------------------------------------------------------------------------
     //マウスが重なっている際の処理
     //---------------------------------------------------------------------------------
-    SetProc("Update", mouse_over_func_, ProcTiming::Update, static_cast<ProcPriority>(NONE));
+    SetProc("Update", mouse_over_func_, ProcTiming::Update, static_cast<ProcPriority>(NORMAL));
     //---------------------------------------------------------------------------------
     //クリック時の処理
     //---------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ void ComponentButton::Init()
             click_func_();    //クリック時の関数を実行
         }
     };
-    SetProc("ClickProc", click_proc, ProcTiming::Update, static_cast<ProcPriority>(NONE));
+    SetProc("ClickProc", click_proc, ProcTiming::Update, static_cast<ProcPriority>(NORMAL));
 }
 //---------------------------------------------------------------------------
 //! @brief	ImGui
@@ -55,7 +55,7 @@ void ComponentButton::GUI()
 //---------------------------------------------------------------------------
 //! @brief	クリックされているかを返す関数
 //---------------------------------------------------------------------------
-bool ComponentButton::IsClick() const
+bool ComponentButton::IsClick()
 {
     //左クリックされていれば
     if(IsMouseDown(MOUSE_INPUT_LEFT)) {
@@ -67,10 +67,14 @@ bool ComponentButton::IsClick() const
 //  マウスがボタンに触れているかを返す関数
 //! @return マウスがボタンに触れているか
 //---------------------------------------------------------------------------
-bool ComponentButton::IsMouseOver() const
+bool ComponentButton::IsMouseOver()
 {
     // とりあえずオーナーを取得
     auto owner = GetOwner();
+    // 描画しない設定なら触れていない
+    if(GetStatus(Component::StatusBit::NoDraw) || owner->GetStatus(Object::StatusBit::NoDraw)) {
+        return false;
+    }
     //ComponentImageがあることを確認
     if(auto image_comp = owner->GetComponent<ComponentImage>()) {
         //マウス座標を取得

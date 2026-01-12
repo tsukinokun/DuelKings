@@ -33,7 +33,7 @@ void ComponentImage::Init()
         //透明度を元に戻す
         SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 
 //---------------------------------------------------------------------------
@@ -55,6 +55,15 @@ void ComponentImage::GUI()
         }
     }
     ImGui::End();
+}
+
+//---------------------------------------------------------------------------
+//! @brief コンストラクト関数
+//---------------------------------------------------------------------------
+void ComponentImage::Construct(ObjectPtr owner)
+{
+    __super::Construct(owner);
+    Init();
 }
 
 //---------------------------------------------------------------------------

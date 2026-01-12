@@ -81,7 +81,7 @@ void ComponentText::Init()
         }
         DxLib::SetFontSize(DEFAULT_FONT_SIZE);    //フォントサイズを元に戻す
     };
-    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NONE));
+    SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
 
 //---------------------------------------------------------------------------
@@ -103,6 +103,15 @@ void ComponentText::GUI()
         }
     }
     ImGui::End();
+}
+
+//---------------------------------------------------------------------------
+//! @brief コンストラクト関数
+//---------------------------------------------------------------------------
+void ComponentText::Construct(ObjectPtr owner)
+{
+    __super::Construct(owner);
+    Init();
 }
 
 //---------------------------------------------------------------------------

@@ -8,6 +8,7 @@
 #include <Game/AutoChess/UIObject/UIGauge.h>
 #include <Game/AutoChess/system/HlslppUseful.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
+#include <System/UIComponent/ComponentGauge.h>
 //---------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------
@@ -56,6 +57,8 @@ std::shared_ptr<UIGauge> PieceUIDisplayer::CreateGauge(const std::string& name, 
     gauge->SetGaugeColor(color);
     gauge->SetGaugeSize(size);
     gauge->SetName(name);
+    auto comp = gauge->GetComponent<ComponentGauge>();
+    comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::HIGH);
 
     std::weak_ptr<Piece> owner_wp = owner;
     gauge->SetAutoReleaseTarget(owner_wp.lock());

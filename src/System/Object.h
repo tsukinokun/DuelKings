@@ -87,21 +87,21 @@ public:
 //!         BP_OBJECT_DECL(B, u8"オブジェクト");
 //! @endcode
 //---------------------------------------------------------------------------
-#define BP_OBJECT_DECL(CLASS, ...)                                                                                                                   \
+#define BP_OBJECT_DECL(CLASS, ...)                                                                                 \
     using Super    = ObjClass; /*! 親クラスの型 : 上のクラス階層で定義されているClassを使うことで親クラスを定義 */ \
-    using ObjClass = CLASS;    /*! 自クラスの型 : これ以降は親クラスではなく自クラスを指す */                              \
-                                                                                                                                                     \
-    /*! 型情報 */                                                                                                                                 \
-    static inline ClassObjectType<CLASS> Type = ClassObjectType<CLASS>(#CLASS, &Super::Type, __VA_ARGS__);                                           \
-                                                                                                                                                     \
-    /*! 型情報を取得 */                                                                                                                        \
-    virtual const ObjTypeInfo* typeInfo() const                                                                                                      \
-    {                                                                                                                                                \
-        return &Type;                                                                                                                                \
-    }                                                                                                                                                \
-    void* createObjectPtr()                                                                                                                          \
-    {                                                                                                                                                \
-        return Type.createObjectPtr();                                                                                                               \
+    using ObjClass = CLASS;    /*! 自クラスの型 : これ以降は親クラスではなく自クラスを指す */                      \
+                                                                                                                   \
+    /*! 型情報 */                                                                                                  \
+    static inline ClassObjectType<CLASS> Type = ClassObjectType<CLASS>(#CLASS, &Super::Type, __VA_ARGS__);         \
+                                                                                                                   \
+    /*! 型情報を取得 */                                                                                            \
+    virtual const ObjTypeInfo* typeInfo() const                                                                    \
+    {                                                                                                              \
+        return &Type;                                                                                              \
+    }                                                                                                              \
+    void* createObjectPtr()                                                                                        \
+    {                                                                                                              \
+        return Type.createObjectPtr();                                                                             \
     }
 
 //***************************************************************************
@@ -121,14 +121,14 @@ public:
 //! @endcode
 //---------------------------------------------------------------------------
 #define BP_OBJECT_BASE_TYPE(CLASS)                                                                                                                               \
-    using MyClass = CLASS; /*! 自クラスの型 */                                                                                                             \
+    using MyClass = CLASS; /*! 自クラスの型 */                                                                                                                   \
                                                                                                                                                                  \
-    /*! 型情報 */                                                                                                                                             \
+    /*! 型情報 */                                                                                                                                                \
     [[deprecated(                                                                                                                                                \
         "BP_OBJECT_TYPE() と BP_OBJECT_BASE_TYPE() は古い宣言です。BP_OBJECT_DECL(クラス名, u8\"解説文\") に置換してください。")]] static ClassObjectType<CLASS> \
         Type;                                                                                                                                                    \
                                                                                                                                                                  \
-    /*! 型情報を取得 */                                                                                                                                    \
+    /*! 型情報を取得 */                                                                                                                                          \
     virtual const ObjTypeInfo* typeInfo() const                                                                                                                  \
     {                                                                                                                                                            \
         return &Type;                                                                                                                                            \
@@ -148,7 +148,7 @@ public:
 //!         BP_OBJECT_TYPE(B, A);
 //! @endcode
 //---------------------------------------------------------------------------
-#define BP_OBJECT_TYPE(CLASS, PARENT_CLASS)              \
+#define BP_OBJECT_TYPE(CLASS, PARENT_CLASS)        \
     using Super = PARENT_CLASS; /* 親クラスの型 */ \
     BP_OBJECT_BASE_TYPE(CLASS);
 
@@ -160,11 +160,11 @@ public:
 //! @endcode
 //---------------------------------------------------------------------------
 #define BP_OBJECT_BASE_IMPL(CLASS, DESC_NAME) \
-    /*! 型情報の実体 */                 \
+    /*! 型情報の実体 */                       \
     ClassObjectType<CLASS> CLASS::Type(#CLASS, sizeof(CLASS), nullptr, DESC_NAME);
 
 #define BP_OBJECT_IMPL(CLASS, DESC_NAME) \
-    /*! 型情報の実体 */            \
+    /*! 型情報の実体 */                  \
     ClassObjectType<CLASS> CLASS::Type(#CLASS, &Super::Type, DESC_NAME);
 
 // ↑↑↑↑↑↑↑

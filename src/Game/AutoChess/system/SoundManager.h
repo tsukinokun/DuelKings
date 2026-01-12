@@ -19,42 +19,19 @@ public:
     // サウンドデータから効果音とBGMをロードする関数
     //! @param data サウンドデータの参照
     //---------------------------------------------------------------------------
-    void LoadFromData(const SoundData& data)
-    {
-        // SE のロード
-        for(auto& [name, path] : data.se) {
-            int handle        = LoadSoundMem(path.c_str());
-            se_handles_[name] = handle;
-        }
-
-        // BGM のロード
-        for(auto& [name, path] : data.bgm) {
-            int handle         = LoadSoundMem(path.c_str());
-            bgm_handles_[name] = handle;
-        }
-    }
+    void LoadFromData(const SoundData& data);
 
     //---------------------------------------------------------------------------
     // 効果音を再生する関数
     //! @param name 効果音の名前
     //---------------------------------------------------------------------------
-    void PlaySE(const std::string& name)
-    {
-        if(se_handles_.count(name)) {
-            PlaySoundMem(se_handles_[name], DX_PLAYTYPE_BACK);
-        }
-    }
+    void PlaySE(const std::string& name);
 
     //---------------------------------------------------------------------------
     // BGMを再生する関数
     //! @param name BGMの名前
     //---------------------------------------------------------------------------
-    void PlayBGM(const std::string& name)
-    {
-        if(bgm_handles_.count(name)) {
-            PlaySoundMem(bgm_handles_[name], DX_PLAYTYPE_LOOP);
-        }
-    }
+    void PlayBGM(const std::string& name);
 
 private:
     std::unordered_map<std::string, int> se_handles_;     // 効果音のハンドルマップ
