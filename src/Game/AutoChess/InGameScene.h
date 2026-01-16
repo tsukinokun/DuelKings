@@ -67,5 +67,6 @@ private:
     bool                                             has_battle_ended_ = false;               //バトルが終了したかどうか
     int                                              turn_count_       = 1;                   // 現在のターン数
     std::weak_ptr<Agent>                             battle_agent_;                           //バトル中のエージェント
+    std::weak_ptr<Agent>                             damage_receivers_;                       //ダメージを受け取るエージェント
     std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;                          //イベントハンドル群
 };

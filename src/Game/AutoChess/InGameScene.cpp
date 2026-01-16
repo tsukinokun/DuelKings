@@ -1269,7 +1269,7 @@ bool InGameScene::Init()
         std::vector<std::shared_ptr<UIObject>> gold_info_ui_objects;    //gold説明UIオブジェクト群
         //説明の背景テキストUI
         auto gold_info_back = Scene::Object::Create<UIImage>();
-        //gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         gold_info_back->SetImage(ImageBuffer::GetImageHandle("gold_detail_back"));
         gold_info_back->SetAlpha(200);
         gold_info_back->SetScaleAxisXYZ(2.0f);
@@ -1278,7 +1278,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(gold_info_back);
         //予想収益と表示するテキストUI
         auto gold_info_text = Scene::Object::Create<UIText>();
-        //gold_info_text->SetStatus(Object::StatusBit::NoDraw, true);                   //初期状態では非表示にしておく
+        gold_info_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         gold_info_text->SetTranslate(float3(460.0f, 230.0f, 0.0f));    //位置を中央あたりに設定
         gold_info_text->SetFontName("游明朝");                         //フォントを設定
         gold_info_text->SetFontSize(22);                               //フォントサイズ設定
@@ -1288,7 +1288,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(gold_info_text);
         //基礎収益テキストUI
         auto base_income_text = Scene::Object::Create<UIText>();
-        //base_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_text->SetStatus(Object::StatusBit::NoDraw, true);
         base_income_text->SetTranslate(float3(440.0f, 280.0f, 0.0f));
         base_income_text->SetFontName("游明朝");    //フォントを設定
         base_income_text->SetFontSize(20);          //フォントサイズ設定
@@ -1298,7 +1298,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(base_income_text);
         //基礎収益予想テキストUI
         auto base_income_detail_text = Scene::Object::Create<UIText>();
-        //base_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         base_income_detail_text->SetTranslate(float3(440.0f, 435.0f, 0.0f));
         base_income_detail_text->SetFontName("游明朝");    //フォントを設定
         base_income_detail_text->SetFontSize(16);          //フォントサイズ設定
@@ -1308,7 +1308,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(base_income_detail_text);
         //利子収益テキストUI
         auto interest_income_text = Scene::Object::Create<UIText>();
-        //interest_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_text->SetStatus(Object::StatusBit::NoDraw, true);
         interest_income_text->SetTranslate(float3(540.0f, 280.0f, 0.0f));
         interest_income_text->SetFontName("游明朝");    //フォントを設定
         interest_income_text->SetFontSize(20);          //フォントサイズ設定
@@ -1318,7 +1318,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(interest_income_text);
         //利子収益予想テキストUI
         auto interest_income_detail_text = Scene::Object::Create<UIText>();
-        //interest_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         interest_income_detail_text->SetTranslate(float3(540.0f, 435.0f, 0.0f));
         interest_income_detail_text->SetFontName("游明朝");    //フォントを設定
         interest_income_detail_text->SetFontSize(16);          //フォントサイズ設定
@@ -1333,7 +1333,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(interest_income_detail_text);
         //勝利ボーナステキストUI
         auto win_bonus_text = Scene::Object::Create<UIText>();
-        //win_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_bonus_text->SetTranslate(float3(640.0f, 280.0f, 0.0f));
         win_bonus_text->SetFontName("游明朝");    //フォントを設定
         win_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1343,7 +1343,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_bonus_text);
         //勝利ボーナス予想テキストUI
         auto win_bonus_detail_text = Scene::Object::Create<UIText>();
-        //win_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_bonus_detail_text->SetTranslate(float3(640.0f, 435.0f, 0.0f));
         win_bonus_detail_text->SetFontName("游明朝");
         win_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
@@ -1353,7 +1353,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_bonus_detail_text);
         //連勝ボーナステキストUI
         auto win_streak_bonus_text = Scene::Object::Create<UIText>();
-        //win_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_streak_bonus_text->SetTranslate(float3(740.0f, 280.0f, 0.0f));
         win_streak_bonus_text->SetFontName("游明朝");    //フォントを設定
         win_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1363,7 +1363,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_streak_bonus_text);
         //連勝ボーナス予想テキストUI
         auto win_streak_bonus_detail_text = Scene::Object::Create<UIText>();
-        //win_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        win_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_streak_bonus_detail_text->SetTranslate(float3(740.0f, 435.0f, 0.0f));
         win_streak_bonus_detail_text->SetFontName("游明朝");
         win_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
@@ -1383,7 +1383,7 @@ bool InGameScene::Init()
         win_streak_bonus_detail_text->SetProc("update_win_streak_income_ui", win_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         //連敗ボーナステキストUI
         auto loss_streak_bonus_text = Scene::Object::Create<UIText>();
-        //loss_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true
+        loss_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         loss_streak_bonus_text->SetTranslate(float3(840.0f, 280.0f, 0.0f));
         loss_streak_bonus_text->SetFontName("游明朝");    //フォント
         loss_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1393,7 +1393,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(loss_streak_bonus_text);
         //連敗ボーナス予想テキストUI
         auto loss_streak_bonus_detail_text = Scene::Object::Create<UIText>();
-        //loss_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        loss_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         loss_streak_bonus_detail_text->SetTranslate(float3(840.0f, 435.0f, 0.0f));
         loss_streak_bonus_detail_text->SetFontName("游明朝");
         loss_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ
@@ -1414,7 +1414,7 @@ bool InGameScene::Init()
         //ゴールド画像UI
         for(int i = 0; i < 5; i++) {
             auto gold_info_icon = Scene::Object::Create<UIImage>();
-            //gold_info_icon->SetStatus(Object::StatusBit::NoDraw, true);
+            gold_info_icon->SetStatus(Object::StatusBit::NoDraw, true);
             gold_info_icon->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
             gold_info_icon->SetScaleAxisXYZ(0.2f);
             gold_info_icon->SetTranslate(float3(440.0f + i * 100.0f, 380.0f, 0.0f));
@@ -1649,8 +1649,19 @@ void InGameScene::CreatePiecesForBattlePhase()
     //次にNPCの駒を生成
     //----------------------------------------------------------------------
     //生きているNPCの中からランダムに1体取得
-    //auto npcs = Scene::Object::GetArray<Npc>();
-    if(auto npc = Scene::Object::Get<Npc>()) {
+    auto npcs = Scene::Object::GetArray<Npc>();
+
+    //メルセンヌ・ツイスタ法の乱数生成器を初期化
+    std::random_device rd;
+    std::mt19937       mt(rd());
+    std::shuffle(npcs.begin(), npcs.end(), mt);
+
+    //10.0f~BATTLE_PHASE_DURATIONの間でランダムにバトル時間を決定
+    std::uniform_int_distribution<float> dist(10.0f, BATTLE_PHASE_DURATION);    // 1から100で整数の一様分布を作る
+
+    float duration = dist(mt);
+    //最初の1体を取得
+    if(auto npc = npcs[0]) {
         battle_agent_ = npc;    //このタイミングでバトルエージェントとして設定
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
