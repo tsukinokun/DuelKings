@@ -21,35 +21,6 @@ void PiecePool::Init(const PieceRepository& piece_repo)
         int         price                 = piece_datas[i].price_;            //駒の価格を取得
         piece_pool_[price - 1][type_name] = {piece_init_stock[price - 1]};    //価格に応じたプールを初期化
     }
-
-    //piece_pool_[0] = {
-    //    {"JapaneseChessKing",   piece_init_stock[0]}, //王将
-    //    {"JapaneseChessKnight", piece_init_stock[0]}, //桂馬
-    //    {"JapaneseChessPawn",   piece_init_stock[0]}, //歩兵
-    //    {"JapaneseChessLance",  piece_init_stock[0]}, //香車
-    //    {"JapaneseChessSilver", piece_init_stock[0]}, //銀将
-    //    {"JapaneseChessGold",   piece_init_stock[0]}, //金将
-    //    {"JapaneseChessBishop", piece_init_stock[0]}, //角行
-    //    {"JapaneseChessRook",   piece_init_stock[0]}, //飛車
-    //    {"ChessPawn",           piece_init_stock[0]}, //ポーン
-    //    {"ChessKnight",         piece_init_stock[0]}, //ナイト
-    //    {"ChessBishop",         piece_init_stock[0]}, //ビショップ
-    //    {"ChessRook",           piece_init_stock[0]}, //ルーク
-    //    {"ChessQueen",          piece_init_stock[0]}, //クイーン
-    //    {"ChessKing",           piece_init_stock[0]}, //キング
-    //    {"MakrukBia",           piece_init_stock[0]}, //ビア
-    //    {"MakrukKhon",          piece_init_stock[0]}, //コーン
-    //    {"MakrukKhun",          piece_init_stock[0]}, //クン
-    //    {"MakrukMa",            piece_init_stock[0]}, //マーク
-    //    {"MakrukMet",           piece_init_stock[0]}, //メット
-    //    {"MakrukRuea",          piece_init_stock[0]}, //ルア
-    //    {"ChaturangaAsva",      piece_init_stock[0]}, //アスヴァ
-    //    {"ChaturangaRatha",     piece_init_stock[0]}, //ラタ
-    //    {"ChaturangaGaja",      piece_init_stock[0]}, //ガジャ
-    //    {"ChaturangaPadati",    piece_init_stock[0]}, //パダティ
-    //    {"ChaturangaMantri",    piece_init_stock[0]}, //マントリ
-    //    {"ChaturangaRaja",      piece_init_stock[0]}, //ラジャ
-    //};
 }
 
 //---------------------------------------------------------------------------
@@ -116,4 +87,31 @@ PieceInfo PiecePool::GetRandomPiece(int agent_level)
 
     // ピース情報のポインタを返す（RAIIによる所有権管理）
     return piece;
+}
+
+//---------------------------------------------------------------------------
+//! @brief キ－に対応するピースをプールに戻す関数
+//---------------------------------------------------------------------------
+void PiecePool::ReturnPieceToPool(const std::string& type_name, int piece_level)
+{
+    //レベルから個数を産出
+    int return_num = 0;
+    switch(piece_level) {
+    case 1:
+        return_num = 1;
+        break;
+    case 2:
+        return_num = 3;
+        break;
+    case 3:
+        return_num = 9;
+        break;
+    }
+    // キーがあれば増やす
+    for(int rarity = 0; rarity < 5; rarity++) {
+        auto it = piece_pool_[rarity].find(type_name);
+        if(it != piece_pool_[rarity].end()) {
+            it->second += return_num;    // キーがある場合だけ操作
+        }
+    }
 }

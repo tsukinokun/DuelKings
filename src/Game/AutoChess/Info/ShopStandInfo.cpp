@@ -26,6 +26,8 @@ void ShopStandInfo::RerollShopPieces()
     }
     //仮でピースの基底クラスを入れておく
     for(int i = 0; i < shop_pieces_.size(); i++) {
+        //現在のピースをプールに戻す
+        PiecePool::ReturnPieceToPool(shop_pieces_[i].GetTypeName(), shop_pieces_[i].GetLevel());
         if(auto owner_agent = owner_agent_.lock()) {
             shop_pieces_[i] = PiecePool::GetRandomPiece(owner_agent->GetAgentLevel());    //ピース情報を更新
         }

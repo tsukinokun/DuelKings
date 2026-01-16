@@ -215,9 +215,10 @@ bool InGameScene::Init()
         auto click_func = [player]() {
             if(auto select_piece = player->GetSelectedPiece()) {
                 int sell_piece_price = select_piece->GetPrice();    //売却価格を取得
-                Scene::Object::Release(select_piece);               //選択されているオブジェクトを解放する
-                player->ReleaseSelectedPiece();                     //選択中のピースをクリアする
-                player->AddGold(sell_piece_price);                  //ゴールドを加算する(売却値の分)
+                PiecePool::ReturnPieceToPool(select_piece->GetNameDefault().data(), select_piece->GetLevel());
+                Scene::Object::Release(select_piece);    //選択されているオブジェクトを解放する
+                player->ReleaseSelectedPiece();          //選択中のピースをクリアする
+                player->AddGold(sell_piece_price);       //ゴールドを加算する(売却値の分)
             }
         };
         sell_button->SetClickFunc(click_func);
