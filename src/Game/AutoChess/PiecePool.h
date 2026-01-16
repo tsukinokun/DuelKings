@@ -31,6 +31,13 @@ public:
     //---------------------------------------------------------------------------
     static int DrawRarity(int agent_level);
 
+    //---------------------------------------------------------------------------
+    // キ－に対応するピースをプールに戻す関数
+    //! @param type_name [in] 駒の種類名
+    //! @param rarity    [in] 駒のレベル
+    //---------------------------------------------------------------------------
+    static void ReturnPieceToPool(const std::string& type_name, int piece_level);
+
 private:
     //五段階の各レアリティごとに、在庫数と駒の名前を管理したmapを配置
     static std::array<std::unordered_map<std::string, int>, 5> piece_pool_;
