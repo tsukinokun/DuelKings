@@ -9,6 +9,7 @@
 #include <Game/AutoChess/Context/GameContext.h>
 #include <TsukinoDIContainer/TsukinoDIContainer.hpp>
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
+#include <Game/AutoChess/Info/MatchInfo.h>
 //前方宣言
 class Agent;
 class InGameScene : public Scene::Base
@@ -51,9 +52,15 @@ private:
     //----------------------------------------------------------------------
     void UpdateBattlePhase();
 
-    //------------------------------------------------------
+    //----------------------------------------------------------------------
+    // NPC同士のバトルをシミュレートする関数
+    //----------------------------------------------------------------------
+    void SimulateNpcBattle();
+
+    //----------------------------------------------------------------------
     // エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
-    //------------------------------------------------------
+    //! @param agent エージェントの共有ポインタ
+    //----------------------------------------------------------------------
     int GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent);
 
     //@}
@@ -67,5 +74,6 @@ private:
     bool                                             has_battle_ended_ = false;               //バトルが終了したかどうか
     int                                              turn_count_       = 1;                   // 現在のターン数
     std::weak_ptr<Agent>                             battle_agent_;                           //バトル中のエージェント
+    std::vector<MatchInfo>                           match_infos_;                            //マッチ情報群
     std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;                          //イベントハンドル群
 };

@@ -205,6 +205,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto sell_button = Scene::Object::Create<UIButton>();       //売却ボタン
+        sell_button->SetIsFilter(true);                             // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -1269,7 +1270,7 @@ bool InGameScene::Init()
         std::vector<std::shared_ptr<UIObject>> gold_info_ui_objects;    //gold説明UIオブジェクト群
         //説明の背景テキストUI
         auto gold_info_back = Scene::Object::Create<UIImage>();
-        //gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         gold_info_back->SetImage(ImageBuffer::GetImageHandle("gold_detail_back"));
         gold_info_back->SetAlpha(200);
         gold_info_back->SetScaleAxisXYZ(2.0f);
@@ -1278,7 +1279,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(gold_info_back);
         //予想収益と表示するテキストUI
         auto gold_info_text = Scene::Object::Create<UIText>();
-        //gold_info_text->SetStatus(Object::StatusBit::NoDraw, true);                   //初期状態では非表示にしておく
+        gold_info_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         gold_info_text->SetTranslate(float3(460.0f, 230.0f, 0.0f));    //位置を中央あたりに設定
         gold_info_text->SetFontName("游明朝");                         //フォントを設定
         gold_info_text->SetFontSize(22);                               //フォントサイズ設定
@@ -1288,7 +1289,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(gold_info_text);
         //基礎収益テキストUI
         auto base_income_text = Scene::Object::Create<UIText>();
-        //base_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_text->SetStatus(Object::StatusBit::NoDraw, true);
         base_income_text->SetTranslate(float3(440.0f, 280.0f, 0.0f));
         base_income_text->SetFontName("游明朝");    //フォントを設定
         base_income_text->SetFontSize(20);          //フォントサイズ設定
@@ -1298,7 +1299,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(base_income_text);
         //基礎収益予想テキストUI
         auto base_income_detail_text = Scene::Object::Create<UIText>();
-        //base_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        base_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         base_income_detail_text->SetTranslate(float3(440.0f, 435.0f, 0.0f));
         base_income_detail_text->SetFontName("游明朝");    //フォントを設定
         base_income_detail_text->SetFontSize(16);          //フォントサイズ設定
@@ -1308,7 +1309,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(base_income_detail_text);
         //利子収益テキストUI
         auto interest_income_text = Scene::Object::Create<UIText>();
-        //interest_income_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_text->SetStatus(Object::StatusBit::NoDraw, true);
         interest_income_text->SetTranslate(float3(540.0f, 280.0f, 0.0f));
         interest_income_text->SetFontName("游明朝");    //フォントを設定
         interest_income_text->SetFontSize(20);          //フォントサイズ設定
@@ -1318,7 +1319,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(interest_income_text);
         //利子収益予想テキストUI
         auto interest_income_detail_text = Scene::Object::Create<UIText>();
-        //interest_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        interest_income_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         interest_income_detail_text->SetTranslate(float3(540.0f, 435.0f, 0.0f));
         interest_income_detail_text->SetFontName("游明朝");    //フォントを設定
         interest_income_detail_text->SetFontSize(16);          //フォントサイズ設定
@@ -1333,7 +1334,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(interest_income_detail_text);
         //勝利ボーナステキストUI
         auto win_bonus_text = Scene::Object::Create<UIText>();
-        //win_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_bonus_text->SetTranslate(float3(640.0f, 280.0f, 0.0f));
         win_bonus_text->SetFontName("游明朝");    //フォントを設定
         win_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1343,7 +1344,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_bonus_text);
         //勝利ボーナス予想テキストUI
         auto win_bonus_detail_text = Scene::Object::Create<UIText>();
-        //win_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_bonus_detail_text->SetTranslate(float3(640.0f, 435.0f, 0.0f));
         win_bonus_detail_text->SetFontName("游明朝");
         win_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
@@ -1353,7 +1354,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_bonus_detail_text);
         //連勝ボーナステキストUI
         auto win_streak_bonus_text = Scene::Object::Create<UIText>();
-        //win_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
+        win_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_streak_bonus_text->SetTranslate(float3(740.0f, 280.0f, 0.0f));
         win_streak_bonus_text->SetFontName("游明朝");    //フォントを設定
         win_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1363,7 +1364,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(win_streak_bonus_text);
         //連勝ボーナス予想テキストUI
         auto win_streak_bonus_detail_text = Scene::Object::Create<UIText>();
-        //win_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        win_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         win_streak_bonus_detail_text->SetTranslate(float3(740.0f, 435.0f, 0.0f));
         win_streak_bonus_detail_text->SetFontName("游明朝");
         win_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ設定
@@ -1383,7 +1384,7 @@ bool InGameScene::Init()
         win_streak_bonus_detail_text->SetProc("update_win_streak_income_ui", win_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         //連敗ボーナステキストUI
         auto loss_streak_bonus_text = Scene::Object::Create<UIText>();
-        //loss_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true
+        loss_streak_bonus_text->SetStatus(Object::StatusBit::NoDraw, true);
         loss_streak_bonus_text->SetTranslate(float3(840.0f, 280.0f, 0.0f));
         loss_streak_bonus_text->SetFontName("游明朝");    //フォント
         loss_streak_bonus_text->SetFontSize(20);          //フォントサイズ設定
@@ -1393,7 +1394,7 @@ bool InGameScene::Init()
         gold_info_ui_objects.push_back(loss_streak_bonus_text);
         //連敗ボーナス予想テキストUI
         auto loss_streak_bonus_detail_text = Scene::Object::Create<UIText>();
-        //loss_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw,true);
+        loss_streak_bonus_detail_text->SetStatus(Object::StatusBit::NoDraw, true);
         loss_streak_bonus_detail_text->SetTranslate(float3(840.0f, 435.0f, 0.0f));
         loss_streak_bonus_detail_text->SetFontName("游明朝");
         loss_streak_bonus_detail_text->SetFontSize(16);    //フォントサイズ
@@ -1414,7 +1415,7 @@ bool InGameScene::Init()
         //ゴールド画像UI
         for(int i = 0; i < 5; i++) {
             auto gold_info_icon = Scene::Object::Create<UIImage>();
-            //gold_info_icon->SetStatus(Object::StatusBit::NoDraw, true);
+            gold_info_icon->SetStatus(Object::StatusBit::NoDraw, true);
             gold_info_icon->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
             gold_info_icon->SetScaleAxisXYZ(0.2f);
             gold_info_icon->SetTranslate(float3(440.0f + i * 100.0f, 380.0f, 0.0f));
@@ -1649,8 +1650,67 @@ void InGameScene::CreatePiecesForBattlePhase()
     //次にNPCの駒を生成
     //----------------------------------------------------------------------
     //生きているNPCの中からランダムに1体取得
-    //auto npcs = Scene::Object::GetArray<Npc>();
-    if(auto npc = Scene::Object::Get<Npc>()) {
+    auto npcs = Scene::Object::GetArray<Npc>();
+
+    //メルセンヌ・ツイスタ法の乱数生成器を初期化
+    std::random_device rd;
+    std::mt19937       mt(rd());
+    std::shuffle(npcs.begin(), npcs.end(), mt);
+    //----------------------------------------------------------------------
+    // 先頭を保存して、ベクターからは削除
+    //----------------------------------------------------------------------
+    std::shared_ptr<Npc> first_npc = npcs[0];
+    npcs.erase(npcs.begin());
+    //ここでマッチング情報を作成
+    match_infos_.clear();    //マッチ情報をクリア
+    // 生きているNPCを格納するベクター、2体でマッチングする場合などに備えて
+    std::vector<std::shared_ptr<Npc>> alive_npcs;
+    //----------------------------------------------------------------------
+    // NPCを走査して、死亡していなければ追加
+    //----------------------------------------------------------------------
+    for(auto& npc : npcs) {
+        //死亡しているならスキップ
+        if(npc->IsDead()) {
+            continue;
+        }
+        // 追加
+        alive_npcs.push_back(npc);
+        // 2体集まったらマッチ情報に登録
+        if(alive_npcs.size() >= 2) {
+            //----------------------------------------------------------------------
+            //10.0f~BATTLE_PHASE_DURATIONの間でランダムにバトル時間を決定
+            //----------------------------------------------------------------------
+            std::uniform_real_distribution<float> dist(10.0f, BATTLE_PHASE_DURATION);
+            float                                 duration = dist(mt);
+            //----------------------------------------------------------------------
+            // マッチ情報を作成して登録
+            //----------------------------------------------------------------------
+            MatchInfo match_info(alive_npcs[0], alive_npcs[1], duration, false);
+            match_infos_.push_back(match_info);
+            // ベクターをクリアして次のマッチングに備える
+            alive_npcs.clear();
+        }
+    }
+    //----------------------------------------------------------------------
+    // 抜けた際に、1体だけ残っている場合、ghostを相手にマッチングを組む
+    //----------------------------------------------------------------------
+    if(alive_npcs.size() == 1) {
+        //ghostを選ぶ
+        auto ghost_npc = Scene::Object::Create<Npc>();
+        //----------------------------------------------------------------------
+        //10.0f~BATTLE_PHASE_DURATIONの間でランダムにバトル時間を決定
+        //----------------------------------------------------------------------
+        std::uniform_real_distribution<float> dist(10.0f, BATTLE_PHASE_DURATION);
+        float                                 duration = dist(mt);
+        //----------------------------------------------------------------------
+        // マッチ情報を作成して登録
+        //----------------------------------------------------------------------
+        MatchInfo match_info(alive_npcs[0], ghost_npc, duration, true);
+        match_infos_.push_back(match_info);
+    }
+
+    //最初の1体を取得
+    if(auto npc = first_npc) {
         battle_agent_ = npc;    //このタイミングでバトルエージェントとして設定
         //ボードの位置に駒を生成
         for(int f = 0; f < 4; f++) {
@@ -1787,6 +1847,11 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
 //----------------------------------------------------------------------
 void InGameScene::UpdateBattlePhase()
 {
+    //----------------------------------------------------------------------
+    // NPC同士のバトルをシミュレートする
+    //----------------------------------------------------------------------
+    SimulateNpcBattle();
+
     //バトルが終了していない場合、終了判定を行う
     if(!has_battle_ended_) {
         //エージェントの駒数を取得
@@ -1884,8 +1949,128 @@ void InGameScene::UpdateBattlePhase()
     }
 }
 
+//----------------------------------------------------------------------
+//! @brief NPC同士のバトルをシミュレートする関数
+//----------------------------------------------------------------------
+void InGameScene::SimulateNpcBattle()
+{
+    //マッチ情報を走査
+    for(auto& match_info : match_infos_) {
+        //既に終了しているマッチングならスキップ
+        if(match_info.is_judged_) {
+            continue;
+        }
+        auto agent1 = match_info.agent1_.lock();
+        auto agent2 = match_info.agent2_.lock();
+        //ポインタチェック、なければスキップ
+        if(!agent1 || !agent2) {
+            continue;
+        }
+        //経過時間が設定されたバトル時間を超えたらマッチング終了
+        if(state_timer_ >= match_info.battle_duration_) {
+            match_info.is_judged_ = true;    //終了フラグを立てる
+            // エージェントの駒数を取得
+            int agent1_piece_count = agent1->GetPlacedPieceNum();
+            int agent2_piece_count = agent2->GetPlacedPieceNum();
+            //戦力から勝敗を確率的に決定
+            int total_pieces = agent1_piece_count + agent2_piece_count;
+            if(total_pieces == 0) {
+                //両者とも駒がいない場合は引き分け
+                {
+                    agent1->UpdateResult(false);    //引き分けは敗北を与える
+                    int goldain = CalculateRoundGold(agent1, false);
+                    agent1->AddGold(goldain);    //ゴールドを増やす
+                }
+                {
+                    agent2->UpdateResult(false);    //引き分けは敗北を与える
+                    int goldain = CalculateRoundGold(agent2, false);
+                    agent2->AddGold(goldain);    //ゴールドを増やす
+                }
+                continue;
+            }
+            //エージェント1が勝つ確率
+            float agent1_win_probability = static_cast<float>(agent1_piece_count) / static_cast<float>(total_pieces);
+            //メルセンヌ・ツイスタ法の乱数生成器を初期化
+            std::random_device                    rd;
+            std::mt19937                          mt(rd());
+            std::uniform_real_distribution<float> dist(0.0f, 1.0f);
+            float                                 random_value   = dist(mt);
+            bool                                  agent1_victory = (random_value < agent1_win_probability);
+            //------------------------------------------------------
+            //エージェント1の勝敗更新
+            //------------------------------------------------------
+            agent1->UpdateResult(agent1_victory);
+            int goldain1 = CalculateRoundGold(agent1, agent1_victory);
+            agent1->AddGold(goldain1);    //ゴールドを増やす
+
+            //------------------------------------------------------
+            // ゴースト戦でなければエージェント2にダメージを与える
+            //------------------------------------------------------
+            if(!match_info.is_ghost_2_ && agent1_victory) {
+                int damage = agent1_piece_count * 2;    //ダメージ概算
+                agent2->ApplyDamage(damage);
+                //HPの数値UIを更新
+                if(auto hp_ui = Scene::Object::Get<UIText>(std::string(agent2->GetName()) + "HPText")) {
+                    int hp = agent2->GetHP();
+                    if(hp > 0) {
+                        //HPが0以下でなければ表示
+                        hp_ui->SetText(std::to_string(hp));
+                    }
+                    else {
+                        //0以下なら、敗北と表示
+                        hp_ui->SetFontName("游明朝");
+                        hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                        hp_ui->SetText("敗北");
+                        //NPCをシーンから削除
+                        Scene::Object::Release(agent2);
+                    }
+                    // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                    float hp_ratio         = static_cast<float>(agent2->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                    int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                    hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                }
+            }
+            //------------------------------------------------------
+            //ゴースト戦でなければエージェント2の勝敗更新
+            //------------------------------------------------------
+            if(!match_info.is_ghost_2_) {
+                agent2->UpdateResult(!agent1_victory);
+                int goldain2 = CalculateRoundGold(agent2, !agent1_victory);
+                agent2->AddGold(goldain2);    //ゴールドを増やす
+            }
+            //------------------------------------------------------
+            // エージェント1が負けたならダメージを与える
+            //------------------------------------------------------
+            if(!agent1_victory) {
+                int damage = agent2_piece_count * 2;    //ダメージ概算
+                agent1->ApplyDamage(damage);
+                //HPの数値UIを更新
+                if(auto hp_ui = Scene::Object::Get<UIText>(std::string(agent1->GetName()) + "HPText")) {
+                    int hp = agent1->GetHP();
+                    if(hp > 0) {
+                        //HPが0以下でなければ表示
+                        hp_ui->SetText(std::to_string(hp));
+                    }
+                    else {
+                        //0以下なら、敗北と表示
+                        hp_ui->SetFontName("游明朝");
+                        hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                        hp_ui->SetText("敗北");
+                        //NPCをシーンから削除
+                        Scene::Object::Release(agent1);
+                    }
+                    // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                    float hp_ratio         = static_cast<float>(agent1->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                    int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                    hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                }
+            }
+        }
+    }
+}
+
 //------------------------------------------------------
-// エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
+//! @brief エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
 //------------------------------------------------------
 int InGameScene::GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent)
 {
