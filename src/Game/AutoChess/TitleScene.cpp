@@ -9,6 +9,7 @@
 #include <Game/AutoChess/Funiture/Glass.h>
 #include <system/Component/ComponentModel.h>
 #include <Game/AutoChess/UIObject/UIButton.h>
+#include <Game/AutoChess/UIObject/UIText.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <System/Component/ComponentCamera.h>
 //---------------------------------------------------------------------------
@@ -44,29 +45,24 @@ bool TitleScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto piece = Scene::Object::Create<Object>();
-        piece->SetTranslate(float3(2.0f, 0.0f, -2.0f));
+        piece->SetTranslate(float3(0.0f, 0.0f, -2.0f));
         auto model = piece->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChaturangaGaja.mv1");
         model->SetScaleAxisXYZ(0.02f);
         //---------------------------------------------------------------------------------
         // 駒に回転させたい
         //---------------------------------------------------------------------------------
-        auto update_proc = [piece]() { piece->AddRotationAxisXYZ(float3(0.0f, 1.0f, 0.0f)); };
+        auto update_proc = [piece]() { piece->AddRotationAxisXYZ(float3(0.0f, 0.2f, 0.0f)); };
         piece->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
-    // スタートボタン
-    //---------------------------------------------------------------------------------
-    auto start_button = Scene::Object::Create<UIButton>();
-    start_button->SetImage(ImageBuffer::GetImageHandle("deff"));
-    start_button->SetTranslate(float3(200.0f, 500.0f, 0.0f));
-    //---------------------------------------------------------------------------------
-    // クリック処理を入れる
+    // クリックを促すUI
     //---------------------------------------------------------------------------------
     {
-        auto click_func = []() {
-            Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
-        };
-        start_button->SetClickFunc(click_func);
+        auto click_text = Scene::Object::Create<UIText>();
+        click_text->SetText("Click anywhere");
+        click_text->SetTranslate(float3(WINDOW_W / 2.0f, 600.0f, 0.0f));
+        click_text->SetColor(GetColor(255, 255, 255));
+        click_text->SetFontSize(50);
     }
     return true;
 }
@@ -76,6 +72,12 @@ bool TitleScene::Init()
 //---------------------------------------------------------------------------
 void TitleScene::Update()
 {
+    //---------------------------------------------------------------------------------
+    // 何かしらのマウスボタンを押したらスタート
+    //---------------------------------------------------------------------------------
+    if(GetMouseInput()) {
+        Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
+    }
     __super::Update();
 }
 
