@@ -200,8 +200,8 @@ bool InGameScene::Init()
     //  売却ボタン
     //---------------------------------------------------------------------------------
     {
-        auto sell_button = Scene::Object::Create<UIButton>();       //売却ボタン
-        sell_button->SetIsFilter(true);                             // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -1615,7 +1615,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;

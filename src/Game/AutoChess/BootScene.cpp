@@ -8,7 +8,7 @@
 #include <Game/AutoChess/system/SoundData.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/Info/SynergyModifierData.h>
-#include <Game/AutoChess/InGameScene.h>
+#include <Game/AutoChess/TitleScene.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ bool BootScene::Init()
     SoundManager::instance()->LoadFromData(sound_data);
     //必要なら起動時にBGMを再生
     //SoundManager::instance()->PlayBGM("setup");
-    Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
+    Scene::Change(Scene::GetScene<TitleScene>());    //シーンの変更を行う処理
     return true;
 }
 
