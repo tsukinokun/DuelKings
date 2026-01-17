@@ -175,15 +175,18 @@ bool ChaturangaAsvaSkill::CheckResetMove()
     //---------------------------------------------------------
     //目的地に到達したかチェック
     //---------------------------------------------------------
-    float3 target_position = target_piece->GetTranslate() + offset_;
-    float  distance        = length(owner->GetTranslate() - target_position);
-    // 自身のスピードを取得
-    float speed = owner->GetMoveSpeed();
-    //1フレームに移動できる距離を計算
-    float frame_move_distance = speed * GetDeltaTime();
-    //目的地に到達したらtrueを返す
-    if(distance <= frame_move_distance) {
-        return true;
+    //相手にコンポーネントがあるなら
+    if(target_piece->GetComponent<ComponentTransform>()) {
+        float3 target_position = target_piece->GetTranslate() + offset_;
+        float  distance        = length(owner->GetTranslate() - target_position);
+        // 自身のスピードを取得
+        float speed = owner->GetMoveSpeed();
+        //1フレームに移動できる距離を計算
+        float frame_move_distance = speed * GetDeltaTime();
+        //目的地に到達したらtrueを返す
+        if(distance <= frame_move_distance) {
+            return true;
+        }
     }
     // 到達していなければfalseを返す
     return false;
