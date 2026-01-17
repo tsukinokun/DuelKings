@@ -91,10 +91,6 @@ bool InGameScene::Init()
     // 机の生成
     //---------------------------------------------------------------------------------
     {
-        //auto table = Scene::Object::Create<Object>();
-        //auto model = table->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/table.mv1");
-        //table->SetScaleAxisXYZ(4.0f);
-        //table->SetTranslate(float3(-0.5f, -20.0f, 0.0f));
         auto table = Scene::Object::Create<Glass>();
     }
     //---------------------------------------------------------------------------------
