@@ -1,16 +1,36 @@
 {
-    "value0": {
-        "se": [
-            {
-                "key": "attack",
-                "value": "data/AutoChess/Sound/attack.mp3"
-            }
-        ],
-        "bgm": [
-            {
-                "key": "setup",
-                "value": "data/AutoChess/Sound/setup_bgm.mp3"
-            }
-        ]
-    }
+  "value0": {
+    "se": [
+      {
+        "key": "attack",
+        "value": "data/AutoChess/Sound/attack.mp3"
+      },
+      {
+        "key": "start",
+        "value": "data/AutoChess/Sound/start.mp3"
+      },
+      {
+        "key": "win",
+        "value": "data/AutoChess/Sound/win.mp3"
+      },
+      {
+        "key": "lose",
+        "value": "data/AutoChess/Sound/lose.mp3"
+      }
+    ],
+    "bgm": [
+      {
+        "key": "title",
+        "value": "data/AutoChess/BGM/title.mp3"
+      },
+      {
+        "key": "setup",
+        "value": "data/AutoChess/BGM/setup.mp3"
+      },
+      {
+        "key": "battle",
+        "value": "data/AutoChess/BGM/battle.mp3"
+      }
+    ]
+  }
 }

@@ -13,6 +13,7 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <System/Component/ComponentCamera.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
@@ -71,7 +72,6 @@ bool TitleScene::Init()
             float click_text_alpha_  = (256 - 0) * t;                          //線形補間の計算
             click_text->SetAlpha(click_text_alpha_);
         };
-
         click_text->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
@@ -91,10 +91,23 @@ bool TitleScene::Init()
 //---------------------------------------------------------------------------
 void TitleScene::Update()
 {
+    //サウンドのインスタンスを取得
+    auto soundmanager = SoundManager::instance();
+    //---------------------------------------------------------------------------------
+    // タイトルBGMの再生
+    //---------------------------------------------------------------------------------
+    //再生中でなければ
+    if(!soundmanager->IsPlayingBGM("title")) {
+        // タイトルBGMを再生
+        soundmanager->PlayBGM("title");
+    }
+
     //---------------------------------------------------------------------------------
     // 何かしらのマウスボタンを押したらスタート
     //---------------------------------------------------------------------------------
     if(GetMouseInput()) {
+        soundmanager->StopBGM("title");                   // タイトルBGMを停止
+        soundmanager->PlaySE("start");                    // ゲーム開始の効果音を再生
         Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
     }
     __super::Update();
