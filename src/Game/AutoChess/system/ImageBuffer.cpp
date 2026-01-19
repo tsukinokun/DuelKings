@@ -12,6 +12,7 @@ std::unordered_map<std::string, int> ImageBuffer::image_buffer_ = {};    // 画�
 void ImageBuffer::Init()
 {
     image_buffer_.clear();                                                                                                 // 画像ハンドルのバッファをクリア
+    image_buffer_["title_logo"]                 = DxLib::LoadGraph("data/AutoChess/Image/TitleLogo.png");                  // タイトルロゴ画像
     image_buffer_["deff"]                       = DxLib::LoadGraph("data/AutoChess/Image/deff.png");                       // デフォルト画像
     image_buffer_["piece_purchase_open_button"] = DxLib::LoadGraph("data/AutoChess/Image/PiecePurchaseOpenButton.png");    // ピース購入画面を開くUI画像
     image_buffer_["left_click_anim"]            = DxLib::LoadGraph("data/AutoChess/Image/LeftClickAnim.png");              // 左クリックアニメーション画像

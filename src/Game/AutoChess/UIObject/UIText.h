@@ -67,6 +67,13 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<UIText> SetWrapWidth(int max_width);
 
+    //---------------------------------------------------------------------------
+    // 透明度を設定する関数
+    //! @param alpha [in] 透明度(0~255の間の値で)
+    //! @retval 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<UIText> SetAlpha(int alpha);
+
 private:
     std::weak_ptr<ComponentText>
         text_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく

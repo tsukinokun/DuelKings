@@ -46,6 +46,7 @@
 #include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
 #include <System/UIComponent/ComponentImage.h>
 #include <Game/AutoChess/Events/GoldClickEvent.h>
+#include <System/Component/ComponentFilterFade.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------

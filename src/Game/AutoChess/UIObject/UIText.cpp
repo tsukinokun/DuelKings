@@ -96,3 +96,14 @@ std::shared_ptr<UIText> UIText::SetWrapWidth(int max_width)
     }
     return dynamic_pointer_cast<UIText>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief 透明度を設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<UIText> UIText::SetAlpha(int alpha)
+{
+    if(auto text_comp = text_component_.lock()) {
+        text_comp->SetAlpha(alpha);    // 透明度を設定
+    }
+    return dynamic_pointer_cast<UIText>(shared_from_this());
+}

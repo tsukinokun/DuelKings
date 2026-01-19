@@ -58,7 +58,7 @@ PS_OUTPUT main(PS_INPUT_MODEL input)
 
     output.color0_ = textureColor; // * input.diffuse_;
     
-    float3 L = normalize(float3(1, 1, -1)); //光源のある方向
+    float3 L = normalize(float3(1, 1, 1)); //光源のある方向
     float3 lightColor = float3(1, 1, 1); //ライトの色
     
     float3 H = normalize(L + V); //ハーフベクトル

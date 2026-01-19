@@ -76,6 +76,13 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<ComponentText> SetWrapWidth(int max_width);
 
+    //---------------------------------------------------------------------------
+    // 透明度を設定する関数
+    //! @param alpha [in] 透明度(0~255の間の値で)
+    //! @retval 自身のポインタ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<ComponentText> SetAlpha(int alpha);
+
 private:
     //---------------------------------------------------------------------------
     // テキストの折り返し処理
@@ -87,7 +94,7 @@ private:
     //! @}
 
 private:
-    std::string font_name_  = "メイリオ";           //フォントの名前
+    std::string font_name_  = "Book Antiqua";       //フォントの名前
     int         font_size_  = DEFAULT_FONT_SIZE;    //フォントサイズ
     int         text_color_ = 0;                    //文字の色
     int         edge_color_ = 0;                    //文字の縁の色
@@ -95,6 +102,7 @@ private:
     int         thick_size_ = 1;                    //文字の太さ
     std::string str_        = "";                   //描画する文字列
     int         max_width_  = 10000;                //折り返しを行う最大幅
+    int         alpha_      = 255;                  //透明度
 
     //--------------------------------------------------------------------
     //! @name Cereal処理
