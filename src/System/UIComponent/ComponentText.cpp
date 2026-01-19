@@ -71,6 +71,8 @@ void ComponentText::Init()
 
         //折り返し処理
         std::string wrapped_text = WrapText(font_handle);
+        // 透明度の設定
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);
         //フォントが存在しているかで分岐
         if(font_handle != -1) {
             DrawStringToHandle(pos.x, pos.y, wrapped_text.data(), text_color_, font_handle, edge_color_);
@@ -80,6 +82,8 @@ void ComponentText::Init()
             DrawString(pos.x, pos.y, wrapped_text.data(), text_color_, edge_color_);
         }
         DxLib::SetFontSize(DEFAULT_FONT_SIZE);    //フォントサイズを元に戻す
+            //透明度を元に戻す
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 255);
     };
     SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
@@ -233,6 +237,16 @@ std::string ComponentText::WrapText(int font_handle)
 std::shared_ptr<ComponentText> ComponentText::SetWrapWidth(int max_width)
 {
     max_width_ = max_width;
+    return dynamic_pointer_cast<ComponentText>(shared_from_this());
+}
+
+//---------------------------------------------------------------------------
+//! @brief 透明度を設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentText> ComponentText::SetAlpha(int alpha)
+{
+    alpha_ = alpha;
+    alpha_ = std::clamp(alpha_, 0, 255);
     return dynamic_pointer_cast<ComponentText>(shared_from_this());
 }
 

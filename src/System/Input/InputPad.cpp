@@ -12,11 +12,11 @@ constexpr unsigned int MAX_PAD_DIRECT_NUM     = 4;                              
 constexpr float        MAX_ANALOG_INPUT_VALUE = 1000.0f;                                          //<! アナログスティックの入力値の最大値
 constexpr unsigned int PAD_BUTTON_NUM         = static_cast<unsigned int>(PAD_ID::PAD_R_PUSH) - static_cast<unsigned int>(PAD_ID::PAD_A) + 1;
 
-std::vector<DINPUT_JOYSTATE>                                      pad_input_states;       //<! 詳細なパッドの状態の取得
-std::array<bool, MAX_PAD_NUM>                                     use_pads;               //<! 使用しているパッドの状態を管理
-std::array<std::array<unsigned int, PAD_BUTTON_NUM>, MAX_PAD_NUM> pad_buttons;            //<! 使用しているパッドのボタンの押下状態を管理
-std::array<std::array<unsigned int, MAX_PAD_DIRECT_NUM>, MAX_PAD_NUM> pad_direct_keys;    //<! 使用しているパッドの方向キーの押下状態を管理
-bool is_all_on_direct_key;                                                                //<! 方向キーのいずれかが押されているかどうか
+std::vector<DINPUT_JOYSTATE>                                          pad_input_states;        //<! 詳細なパッドの状態の取得
+std::array<bool, MAX_PAD_NUM>                                         use_pads;                //<! 使用しているパッドの状態を管理
+std::array<std::array<unsigned int, PAD_BUTTON_NUM>, MAX_PAD_NUM>     pad_buttons;             //<! 使用しているパッドのボタンの押下状態を管理
+std::array<std::array<unsigned int, MAX_PAD_DIRECT_NUM>, MAX_PAD_NUM> pad_direct_keys;         //<! 使用しているパッドの方向キーの押下状態を管理
+bool                                                                  is_all_on_direct_key;    //<! 方向キーのいずれかが押されているかどうか
 
 // パッド番号の範囲外チェック関数
 bool isOverPadNum(s32 pad_num)

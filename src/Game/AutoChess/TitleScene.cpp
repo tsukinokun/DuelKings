@@ -12,6 +12,7 @@
 #include <Game/AutoChess/UIObject/UIText.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <System/Component/ComponentCamera.h>
+#include <Game/AutoChess/UIObject/UIImage.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
@@ -62,7 +63,25 @@ bool TitleScene::Init()
         click_text->SetText("Click anywhere");
         click_text->SetTranslate(float3(WINDOW_W / 2.0f, 600.0f, 0.0f));
         click_text->SetColor(GetColor(255, 255, 255));
-        click_text->SetFontSize(50);
+        click_text->SetFontSize(60);
+        //透明度がゆっくりと変化
+        auto update_proc = [click_text, this]() {
+            click_text_rad_         += 0.03f;                                  //ラジアン値を増加
+            float t                  = sinf(click_text_rad_) * 0.5f + 0.5f;    //0.0f~1.0fの範囲で指定
+            float click_text_alpha_  = (256 - 0) * t;                          //線形補間の計算
+            click_text->SetAlpha(click_text_alpha_);
+        };
+
+        click_text->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+    }
+    //---------------------------------------------------------------------------------
+    // タイトルロゴUIの生成
+    //---------------------------------------------------------------------------------
+    {
+        auto title_logo = Scene::Object::Create<UIImage>();
+        title_logo->SetImage(ImageBuffer::GetImageHandle("title_logo"));
+        title_logo->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f, 0.0f));
+        title_logo->SetScaleAxisXYZ(2.0f);
     }
     return true;
 }
