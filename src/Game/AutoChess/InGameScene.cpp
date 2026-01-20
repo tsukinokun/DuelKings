@@ -47,6 +47,7 @@
 #include <System/UIComponent/ComponentImage.h>
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <System/Component/ComponentFilterFade.h>
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1462,8 +1463,14 @@ void InGameScene::Update()
 
     switch(game_state_) {
     case GameState::Setup:
+        //----------------------------------------------------------------------
+        // セットアップBGMを再生
+        //----------------------------------------------------------------------
+        UpdateSetupPhase();
         if(state_timer_ >= SETUP_PHASE_DURATION) {
             TransitionTo(GameState::Battle);
+            auto sound_manager = SoundManager::instance();
+            sound_manager->StopBGM("setup");    //BGMを停止する
             //駒数が上限を超えている場合、ピーススタンドに戻す、もしもピーススタンドが満タンなら強制的に破棄する。
             for(auto& agent : Scene::Object::GetArray<Agent>()) {
                 agent->EnforcePieceLimit();    //駒数制限を強制適用
@@ -1482,7 +1489,9 @@ void InGameScene::Update()
         UpdateBattlePhase();    //バトルフェーズの更新処理
         if(state_timer_ >= BATTLE_PHASE_DURATION) {
             TransitionTo(GameState::Setup);
-            DestroyPiecesAfterBattlePhase();    //バトルフェーズ用に生成した駒を破棄する
+            auto sound_manager = SoundManager::instance();
+            sound_manager->StopBGM("battle");    //BGMを停止する
+            DestroyPiecesAfterBattlePhase();     //バトルフェーズ用に生成した駒を破棄する
             //---------------------------------------------------------------------------------
             //  各エージェントに処理
             //---------------------------------------------------------------------------------
@@ -1840,10 +1849,29 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
 }
 
 //----------------------------------------------------------------------
-// バトルフェーズの処理
+//! @brief セットアップの処理
+//----------------------------------------------------------------------
+void InGameScene::UpdateSetupPhase()
+{
+    auto sound_manager = SoundManager::instance();
+    if(!sound_manager->IsPlayingBGM("setup")) {
+        sound_manager->PlayBGM("setup");
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief バトルフェーズの処理
 //----------------------------------------------------------------------
 void InGameScene::UpdateBattlePhase()
 {
+    //----------------------------------------------------------------------
+    // バトルBGMを再生
+    //----------------------------------------------------------------------
+    auto sound_manager = SoundManager::instance();
+    if(!sound_manager->IsPlayingBGM("battle")) {
+        sound_manager->PlayBGM("battle");
+    }
+
     //----------------------------------------------------------------------
     // NPC同士のバトルをシミュレートする
     //----------------------------------------------------------------------
@@ -1871,6 +1899,13 @@ void InGameScene::UpdateBattlePhase()
             //ダメージ処理
             if(auto battle_npc = battle_agent_.lock()) {
                 if(is_player_victory) {
+                    //----------------------------------------------------------------------
+                    // 勝利SEを再生
+                    //----------------------------------------------------------------------
+                    if(!sound_manager->IsPlayingSE("win")) {
+                        sound_manager->PlaySE("win");
+                    }
+
                     //----------------------------------------------------------------------
                     //NPCの駒が全滅したら、NPCがダメージを受ける
                     //----------------------------------------------------------------------
@@ -1900,6 +1935,13 @@ void InGameScene::UpdateBattlePhase()
                     }
                 }
                 else if(player_alive_piece_count == 0) {
+                    //----------------------------------------------------------------------
+                    // 敗北SEを再生
+                    //----------------------------------------------------------------------
+                    if(!sound_manager->IsPlayingSE("lose")) {
+                        sound_manager->PlaySE("lose");
+                    }
+
                     //----------------------------------------------------------------------
                     //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
                     //----------------------------------------------------------------------
