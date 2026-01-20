@@ -23,4 +23,5 @@ public:
     void GUI() override;       //!< GUI表示
 private:
     float click_text_rad_ = 0.0f;
+    int   frame_count_    = 0;
 };

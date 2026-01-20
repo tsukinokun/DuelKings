@@ -48,6 +48,7 @@
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
+#include <Game/AutoChess/ResultScene.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1559,7 +1560,6 @@ void InGameScene::Draw()
 //---------------------------------------------------------------------------------
 void InGameScene::Exit()
 {
-    ImageBuffer::Exit();    //画像バッファの終了
     __super::Exit();
 }
 
@@ -1788,6 +1788,15 @@ void InGameScene::CreatePiecesForBattlePhase()
 //----------------------------------------------------------------------
 void InGameScene::DestroyPiecesAfterBattlePhase()
 {
+    //----------------------------------------------------------------------
+    // プレイヤーが敗北していたら、リザルトシーンへ遷移
+    //----------------------------------------------------------------------
+    if(auto player = Scene::Object::Get<Player>()) {
+        if(player->IsDead()) {
+            Scene::Change(Scene::GetScene<ResultScene>());    //シーンの変更を行う処理
+        }
+    }
+
     //----------------------------------------------------------------------
     //ショップの駒をマスク
     //----------------------------------------------------------------------
