@@ -52,6 +52,8 @@
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
 #include <Game/AutoChess/system/GameRepository.h>
+#include <Game/AutoChess/Component/MoveStrategy/IMoveStrategy.h>
+#include <Game/AutoChess/Component/MoveStrategy/MoveWinStrategy.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -2102,6 +2104,14 @@ void InGameScene::UpdateBattlePhase()
                     battle_npc->UpdateResult(!is_player_victory);
                     int goldain = CalculateRoundGold(battle_npc, !is_player_victory);
                     battle_npc->AddGold(goldain);    //ゴールドを5増やす
+                }
+                //----------------------------------------------------------------------
+                // 移動ストラテジを勝利へ
+                //----------------------------------------------------------------------
+                for(auto& piece : Scene::Object::GetArray<Piece>()) {
+                    if(auto piece_mover = piece->GetComponent<PieceMover>()) {
+                        piece_mover->SetMoveStrategy(std::make_unique<MoveWinStrategy>());
+                    }
                 }
             }
         }
