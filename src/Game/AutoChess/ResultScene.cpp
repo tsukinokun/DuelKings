@@ -15,6 +15,7 @@
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/TitleScene.h>
+#include <Game/AutoChess/system/GameRepository.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
@@ -58,13 +59,16 @@ bool ResultScene::Init()
         piece->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
-    // タイトルロゴUIの生成
+    // 順位を表示するUI
     //---------------------------------------------------------------------------------
     {
-        auto title_logo = Scene::Object::Create<UIImage>();
-        title_logo->SetImage(ImageBuffer::GetImageHandle("title_logo"));
-        title_logo->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f, 0.0f));
-        title_logo->SetScaleAxisXYZ(2.0f);
+        auto result_text = Scene::Object::Create<UIText>();
+        result_text->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f - 50.0f, 0.0f));    //位置の設定
+        result_text->SetFontName("游明朝");                                                   //フォントの設定
+        result_text->SetFontSize(128);                                                        //サイズの設定
+        result_text->SetColor(GetColor(255, 255, 255));                                       //色の設定
+        int player_rank = GameRepository::instance()->GetPlayerRank();                        //プレイヤーの最終順位を取得
+        result_text->SetText(std::to_string(player_rank) + "位");                             //表示するテキストの設定
     }
     return true;
 }

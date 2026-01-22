@@ -49,6 +49,7 @@
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
+#include <Game/AutoChess/system/GameRepository.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1793,7 +1794,15 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
     //----------------------------------------------------------------------
     if(auto player = Scene::Object::Get<Player>()) {
         if(player->IsDead()) {
-            Scene::Change(Scene::GetScene<ResultScene>());    //シーンの変更を行う処理
+            //NPCの生き残り数をカウント
+            int alive_npc_count = 0;
+            for(auto& npc : Scene::Object::GetArray<Npc>()) {
+                if(!npc->IsDead()) {
+                    ++alive_npc_count;
+                }
+            }
+            GameRepository::instance()->SetPlayerRank(alive_npc_count + 1);    //プレイヤーのランクは生き残りNPC数+1位
+            Scene::Change(Scene::GetScene<ResultScene>());                     //シーンの変更を行う処理
         }
     }
 
@@ -1802,6 +1811,7 @@ void InGameScene::DestroyPiecesAfterBattlePhase()
     //----------------------------------------------------------------------
     auto npcs = Scene::Object::GetArray<Npc>();
     if(npcs.empty()) {
+        GameRepository::instance()->SetPlayerRank(1);     //プレイヤーのランクは1位
         Scene::Change(Scene::GetScene<ResultScene>());    //シーンの変更を行う処理
     }
 
