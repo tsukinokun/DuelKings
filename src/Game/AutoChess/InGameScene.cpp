@@ -47,6 +47,7 @@
 #include <System/UIComponent/ComponentImage.h>
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <Game/AutoChess/Events/LoseEvent.h>
+#include <Game/AutoChess/Events/WinEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
@@ -1450,35 +1451,76 @@ bool InGameScene::Init()
         event_handles_.push_back(std::move(gold_info_event_handle));
     }
     //---------------------------------------------------------------------------------
-    // 敗北時に表示するUIの作成
+    // 中央に表示するUIの作成
     //---------------------------------------------------------------------------------
     {
-        auto lose_damage_ui = Scene::Object::Create<UIText>();
-        lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);                         //初期状態では非表示にしておく
-        lose_damage_ui->SetTranslate(float3(WINDOW_W / 2, WINDOW_H / 2 + 100.0f, 0.0f));    //位置を中央あたりに設定
-        lose_damage_ui->SetFontSize(20);                                                    //サイズを設定
-        lose_damage_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));               //文字色設定
-        lose_damage_ui->SetFontName("游明朝");                                              //フォントを設定
-        auto hide_proc = [lose_damage_ui]() {
-            static float timer = 0.0f;
-            if(!lose_damage_ui->GetStatus(Object::StatusBit::NoDraw)) {
-                timer += GetDeltaTime();
-                if(timer >= 3.0f) {
-                    lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);
-                    timer = 0.0f;
+        auto center_message_ui = Scene::Object::Create<UIText>();
+        center_message_ui->SetStatus(Object::StatusBit::NoDraw, true);                //初期状態では非表示にしておく
+        center_message_ui->SetTranslate(float3(WINDOW_W / 2, WINDOW_H / 2, 0.0f));    //位置を中央あたりに設定
+        center_message_ui->SetFontSize(60);                                           //サイズを設定
+        center_message_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));      //文字色設定
+        center_message_ui->SetFontName("游明朝");                                     //フォントを設定
+        float center_message_hide_timer = 0.0f;                                       //非表示タイマー
+        //---------------------------------------------------------------------------------
+        // 非表示処理の登録
+        //---------------------------------------------------------------------------------
+        auto center_message_hide_proc = [center_message_ui, &center_message_hide_timer]() {
+            if(!center_message_ui->GetStatus(Object::StatusBit::NoDraw)) {
+                center_message_hide_timer += GetDeltaTime();
+                if(center_message_hide_timer >= 3.0f) {
+                    center_message_ui->SetStatus(Object::StatusBit::NoDraw, true);
+                    center_message_hide_timer = 0.0f;
                 }
             }
         };
-        lose_damage_ui->SetProc("hide_lose_damage_ui_proc", hide_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        center_message_ui->SetProc("hide_center_message_ui_proc", center_message_hide_proc, ProcTiming::Update, ProcPriority::NORMAL);
         //---------------------------------------------------------------------------------
-        // 敗北時のイベントを登録
+        // 敗北時に表示するUIの作成
         //---------------------------------------------------------------------------------
-        auto lose_event = [lose_damage_ui](const LoseEvent& e) {
-            lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, false);
-            lose_damage_ui->SetText(std::format("\n被ダメージ:{}", e.agent_damage_amount_));
+        {
+            auto lose_damage_ui = Scene::Object::Create<UIText>();
+            lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);                         //初期状態では非表示にしておく
+            lose_damage_ui->SetTranslate(float3(WINDOW_W / 2, WINDOW_H / 2 + 100.0f, 0.0f));    //位置を中央あたりに設定
+            lose_damage_ui->SetFontSize(20);                                                    //サイズを設定
+            lose_damage_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));               //文字色設定
+            lose_damage_ui->SetFontName("游明朝");                                              //フォントを設定
+            float hide_timer = 0.0f;
+            //---------------------------------------------------------------------------------
+            // 非表示処理の登録
+            //---------------------------------------------------------------------------------
+            auto hide_proc = [lose_damage_ui, &hide_timer]() {
+                if(!lose_damage_ui->GetStatus(Object::StatusBit::NoDraw)) {
+                    hide_timer += GetDeltaTime();
+                    if(hide_timer >= 3.0f) {
+                        lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);
+                        hide_timer = 0.0f;
+                    }
+                }
+            };
+            lose_damage_ui->SetProc("hide_lose_damage_ui_proc", hide_proc, ProcTiming::Update, ProcPriority::NORMAL);
+            //---------------------------------------------------------------------------------
+            // 敗北時のイベントを登録
+            //---------------------------------------------------------------------------------
+            auto lose_event = [lose_damage_ui, center_message_ui, &center_message_hide_timer](const LoseEvent& e) {
+                lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, false);
+                lose_damage_ui->SetText(std::format("\n被ダメージ:{}", e.agent_damage_amount_));
+                center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
+                center_message_ui->SetText("敗北");
+                center_message_hide_timer = 0.0f;
+            };
+            auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
+            event_handles_.push_back(std::move(lose_event_handle));
+        }
+        //---------------------------------------------------------------------------------
+        // 勝利時のイベントを登録
+        //---------------------------------------------------------------------------------
+        auto win_event = [center_message_ui, &center_message_hide_timer](const WinEvent& e) {
+            center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            center_message_ui->SetText("勝利");
+            center_message_hide_timer = 0.0f;
         };
-        auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
-        event_handles_.push_back(std::move(lose_event_handle));
+        auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
+        event_handles_.push_back(std::move(win_event_handle));
     }
     return true;
 }
@@ -2007,6 +2049,8 @@ void InGameScene::UpdateBattlePhase()
                             hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
                         }
                     }
+                    auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                    event_bus->publish(WinEvent());
                 }
                 else if(player_alive_piece_count == 0) {
                     //----------------------------------------------------------------------
