@@ -46,6 +46,7 @@
 #include <Game/AutoChess/Component/StatusEffect/ModifierStatus.h>
 #include <System/UIComponent/ComponentImage.h>
 #include <Game/AutoChess/Events/GoldClickEvent.h>
+#include <Game/AutoChess/Events/LoseEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
@@ -1448,6 +1449,37 @@ bool InGameScene::Init()
         auto gold_info_event_handle = event_bus->subscribe<GoldClickEvent>(gold_click_proc, 0);
         event_handles_.push_back(std::move(gold_info_event_handle));
     }
+    //---------------------------------------------------------------------------------
+    // 敗北時に表示するUIの作成
+    //---------------------------------------------------------------------------------
+    {
+        auto lose_damage_ui = Scene::Object::Create<UIText>();
+        lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);                         //初期状態では非表示にしておく
+        lose_damage_ui->SetTranslate(float3(WINDOW_W / 2, WINDOW_H / 2 + 100.0f, 0.0f));    //位置を中央あたりに設定
+        lose_damage_ui->SetFontSize(20);                                                    //サイズを設定
+        lose_damage_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));               //文字色設定
+        lose_damage_ui->SetFontName("游明朝");                                              //フォントを設定
+        auto hide_proc = [lose_damage_ui]() {
+            static float timer = 0.0f;
+            if(!lose_damage_ui->GetStatus(Object::StatusBit::NoDraw)) {
+                timer += GetDeltaTime();
+                if(timer >= 3.0f) {
+                    lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);
+                    timer = 0.0f;
+                }
+            }
+        };
+        lose_damage_ui->SetProc("hide_lose_damage_ui_proc", hide_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // 敗北時のイベントを登録
+        //---------------------------------------------------------------------------------
+        auto lose_event = [lose_damage_ui](const LoseEvent& e) {
+            lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            lose_damage_ui->SetText(std::format("\n被ダメージ:{}", e.agent_damage_amount_));
+        };
+        auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
+        event_handles_.push_back(std::move(lose_event_handle));
+    }
     return true;
 }
 
@@ -2009,6 +2041,8 @@ void InGameScene::UpdateBattlePhase()
                             hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
                         }
                     }
+                    auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                    event_bus->publish(LoseEvent(damage));
                 }
                 //----------------------------------------------------------------------
                 // 内部的な勝ち負けを更新してゴールドを付与
