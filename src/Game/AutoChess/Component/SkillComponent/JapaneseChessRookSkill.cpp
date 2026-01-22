@@ -24,7 +24,6 @@ JapaneseChessRookSkill::JapaneseChessRookSkill()
 void JapaneseChessRookSkill::Init()
 {
     __super::Init();
-    mp_ = 90;    //初期MPを設定
 }
 
 //---------------------------------------------------------

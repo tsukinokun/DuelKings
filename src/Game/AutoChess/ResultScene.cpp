@@ -1,9 +1,9 @@
 ﻿//---------------------------------------------------------------------------
-//!	@file	TitleScene.cpp
-//! @brief	オートチェスのタイトルシーン
+//!	@file	ResultScene.cpp
+//! @brief	オートチェスのリザルトシーン
 //! @author 山﨑愛
 //---------------------------------------------------------------------------
-#include "TitleScene.h"
+#include "ResultScene.h"
 #include <Game/AutoChess/InGameScene.h>
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/Funiture/Glass.h>
@@ -14,10 +14,12 @@
 #include <System/Component/ComponentCamera.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/SoundManager.h>
+#include <Game/AutoChess/TitleScene.h>
+#include <Game/AutoChess/system/GameRepository.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
-bool TitleScene::Init()
+bool ResultScene::Init()
 {
     __super::Init();
     //---------------------------------------------------------------------------
@@ -57,31 +59,16 @@ bool TitleScene::Init()
         piece->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
-    // クリックを促すUI
+    // 順位を表示するUI
     //---------------------------------------------------------------------------------
     {
-        auto click_text = Scene::Object::Create<UIText>();
-        click_text->SetText("Click anywhere");
-        click_text->SetTranslate(float3(WINDOW_W / 2.0f, 600.0f, 0.0f));
-        click_text->SetColor(GetColor(255, 255, 255));
-        click_text->SetFontSize(60);
-        //透明度がゆっくりと変化
-        auto update_proc = [click_text, this]() {
-            click_text_rad_         += 0.03f;                                  //ラジアン値を増加
-            float t                  = sinf(click_text_rad_) * 0.5f + 0.5f;    //0.0f~1.0fの範囲で指定
-            float click_text_alpha_  = (256 - 0) * t;                          //線形補間の計算
-            click_text->SetAlpha(click_text_alpha_);
-        };
-        click_text->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
-    }
-    //---------------------------------------------------------------------------------
-    // タイトルロゴUIの生成
-    //---------------------------------------------------------------------------------
-    {
-        auto title_logo = Scene::Object::Create<UIImage>();
-        title_logo->SetImage(ImageBuffer::GetImageHandle("title_logo"));
-        title_logo->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f, 0.0f));
-        title_logo->SetScaleAxisXYZ(2.0f);
+        auto result_text = Scene::Object::Create<UIText>();
+        result_text->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f - 50.0f, 0.0f));    //位置の設定
+        result_text->SetFontName("游明朝");                                                   //フォントの設定
+        result_text->SetFontSize(128);                                                        //サイズの設定
+        result_text->SetColor(GetColor(255, 255, 255));                                       //色の設定
+        int player_rank = GameRepository::instance()->GetPlayerRank();                        //プレイヤーの最終順位を取得
+        result_text->SetText(std::to_string(player_rank) + "位");                             //表示するテキストの設定
     }
     return true;
 }
@@ -89,7 +76,7 @@ bool TitleScene::Init()
 //---------------------------------------------------------------------------
 //! @brief 更新処理
 //---------------------------------------------------------------------------
-void TitleScene::Update()
+void ResultScene::Update()
 {
     __super::Update();
     //サウンドのインスタンスを取得
@@ -106,19 +93,17 @@ void TitleScene::Update()
     //---------------------------------------------------------------------------------
     // 何かしらのマウスボタンを押したらスタート
     //---------------------------------------------------------------------------------
-    if(GetMouseInput() && (frame_count_ > 10)) {
-        soundmanager->StopBGM("title");                   // タイトルBGMを停止
-        soundmanager->PlaySE("start");                    // ゲーム開始の効果音を再生
-        Scene::Change(Scene::GetScene<InGameScene>());    //シーンの変更を行う処理
+    if(GetMouseInput()) {
+        soundmanager->StopBGM("title");                  // タイトルBGMを停止
+        soundmanager->PlaySE("start");                   // ゲーム開始の効果音を再生
+        Scene::Change(Scene::GetScene<TitleScene>());    //シーンの変更を行う処理
     }
-    // 最初のフレーム処理が終わったらfalseにする
-    frame_count_++;
 }
 
 //---------------------------------------------------------------------------
 //! @brief 描画処理
 //---------------------------------------------------------------------------
-void TitleScene::Draw()
+void ResultScene::Draw()
 {
     __super::Draw();
     //---------------------------------------------------------------------------
@@ -143,7 +128,7 @@ void TitleScene::Draw()
 //---------------------------------------------------------------------------
 //! @brief 終了処理
 //---------------------------------------------------------------------------
-void TitleScene::Exit()
+void ResultScene::Exit()
 {
     __super::Exit();
 }
@@ -151,7 +136,7 @@ void TitleScene::Exit()
 //---------------------------------------------------------------------------
 //! @brief GUI描画
 //---------------------------------------------------------------------------
-void TitleScene::GUI()
+void ResultScene::GUI()
 {
     __super::GUI();
 }

@@ -9,6 +9,7 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/Info/SynergyModifierData.h>
 #include <Game/AutoChess/TitleScene.h>
+#include <Game/AutoChess/system/GameRepository.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -30,7 +31,8 @@ bool BootScene::Init()
         archive(sound_data);
     }
 
-    static SoundManager sound_manager_instance;
+    static SoundManager   sound_manager_instance;
+    static GameRepository game_repository_instance;
     //SoundManager に渡してロード
     SoundManager::instance()->LoadFromData(sound_data);
     //必要なら起動時にBGMを再生

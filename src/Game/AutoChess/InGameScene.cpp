@@ -48,6 +48,8 @@
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
+#include <Game/AutoChess/ResultScene.h>
+#include <Game/AutoChess/system/GameRepository.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1519,7 +1521,9 @@ void InGameScene::Update()
             // NPCが盤面を強化する処理
             //--------------------------------------------------------------------------------
             for(auto& npc : Scene::Object::GetArray<Npc>()) {
-                npc->OnTurnStart();
+                if(!npc->IsDead()) {
+                    npc->OnTurnStart();
+                }
             }
             has_battle_ended_ = false;    //バトル終了フラグをリセット
         }
@@ -1557,7 +1561,6 @@ void InGameScene::Draw()
 //---------------------------------------------------------------------------------
 void InGameScene::Exit()
 {
-    ImageBuffer::Exit();    //画像バッファの終了
     __super::Exit();
 }
 
@@ -1663,10 +1666,9 @@ void InGameScene::CreatePiecesForBattlePhase()
     std::mt19937       mt(rd());
     std::shuffle(npcs.begin(), npcs.end(), mt);
     //----------------------------------------------------------------------
-    // 先頭を保存して、ベクターからは削除
+    // 先頭を保存
     //----------------------------------------------------------------------
     std::shared_ptr<Npc> first_npc = npcs[0];
-    npcs.erase(npcs.begin());
     //ここでマッチング情報を作成
     match_infos_.clear();    //マッチ情報をクリア
     // 生きているNPCを格納するベクター、2体でマッチングする場合などに備えて
@@ -1677,6 +1679,10 @@ void InGameScene::CreatePiecesForBattlePhase()
     for(auto& npc : npcs) {
         //死亡しているならスキップ
         if(npc->IsDead()) {
+            continue;
+        }
+        //先頭と同じならスキップ
+        if(npc == first_npc) {
             continue;
         }
         // 追加
@@ -1701,8 +1707,18 @@ void InGameScene::CreatePiecesForBattlePhase()
     // 抜けた際に、1体だけ残っている場合、ghostを相手にマッチングを組む
     //----------------------------------------------------------------------
     if(alive_npcs.size() == 1) {
-        //ghostを選ぶ
-        auto ghost_npc = Scene::Object::Create<Npc>();
+        //alive_npcsから、自分以外をランダムで選ぶ
+        std::shared_ptr<Npc> ghost_npc = nullptr;
+        //ランダムに選ぶ
+        while(!ghost_npc) {
+            std::uniform_int_distribution<int> dist(0, npcs.size() - 1);
+            int                                index = dist(mt);
+            //選んだNPCが自分自身でなければ採用
+            if(alive_npcs[0] != npcs[index]) {
+                ghost_npc = npcs[index];
+            }
+            //もしも選んだNPCが自分自身なら、再度ランダムに選び直す
+        }
         //----------------------------------------------------------------------
         //10.0f~BATTLE_PHASE_DURATIONの間でランダムにバトル時間を決定
         //----------------------------------------------------------------------
@@ -1773,6 +1789,32 @@ void InGameScene::CreatePiecesForBattlePhase()
 //----------------------------------------------------------------------
 void InGameScene::DestroyPiecesAfterBattlePhase()
 {
+    //----------------------------------------------------------------------
+    // プレイヤーが敗北していたら、リザルトシーンへ遷移
+    //----------------------------------------------------------------------
+    if(auto player = Scene::Object::Get<Player>()) {
+        if(player->IsDead()) {
+            //NPCの生き残り数をカウント
+            int alive_npc_count = 0;
+            for(auto& npc : Scene::Object::GetArray<Npc>()) {
+                if(!npc->IsDead()) {
+                    ++alive_npc_count;
+                }
+            }
+            GameRepository::instance()->SetPlayerRank(alive_npc_count + 1);    //プレイヤーのランクは生き残りNPC数+1位
+            Scene::Change(Scene::GetScene<ResultScene>());                     //シーンの変更を行う処理
+        }
+    }
+
+    //----------------------------------------------------------------------
+    // 生きているNPCが0体なら、リザルトシーンへ遷移
+    //----------------------------------------------------------------------
+    auto npcs = Scene::Object::GetArray<Npc>();
+    if(npcs.empty()) {
+        GameRepository::instance()->SetPlayerRank(1);     //プレイヤーのランクは1位
+        Scene::Change(Scene::GetScene<ResultScene>());    //シーンの変更を行う処理
+    }
+
     //----------------------------------------------------------------------
     //ショップの駒をマスク
     //----------------------------------------------------------------------

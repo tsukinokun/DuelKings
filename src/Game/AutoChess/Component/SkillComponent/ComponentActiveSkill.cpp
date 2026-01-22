@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <Game/AutoChess/Piece/Piece.h>
+#include <Game/AutoChess/Component/PieceSensor.h>
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
@@ -111,6 +112,23 @@ const SkillData& ComponentActiveSkill::GetMasterData() const
 //---------------------------------------------------------
 bool ComponentActiveSkill::CanActivate() const
 {
+    auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());    //ピースであることが前提
+    //敵ピースが存在するかチェック
+    auto                                pieces = Scene::Object::GetArray<Piece>();    // シーン内のピースを取得
+    std::vector<std::shared_ptr<Piece>> enemy_pieces;
+    for(auto& piece : pieces) {
+        //センサーがついていないピースは無視
+        if(!piece->GetComponent<PieceSensor>()) {
+            continue;
+        }
+        //自身と違うチームのピースをベクターに格納
+        if(piece->GetOwner() != owner->GetOwner()) {
+            enemy_pieces.push_back(piece);
+        }
+    }
+    if(enemy_pieces.size() == 0) {
+        return false;    // 敵ピースが存在しない場合、発動不可
+    }
     // スキルMPが100以上かつクールダウン時間が0以下なら発動可能
     return (mp_ >= 100) && (cool_doen_time_ <= 0.0f);
 }

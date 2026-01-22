@@ -19,7 +19,7 @@ constexpr int LEVEL_UP_REQUIRED_PIECE_COUNT = 3;
 const std::vector<int>   exp_table        = {0, 1, 2, 4, 8, 18, 28, 38, 48, 56};
 const std::array<int, 5> piece_init_stock = {25, 20, 15, 10, 10};    //各レアリティごとの初期在庫数
 //Agentの最大HP
-int constexpr MAX_AGENT_HP = 100;
+int constexpr MAX_AGENT_HP = 1;
 //駒のレアリティ数
 constexpr int RARITIES = 5;
 //ピーススタンドのサイズ
