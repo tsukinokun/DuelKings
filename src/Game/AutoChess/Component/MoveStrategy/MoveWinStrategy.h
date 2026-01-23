@@ -21,5 +21,7 @@ public:
     void Move(Piece* piece, float delta_time) override;
 
 private:
-    float1 sin_curve_rot_ = 90.0f;    // サインカーブ用の回転角
+    float1 sin_curve_rot_  = 90.0f;    // サインカーブ用の回転角
+    float  rot_y_          = 0.0f;     // Y軸回転用の角度
+    float  ROTATION_SPEED_ = 2.0f;     // 回転速度
 };
