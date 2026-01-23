@@ -15,6 +15,13 @@ class Agent;
 class InGameScene : public Scene::Base
 {
 private:
+    enum class TutorialStep
+    {
+        None,
+        PurchaseOpen
+    };
+
+private:
     //ゲームの状態
     enum class GameState
     {
@@ -68,6 +75,11 @@ private:
     //----------------------------------------------------------------------
     int GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent);
 
+    //----------------------------------------------------------------------
+    // チュートリアルの更新処理関数
+    //----------------------------------------------------------------------
+    void UpdateTutorial();
+
     //@}
 private:
     TsukinoDIContainer::Container                    di_container_;    //DIコンテナ
@@ -75,10 +87,12 @@ private:
     GameContext                                      game_context_;                           //マスターデータなどの管理クラス
     GameState                                        game_state_       = GameState::Setup;    //現在のゲーム状態、設置フェーズから開始する。
     float                                            state_timer_      = 0.0f;                // 状態経過時間（秒）
-    bool                                             is_purchase_open_ = true;                //ピース購入画面が開いているかどうか
+    bool                                             is_purchase_open_ = false;               //ピース購入画面が開いているかどうか
     bool                                             has_battle_ended_ = false;               //バトルが終了したかどうか
     int                                              turn_count_       = 1;                   // 現在のターン数
     std::weak_ptr<Agent>                             battle_agent_;                           //バトル中のエージェント
     std::vector<MatchInfo>                           match_infos_;                            //マッチ情報群
     std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;                          //イベントハンドル群
+    TutorialStep                                     tutorial_step_   = TutorialStep::PurchaseOpen;
+    bool                                             tutorial_active_ = true;
 };

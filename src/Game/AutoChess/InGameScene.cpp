@@ -124,7 +124,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
-        exp_button->SetStatus(Object::StatusBit::NoDraw, true);
+        //exp_button->SetStatus(Object::StatusBit::NoDraw, true);
         exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
         exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
         exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面左下あたりに設定
@@ -147,7 +147,7 @@ bool InGameScene::Init()
         {
             //現在の経験値
             auto curr_exp_ui = Scene::Object::Create<UIText>();
-            curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
             curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleRight);    //左寄せに設定
             curr_exp_ui->SetTranslate(float3(100.0f, 500.0f, 0.0f));                    //位置を設定
             curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
@@ -163,14 +163,14 @@ bool InGameScene::Init()
             //割線
             auto line_ui = Scene::Object::Create<UIText>();
             curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            line_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //line_ui->SetStatus(Object::StatusBit::NoDraw, true);
             line_ui->SetTranslate(float3(150.0f, 500.0f, 0.0f));                    //位置を設定
             line_ui->SetFontSize(30);                                               //フォントサイズ設定
             line_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
             line_ui->SetText("/");                                                  //割線を表示
             //次のレベルまでに必要な経験値
             auto next_exp_ui = Scene::Object::Create<UIText>();
-            next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
             next_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
             next_exp_ui->SetTranslate(float3(170.0f, 500.0f, 0.0f));                    //位置を設定
             next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
@@ -208,9 +208,9 @@ bool InGameScene::Init()
     //  売却ボタン
     //---------------------------------------------------------------------------------
     {
-        auto sell_button = Scene::Object::Create<UIButton>();       //売却ボタン
-        sell_button->SetIsFilter(true);                             // クリック判定をUIヒットマネージャーでフィルタリングするように設定
-        sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
+        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        sell_button->SetIsFilter(true);                          // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
         sell_button->SetTranslate(float3(1050.0f, 500.0f, 0.0f));    //位置を画面右下あたりに設定
@@ -343,8 +343,12 @@ bool InGameScene::Init()
         phase_timer_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));           //文字色設定
         phase_timer_ui->SetTranslate(float3(WINDOW_W * 0.5f, 100.0f, 0.0f));            //位置を上部中央あたりに設定
         phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央寄せに設定
+        phase_timer_ui->SetText("Time : ∞");
         //更新処理
         auto set_text_proc = [this, phase_timer_ui]() {
+            if(tutorial_active_) {
+                return;    // チュートリアル中はタイマーを更新しない
+            }
             int time_left = 0;
             switch(game_state_) {
             case GameState::Setup:
@@ -785,9 +789,10 @@ bool InGameScene::Init()
     //  購入画面のフィルター
     //---------------------------------------------------------------------------------
     {
-        auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
-        purchase_window_filter->SetScaleAxisXYZ(15.0f);                    //大きさを画面全体に設定
-        purchase_window_filter->SetAlpha(168);                             //透明度を設定
+        auto purchase_window_filter = Scene::Object::Create<UIImage>();        //フィルターの宣言
+        purchase_window_filter->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        purchase_window_filter->SetScaleAxisXYZ(15.0f);                        //大きさを画面全体に設定
+        purchase_window_filter->SetAlpha(168);                                 //透明度を設定
         float x = WINDOW_W * 0.5f;
         float y = WINDOW_H * 0.5f;
         purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
@@ -801,6 +806,7 @@ bool InGameScene::Init()
         auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
             auto piece_purchase_button = Scene::Object::Create<UIButton>();
+            piece_purchase_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
@@ -878,6 +884,7 @@ bool InGameScene::Init()
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
             auto piece_name_text = Scene::Object::Create<UIText>();
+            piece_name_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_name_text->SetName("PieceNameText");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
@@ -910,6 +917,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto reroll_button = Scene::Object::Create<UIButton>();
+        reroll_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         reroll_button->SetImage(ImageBuffer::GetImageHandle("reroll_button"));
         reroll_button->SetScaleAxisXYZ(0.5f);                          //大きさを少し小さく設定
         reroll_button->SetTranslate(float3(1150.0f, 300.0f, 0.0f));    //位置を画面右中央あたりに設定
@@ -933,6 +941,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto lock_button = Scene::Object::Create<UIButton>();
+        lock_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
         lock_button->SetScaleAxisXYZ(0.5f);                         //大きさを少し小さく設定
         lock_button->SetTranslate(float3(150.0f, 300.0f, 0.0f));    //位置を画面左中央あたりに設定
@@ -1227,7 +1236,7 @@ bool InGameScene::Init()
     {
         //goldボタンUI
         auto gold_ui = Scene::Object::Create<UIButton>();
-        gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        //gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
         gold_ui->SetTranslate(float3(800.0f, 50.0f, 0.0f));    //位置を画面左上あたりに設定
         gold_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
         gold_ui->SetScaleAxisXYZ(0.2f);    //大きさ
@@ -1237,13 +1246,13 @@ bool InGameScene::Init()
         gold_ui->SetClickFunc(gold_click_func);
         //goldテキストUI
         auto gold_text_ui = Scene::Object::Create<UIText>();
-        gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        //Fgold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
         gold_text_ui->SetTranslate(float3(830.0f, 50.0f, 0.0f));               //位置を画面左上あたりに設定
         gold_text_ui->SetFontName("游明朝");                                   //フォントを設定
         gold_text_ui->SetFontSize(24);                                         //フォントサイズ設定
         gold_text_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
         gold_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
-        //gold更新処理
+        //gold更新処理F
         auto gold_update_proc = [gold_text_ui, player]() {
             //gold情報UIに情報を設定
             gold_text_ui->SetText(std::format("{}", player->GetGold()));
@@ -1524,6 +1533,13 @@ bool InGameScene::Init()
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
     }
+    //---------------------------------------------------------------------------------
+    //  フェードフィルター
+    //---------------------------------------------------------------------------------
+    Scene::Object::Create<Object>()              // フェード用オブジェクト
+        ->SetName("FadeIn")                      // 名前設定
+        ->AddComponent<ComponentFilterFade>()    // フェードコンポーネント
+        ->StartFadeIn();                         // フェードインスタート
     return true;
 }
 
@@ -1535,10 +1551,14 @@ void InGameScene::Update()
     __super::Update();
     // delta_time を更新
     float delta_time = phase_timer_.Tick();    // 前回からの経過時間（秒）
-
-    // 状態経過時間に加算
-    state_timer_ += delta_time;
-
+    //チュートリアル中
+    if(tutorial_active_) {
+        UpdateTutorial();
+    }
+    else {
+        // 状態経過時間に加算
+        state_timer_ += delta_time;
+    }
     switch(game_state_) {
     case GameState::Setup:
         //----------------------------------------------------------------------
@@ -2254,4 +2274,18 @@ int InGameScene::GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent)
         }
     }
     return count;
+}
+
+//----------------------------------------------------------------------
+//! @brief チュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::UpdateTutorial()
+{
+    switch(tutorial_step_) {
+    case TutorialStep::None:
+        //何もしない
+        break;
+    case TutorialStep::PurchaseOpen:
+        break;
+    }
 }
