@@ -210,7 +210,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
-        sell_button->SetIsFilter(true);                          // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -1639,7 +1639,13 @@ void InGameScene::Update()
 void InGameScene::Draw()
 {
     __super::Draw();
+    //---------------------------------------------------------------------------------
+    // チュートリアル描画
+    //---------------------------------------------------------------------------------
+    DrawTutorial();
+    //---------------------------------------------------------------------------------
     //バトルフェーズはバトル用の描画処理を行う
+    //---------------------------------------------------------------------------------
     if(game_state_ == GameState::Battle) {
         //ボードを描画
         for(int f = 0; f < 8; f++) {
@@ -1658,6 +1664,7 @@ void InGameScene::Draw()
         }
     }
 }
+
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
@@ -1730,7 +1737,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;
@@ -2334,6 +2341,18 @@ void InGameScene::UpdateTutorial()
 }
 
 //----------------------------------------------------------------------
+//! @brief チュートリアルの描画処理関数
+//----------------------------------------------------------------------
+void InGameScene::DrawTutorial()
+{
+    switch(tutorial_step_) {
+    case TutorialStep::PutPiece:
+        PutPieceTutorialDraw();
+        break;
+    }
+}
+
+//----------------------------------------------------------------------
 //! @brief 購入オープンチュートリアルの開始処理関数
 //----------------------------------------------------------------------
 void InGameScene::PurchaseOpenTutorialEnter()
@@ -2496,6 +2515,24 @@ void InGameScene::PutPieceTutorialEnter()
 void InGameScene::PutPieceTutorialUpdate()
 {
     //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto player = Scene::Object::Get<Player>()) {
+        // プレイヤーがピースを1体以上配置したら
+        if(player->GetPlacedPieceNum() >= 1) {
+            PutPieceTutorialExit();
+            tutorial_step_   = TutorialStep::None;    // チュートリアル終了
+            tutorial_active_ = false;                 // チュートリアル無効化
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+// ピースを置くチュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PutPieceTutorialDraw()
+{
+    //----------------------------------------------------------------------
     // ピーススタンドのピースを取得して、盤面のほうへのベジェ曲線を描画
     //----------------------------------------------------------------------
     if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
@@ -2506,24 +2543,37 @@ void InGameScene::PutPieceTutorialUpdate()
                 auto piece_weak = square->GetPutPiece();
                 if(auto piece = piece_weak.lock()) {
                     float3 start_pos = piece->GetTranslate();
-                    //ベジェ曲線を描画
+                    float3 end_pos   = float3(0.0f, 0.5f, -3.0f);
+                    //----------------------------------------------------------------------
+                    //方向ベクトルを計算
+                    //----------------------------------------------------------------------
+                    float3 dir     = end_pos - start_pos;
+                    float3 div_vec = (dir / 3);
+                    //----------------------------------------------------------------------
+                    // 制御点の高さ
+                    //----------------------------------------------------------------------
+                    float control_y = 4.0f;
+                    //----------------------------------------------------------------------
+                    //方向を分割して、その真上座標を制御点にする。
+                    //----------------------------------------------------------------------
+                    float3 control_point2 = start_pos + div_vec;
+                    control_point2.y      = control_y;
+                    float3 control_point3 = start_pos + (div_vec * 2);
+                    control_point3.y      = control_y;
+                    //----------------------------------------------------------------------
+                    // 制御点の追加
+                    //----------------------------------------------------------------------
                     std::vector<float3> control_points;
                     control_points.push_back(start_pos);
-                    DrawBezierCurve3D(control_points);
+                    control_points.push_back(control_point2);
+                    control_points.push_back(control_point3);
+                    control_points.push_back(end_pos);
+                    //----------------------------------------------------------------------
+                    //ベジェ曲線を描画
+                    //----------------------------------------------------------------------
+                    DrawBezierArrow3D(control_points, 16, DxLib::GetColor(255, 255, 0));
                 }
             }
-        }
-    }
-
-    //----------------------------------------------------------------------
-    // 切り替え処理
-    //----------------------------------------------------------------------
-    if(auto player = Scene::Object::Get<Player>()) {
-        // プレイヤーがピースを1体以上配置したら
-        if(player->GetPlacedPieceNum() >= 1) {
-            PutPieceTutorialExit();
-            tutorial_step_   = TutorialStep::None;    // チュートリアル終了
-            tutorial_active_ = false;                 // チュートリアル無効化
         }
     }
 }

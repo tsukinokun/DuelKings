@@ -68,7 +68,7 @@ int WINAPI WinMain(_In_ [[maybe_unused]] HINSTANCE     hInstance,
         return -1;
     }
 
-#if 1    // GPU位置固定するため、初期化後行う必要がある
+#if 0    // GPU位置固定するため、初期化後行う必要がある
     if(ini.GetBool("System", "GUIEditor")) {
         RECT   rect{};
         float2 ofs = {0, 0};
