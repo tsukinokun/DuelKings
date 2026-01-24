@@ -54,6 +54,7 @@
 #include <Game/AutoChess/system/GameRepository.h>
 #include <Game/AutoChess/Component/MoveStrategy/IMoveStrategy.h>
 #include <Game/AutoChess/Component/MoveStrategy/MoveWinStrategy.h>
+#include <Game/AutoChess/system/DXLibUtils.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -2506,6 +2507,9 @@ void InGameScene::PutPieceTutorialUpdate()
                 if(auto piece = piece_weak.lock()) {
                     float3 start_pos = piece->GetTranslate();
                     //ベジェ曲線を描画
+                    std::vector<float3> control_points;
+                    control_points.push_back(start_pos);
+                    DrawBezierCurve3D(control_points);
                 }
             }
         }
