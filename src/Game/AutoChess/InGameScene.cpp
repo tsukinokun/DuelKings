@@ -55,6 +55,7 @@
 #include <Game/AutoChess/Component/MoveStrategy/IMoveStrategy.h>
 #include <Game/AutoChess/Component/MoveStrategy/MoveWinStrategy.h>
 #include <Game/AutoChess/system/DXLibUtils.h>
+#include <Game/AutoChess/UIObject/UIObject.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1539,6 +1540,13 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
     PurchaseOpenTutorialEnter();
+
+    for(auto& ui : Scene::Object::GetArray<UIObject>()) {
+        //ui->SetStatus(Object::StatusBit::NoUpdate, true);    //全てのUIオブジェクトを非表示にする
+        //ui->SetStatus(Object::StatusBit::NoDraw, true);    //全てのUIオブジェクトを非表示にする
+        //Scene::Object::Release(ui);    //全てのUIオブジェクトを解放
+    }
+
     //---------------------------------------------------------------------------------
     //  フェードフィルター
     //---------------------------------------------------------------------------------
