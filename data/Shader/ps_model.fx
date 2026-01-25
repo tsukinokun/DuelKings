@@ -86,9 +86,8 @@ PS_OUTPUT main(PS_INPUT_MODEL input)
     float3 ambientTerm = ambient * textureColor.rgb;
     
     output.color0_ = float4(diffuseTerm + specularTerm + ambientTerm, 1);
-    
-    //output.color0_ = float4(N, 1);
-
+    //uvデバッグ
+    //output.color0_ = float4(input.uv0_, 0, 0);
     
 	// 出力パラメータを返す
     return output;

@@ -19,5 +19,6 @@ void MoveWinStrategy::Move(Piece* piece, float delta_time)
     piece->SetTranslate(pos);
 
     // ピースをY軸回転させる
-    piece->AddRotationAxisXYZ(float3(0.0f, 20.0f * delta_time, 0.0f));
+    rot_y_ += ROTATION_SPEED_;
+    piece->SetRotationAxisXYZ(float3(0.0f, rot_y_, 0.0f));
 }

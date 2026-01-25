@@ -68,24 +68,32 @@ int WINAPI WinMain(_In_ [[maybe_unused]] HINSTANCE     hInstance,
         return -1;
     }
 
-#if 1    // GPU位置固定するため、初期化後行う必要がある
-    if(ini.GetBool("System", "GUIEditor")) {
-        RECT   rect{};
-        float2 ofs = {0, 0};
-        GetWindowClientRect(&rect);
-        int screen_width  = GetSystemMetrics(SM_CXSCREEN);
-        int screen_height = GetSystemMetrics(SM_CYSCREEN);
-        if(rect.left > screen_width) {
-            ofs.x = (float)screen_width;
-        }
-        if(rect.top > screen_height) {
-            ofs.y = (float)screen_height;
-        }
-        int pos_x = std::max((screen_width - (WINDOW_W + 400)) / 2 + (int)ofs.x, 0);
-        int pos_y = std::max((screen_height - (WINDOW_H + 200)) / 2 + (int)ofs.y, 0);
-        SetWindowPosition(pos_x, pos_y);
+    if(is_fullscreen) {
+        SetMouseDispFlag(TRUE);
     }
+
+    //ShowCursor(true);
+
+    if(is_fullscreen == false) {
+#if 1    // GPU位置固定するため、初期化後行う必要がある
+        if(ini.GetBool("System", "GUIEditor")) {
+            RECT   rect{};
+            float2 ofs = {0, 0};
+            GetWindowClientRect(&rect);
+            int screen_width  = GetSystemMetrics(SM_CXSCREEN);
+            int screen_height = GetSystemMetrics(SM_CYSCREEN);
+            if(rect.left > screen_width) {
+                ofs.x = (float)screen_width;
+            }
+            if(rect.top > screen_height) {
+                ofs.y = (float)screen_height;
+            }
+            int pos_x = std::max((screen_width - (WINDOW_W + 400)) / 2 + (int)ofs.x, 0);
+            int pos_y = std::max((screen_height - (WINDOW_H + 200)) / 2 + (int)ofs.y, 0);
+            SetWindowPosition(pos_x, pos_y);
+        }
 #endif
+    }
 
     // Effekseerの初期化
     if(Effekseer_Init(8000) == -1) {

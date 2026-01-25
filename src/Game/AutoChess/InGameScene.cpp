@@ -54,6 +54,8 @@
 #include <Game/AutoChess/system/GameRepository.h>
 #include <Game/AutoChess/Component/MoveStrategy/IMoveStrategy.h>
 #include <Game/AutoChess/Component/MoveStrategy/MoveWinStrategy.h>
+#include <Game/AutoChess/system/DXLibUtils.h>
+#include <Game/AutoChess/UIObject/UIObject.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -124,7 +126,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto exp_button = Scene::Object::Create<UIButton>();    //経験値ボタン
-        exp_button->SetStatus(Object::StatusBit::NoDraw, true);
+        //exp_button->SetStatus(Object::StatusBit::NoDraw, true);
         exp_button->SetImage(ImageBuffer::GetImageHandle("exp_button"));
         exp_button->SetScaleAxisXYZ(0.6f);                         //大きさを少し小さく設定
         exp_button->SetTranslate(float3(150.0f, 600.0f, 0.0f));    //位置を画面左下あたりに設定
@@ -147,7 +149,7 @@ bool InGameScene::Init()
         {
             //現在の経験値
             auto curr_exp_ui = Scene::Object::Create<UIText>();
-            curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
             curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleRight);    //左寄せに設定
             curr_exp_ui->SetTranslate(float3(100.0f, 500.0f, 0.0f));                    //位置を設定
             curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
@@ -163,14 +165,14 @@ bool InGameScene::Init()
             //割線
             auto line_ui = Scene::Object::Create<UIText>();
             curr_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            line_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //line_ui->SetStatus(Object::StatusBit::NoDraw, true);
             line_ui->SetTranslate(float3(150.0f, 500.0f, 0.0f));                    //位置を設定
             line_ui->SetFontSize(30);                                               //フォントサイズ設定
             line_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
             line_ui->SetText("/");                                                  //割線を表示
             //次のレベルまでに必要な経験値
             auto next_exp_ui = Scene::Object::Create<UIText>();
-            next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
+            //next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);
             next_exp_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);     //左寄せに設定
             next_exp_ui->SetTranslate(float3(170.0f, 500.0f, 0.0f));                    //位置を設定
             next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
@@ -208,9 +210,9 @@ bool InGameScene::Init()
     //  売却ボタン
     //---------------------------------------------------------------------------------
     {
-        auto sell_button = Scene::Object::Create<UIButton>();       //売却ボタン
-        sell_button->SetIsFilter(true);                             // クリック判定をUIヒットマネージャーでフィルタリングするように設定
-        sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
+        auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
+        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
         sell_button->SetTranslate(float3(1050.0f, 500.0f, 0.0f));    //位置を画面右下あたりに設定
@@ -343,8 +345,12 @@ bool InGameScene::Init()
         phase_timer_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));           //文字色設定
         phase_timer_ui->SetTranslate(float3(WINDOW_W * 0.5f, 100.0f, 0.0f));            //位置を上部中央あたりに設定
         phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央寄せに設定
+        phase_timer_ui->SetText("Time : ∞");
         //更新処理
         auto set_text_proc = [this, phase_timer_ui]() {
+            if(tutorial_active_) {
+                return;    // チュートリアル中はタイマーを更新しない
+            }
             int time_left = 0;
             switch(game_state_) {
             case GameState::Setup:
@@ -785,9 +791,10 @@ bool InGameScene::Init()
     //  購入画面のフィルター
     //---------------------------------------------------------------------------------
     {
-        auto purchase_window_filter = Scene::Object::Create<UIImage>();    //フィルターの宣言
-        purchase_window_filter->SetScaleAxisXYZ(15.0f);                    //大きさを画面全体に設定
-        purchase_window_filter->SetAlpha(168);                             //透明度を設定
+        auto purchase_window_filter = Scene::Object::Create<UIImage>();        //フィルターの宣言
+        purchase_window_filter->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        purchase_window_filter->SetScaleAxisXYZ(15.0f);                        //大きさを画面全体に設定
+        purchase_window_filter->SetAlpha(168);                                 //透明度を設定
         float x = WINDOW_W * 0.5f;
         float y = WINDOW_H * 0.5f;
         purchase_window_filter->SetTranslate(float3(x, y, 0.0f));
@@ -801,6 +808,7 @@ bool InGameScene::Init()
         auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
             auto piece_purchase_button = Scene::Object::Create<UIButton>();
+            piece_purchase_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
@@ -878,6 +886,7 @@ bool InGameScene::Init()
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
             auto piece_name_text = Scene::Object::Create<UIText>();
+            piece_name_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_name_text->SetName("PieceNameText");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
@@ -910,6 +919,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto reroll_button = Scene::Object::Create<UIButton>();
+        reroll_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         reroll_button->SetImage(ImageBuffer::GetImageHandle("reroll_button"));
         reroll_button->SetScaleAxisXYZ(0.5f);                          //大きさを少し小さく設定
         reroll_button->SetTranslate(float3(1150.0f, 300.0f, 0.0f));    //位置を画面右中央あたりに設定
@@ -933,6 +943,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto lock_button = Scene::Object::Create<UIButton>();
+        lock_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
         lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
         lock_button->SetScaleAxisXYZ(0.5f);                         //大きさを少し小さく設定
         lock_button->SetTranslate(float3(150.0f, 300.0f, 0.0f));    //位置を画面左中央あたりに設定
@@ -956,7 +967,7 @@ bool InGameScene::Init()
     //  ピース購入画面を開けるボタン
     //---------------------------------------------------------------------------------
     {
-        auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>();
+        auto piece_purchase_open_button = Scene::Object::Create<PiecePurchaseOpenButton>("PiecePurchaseOpenButton");
         auto click_func                 = [this, purchase_window_objects, event_bus]() {
             is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
             //ウィンドウ群に対して開閉処理を行う
@@ -1227,7 +1238,7 @@ bool InGameScene::Init()
     {
         //goldボタンUI
         auto gold_ui = Scene::Object::Create<UIButton>();
-        gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        //gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
         gold_ui->SetTranslate(float3(800.0f, 50.0f, 0.0f));    //位置を画面左上あたりに設定
         gold_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
         gold_ui->SetScaleAxisXYZ(0.2f);    //大きさ
@@ -1237,13 +1248,13 @@ bool InGameScene::Init()
         gold_ui->SetClickFunc(gold_click_func);
         //goldテキストUI
         auto gold_text_ui = Scene::Object::Create<UIText>();
-        gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
+        //Fgold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
         gold_text_ui->SetTranslate(float3(830.0f, 50.0f, 0.0f));               //位置を画面左上あたりに設定
         gold_text_ui->SetFontName("游明朝");                                   //フォントを設定
         gold_text_ui->SetFontSize(24);                                         //フォントサイズ設定
         gold_text_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
         gold_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
-        //gold更新処理
+        //gold更新処理F
         auto gold_update_proc = [gold_text_ui, player]() {
             //gold情報UIに情報を設定
             gold_text_ui->SetText(std::format("{}", player->GetGold()));
@@ -1524,6 +1535,25 @@ bool InGameScene::Init()
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
     }
+    //---------------------------------------------------------------------------------
+    // チュートリアル開始処理
+    //---------------------------------------------------------------------------------
+    tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
+    PurchaseOpenTutorialEnter();
+
+    for(auto& ui : Scene::Object::GetArray<UIObject>()) {
+        //ui->SetStatus(Object::StatusBit::NoUpdate, true);    //全てのUIオブジェクトを非表示にする
+        //ui->SetStatus(Object::StatusBit::NoDraw, true);    //全てのUIオブジェクトを非表示にする
+        //Scene::Object::Release(ui);    //全てのUIオブジェクトを解放
+    }
+
+    //---------------------------------------------------------------------------------
+    //  フェードフィルター
+    //---------------------------------------------------------------------------------
+    Scene::Object::Create<Object>()              // フェード用オブジェクト
+        ->SetName("FadeIn")                      // 名前設定
+        ->AddComponent<ComponentFilterFade>()    // フェードコンポーネント
+        ->StartFadeIn();                         // フェードインスタート
     return true;
 }
 
@@ -1535,10 +1565,14 @@ void InGameScene::Update()
     __super::Update();
     // delta_time を更新
     float delta_time = phase_timer_.Tick();    // 前回からの経過時間（秒）
-
-    // 状態経過時間に加算
-    state_timer_ += delta_time;
-
+    //チュートリアル中
+    if(tutorial_active_) {
+        UpdateTutorial();
+    }
+    else {
+        // 状態経過時間に加算
+        state_timer_ += delta_time;
+    }
     switch(game_state_) {
     case GameState::Setup:
         //----------------------------------------------------------------------
@@ -1613,7 +1647,13 @@ void InGameScene::Update()
 void InGameScene::Draw()
 {
     __super::Draw();
+    //---------------------------------------------------------------------------------
+    // チュートリアル描画
+    //---------------------------------------------------------------------------------
+    DrawTutorial();
+    //---------------------------------------------------------------------------------
     //バトルフェーズはバトル用の描画処理を行う
+    //---------------------------------------------------------------------------------
     if(game_state_ == GameState::Battle) {
         //ボードを描画
         for(int f = 0; f < 8; f++) {
@@ -1632,6 +1672,7 @@ void InGameScene::Draw()
         }
     }
 }
+
 //---------------------------------------------------------------------------------
 //!	終了
 //---------------------------------------------------------------------------------
@@ -1704,7 +1745,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;
@@ -2238,6 +2279,33 @@ void InGameScene::SimulateNpcBattle()
     }
 }
 
+//----------------------------------------------------------------------
+//! @brief ピース購入オープンボタン催促用UIを生成する関数
+//----------------------------------------------------------------------
+void InGameScene::CreatePurchaseOpenTutorialUI()
+{
+    //---------------------------------------------------------------------------------
+    // ピース購入オープンボタン催促用UI
+    //---------------------------------------------------------------------------------
+    {
+        auto purchase_open_button_prompt_ui = Scene::Object::Create<UIImage>("purchase_open_button_prompt_ui");
+        purchase_open_button_prompt_ui->SetImage(ImageBuffer::GetImageHandle("cursor"));
+        float x_base_pos = 1100.0f;
+        float y_base_pos = 650.0f;
+        purchase_open_button_prompt_ui->SetTranslate(float3(x_base_pos, y_base_pos, 0.0f));    //右下に配置
+        purchase_open_button_prompt_ui->SetScaleAxisXYZ(0.4f);                                 //小さくする
+        auto update_proc = [purchase_open_button_prompt_ui, x_base_pos, y_base_pos]() {
+            static float sin_rot = 90.0f;
+            //左下方向にサインカーブで前後させる
+            sin_rot        += 4.0f;
+            float x_offset  = std::sin(D2R(sin_rot)) * 10.0f;
+            float y_offset  = std::sin(D2R(sin_rot)) * 10.0f;
+            purchase_open_button_prompt_ui->SetTranslate(float3(x_base_pos - x_offset, y_base_pos + y_offset, 0.0f));
+        };
+        purchase_open_button_prompt_ui->SetProc("piece_button_prompt_update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+    }
+}
+
 //------------------------------------------------------
 //! @brief エージェントの保有している生きたバトルフェーズ中の駒の数を取得する関数
 //------------------------------------------------------
@@ -2254,4 +2322,273 @@ int InGameScene::GetAlivePieceCountForAgent(const std::shared_ptr<Agent>& agent)
         }
     }
     return count;
+}
+
+//----------------------------------------------------------------------
+//! @brief チュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::UpdateTutorial()
+{
+    switch(tutorial_step_) {
+    case TutorialStep::None:
+        //何もしない
+        break;
+    case TutorialStep::PurchaseOpen:
+        PurchaseOpenTutorialUpdate();
+        break;
+    case TutorialStep::PurchasePiece:
+        PurchasePieceTutorialUpdate();
+        break;
+    case TutorialStep::PurchaseClose:
+        PurchaseCloseTutorialUpdate();
+        break;
+    case TutorialStep::PutPiece:
+        PutPieceTutorialUpdate();
+        break;
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief チュートリアルの描画処理関数
+//----------------------------------------------------------------------
+void InGameScene::DrawTutorial()
+{
+    switch(tutorial_step_) {
+    case TutorialStep::PutPiece:
+        PutPieceTutorialDraw();
+        break;
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief 購入オープンチュートリアルの開始処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseOpenTutorialEnter()
+{
+    //---------------------------------------------------------------------------------
+    // ピース購入オープンボタン催促用UI
+    //---------------------------------------------------------------------------------
+    CreatePurchaseOpenTutorialUI();
+}
+
+//----------------------------------------------------------------------
+//! @brief 購入オープンチュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseOpenTutorialUpdate()
+{
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto piece_purchase_open_button = Scene::Object::Get<PiecePurchaseOpenButton>("PiecePurchaseOpenButton")) {
+        //購入ボタンをクリックしたら切り替え
+        if(piece_purchase_open_button->IsClick()) {
+            PurchaseOpenTutorialExit();
+            tutorial_step_ = TutorialStep::PurchasePiece;    //次のステップへ
+            PurchasePieceTutorialEnter();                    // ピース購入チュートリアル開始
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief 購入オープンチュートリアルの終了処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseOpenTutorialExit()
+{
+    //----------------------------------------------------------------------
+    // 購入促しUIを削除
+    //----------------------------------------------------------------------
+    if(auto ui = Scene::Object::Get<UIImage>("purchase_open_button_prompt_ui")) {
+        Scene::Object::Release(ui);
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入チュートリアルの開始処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchasePieceTutorialEnter()
+{
+    //----------------------------------------------------------------------
+    // ピース購入を促すUIを作成
+    //----------------------------------------------------------------------
+    for(int i = 0; i < 5; i++) {
+        auto purchase_piece_prompt_ui = Scene::Object::Create<UIImage>("purchase_piece_prompt_ui_" + std::to_string(i));
+        purchase_piece_prompt_ui->SetImage(ImageBuffer::GetImageHandle("cursor"));
+        float x_base_pos = 370.0f + (i * 150.0f);    //X位置を設定
+        float y_base_pos = 330.0f;
+        purchase_piece_prompt_ui->SetTranslate(float3(x_base_pos, y_base_pos, 0.0f));    //右下に配置
+        purchase_piece_prompt_ui->SetScaleAxisXYZ(0.2f);                                 //小さくする
+        auto update_proc = [purchase_piece_prompt_ui, x_base_pos, y_base_pos]() {
+            static float sin_rot = 90.0f;
+            //左下方向にサインカーブで前後させる
+            sin_rot        += 2.0f;
+            float x_offset  = std::sin(D2R(sin_rot)) * 5.0f;
+            float y_offset  = std::sin(D2R(sin_rot)) * 5.0f;
+            purchase_piece_prompt_ui->SetTranslate(float3(x_base_pos - x_offset, y_base_pos + y_offset, 0.0f));
+        };
+        purchase_piece_prompt_ui->SetProc("piece_button_prompt_update_proc_" + std::to_string(i), update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入チュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchasePieceTutorialUpdate()
+{
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto piece_purchase_open_button = Scene::Object::Get<PiecePurchaseOpenButton>("PiecePurchaseOpenButton")) {
+        //購入ボタンをクリックしたら切り替え
+        if(piece_purchase_open_button->IsClick()) {
+            PurchasePieceTutorialExit();
+            tutorial_step_ = TutorialStep::PurchaseOpen;    // 購入チュートリアルに戻る
+            PurchaseOpenTutorialEnter();
+        }
+    }
+    if(auto player = Scene::Object::Get<Player>()) {
+        // プレイヤーがピースを1体以上所有したら
+        if(player->GetOwnedPieceNum() >= 1) {
+            PurchasePieceTutorialExit();
+            tutorial_step_ = TutorialStep::PurchaseClose;    // 次のステップへ
+            PurchaseCloseTutorialEnter();                    // ピース購入画面を閉じるチュートリアル開始
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入チュートリアルの終了処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchasePieceTutorialExit()
+{
+    //購入促しUIを削除
+    for(int i = 0; i < 5; i++) {
+        if(auto ui = Scene::Object::Get<UIImage>("purchase_piece_prompt_ui_" + std::to_string(i))) {
+            Scene::Object::Release(ui);
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入画面を閉じるチュートリアルの開始処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseCloseTutorialEnter()
+{
+    //---------------------------------------------------------------------------------
+    // ピース購入オープンボタン催促用UI
+    //---------------------------------------------------------------------------------
+    CreatePurchaseOpenTutorialUI();
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入画面を閉じるチュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseCloseTutorialUpdate()
+{
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto piece_purchase_open_button = Scene::Object::Get<PiecePurchaseOpenButton>("PiecePurchaseOpenButton")) {
+        //購入ボタンをクリックしたら切り替え
+        if(piece_purchase_open_button->IsClick()) {
+            PurchaseCloseTutorialExit();
+            tutorial_step_ = TutorialStep::PutPiece;    // ピース配置チュートリアル
+            PutPieceTutorialEnter();
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピース購入画面を閉じるチュートリアルの終了処理関数
+//----------------------------------------------------------------------
+void InGameScene::PurchaseCloseTutorialExit()
+{
+    //----------------------------------------------------------------------
+    // 購入促しUIを削除
+    //----------------------------------------------------------------------
+    if(auto ui = Scene::Object::Get<UIImage>("purchase_open_button_prompt_ui")) {
+        Scene::Object::Release(ui);
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピースを置くチュートリアルの開始処理関数
+//----------------------------------------------------------------------
+void InGameScene::PutPieceTutorialEnter()
+{
+}
+
+//----------------------------------------------------------------------
+//! @brief ピースを置くチュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PutPieceTutorialUpdate()
+{
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto player = Scene::Object::Get<Player>()) {
+        // プレイヤーがピースを1体以上配置したら
+        if(player->GetPlacedPieceNum() >= 1) {
+            PutPieceTutorialExit();
+            tutorial_step_   = TutorialStep::None;    // チュートリアル終了
+            tutorial_active_ = false;                 // チュートリアル無効化
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+// ピースを置くチュートリアルの更新処理関数
+//----------------------------------------------------------------------
+void InGameScene::PutPieceTutorialDraw()
+{
+    //----------------------------------------------------------------------
+    // ピーススタンドのピースを取得して、盤面のほうへのベジェ曲線を描画
+    //----------------------------------------------------------------------
+    if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
+        auto stand_square = piece_stand->GetSquarePtrArray();
+        //ベジェ曲線を描画
+        for(auto& weak_stand : stand_square) {
+            if(auto square = weak_stand.lock()) {
+                auto piece_weak = square->GetPutPiece();
+                if(auto piece = piece_weak.lock()) {
+                    float3 start_pos = piece->GetTranslate();
+                    float3 end_pos   = float3(0.0f, 0.5f, -3.0f);
+                    //----------------------------------------------------------------------
+                    //方向ベクトルを計算
+                    //----------------------------------------------------------------------
+                    float3 dir     = end_pos - start_pos;
+                    float3 div_vec = (dir / 3);
+                    //----------------------------------------------------------------------
+                    // 制御点の高さ
+                    //----------------------------------------------------------------------
+                    float control_y = 4.0f;
+                    //----------------------------------------------------------------------
+                    //方向を分割して、その真上座標を制御点にする。
+                    //----------------------------------------------------------------------
+                    float3 control_point2 = start_pos + div_vec;
+                    control_point2.y      = control_y;
+                    float3 control_point3 = start_pos + (div_vec * 2);
+                    control_point3.y      = control_y;
+                    //----------------------------------------------------------------------
+                    // 制御点の追加
+                    //----------------------------------------------------------------------
+                    std::vector<float3> control_points;
+                    control_points.push_back(start_pos);
+                    control_points.push_back(control_point2);
+                    control_points.push_back(control_point3);
+                    control_points.push_back(end_pos);
+                    //----------------------------------------------------------------------
+                    //ベジェ曲線を描画
+                    //----------------------------------------------------------------------
+                    DrawBezierArrow3D(control_points, 16, DxLib::GetColor(255, 255, 0));
+                }
+            }
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ピースを置くチュートリアルの終了処理関数
+//----------------------------------------------------------------------
+void InGameScene::PutPieceTutorialExit()
+{
 }
