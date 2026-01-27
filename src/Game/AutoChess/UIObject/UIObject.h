@@ -31,5 +31,7 @@ public:
     std::shared_ptr<UIObject> SetAutoReleaseTarget(const std::weak_ptr<Object>& target_obj);
 
 protected:
-    std::weak_ptr<ComponentTransformUI> ui_transform_component_;    //UIのTransformコンポーネント
+    std::weak_ptr<ComponentTransformUI> ui_transform_component_;     //UIのTransformコンポーネント
+    std::weak_ptr<Object>               target_obj_;                 //破棄を監視するオブジェクト
+    bool                                is_auto_release_ = false;    //自動解放が有効かどうか
 };

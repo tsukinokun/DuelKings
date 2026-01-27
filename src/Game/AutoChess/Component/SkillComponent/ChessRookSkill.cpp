@@ -25,7 +25,6 @@ ChessRookSkill::ChessRookSkill()
 void ChessRookSkill::Init()
 {
     __super::Init();
-    mp_              = 90;
     auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
     auto update_proc = [this, owner]() {
         //---------------------------------------------------------
