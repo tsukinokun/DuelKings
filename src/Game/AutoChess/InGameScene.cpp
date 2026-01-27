@@ -211,7 +211,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
-        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        sell_button->SetIsFilter(true);                          // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -1497,16 +1497,16 @@ bool InGameScene::Init()
             lose_damage_ui->SetFontSize(20);                                                    //サイズを設定
             lose_damage_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));               //文字色設定
             lose_damage_ui->SetFontName("游明朝");                                              //フォントを設定
-            float hide_timer = 0.0f;
+            float lose_damage_hide_timer = 0.0f;
             //---------------------------------------------------------------------------------
             // 非表示処理の登録
             //---------------------------------------------------------------------------------
-            auto hide_proc = [lose_damage_ui, &hide_timer]() {
+            auto hide_proc = [lose_damage_ui, &lose_damage_hide_timer]() {
                 if(!lose_damage_ui->GetStatus(Object::StatusBit::NoDraw)) {
-                    hide_timer += GetDeltaTime();
-                    if(hide_timer >= 3.0f) {
+                    lose_damage_hide_timer += GetDeltaTime();
+                    if(lose_damage_hide_timer >= 3.0f) {
                         lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);
-                        hide_timer = 0.0f;
+                        lose_damage_hide_timer = 0.0f;
                     }
                 }
             };
@@ -1514,12 +1514,13 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             // 敗北時のイベントを登録
             //---------------------------------------------------------------------------------
-            auto lose_event = [lose_damage_ui, center_message_ui, &center_message_hide_timer](const LoseEvent& e) {
+            auto lose_event = [lose_damage_ui, center_message_ui, &center_message_hide_timer, &lose_damage_hide_timer](const LoseEvent& e) {
                 lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, false);
                 lose_damage_ui->SetText(std::format("\n被ダメージ:{}", e.agent_damage_amount_));
                 center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
                 center_message_ui->SetText("敗北");
                 center_message_hide_timer = 0.0f;
+                lose_damage_hide_timer    = 0.0f;
             };
             auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
             event_handles_.push_back(std::move(lose_event_handle));
@@ -1745,7 +1746,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;
@@ -1766,7 +1767,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                         col_comp->SetRadius(0.3f);
                         col_comp->SetHeight(1.0f);
                         col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
-                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+                        //col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
                     }
                 }
             }
@@ -1894,7 +1895,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                         col_comp->SetRadius(0.3f);
                         col_comp->SetHeight(1.0f);
                         col_comp->SetCollisionGroup(ComponentCollision::CollisionGroup::ETC);
-                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+                        //col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
                     }
                 }
             }

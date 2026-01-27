@@ -57,11 +57,10 @@ std::shared_ptr<UIGauge> PieceUIDisplayer::CreateGauge(const std::string& name, 
     gauge->SetGaugeColor(color);
     gauge->SetGaugeSize(size);
     gauge->SetName(name);
-    auto comp = gauge->GetComponent<ComponentGauge>();
-    comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::HIGH);
-
     std::weak_ptr<Piece> owner_wp = owner;
     gauge->SetAutoReleaseTarget(owner_wp.lock());
+    auto comp = gauge->GetComponent<ComponentGauge>();
+    comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::HIGH);
 
     return gauge;
 }
