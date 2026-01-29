@@ -15,16 +15,19 @@
 void PieceUIDisplayer::Init()
 {
     __super::Init();
-    auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    auto                 owner    = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    std::weak_ptr<Piece> owner_wp = owner;
     //---------------------------------------------------------------------------------
     // ピースにHPゲージの描画を追加
     //---------------------------------------------------------------------------------
-    auto hp_proc = [owner, this]() {
-        // HPゲージの更新
-        UpdateGauge(owner, "hp_ui", owner->GetHP(), owner->GetMaxHP(), hp_bar_color, int2(50, 10));
-        // MPゲージの更新
-        if(auto component_active_skill = owner->GetComponent<ComponentActiveSkill>()) {
-            UpdateGauge(owner, "mp_ui", component_active_skill->GetMP(), 100, GetColor(0, 128, 128), int2(50, 10), float2(0.0f, -15.0f));
+    auto hp_proc = [owner_wp, this]() {
+        if(auto owner = owner_wp.lock()) {
+            // HPゲージの更新
+            UpdateGauge(owner, "hp_ui", owner->GetHP(), owner->GetMaxHP(), hp_bar_color, int2(50, 10));
+            // MPゲージの更新
+            if(auto component_active_skill = owner->GetComponent<ComponentActiveSkill>()) {
+                UpdateGauge(owner, "mp_ui", component_active_skill->GetMP(), 100, GetColor(0, 128, 128), int2(50, 10), float2(0.0f, -15.0f));
+            }
         }
     };
     SetProc("hp_proc", hp_proc, ProcTiming::Update, ProcPriority::NORMAL);
