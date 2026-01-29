@@ -69,7 +69,7 @@ void JapaneseChessKingSkill::Activate()
     float3 pos   = owner->GetTranslate();
     auto   skill = Scene::Object::Create<SkillObjectBase>();
     skill->SetEffect("data/AutoChess/Effect/JapaneseChessKingSkill.efkefc");
-    skill->SetScaleAxisXYZ(0.3f);
+    skill->SetScaleAxisXYZ(0.1f);
     skill->SetTranslate(pos);
     skill->SetSkillOwner(owner->GetOwner());
 }

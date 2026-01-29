@@ -65,7 +65,7 @@ void JapaneseChessSilverSkill::Activate()
         float3 pos   = enemy->GetTranslate();
         auto   skill = Scene::Object::Create<SkillObjectBase>();
         skill->SetEffect("data/AutoChess/Effect/JapaneseChessSilverSkill.efkefc");
-        skill->SetEffectPlaySpeed(3.0f);
+        skill->SetEffectPlaySpeed(1.0f);
         skill->SetScaleAxisXYZ(1.0f);
         skill->SetTranslate(pos);
         skill->SetSkillOwner(owner->GetOwner());

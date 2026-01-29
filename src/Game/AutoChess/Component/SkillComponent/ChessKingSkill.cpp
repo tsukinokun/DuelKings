@@ -79,7 +79,7 @@ void ChessKingSkill::Activate()
         //---------------------------------------------------------
         auto skill = Scene::Object::Create<SkillObjectBase>();
         skill->SetEffect("data/AutoChess/Effect/ChessKingSkill.efkefc");
-        skill->SetEffectPlaySpeed(4.0f);
+        skill->SetEffectPlaySpeed(1.0f);
         skill->SetScaleAxisXYZ(2.0f);
         skill->SetTranslate(target_pos);
         skill->SetSkillOwner(owner->GetOwner());

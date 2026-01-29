@@ -23,6 +23,13 @@ public:
     //---------------------------------------------------------
     void LockTarget(const std::shared_ptr<Piece>& target, float duration);
 
+    //---------------------------------------------------------
+    // アタックエフェクトを生成する関数
+    //! @param effect_path エフェクトのパス
+    //! @param position エフェクトの位置
+    //---------------------------------------------------------
+    void CreateAttackEffect(const float3& position);
+
 private:
     float                attack_timer_ = 0.0f;    //!< 攻撃クールタイムのタイマー
     float                lock_timer_   = 0.0f;    //!< ターゲットロックが有効な時間

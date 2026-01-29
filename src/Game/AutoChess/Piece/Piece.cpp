@@ -77,11 +77,13 @@ bool Piece::Init()
     auto death_proc = [this]() {
         if(status_.IsDead()) {
             // 死亡エフェクトを再生
-            const std::string path = "data/AutoChess/Effect/PieceDeath.efkefc";
-            //const std::string path   = "data/AutoChess/Effect/Poison/Poison.efkefc";
-            float3 pos    = GetTranslate();
-            auto   effect = ComponentEffect::Object::Create(path, pos);
+            const std::string path   = "data/AutoChess/Effect/PieceDeath.efkefc";
+            float3            pos    = GetTranslate();
+            auto              effect = ComponentEffect::Object::Create(path, pos);
             effect->SetTranslate(pos);
+            if(auto eff_comp = effect->GetComponent<ComponentEffect>()) {
+                eff_comp->SetPlaySpeed(0.3f);
+            }
             Scene::Object::Release(dynamic_pointer_cast<Piece>(shared_from_this()));    // ピースをリリースする
         }
     };

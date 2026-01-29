@@ -15,7 +15,7 @@ bool ChaturangaRajaSkillObject::Init()
 
     SetName(u8"王の威厳");
     SetEffect(u8"data/AutoChess/Effect/ChaturangaRajaSkill.efkefc");
-    SetEffectPlaySpeed(2.5f);
+    SetEffectPlaySpeed(0.5f);
     //---------------------------------------------------------------------------------
     // コリジョンを追加
     //---------------------------------------------------------------------------------

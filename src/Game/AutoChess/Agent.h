@@ -231,7 +231,7 @@ public:
 
     //@}
 protected:
-    int            exp_ = 200;          //エージェントのレベル
+    int            exp_ = 0;            //エージェントの経験値
     PieceStandInfo stand_info_;         // ピーススタンド
     BoardInfo      board_info_;         // チェスボード
     ShopStandInfo  shop_stand_info_;    //ショップスタンド

@@ -9,6 +9,7 @@
 #include <Game/AutoChess/system/Logic.h>
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <Game/AutoChess/Component/StatusEffect/StunStatus.h>
+#include <System/Component/ComponentEffect.h>
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
@@ -65,6 +66,8 @@ void PieceAttacker::Init()
                             locked_target->TakeDamage(attack_power);
                             //攻撃クールタイムをリセット
                             attack_timer_ = this_piece->GetAttackInterval();
+                            //攻撃エフェクトを再生する
+                            CreateAttackEffect(locked_target_position);
                         }
                     }
                 }
@@ -100,6 +103,8 @@ void PieceAttacker::Init()
                                 nearest_enemy->TakeDamage(attack_power);
                                 //攻撃クールタイムをリセット
                                 attack_timer_ = this_piece->GetAttackInterval();
+                                //攻撃エフェクトを再生する
+                                CreateAttackEffect(nearest_enemy_position);
                             }
                         }
                     }
@@ -117,4 +122,19 @@ void PieceAttacker::LockTarget(const std::shared_ptr<Piece>& target, float durat
 {
     locked_target_ = target;
     lock_timer_    = duration;
+}
+
+//---------------------------------------------------------
+//! @brief アタックエフェクトを生成する関数
+//---------------------------------------------------------
+void PieceAttacker::CreateAttackEffect(const float3& position)
+{
+    const std::string path   = "data/AutoChess/Effect/NormalAttack.efkefc";
+    float3            pos    = position;
+    auto              effect = ComponentEffect::Object::Create(path, pos);
+    effect->SetTranslate(pos);
+    //スピード調整
+    if(auto eff_comp = effect->GetComponent<ComponentEffect>()) {
+        eff_comp->SetPlaySpeed(0.3f);
+    }
 }

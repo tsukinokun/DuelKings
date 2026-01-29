@@ -85,14 +85,14 @@ void ChessKnightSkill::Activate()
         //回復エフェクト
         auto skill = Scene::Object::Create<SkillObjectBase>();
         skill->SetEffect("data/AutoChess/Effect/ChessKnightSkillCure.efkefc");
-        skill->SetEffectPlaySpeed(3.0f);
+        skill->SetEffectPlaySpeed(1.0f);
         skill->SetScaleAxisXYZ(0.8f);
         skill->SetTranslate(pos);
         skill->SetSkillOwner(owner->GetOwner());
         //攻撃エフェクト
         auto skill2 = Scene::Object::Create<SkillObjectBase>();
         skill2->SetEffect("data/AutoChess/Effect/ChessKnightSkillAttack.efkefc");
-        skill2->SetEffectPlaySpeed(3.0f);
+        skill2->SetEffectPlaySpeed(1.0f);
         skill2->SetScaleAxisXYZ(0.5f);
         skill2->SetTranslate(pos);
         skill2->SetSkillOwner(owner->GetOwner());

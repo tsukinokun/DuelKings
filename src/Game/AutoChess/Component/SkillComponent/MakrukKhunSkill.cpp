@@ -73,6 +73,6 @@ void MakrukKhunSkill::Activate()
     auto   skill = Scene::Object::Create<SkillObjectBase>();
     skill->SetEffect("data/AutoChess/Effect/MakrukKhunSkill.efkefc");
     skill->SetSkillOwner(owner->GetOwner());
-    skill->SetEffectPlaySpeed(4.0f);
+    skill->SetEffectPlaySpeed(1.0f);
     skill->SetTranslate(pos);
 }

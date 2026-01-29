@@ -68,7 +68,7 @@ void JapaneseChessRookSkill::Activate()
             auto   skill = Scene::Object::Create<SkillObjectBase>();
             skill->SetEffect("data/AutoChess/Effect/JapaneseChessRookSkill.efkefc");
             skill->SetSkillOwner(owner->GetOwner());
-            skill->SetEffectPlaySpeed(4.0f);
+            skill->SetEffectPlaySpeed(1.0f);
             skill->SetTranslate(pos);
         }
     }

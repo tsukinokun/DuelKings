@@ -15,7 +15,7 @@ bool JapaneseChessBishopSkillObject::Init()
 
     SetName(u8"衝撃波");
     SetEffect(u8"data/AutoChess/Effect/JapaneseChessBishopSkill.efkefc");
-    SetEffectPlaySpeed(2.0f);
+    SetEffectPlaySpeed(0.5f);
     //---------------------------------------------------------------------------------
     // コリジョンを追加
     //---------------------------------------------------------------------------------
