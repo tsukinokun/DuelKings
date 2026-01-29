@@ -28,8 +28,8 @@ public:
 
 private:
     const std::array<int, 3> DAMAGE_VALUES_      = {100, 200, 400};    //ダメージ
-    const float              KNOCKBACK_STRENGTH_ = 0.3f;               //ノックバック距離
-    const float              KNOCKBACK_TIME_     = 0.4f;               //ノックバック時間
+    const float              KNOCKBACK_STRENGTH_ = 0.1f;               //ノックバック距離
+    const float              KNOCKBACK_TIME_     = 0.6;                //ノックバック時間
 };
 
 CEREAL_REGISTER_TYPE(MakrukBiaSkill)
