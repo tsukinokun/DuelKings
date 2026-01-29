@@ -73,7 +73,7 @@ void ChaturangaPadatiSkill::Activate()
         auto   skill = Scene::Object::Create<SkillObjectBase>();    // スキルオブジェクト生成
         {
             skill->SetEffect("data/AutoChess/Effect/ChaturangaPadatiSkill.efkefc");
-            skill->SetEffectPlaySpeed(2.0f);
+            skill->SetEffectPlaySpeed(0.5f);
             skill->SetScaleAxisXYZ(1.0f);
             skill->SetTranslate(pos);
             skill->SetSkillOwner(owner->GetOwner());

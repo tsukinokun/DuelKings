@@ -15,7 +15,7 @@ bool ChessBishopSkillObject::Init()
 
     SetName(u8"闇の儀式");
     SetEffect(u8"data/AutoChess/Effect/ChessBishopSkill.efkefc");
-    SetEffectPlaySpeed(0.05f);
+    SetEffectPlaySpeed(0.02f);
 
     auto update_proc = [this]() {
         timer_ += GetDeltaTime();

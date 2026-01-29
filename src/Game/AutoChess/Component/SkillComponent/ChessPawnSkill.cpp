@@ -45,7 +45,7 @@ void ChessPawnSkill::Activate()
             float3 pos   = target_enemy->GetTranslate();
             auto   skill = Scene::Object::Create<SkillObjectBase>();
             skill->SetEffect("data/AutoChess/Effect/ChessPawnSkill.efkefc");
-            skill->SetEffectPlaySpeed(3.0f);
+            skill->SetEffectPlaySpeed(1.0f);
             skill->SetScaleAxisXYZ(1.0f);
             skill->SetTranslate(pos);
             skill->SetSkillOwner(owner->GetOwner());

@@ -22,7 +22,6 @@ ChaturangaRajaSkill::ChaturangaRajaSkill()
 void ChaturangaRajaSkill::Init()
 {
     __super::Init();
-    mp_ = 90;
 }
 
 //---------------------------------------------------------

@@ -61,7 +61,7 @@ void ChaturangaRathaSkill::Activate()
     float3 pos   = owner->GetTranslate();
     auto   skill = Scene::Object::Create<SkillObjectBase>();
     skill->SetEffect("data/AutoChess/Effect/ChaturangaRathaSkill.efkefc");
-    skill->SetEffectPlaySpeed(4.0f);
+    skill->SetEffectPlaySpeed(1.0f);
     skill->SetScaleAxisXYZ(1.0f);
     skill->SetTranslate(pos);
     skill->SetSkillOwner(owner->GetOwner());

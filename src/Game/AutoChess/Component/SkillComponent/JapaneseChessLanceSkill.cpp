@@ -78,7 +78,7 @@ void JapaneseChessLanceSkill::Init()
                 float3 pos   = owner->GetTranslate();
                 auto   skill = Scene::Object::Create<SkillObjectBase>();
                 skill->SetEffect("data/AutoChess/Effect/JapaneseChessLanceSkill.efkefc");
-                skill->SetEffectPlaySpeed(1.0f);
+                skill->SetEffectPlaySpeed(0.3f);
                 skill->SetScaleAxisXYZ(1.0f);
                 skill->SetTranslate(pos);
                 skill->SetSkillOwner(owner->GetOwner());
@@ -101,7 +101,7 @@ void JapaneseChessLanceSkill::Activate()
     float3 pos   = owner->GetTranslate();
     auto   skill = Scene::Object::Create<SkillObjectBase>();
     skill->SetEffect("data/AutoChess/Effect/JapaneseChessLanceSkill.efkefc");
-    skill->SetEffectPlaySpeed(1.0f);
+    skill->SetEffectPlaySpeed(0.3f);
     skill->SetScaleAxisXYZ(1.0f);
     skill->SetTranslate(pos);
     skill->SetSkillOwner(owner->GetOwner());

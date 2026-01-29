@@ -61,7 +61,7 @@ void ChessRookSkill::Init()
                     float3 pos   = target_piece->GetTranslate();
                     auto   skill = Scene::Object::Create<SkillObjectBase>();    // スキルオブジェクト生成
                     skill->SetEffect("data/AutoChess/Effect/ChessRookSkill.efkefc");
-                    skill->SetEffectPlaySpeed(5.0f);
+                    skill->SetEffectPlaySpeed(1.0f);
                     skill->SetScaleAxisXYZ(1.0f);
                     skill->SetTranslate(pos);
                     skill->SetSkillOwner(owner->GetOwner());

@@ -15,7 +15,7 @@ bool ChessQueenSkillObject::Init()
 
     SetName(u8"ブラックホール");
     SetEffect(u8"data/AutoChess/Effect/ChessQueenSkill.efkefc", true);    //八秒で消すのでループ再生
-    SetEffectPlaySpeed(0.5f);
+    SetEffectPlaySpeed(0.2f);
     SetScaleAxisXYZ(0.6f);
     //---------------------------------------------------------------------------------
     // コリジョンを追加

@@ -117,7 +117,7 @@ void ChaturangaMantriSkill::ApplyEffectToTarget()
         float3 pos   = target_piece->GetTranslate();
         auto   skill = Scene::Object::Create<SkillObjectBase>();
         skill->SetEffect("data/AutoChess/Effect/ChaturangaMantriSkillHit.efkefc");
-        skill->SetEffectPlaySpeed(4.0f);
+        skill->SetEffectPlaySpeed(1.0f);
         skill->SetScaleAxisXYZ(1.0f);
         skill->SetTranslate(pos);
         skill->SetSkillOwner(owner->GetOwner());

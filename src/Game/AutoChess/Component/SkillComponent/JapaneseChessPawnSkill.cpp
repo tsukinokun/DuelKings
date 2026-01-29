@@ -50,7 +50,7 @@ void JapaneseChessPawnSkill::Activate()
     float3 pos   = owner->GetTranslate();
     auto   skill = Scene::Object::Create<SkillObjectBase>();
     skill->SetEffect("data/AutoChess/Effect/JapaneseChessPawnSkill.efkefc");
-    skill->SetEffectPlaySpeed(8.0f);
+    skill->SetEffectPlaySpeed(2.0f);
     skill->SetScaleAxisXYZ(2.0f);
     skill->SetTranslate(pos);
     skill->SetSkillOwner(owner->GetOwner());

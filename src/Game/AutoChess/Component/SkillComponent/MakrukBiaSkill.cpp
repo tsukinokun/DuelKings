@@ -54,7 +54,7 @@ void MakrukBiaSkill::Activate()
             float3 pos   = target->GetTranslate();
             auto   skill = Scene::Object::Create<SkillObjectBase>();
             skill->SetEffect("data/AutoChess/Effect/MakrukBiaSkill.efkefc");
-            skill->SetEffectPlaySpeed(2.0f);
+            skill->SetEffectPlaySpeed(0.5f);
             skill->SetScaleAxisXYZ(1.0f);
             skill->SetTranslate(pos);
             skill->SetSkillOwner(owner->GetOwner());
