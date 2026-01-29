@@ -410,16 +410,24 @@ bool InGameScene::Init()
             agent_ui->SetText(agent->GetName());                                            //エージェント名を表示
             agent_ui_objects.push_back(agent_ui);
             //---------------------------------------------------------------------------------
+            // 所持ゴールドのアイコンUI
+            //---------------------------------------------------------------------------------
+            auto gold_icon_ui = Scene::Object::Create<UIImage>();
+            gold_icon_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));                    //ゴールドアイコン画像を設定
+            gold_icon_ui->SetTranslate(float3(150.0f, 115.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            gold_icon_ui->SetScaleAxisXYZ(0.15f);                                                //大きさを少し小さく設定
+            agent_ui_objects.push_back(gold_icon_ui);
+            //---------------------------------------------------------------------------------
             // エージェントの所持ゴールド表示UI
             //---------------------------------------------------------------------------------
             auto gold_ui = Scene::Object::Create<UIText>();
             gold_ui->SetFontSize(30);                                                       //フォントサイズ設定
             gold_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));                  //文字色設定
-            gold_ui->SetTranslate(float3(150.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            gold_ui->SetTranslate(float3(170.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             gold_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
             //更新処理
             auto set_text_proc = [agent, gold_ui]() {
-                gold_ui->SetText("Gold: " + std::to_string(agent->GetGold()));    //所持ゴールドを表示
+                gold_ui->SetText(std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
             gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
             agent_ui_objects.push_back(gold_ui);
@@ -427,7 +435,7 @@ bool InGameScene::Init()
             // エージェントのHP表示UI
             //---------------------------------------------------------------------------------
             auto hp_gauge = Scene::Object::Create<UIGauge>();
-            hp_gauge->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            hp_gauge->SetTranslate(float3(280.0f, 115.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             hp_gauge->SetGaugeSize(int2(100, 20));                                           //ゲージサイズ設定
             //更新処理
             auto set_gauge_proc = [agent, hp_gauge]() {
@@ -440,7 +448,7 @@ bool InGameScene::Init()
             // エージェントのHP数値表示UI
             //---------------------------------------------------------------------------------
             auto hp_ui = Scene::Object::Create<UIText>();
-            hp_ui->SetTranslate(float3(300.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
+            hp_ui->SetTranslate(float3(280.0f, 115.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             hp_ui->SetName(std::string(agent->GetName()) + "HPText");
             hp_ui->SetFontSize(25);                                         //フォントサイズ設定
             hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
