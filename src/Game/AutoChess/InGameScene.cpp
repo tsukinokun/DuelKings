@@ -893,14 +893,12 @@ bool InGameScene::Init()
         auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
-            auto piece_data      = piece_repository.FindByTypeName(shop_pieces[i].GetTypeName());
             auto piece_name_text = Scene::Object::Create<UIText>();
             piece_name_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_name_text->SetName("PieceNameText");
             float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
-            piece_name_text->SetFontSize(16);                                                               //フォントサイズを設定
-            piece_name_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
+            piece_name_text->SetFontSize(16);    //フォントサイズを設定
             piece_name_text->SetFontName("游明朝");
             piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
             //---------------------------------------------------------------------------------
@@ -913,6 +911,7 @@ bool InGameScene::Init()
                         //ピース情報UIに情報を設定
                         auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
                         piece_name_text->SetText(piece_data->display_name_);
+                        piece_name_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
                     }
                     else {
                         piece_name_text->SetText("");    //ピースがない場合は空文字にする
@@ -963,12 +962,10 @@ bool InGameScene::Init()
         auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
-            auto piece_data       = piece_repository.FindByTypeName(shop_pieces[i].GetTypeName());
             auto piece_price_text = Scene::Object::Create<UIText>();
             piece_price_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_price_text->SetName("PiecePriceText");
-            float x_pos = 300.0f + (i * 165.0f);                                                             //X位置を設定
-            piece_price_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
+            float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_price_text->SetTranslate(float3(x_pos, 395.0f, 0.0f));
             piece_price_text->SetFontSize(16);    //フォントサイズを設定
             piece_price_text->SetFontName("游明朝");
@@ -983,6 +980,7 @@ bool InGameScene::Init()
                         //ピース情報UIに情報を設定
                         auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
                         piece_price_text->SetText(std::to_string(piece_data->price_));
+                        piece_price_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
                     }
                     else {
                         piece_price_text->SetText("");    //ピースがない場合は空文字にする
