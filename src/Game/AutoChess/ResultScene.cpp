@@ -16,6 +16,7 @@
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/TitleScene.h>
 #include <Game/AutoChess/system/GameRepository.h>
+#include <System/Component/ComponentFilterFade.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
@@ -70,6 +71,7 @@ bool ResultScene::Init()
         int player_rank = GameRepository::instance()->GetPlayerRank();                        //プレイヤーの最終順位を取得
         result_text->SetText(std::to_string(player_rank) + "位");                             //表示するテキストの設定
     }
+
     return true;
 }
 

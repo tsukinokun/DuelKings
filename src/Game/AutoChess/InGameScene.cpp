@@ -818,7 +818,7 @@ bool InGameScene::Init()
             auto piece_purchase_button = Scene::Object::Create<UIButton>();
             piece_purchase_button->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_purchase_button->SetName("PiecePurchaseButton");
-            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
             auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
@@ -893,14 +893,14 @@ bool InGameScene::Init()
         auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
-            auto piece_data      = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+            auto piece_data      = piece_repository.FindByTypeName(shop_pieces[i].GetTypeName());
             auto piece_name_text = Scene::Object::Create<UIText>();
             piece_name_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_name_text->SetName("PieceNameText");
-            float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
+            float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
-            piece_name_text->SetFontSize(16);                                   //フォントサイズを設定
-            piece_name_text->SetColor(GetColor(0, 0, 0), PIECE_COLORS.at());    //文字色を白に設定
+            piece_name_text->SetFontSize(16);                                                               //フォントサイズを設定
+            piece_name_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
             piece_name_text->SetFontName("游明朝");
             piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
             //---------------------------------------------------------------------------------
@@ -923,6 +923,77 @@ bool InGameScene::Init()
             purchase_window_objects.push_back(piece_name_text);    //購入画面のウィンドウ群に追加
         }
     }
+    //---------------------------------------------------------------------------------
+    // ピースの価格の横のゴールドアイコン表示テキスト
+    //---------------------------------------------------------------------------------
+    {
+        auto shop_pieces = player->GetShopPieces();    //ショップに並んでいるピースを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto gold_icon_ui = Scene::Object::Create<UIImage>();
+            gold_icon_ui->SetStatus(Object::StatusBit::NoDraw, true);      //初期状態では非表示にしておく
+            gold_icon_ui->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
+            gold_icon_ui->SetName("GoldIconUI");
+            float x_pos = 300.0f + (i * 165.0f) - 25.0f;    //X位置を設定
+            gold_icon_ui->SetTranslate(float3(x_pos, 395.0f, 0.0f));
+            gold_icon_ui->SetScaleAxisXYZ(0.1f);    //大きさを少し小さく設定
+            gold_icon_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+            //---------------------------------------------------------------------------------
+            //  更新処理の設定
+            //---------------------------------------------------------------------------------
+            auto update_func = [gold_icon_ui, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    if(auto piece = shop_pieces[i].lock()) {
+                        //ピース情報UIに情報を設定
+                        gold_icon_ui->SetStatus(Object::StatusBit::NoDraw, false);    //ピースがある場合は表示にする
+                    }
+                    else {
+                        gold_icon_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピースがない場合は非表示にする
+                    }
+                }
+            };
+            gold_icon_ui->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NORMAL);
+            purchase_window_objects.push_back(gold_icon_ui);    //購入画面のウィンドウ群に追加
+        }
+    }
+    //---------------------------------------------------------------------------------
+    // ピースの価格表示テキスト
+    //---------------------------------------------------------------------------------
+    {
+        auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
+        const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
+        for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_data       = piece_repository.FindByTypeName(shop_pieces[i].GetTypeName());
+            auto piece_price_text = Scene::Object::Create<UIText>();
+            piece_price_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+            piece_price_text->SetName("PiecePriceText");
+            float x_pos = 300.0f + (i * 165.0f);                                                             //X位置を設定
+            piece_price_text->SetColor(PIECE_COLORS.at(piece_data->price_ - 1), GetColor(255, 255, 255));    //文字色をレベルの色に設定
+            piece_price_text->SetTranslate(float3(x_pos, 395.0f, 0.0f));
+            piece_price_text->SetFontSize(16);    //フォントサイズを設定
+            piece_price_text->SetFontName("游明朝");
+            piece_price_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
+            //---------------------------------------------------------------------------------
+            //  更新処理の設定
+            //---------------------------------------------------------------------------------
+            auto update_func = [piece_price_text, piece_repository, i]() {
+                if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
+                    auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    if(auto piece = shop_pieces[i].lock()) {
+                        //ピース情報UIに情報を設定
+                        auto piece_data = piece_repository.FindByTypeName(piece->GetNameDefault().data());
+                        piece_price_text->SetText(std::to_string(piece_data->price_));
+                    }
+                    else {
+                        piece_price_text->SetText("");    //ピースがない場合は空文字にする
+                    }
+                }
+            };
+            piece_price_text->SetProc("update", update_func, ProcTiming::Update, ProcPriority::NORMAL);
+            purchase_window_objects.push_back(piece_price_text);    //購入画面のウィンドウ群に追加
+        }
+    }
+
     //---------------------------------------------------------------------------------
     //  リロールボタン
     //---------------------------------------------------------------------------------
@@ -1094,7 +1165,6 @@ bool InGameScene::Init()
             // 処理を登録
             obj->SetProc("skill_ui_update_proc", skill_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         }
-
         //---------------------------------------------------------------------------------
         // クリックイベントの登録
         //---------------------------------------------------------------------------------
@@ -1248,7 +1318,7 @@ bool InGameScene::Init()
         //goldボタンUI
         auto gold_ui = Scene::Object::Create<UIButton>();
         //gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
-        gold_ui->SetTranslate(float3(800.0f, 50.0f, 0.0f));    //位置を画面左上あたりに設定
+        gold_ui->SetTranslate(float3(1100.0f, 180.0f, 0.0f));    //位置を画面左上あたりに設定
         gold_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
         gold_ui->SetScaleAxisXYZ(0.2f);    //大きさ
         gold_ui->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
@@ -1258,7 +1328,7 @@ bool InGameScene::Init()
         //goldテキストUI
         auto gold_text_ui = Scene::Object::Create<UIText>();
         //Fgold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);
-        gold_text_ui->SetTranslate(float3(830.0f, 50.0f, 0.0f));               //位置を画面左上あたりに設定
+        gold_text_ui->SetTranslate(float3(1130.0f, 180.0f, 0.0f));             //位置を画面左上あたりに設定
         gold_text_ui->SetFontName("游明朝");                                   //フォントを設定
         gold_text_ui->SetFontSize(24);                                         //フォントサイズ設定
         gold_text_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
@@ -1545,6 +1615,28 @@ bool InGameScene::Init()
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
     }
+    //---------------------------------------------------------------------------------
+    // ヘルプボタンの作成
+    //---------------------------------------------------------------------------------
+    {
+        auto help_button = Scene::Object::Create<UIButton>();
+        help_button->SetTranslate(float3(1200.0f, 180.0f, 0.0f));    //位置を画面左上あたりに設定
+        help_button->SetImage(ImageBuffer::GetImageHandle("help_icon"));
+        help_button->SetScaleAxisXYZ(0.3f);    //大きさ
+        help_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //購入ボタンオープンでヘルプボタンを非表示にする処理登録
+        auto help_button_hide_proc = [help_button](const PiecePurchaseOpenClickEvent& e) {
+            if(e.is_open_) {
+                help_button->SetStatus(Object::StatusBit::NoDraw, true);
+            }
+            else {
+                help_button->SetStatus(Object::StatusBit::NoDraw, false);
+            }
+        };
+        auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(help_button_hide_proc, 0);
+        event_handles_.push_back(std::move(event_handle));
+    }
+
     //---------------------------------------------------------------------------------
     // チュートリアル開始処理
     //---------------------------------------------------------------------------------
@@ -2416,14 +2508,14 @@ void InGameScene::PurchasePieceTutorialEnter()
     for(int i = 0; i < 5; i++) {
         auto purchase_piece_prompt_ui = Scene::Object::Create<UIImage>("purchase_piece_prompt_ui_" + std::to_string(i));
         purchase_piece_prompt_ui->SetImage(ImageBuffer::GetImageHandle("cursor"));
-        float x_base_pos = 370.0f + (i * 150.0f);    //X位置を設定
+        float x_base_pos = 270.0f + (i * 165.0f);    //X位置を設定
         float y_base_pos = 330.0f;
         purchase_piece_prompt_ui->SetTranslate(float3(x_base_pos, y_base_pos, 0.0f));    //右下に配置
         purchase_piece_prompt_ui->SetScaleAxisXYZ(0.2f);                                 //小さくする
         auto update_proc = [purchase_piece_prompt_ui, x_base_pos, y_base_pos]() {
             static float sin_rot = 90.0f;
             //左下方向にサインカーブで前後させる
-            sin_rot        += 1.0f;
+            sin_rot        += 0.5f;
             float x_offset  = std::sin(D2R(sin_rot)) * 5.0f;
             float y_offset  = std::sin(D2R(sin_rot)) * 5.0f;
             purchase_piece_prompt_ui->SetTranslate(float3(x_base_pos - x_offset, y_base_pos + y_offset, 0.0f));

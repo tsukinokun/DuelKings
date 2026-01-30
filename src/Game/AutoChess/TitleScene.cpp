@@ -14,6 +14,7 @@
 #include <System/Component/ComponentCamera.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/SoundManager.h>
+#include <System/Component/ComponentFilterFade.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
@@ -83,6 +84,13 @@ bool TitleScene::Init()
         title_logo->SetTranslate(float3(WINDOW_W / 2.0f, WINDOW_H / 2.0f, 0.0f));
         title_logo->SetScaleAxisXYZ(2.0f);
     }
+    //---------------------------------------------------------------------------------
+    //  フェードフィルター
+    //---------------------------------------------------------------------------------
+    Scene::Object::Create<Object>()              // フェード用オブジェクト
+        ->SetName("FadeIn")                      // 名前設定
+        ->AddComponent<ComponentFilterFade>()    // フェードコンポーネント
+        ->StartFadeIn();                         // フェードインスタート
     return true;
 }
 

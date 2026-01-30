@@ -37,10 +37,30 @@ void JapaneseChessLanceSkill::Init()
             //タイマーが0.0f以下になったら
             if(effect_timer_ <= 0.0f) {
                 hit_pieces_.clear();    //当たったピースのリストをクリア
-                //移動コンポーネントを取得
-                if(auto piece_mover = owner->GetComponent<PieceMover>()) {
-                    // 移動ストラテジーを通常移動ストラテジーへ変更
-                    piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                //---------------------------------------------------------
+                // ピースを走査して敵ピースを取得する
+                //---------------------------------------------------------
+                auto pieces         = Scene::Object::GetArray<Piece>();    // シーン内のピースを取得
+                bool is_enemy_found = false;                               // 敵ピースが見つかったかどうかのフラグ
+                for(auto& piece : pieces) {
+                    //センサーがついていないピースは無視
+                    if(!piece->GetComponent<PieceSensor>()) {
+                        continue;
+                    }
+                    //自身と違うチームのピースをベクターに格納
+                    if(piece->GetOwner() != owner->GetOwner()) {
+                        is_enemy_found = true;
+                        break;
+                    }
+                }
+
+                //敵がいるなら
+                if(is_enemy_found) {
+                    //移動コンポーネントを取得
+                    if(auto piece_mover = owner->GetComponent<PieceMover>()) {
+                        // 移動ストラテジーを通常移動ストラテジーへ変更
+                        piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                    }
                 }
             }
         }
