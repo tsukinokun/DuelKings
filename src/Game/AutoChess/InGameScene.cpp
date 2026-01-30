@@ -893,13 +893,14 @@ bool InGameScene::Init()
         auto        shop_pieces      = player->GetShopPieces();               //ショップに並んでいるピースを取得
         const auto& piece_repository = game_context_.GetPieceRepository();    // ピースリポジトリを取得
         for(int i = 0; i < shop_pieces.size(); ++i) {
+            auto piece_data      = piece_repository.FindByTypeName(piece->GetNameDefault().data());
             auto piece_name_text = Scene::Object::Create<UIText>();
             piece_name_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
             piece_name_text->SetName("PieceNameText");
             float x_pos = 400.0f + (i * 150.0f);    //X位置を設定
             piece_name_text->SetTranslate(float3(x_pos, 370.0f, 0.0f));
-            piece_name_text->SetFontSize(16);                                         //フォントサイズを設定
-            piece_name_text->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色を白に設定
+            piece_name_text->SetFontSize(16);                                   //フォントサイズを設定
+            piece_name_text->SetColor(GetColor(0, 0, 0), PIECE_COLORS.at());    //文字色を白に設定
             piece_name_text->SetFontName("游明朝");
             piece_name_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
             //---------------------------------------------------------------------------------
@@ -1549,13 +1550,6 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
     PurchaseOpenTutorialEnter();
-
-    for(auto& ui : Scene::Object::GetArray<UIObject>()) {
-        //ui->SetStatus(Object::StatusBit::NoUpdate, true);    //全てのUIオブジェクトを非表示にする
-        //ui->SetStatus(Object::StatusBit::NoDraw, true);    //全てのUIオブジェクトを非表示にする
-        //Scene::Object::Release(ui);    //全てのUIオブジェクトを解放
-    }
-
     //---------------------------------------------------------------------------------
     //  フェードフィルター
     //---------------------------------------------------------------------------------
@@ -2429,7 +2423,7 @@ void InGameScene::PurchasePieceTutorialEnter()
         auto update_proc = [purchase_piece_prompt_ui, x_base_pos, y_base_pos]() {
             static float sin_rot = 90.0f;
             //左下方向にサインカーブで前後させる
-            sin_rot        += 2.0f;
+            sin_rot        += 1.0f;
             float x_offset  = std::sin(D2R(sin_rot)) * 5.0f;
             float y_offset  = std::sin(D2R(sin_rot)) * 5.0f;
             purchase_piece_prompt_ui->SetTranslate(float3(x_base_pos - x_offset, y_base_pos + y_offset, 0.0f));
