@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 #include <Game/AutoChess/Component/Manager/HelpManager.h>
 #include <Game/AutoChess/UIObject/UIImage.h>
+#include <Game/AutoChess/UIObject/UIButton.h>
 #include <System/UIComponent/ComponentImage.h>
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/Events/HelpClickEvent.h>
@@ -46,7 +47,10 @@ void HelpManager::Init()
     }
     //---------------------------------------------------------------------------------
     // 右ボタンの作成
-    //---------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    {
+        auto right_button = Scene::Object::Create<UIButton>();
+    }
 }
 
 //---------------------------------------------------------------------------

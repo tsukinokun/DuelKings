@@ -213,7 +213,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
-        sell_button->SetIsFilter(true);                          // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -822,7 +822,7 @@ bool InGameScene::Init()
             piece_purchase_button->SetName("PiecePurchaseButton");
             float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
-            auto texture = std::make_shared<Texture>(100, 100, DXGI_FORMAT_R8G8B8A8_UNORM);
+            auto texture = std::make_shared<Texture>(300, 300, DXGI_FORMAT_R8G8B8A8_UNORM);
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------
@@ -1855,7 +1855,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;
