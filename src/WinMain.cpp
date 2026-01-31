@@ -95,6 +95,9 @@ int WINAPI WinMain(_In_ [[maybe_unused]] HINSTANCE     hInstance,
 #endif
     }
 
+    //DxLib::SetUseCullingFlag(FALSE);    // カリング無効
+    //DxLib::SetUseBackCulling(FALSE);    // カリング無効
+
     // Effekseerの初期化
     if(Effekseer_Init(8000) == -1) {
         DxLib_End();

@@ -48,6 +48,7 @@
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <Game/AutoChess/Events/LoseEvent.h>
 #include <Game/AutoChess/Events/WinEvent.h>
+#include <Game/AutoChess/Events/HelpClickEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
@@ -56,6 +57,7 @@
 #include <Game/AutoChess/Component/MoveStrategy/MoveWinStrategy.h>
 #include <Game/AutoChess/system/DXLibUtils.h>
 #include <Game/AutoChess/UIObject/UIObject.h>
+#include <Game/AutoChess/Component/Manager/HelpManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -1618,11 +1620,19 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto help_button = Scene::Object::Create<UIButton>();
+        help_button->SetName("HelpButton");
         help_button->SetTranslate(float3(1200.0f, 180.0f, 0.0f));    //位置を画面左上あたりに設定
         help_button->SetImage(ImageBuffer::GetImageHandle("help_icon"));
         help_button->SetScaleAxisXYZ(0.3f);    //大きさ
         help_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
+        //---------------------------------------------------------------------------------
+        // クリックをしたときの処理登録
+        //---------------------------------------------------------------------------------
+        auto help_click_func = [event_bus]() { event_bus->publish(HelpClickEvent()); };
+        help_button->SetClickFunc(help_click_func);
+        //---------------------------------------------------------------------------------
         //購入ボタンオープンでヘルプボタンを非表示にする処理登録
+        //---------------------------------------------------------------------------------
         auto help_button_hide_proc = [help_button](const PiecePurchaseOpenClickEvent& e) {
             if(e.is_open_) {
                 help_button->SetStatus(Object::StatusBit::NoDraw, true);
@@ -1633,6 +1643,13 @@ bool InGameScene::Init()
         };
         auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(help_button_hide_proc, 0);
         event_handles_.push_back(std::move(event_handle));
+    }
+    //---------------------------------------------------------------------------------
+    // ヘルプマネージャーを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto help_manager = Scene::Object::Create<Object>();
+        help_manager->AddComponent<HelpManager>(event_bus);    //
     }
 
     //---------------------------------------------------------------------------------
@@ -2438,6 +2455,12 @@ void InGameScene::UpdateTutorial()
     case TutorialStep::PutPiece:
         PutPieceTutorialUpdate();
         break;
+    case TutorialStep::HelpOpen:
+        HelpOpenTutorialUpdate();
+        break;
+    case TutorialStep::HelpClose:
+        HelpCloseTutorialUpdate();
+        break;
     }
 }
 
@@ -2622,8 +2645,8 @@ void InGameScene::PutPieceTutorialUpdate()
         // プレイヤーがピースを1体以上配置したら
         if(player->GetPlacedPieceNum() >= 1) {
             PutPieceTutorialExit();
-            tutorial_step_   = TutorialStep::None;    // チュートリアル終了
-            tutorial_active_ = false;                 // チュートリアル無効化
+            tutorial_step_ = TutorialStep::HelpOpen;    // ヘルプ押下へ
+            HelpOpenTutorialEnter();
         }
     }
 }
@@ -2683,5 +2706,83 @@ void InGameScene::PutPieceTutorialDraw()
 //! @brief ピースを置くチュートリアルの終了処理関数
 //----------------------------------------------------------------------
 void InGameScene::PutPieceTutorialExit()
+{
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを開くチュートリアルを始める関数
+//----------------------------------------------------------------------
+void InGameScene::HelpOpenTutorialEnter()
+{
+    //---------------------------------------------------------------------------------
+    // ピース購入オープンボタン催促用UI
+    //---------------------------------------------------------------------------------
+    {
+        auto help_prompt_ui = Scene::Object::Create<UIImage>("help_prompt_ui");
+        help_prompt_ui->SetImage(ImageBuffer::GetImageHandle("cursor"));
+        float x_base_pos = 1150.0f;
+        float y_base_pos = 220.0f;
+        help_prompt_ui->SetTranslate(float3(x_base_pos, y_base_pos, 0.0f));    //右下に配置
+        help_prompt_ui->SetScaleAxisXYZ(0.2f);                                 //小さくする
+        auto update_proc = [help_prompt_ui, x_base_pos, y_base_pos]() {
+            static float sin_rot = 90.0f;
+            //左下方向にサインカーブで前後させる
+            sin_rot        += 2.0f;
+            float x_offset  = std::sin(D2R(sin_rot)) * 5.0f;
+            float y_offset  = std::sin(D2R(sin_rot)) * 5.0f;
+            help_prompt_ui->SetTranslate(float3(x_base_pos - x_offset, y_base_pos + y_offset, 0.0f));
+        };
+        help_prompt_ui->SetProc("help_prompt_update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを開くチュートリアルのアップデート関数
+//----------------------------------------------------------------------
+void InGameScene::HelpOpenTutorialUpdate()
+{
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto help_button = Scene::Object::Get<UIButton>("HelpButton")) {
+        //ヘルプボタンをクリックしたら切り替え
+        if(help_button->IsClick()) {
+            HelpOpenTutorialExit();
+            tutorial_step_ = TutorialStep::HelpClose;    // ヘルプを閉じるまで待機
+        }
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを開くチュートリアルを終わる関数
+//----------------------------------------------------------------------
+void InGameScene::HelpOpenTutorialExit()
+{
+    //----------------------------------------------------------------------
+    // ヘルプ促しUIを削除
+    //----------------------------------------------------------------------
+    if(auto ui = Scene::Object::Get<UIImage>("help_prompt_ui")) {
+        Scene::Object::Release(ui);
+    }
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを閉じるチュートリアルを始める関数
+//----------------------------------------------------------------------
+void InGameScene::HelpCloseTutorialEnter()
+{
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを閉じるチュートリアルを更新する関数
+//----------------------------------------------------------------------
+void InGameScene::HelpCloseTutorialUpdate()
+{
+}
+
+//----------------------------------------------------------------------
+//! @brief ヘルプを閉じるチュートリアルを終わる関数
+//----------------------------------------------------------------------
+void InGameScene::HelpCloseTutorialExit()
 {
 }

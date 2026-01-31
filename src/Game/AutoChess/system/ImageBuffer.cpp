@@ -27,6 +27,10 @@ void ImageBuffer::Init()
     image_buffer_["level3_star"]                = DxLib::LoadGraph("data/AutoChess/Image/Level3Star.png");                 // レベル3スター画像
     image_buffer_["cursor"]                     = DxLib::LoadGraph("data/AutoChess/Image/Cursor.png");                     // カーソル画像
     image_buffer_["help_icon"]                  = DxLib::LoadGraph("data/AutoChess/Image/HelpIcon.png");                   // ヘルプボタン画像
+    image_buffer_["help1"]                      = DxLib::LoadGraph("data/AutoChess/Image/Help/Help1.png");                 // ヘルプの1番目
+    image_buffer_["help2"]                      = DxLib::LoadGraph("data/AutoChess/Image/Help/Help2.png");                 // ヘルプの2番目
+    image_buffer_["help3"]                      = DxLib::LoadGraph("data/AutoChess/Image/Help/Help3.png");                 // ヘルプの3番目
+    image_buffer_["help4"]                      = DxLib::LoadGraph("data/AutoChess/Image/Help/Help4.png");                 // ヘルプの4番目
     image_buffer_["japanese_chess_synergy_icon"] =
         DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/JapaneseChessSynergyIcon.png");                              // 将棋シナジーアイコン画像
     image_buffer_["chess_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChessSynergyIcon.png");    // チェスシナジーアイコン画像
