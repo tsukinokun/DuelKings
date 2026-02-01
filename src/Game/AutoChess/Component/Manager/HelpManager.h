@@ -23,9 +23,10 @@ public:
     void Construct(ObjectPtr owner, const std::shared_ptr<TsukinoEventBus::EventBus> event_bus);
 
 private:
-    std::weak_ptr<TsukinoEventBus::EventBus>         event_bus_;        //!< イベントバスのポインタ
-    int                                              help_num_ = 0;     //!< ヘルプ番号
-    std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;    //イベントハンドル群
+    std::weak_ptr<TsukinoEventBus::EventBus>         event_bus_;           //!< イベントバスのポインタ
+    int                                              help_num_     = 1;    //!< ヘルプ番号
+    int                                              max_help_num_ = 4;    //!< 最大ヘルプ番号
+    std::vector<TsukinoEventBus::SubscriptionHandle> event_handles_;       //イベントハンドル群
 };
 
 CEREAL_REGISTER_TYPE(HelpManager)

@@ -213,7 +213,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto sell_button = Scene::Object::Create<UIButton>();    //売却ボタン
-        sell_button->SetIsFilter(true);    // クリック判定をUIヒットマネージャーでフィルタリングするように設定
+        sell_button->SetIsFilter(true);                          // クリック判定をUIヒットマネージャーでフィルタリングするように設定
         //sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //表示しない状態から開始
         sell_button->SetImage(ImageBuffer::GetImageHandle("sell_button"));
         sell_button->SetScaleAxisXYZ(0.3f);                          //大きさを少し小さく設定
@@ -1855,7 +1855,7 @@ void InGameScene::CreatePiecesForBattlePhase()
                     //---------------------------------------------------------------------------------
                     for(auto& active_synergy : player->GetActiveSynergy()) {
                         int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
-                        int synergy_level = synergy_count / 2;    //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
                         //レベルは3まで
                         if(synergy_level > 3) {
                             synergy_level = 3;
@@ -2749,6 +2749,7 @@ void InGameScene::HelpOpenTutorialUpdate()
         if(help_button->IsClick()) {
             HelpOpenTutorialExit();
             tutorial_step_ = TutorialStep::HelpClose;    // ヘルプを閉じるまで待機
+            HelpCloseTutorialEnter();
         }
     }
 }
@@ -2778,6 +2779,17 @@ void InGameScene::HelpCloseTutorialEnter()
 //----------------------------------------------------------------------
 void InGameScene::HelpCloseTutorialUpdate()
 {
+    //----------------------------------------------------------------------
+    // 切り替え処理
+    //----------------------------------------------------------------------
+    if(auto help_button = Scene::Object::Get<UIButton>("HelpCloseButton")) {
+        //ヘルプウィンドウが閉じられたら切り替え
+        if(help_button->IsClick()) {
+            HelpCloseTutorialExit();
+            tutorial_step_   = TutorialStep::None;    // チュートリアル終了
+            tutorial_active_ = false;                 // チュートリアル無効化
+        }
+    }
 }
 
 //----------------------------------------------------------------------
@@ -2785,4 +2797,5 @@ void InGameScene::HelpCloseTutorialUpdate()
 //----------------------------------------------------------------------
 void InGameScene::HelpCloseTutorialExit()
 {
+    state_timer_ += (SETUP_PHASE_DURATION - 2.0f);    // セットアップフェーズ時間を加算して、すぐにバトルフェーズへ移行するようにする
 }
