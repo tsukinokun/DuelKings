@@ -55,13 +55,13 @@ struct Variant
         //--------------------------------------------------------------
         // シェーダーをコンパイル
         //--------------------------------------------------------------
-        u32 compile_flags  = D3DCOMPILE_OPTIMIZATION_LEVEL3;
-        compile_flags     |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
+        u32 compile_flags = D3DCOMPILE_OPTIMIZATION_LEVEL3;
 
 #if defined(_DEBUG)
         // GraphicDebuggingツール用にシェーダーデバッグ向け設定
-        compile_flags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+        compile_flags = D3DCOMPILE_DEBUG | D3DCOMPILE_OPTIMIZATION_LEVEL0;
 #endif
+        compile_flags |= D3DCOMPILE_PACK_MATRIX_ROW_MAJOR;
 
         // #define SHADER_VARIANT  index の形式でプリプロセッサ定義
         auto number_string = std::to_string(index);

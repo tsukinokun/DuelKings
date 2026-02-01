@@ -36,11 +36,29 @@ void ChaturangaAsvaSkill::Init()
         //---------------------------------------------------------
         if(is_tracking_) {
             if(CheckResetMove()) {
-                // 移動ストラテジを元に戻す
-                if(auto piece_mover = owner->GetComponent<PieceMover>()) {
-                    piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                //---------------------------------------------------------
+                // ピースを走査して敵ピースを取得する
+                //---------------------------------------------------------
+                auto pieces         = Scene::Object::GetArray<Piece>();    // シーン内のピースを取得
+                bool is_enemy_found = false;                               // 敵ピースが見つかったかどうかのフラグ
+                for(auto& piece : pieces) {
+                    //センサーがついていないピースは無視
+                    if(!piece->GetComponent<PieceSensor>()) {
+                        continue;
+                    }
+                    //自身と違うチームのピースをベクターに格納
+                    if(piece->GetOwner() != owner->GetOwner()) {
+                        is_enemy_found = true;
+                        break;
+                    }
                 }
-                is_tracking_ = false;    // 追跡中フラグを下ろす
+                // 移動ストラテジを元に戻す
+                if(is_enemy_found) {
+                    if(auto piece_mover = owner->GetComponent<PieceMover>()) {
+                        piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                    }
+                    is_tracking_ = false;    // 追跡中フラグを下ろす
+                }
             }
         }
     };

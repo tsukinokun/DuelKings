@@ -9,7 +9,7 @@ const float SQUARE_HALF = 0.5f;    //マスのxz軸の半分の大きさ
 //ゲームプレイ人数
 constexpr int AGENT_NUM = 8;    //プレイ人数
 //フェーズの長さ
-constexpr float SETUP_PHASE_DURATION  = 10.0f;    // 設置フェーズの長さ（秒）
+constexpr float SETUP_PHASE_DURATION  = 15.0f;    // 設置フェーズの長さ（秒）
 constexpr float BATTLE_PHASE_DURATION = 25.0f;    // 戦闘フェーズの長さ（秒）
 //ピースの最大レベル
 constexpr int MAX_PIECE_LEVEL = 3;
@@ -18,6 +18,11 @@ constexpr int LEVEL_UP_REQUIRED_PIECE_COUNT = 3;
 //経験値テーブル
 const std::vector<int>   exp_table        = {0, 1, 2, 4, 8, 18, 28, 38, 48, 56};
 const std::array<int, 5> piece_init_stock = {25, 20, 15, 10, 10};    //各レアリティごとの初期在庫数
+const std::array<int, 5> PIECE_COLORS     = {DxLib::GetColor(0, 0, 0),
+                                             DxLib::GetColor(0, 200, 0),
+                                             DxLib::GetColor(0, 0, 255),
+                                             DxLib::GetColor(128, 0, 128),
+                                             DxLib::GetColor(255, 215, 0)};    //各レアリティごとの色
 //Agentの最大HP
 int constexpr MAX_AGENT_HP = 100;
 //駒のレアリティ数

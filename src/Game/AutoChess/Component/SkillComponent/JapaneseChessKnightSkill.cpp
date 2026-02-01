@@ -46,7 +46,7 @@ void JapaneseChessKnightSkill::Activate()
             float3 vec = target_enemy->GetTranslate() - owner->GetTranslate();
             vec.y      = 0.0f;
             vec        = normalize(vec);    // 水平方向の単位ベクトルに変換
-            skill->SetMoveVector(vec * 10.0f);
+            skill->SetMoveVector(vec * 0.1f);
         }
     }
 }

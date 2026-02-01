@@ -15,7 +15,7 @@ bool JapaneseChessKnightSkillObject::Init()
 
     SetName(u8"跳躍");
     SetEffect(u8"data/AutoChess/Effect/JapaneseChessKnightSkill.efkefc");
-    SetEffectPlaySpeed(1.0f);
+    SetEffectPlaySpeed(0.3f);
     //---------------------------------------------------------------------------------
     // コリジョンを追加
     //---------------------------------------------------------------------------------

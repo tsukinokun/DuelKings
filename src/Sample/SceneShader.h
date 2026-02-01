@@ -25,6 +25,7 @@ public:
 
 private:
     std::shared_ptr<ComponentModel>      model_;          //!< モデルコンポーネント
+    std::shared_ptr<ComponentModel>      model2_;         //!< モデルコンポーネント
     std::shared_ptr<ComponentFilterFade> filter_fade_;    //!< フェードコンポーネント
 
     std::shared_ptr<Texture>  texture_;         //!< テクスチャ

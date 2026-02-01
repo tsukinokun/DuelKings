@@ -12,12 +12,15 @@
 //---------------------------------------------------------------------------
 bool SceneShader::Init()
 {
-    auto obj = Scene::Object::Create<Object>();
+    auto obj  = Scene::Object::Create<Object>();
+    auto obj2 = Scene::Object::Create<Object>();
 
     // モデルコンポーネント
-    //model_ = obj->AddComponent<ComponentModel>("data/Sample/Player/model.mv1");
+    model_ = obj->AddComponent<ComponentModel>("data/Sample/Player/model.mv1");
     //model_ = obj->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/MakrukBia.mv1");
-    model_ = obj->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChessQueen.mv1");
+    model2_ = obj2->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChaturangaGaja.mv1");
+    obj2->SetScaleAxisXYZ(0.5f);
+    obj2->SetTranslate(float3(5.0f, 0.0f, 0.0f));
 
     // カメラコンポーネント
     auto camera = obj->AddComponent<ComponentCamera>();
@@ -53,7 +56,8 @@ void SceneShader::Update()
     static f32 ry  = 0.0f;
     ry            += 0.5f * delta;
 
-    model_->Matrix() = mul(matrix::scale(0.1f), matrix::rotateY(ry));
+    model_->Matrix()  = mul(matrix::scale(0.1f), matrix::rotateY(ry));
+    model2_->Matrix() = mul(matrix::scale(0.1f), matrix::rotateY(ry));
 }
 
 //---------------------------------------------------------------------------
