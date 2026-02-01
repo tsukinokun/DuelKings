@@ -53,6 +53,12 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<ComponentButton> SetClickFunc(const std::function<void()>& click_func);
 
+    //---------------------------------------------------------------------------
+    // カスタムサイズを設定する関数
+    //! @param size [in] カスタムサイズ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<ComponentButton> SetCustomSize(const float2& size);
+
     //! @}
     //--------------------------------------------------------------------
     //! @name Cereal処理
@@ -62,7 +68,9 @@ private:
     //ボタンに触れた時の処理
     std::function<void()> mouse_over_func_ = []() {};
     //ボタンをクリックしたときの処理
-    std::function<void()> click_func_ = []() {};
+    std::function<void()> click_func_         = []() {};
+    float2                custom_size_        = float2(0.0f, 0.0f);    //カスタムサイズ
+    bool                  active_custom_size_ = false;                 //カスタムサイズを有効にするか
     //! @brief セーブ
     // @param arc アーカイバ
     // @param ver バージョン

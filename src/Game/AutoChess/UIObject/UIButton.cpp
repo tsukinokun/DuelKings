@@ -100,3 +100,14 @@ std::shared_ptr<UIButton> UIButton::SetIsFilter(bool is_filter)
     }
     return dynamic_pointer_cast<UIButton>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief カスタムサイズを設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentButton> UIButton::SetCustomSize(const float2& size)
+{
+    if(auto button_comp = button_component_.lock()) {
+        button_comp->SetCustomSize(size);    // ボタンコンポーネントにカスタムサイズを設定
+    }
+    return dynamic_pointer_cast<ComponentButton>(shared_from_this());
+}
