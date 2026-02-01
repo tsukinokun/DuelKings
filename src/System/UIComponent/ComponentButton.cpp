@@ -64,8 +64,7 @@ bool ComponentButton::IsClick()
     return false;
 }
 //---------------------------------------------------------------------------
-//  マウスがボタンに触れているかを返す関数
-//! @return マウスがボタンに触れているか
+//! @brief  マウスがボタンに触れているかを返す関数
 //---------------------------------------------------------------------------
 bool ComponentButton::IsMouseOver()
 {
@@ -83,8 +82,13 @@ bool ComponentButton::IsMouseOver()
         float3 translate = owner->GetTranslate() + image_comp->GetAdjustment();
         float2 ui_pos    = float2(translate.x, translate.y);
         //UIサイズを取得
-        float2 ui_size = float2(0.0f, 0.0f);                  //とりあえず宣言
-        ui_size        = image_comp->GetScreenImageSize();    //サイズ取得
+        float2 ui_size = float2(0.0f, 0.0f);    //とりあえず宣言
+        if(active_custom_size_) {               //カスタムサイズが有効なら
+            ui_size = custom_size_;             //カスタムサイズを使用
+        }
+        else {
+            ui_size = image_comp->GetScreenImageSize();    //サイズ取得
+        }
         if(CheckBoxPointHit(ui_pos, ui_size, mouse_pos)) {
             return true;
         }
@@ -92,8 +96,7 @@ bool ComponentButton::IsMouseOver()
     return false;
 }
 //---------------------------------------------------------------------------
-//  マウスがボタンに触れている時に表示させる情報の設定
-//! @return 自身のポインタ
+//! @brief  マウスがボタンに触れている時に表示させる情報の設定
 //---------------------------------------------------------------------------
 std::shared_ptr<ComponentButton> ComponentButton::SetOverInformation(OverInformation info)
 {
@@ -137,12 +140,23 @@ std::shared_ptr<ComponentButton> ComponentButton::SetOverInformation(OverInforma
 }
 
 //---------------------------------------------------------------------------
-//!  マウスをクリックした時に行う処理の設定
+//! @brief マウスをクリックした時に行う処理の設定
 //---------------------------------------------------------------------------
 std::shared_ptr<ComponentButton> ComponentButton::SetClickFunc(const std::function<void()>& click_func)
 {
     click_func_ = click_func;
     return dynamic_pointer_cast<ComponentButton>(shared_from_this());
 }
+
+//---------------------------------------------------------------------------
+//! @brief カスタムサイズを設定する関数
+//---------------------------------------------------------------------------
+std::shared_ptr<ComponentButton> ComponentButton::SetCustomSize(const float2& size)
+{
+    custom_size_        = size;
+    active_custom_size_ = true;
+    return dynamic_pointer_cast<ComponentButton>(shared_from_this());
+}
+
 CEREAL_REGISTER_TYPE(ComponentButton)
 CEREAL_REGISTER_POLYMORPHIC_RELATION(Component, ComponentButton)

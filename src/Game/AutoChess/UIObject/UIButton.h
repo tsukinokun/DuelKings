@@ -63,6 +63,12 @@ public:
     //---------------------------------------------------------------------------
     std::shared_ptr<UIButton> SetIsFilter(bool is_filter);
 
+    //---------------------------------------------------------------------------
+    // カスタムサイズを設定する関数
+    //! @param size [in] カスタムサイズ
+    //---------------------------------------------------------------------------
+    std::shared_ptr<ComponentButton> SetCustomSize(const float2& size);
+
 protected:
     std::weak_ptr<ComponentImage>
         image_component_;    // 文字コンポーネントへの参照、使う側が毎回GetCompoenentするのも、weak_ptrを保持しておくのもさすがに面倒なので、ここでpublicにして保持しておく
