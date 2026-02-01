@@ -859,6 +859,7 @@ bool InGameScene::Init()
             auto draw_target = [piece_purchase_button, texture, i]() {
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
+                    DxLib::SetLightEnable(TRUE);                       //ライトを有効化
                     SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
                     ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
                     MATRIX prev_mat      = GetCameraViewMatrix();
