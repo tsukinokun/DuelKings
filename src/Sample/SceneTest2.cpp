@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+#include "System2/Shadowmap.h"
+
 namespace Sample {
 
 // STAGE01を使用するときはこちらを有効にする
@@ -38,7 +40,7 @@ public:
         return true;
     }
 
-    void Update() override { AddTranslate({0, 0, -0.05f}); }
+    void Update() override { AddTranslate({0, 0, -0.05f * GetDeltaTime60()}); }
 };
 
 class Shot : public Object
@@ -54,7 +56,7 @@ public:
         return true;
     }
 
-    void Update() override { AddTranslate(vec_ * speed_); }
+    void Update(float delta) { AddTranslate(vec_ * speed_ * delta); }
 
     void Draw() { DrawSphere3D(cast(GetTranslate()), radius_, 10, GetColor(255, 0, 0), GetColor(255, 0, 0), TRUE); }
 
@@ -62,11 +64,11 @@ public:
     {
         auto owner = hitInfo.hit_collision_->GetOwnerPtr();
         if(owner->GetNameDefault() == "Enemy") {
-            Scene::Object::Release(owner);
-            Scene::Object::Release(SharedThis());
+            Scene::ReleaseObject(owner);
+            Scene::ReleaseObject(SharedThis());
         }
         if(owner->GetNameDefault() == "Ground") {
-            Scene::Object::Release(SharedThis());
+            Scene::ReleaseObject(SharedThis());
         }
     }
 
@@ -78,7 +80,7 @@ public:
 
 private:
     float3 vec_    = {0, 0, 0};    //< 進む方向
-    float3 speed_  = 3.0f;         //< 1秒間に進む量
+    float3 speed_  = 100.0f;       //< 1秒間に進む量
     float  radius_ = 1.0f;         //< 弾の大きさ
 };
 
@@ -264,7 +266,7 @@ public:
         AddTranslate(move);
 
         // Shot
-        if(IsKeyDown(KEY_INPUT_SPACE)) {
+        if(IsKeyOn(KEY_INPUT_SPACE)) {
             float3 vec = {0, 0, 1};
 
             if(mdl)
@@ -467,6 +469,8 @@ ObjectPtr TrackingNearEnemy(ObjectPtr player)
 
 bool SceneTest2::Init()
 {
+    Scene::Object::Create<Shadowmap>("Shadowmap");    // シャドウマップ
+
     // カメラ
     //auto cam = Scene::Object::Create<Object>()->AddComponent<ComponentCamera>();
     //cam->SetPositionAndTarget( { 0, 35, -60 }, { 0, 20, 0 } );

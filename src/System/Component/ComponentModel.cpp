@@ -5,7 +5,7 @@
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentTransform.h>
 #include <System/Object.h>
-
+#include <System2/Shadowmap.h>
 namespace {
 std::string null_name = "  ";
 
@@ -103,6 +103,22 @@ void ComponentModel::Init()
 {
     // 親クラス
     Super::Init();
+
+    {
+        auto drawShadow = [this]() {
+            // 影が無効の場合は影登録しない
+            auto shadow = Scene::Object::Get<Shadowmap>();
+            if(!shadow)
+                return;
+
+            // 描画
+            Draw();
+        };
+
+        // 描画関数を登録
+        // ProcPriorityは 0～65535 まで設定可能。0が最も優先度が高い(先に実行される)
+        SetProc("drawShadow", drawShadow, ProcTiming::Shadow, ProcPriority(32768));
+    }
 }
 
 //! @brief モデル更新

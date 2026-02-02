@@ -25,10 +25,10 @@ PS_OUTPUT main(PS_INPUT input)
 	float4	color = DiffuseTexture.Sample(DiffuseSampler, input.uv0_);
 
 	// トーンマッピング適用
-//	color.rgb = ACESFilm(color.rgb);
+	//color.rgb = ACESFilm(color.rgb);
 
 	// sRGBへ変換
-//	color.rgb = pow(color.rgb, 1.0 / 2.2);
+	//color.rgb = pow(color.rgb, 1.0 / 2.2);
 
 	output.color0_ = color;
 

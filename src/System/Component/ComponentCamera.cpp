@@ -5,6 +5,7 @@
 
 #include <System/Debug/DebugCamera.h>
 #include <System/ImGui.h>
+#include <System2/Shadowmap.h>
 
 ComponentCameraWeakPtr ComponentCamera::current_camera_{};
 
@@ -28,6 +29,17 @@ void ComponentCamera::Init()
     SetUpdateTiming(ProcTiming::PostUpdate);
 
     camera_status_.on(CameraBit::Initialized);
+
+    //----------------------------------------------------------
+    // カメラの描画用設定を追加
+    //----------------------------------------------------------
+    {
+        auto func = [this]() { SetCameraTransform(); };
+
+        // 描画関数を登録
+        // ProcPriorityは 0～65535 まで設定可能。0が最も優先度が高い(先に実行される)
+        SetProc("SetCamera", func, ProcTiming::Gbuffer, ProcPriority(0));
+    }
 }
 
 //---------------------------------------------------------
@@ -35,8 +47,8 @@ void ComponentCamera::Init()
 //---------------------------------------------------------
 void ComponentCamera::PreUpdate()
 {
-    if(camera_status_.is(CameraBit::UpdateOnPreUpdate))
-        SetCameraTransform();
+    /*if(camera_status_.is(CameraBit::UpdateOnPreUpdate))
+        SetCameraTransform();*/
 }
 
 //---------------------------------------------------------
@@ -44,8 +56,8 @@ void ComponentCamera::PreUpdate()
 //---------------------------------------------------------
 void ComponentCamera::Update()
 {
-    if(camera_status_.is(CameraBit::UpdateOnUpdate))
-        SetCameraTransform();
+    /* if(camera_status_.is(CameraBit::UpdateOnUpdate))
+        SetCameraTransform();*/
 }
 
 //---------------------------------------------------------
@@ -53,30 +65,30 @@ void ComponentCamera::Update()
 //---------------------------------------------------------
 void ComponentCamera::PostUpdate()
 {
-    if(camera_status_.is(CameraBit::UpdateOnPostUpdate))
-        SetCameraTransform();
+    //if(camera_status_.is(CameraBit::UpdateOnPostUpdate))
+    //    SetCameraTransform();
 
-    //---------------------------------------------------------
-    // 定数バッファを更新
-    //---------------------------------------------------------
-    // 更新に必要なメモリの場所を取得
-    void* p = GetBufferShaderConstantBuffer(cb_camera_info_);
-    {
-        auto* info          = reinterpret_cast<CameraInfo*>(p);
-        info->mat_view_     = mat_view_;
-        info->mat_proj_     = mat_proj_;
-        info->eye_position_ = position_;
-    }
+    ////---------------------------------------------------------
+    //// 定数バッファを更新
+    ////---------------------------------------------------------
+    //// 更新に必要なメモリの場所を取得
+    //void* p = GetBufferShaderConstantBuffer(cb_camera_info_);
+    //{
+    //    auto* info          = reinterpret_cast<CameraInfo*>(p);
+    //    info->mat_view_     = mat_view_;
+    //    info->mat_proj_     = mat_proj_;
+    //    info->eye_position_ = position_;
+    //}
 
-    // メモリをGPU側へ転送
-    UpdateShaderConstantBuffer(cb_camera_info_);
+    //// メモリをGPU側へ転送
+    //UpdateShaderConstantBuffer(cb_camera_info_);
 
-    //---------------------------------------------------------
-    // カメラ情報の定数バッファを設定
-    //---------------------------------------------------------
-    // b10 = CameraInfo
-    SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_VERTEX, 10);
-    SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_PIXEL, 10);
+    ////---------------------------------------------------------
+    //// カメラ情報の定数バッファを設定
+    ////---------------------------------------------------------
+    //// b10 = CameraInfo
+    //SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_VERTEX, 10);
+    //SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_PIXEL, 10);
 }
 
 //----------------------------------------------------------
@@ -112,21 +124,53 @@ void ComponentCamera::SetCameraTransform()
         if(camera_status_.is(CameraBit::Current)) {
             SetCameraViewMatrix(mat_view_);             // ビュー行列
             SetupCamera_ProjectionMatrix(mat_proj_);    // 投影行列
+
+            //---------------------------------------------------------
+            // 定数バッファを更新
+            //---------------------------------------------------------
+            // 更新に必要なメモリの場所を取得
+            void* p = GetBufferShaderConstantBuffer(cb_camera_info_);
+            {
+                auto* info          = reinterpret_cast<CameraInfo*>(p);
+                info->mat_view_     = mat_view_;
+                info->mat_proj_     = mat_proj_;
+                info->eye_position_ = GetPosition();
+
+                // 影が無効の場合は影登録しない
+                auto shadow = Scene::Object::Get<Shadowmap>();
+                if(shadow) {
+                    info->mat_light_view_ = shadow->getLightViewMatrix();
+                    info->mat_light_proj_ = shadow->getLightProjMatrix();
+                }
+                else {
+                    info->mat_light_view_ = matrix::identity();
+                    info->mat_light_proj_ = matrix::identity();
+                }
+            }
+
+            // メモリをGPU側へ転送
+            UpdateShaderConstantBuffer(cb_camera_info_);
+
+            //---------------------------------------------------------
+            // カメラ情報の定数バッファを設定
+            //---------------------------------------------------------
+            // b10 = CameraInfo
+            SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_VERTEX, 10);
+            SetShaderConstantBuffer(cb_camera_info_, DX_SHADERTYPE_PIXEL, 10);
         }
-    }
+        // 視錐台(Frustum)の更新
+        if(camera_status_.is(CameraBit::Current)) {
+            frustum_.setPosition(position);
+            frustum_.setLookAt(target);
+            frustum_.setWorldUp(up_);
+            frustum_.setFov(fovy_ * DegToRad);
+            frustum_.setDepthMode(Frustum::DepthMode::Default);
+            frustum_.setAspectRatio(aspect_ratio_);
 
-    // 視錐台(Frustum)の更新
-    if(camera_status_.is(CameraBit::Current)) {
-        frustum_.setPosition(position);
-        frustum_.setLookAt(target);
-        frustum_.setWorldUp(up_);
-        frustum_.setFov(fovy_ * DegToRad);
-        frustum_.setDepthMode(Frustum::DepthMode::Default);
-        frustum_.setAspectRatio(aspect_ratio_);
-
-        frustum_.setNearZ(near_z_);
-        frustum_.setFarZ(far_z_);
-        frustum_.update();
+            frustum_.setNearZ(near_z_);
+            frustum_.setFarZ(far_z_);
+            frustum_.update();
+        }
     }
 }
 

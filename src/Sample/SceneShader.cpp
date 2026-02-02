@@ -18,7 +18,7 @@ bool SceneShader::Init()
     // モデルコンポーネント
     model_ = obj->AddComponent<ComponentModel>("data/Sample/Player/model.mv1");
     //model_ = obj->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/MakrukBia.mv1");
-    model2_ = obj2->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/JapaneseChessPawn.mv1");
+    model2_ = obj2->AddComponent<ComponentModel>("data/AutoChess/Model/Piece/ChaturangaAsva.mv1");
     obj2->SetScaleAxisXYZ(0.5f);
     obj2->SetTranslate(float3(5.0f, 0.0f, 0.0f));
 
