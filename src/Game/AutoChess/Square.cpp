@@ -11,20 +11,18 @@
 #include <System/Component/ComponentCollisionModel.h>
 
 //---------------------------------------------------------------------------------
-//!	初期化
+//!	@brief 初期化
 //---------------------------------------------------------------------------------
 bool Square::Init()
 {
     __super::Init();
     SetName("Square");
     SetScaleAxisXYZ(float3(0.05f, 0.05f, 0.05f));
-    AddComponent<ComponentModel>("data/AutoChess/Square.mv1");
-    AddComponent<ComponentCollisionModel>()->AttachToModel();
     return true;
 }
 
 //---------------------------------------------------------------------------------
-//!	更新
+//!	@brief	更新
 //---------------------------------------------------------------------------------
 void Square::Update()
 {
@@ -34,7 +32,7 @@ void Square::Update()
 }
 
 //---------------------------------------------------------------------------------
-//!	当たり時処理
+//!	@brief	当たり時処理
 //---------------------------------------------------------------------------------
 void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
 {
@@ -86,7 +84,7 @@ void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
 }
 
 //---------------------------------------------------------------------------------
-//!	マウスから出る光線にあたっているかを返す
+//!	@brief	マウスから出る光線にあたっているかを返す
 //---------------------------------------------------------------------------------
 bool Square::IsRayHit()
 {
@@ -94,7 +92,7 @@ bool Square::IsRayHit()
 }
 
 //---------------------------------------------------------------------------------
-//!	オーナーを設定
+//!	@brief	オーナーを設定
 //---------------------------------------------------------------------------------
 void Square::SetOwner(std::weak_ptr<Object> owner)
 {
@@ -102,7 +100,7 @@ void Square::SetOwner(std::weak_ptr<Object> owner)
 }
 
 //---------------------------------------------------------------------------------
-//!	ピースを置く
+//!	@brief	ピースを置く
 //---------------------------------------------------------------------------------
 void Square::SetPutPiece(std::weak_ptr<Piece> piece)
 {
@@ -110,15 +108,14 @@ void Square::SetPutPiece(std::weak_ptr<Piece> piece)
 }
 
 //---------------------------------------------------------------------------------
-//!	置いてあるピースのポインタを取得
+//!	@brief	置いてあるピースのポインタを取得
 //---------------------------------------------------------------------------------
 std::weak_ptr<Piece> Square::GetPutPiece()
 {
     return piece_;
 }
 //----------------------------------------------------------
-// 別のマスとピースを交換する関数
-//! @param piece [in,out] 移動させるマスのウィークポインタ
+//!	@brief 別のマスとピースを交換する関数
 //----------------------------------------------------------
 void Square::ExchangePiece(std::weak_ptr<Square> other_square_wp)
 {
@@ -144,7 +141,7 @@ void Square::ExchangePiece(std::weak_ptr<Square> other_square_wp)
 }
 
 //----------------------------------------------------------
-// ピースを削除する関数
+//!	@brief ピースを削除する関数
 //----------------------------------------------------------
 void Square::RemovePiece()
 {
@@ -156,4 +153,17 @@ void Square::RemovePiece()
         piece_.reset();                   //ピースのポインタをリセット
         SetChanged();                     //状態が変化したことを記録
     }
+}
+
+//----------------------------------------------------------
+//!	@brief 色を指定してモデルコンポーネントを追加する関数
+//----------------------------------------------------------
+void Square::AddModelComponentWithColor(bool is_black)
+{
+    std::string_view model_path = "data/AutoChess/Model/Square/WhiteSquare.mv1";
+    if(is_black) {
+        model_path = "data/AutoChess/Model/Square/BlackSquare.mv1";
+    }
+    AddComponent<ComponentModel>(model_path);
+    AddComponent<ComponentCollisionModel>()->AttachToModel();
 }

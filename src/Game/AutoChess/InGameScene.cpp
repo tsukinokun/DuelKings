@@ -103,7 +103,11 @@ bool InGameScene::Init()
     // 机の生成
     //---------------------------------------------------------------------------------
     {
-        auto table = Scene::Object::Create<Glass>();
+        //auto table = Scene::Object::Create<Glass>();
+        auto table = Scene::Object::Create<Object>();
+        auto model = table->AddComponent<ComponentModel>("data/AutoChess/Model/Stage/table.mv1");
+        table->SetScaleAxisXYZ(2.0f);
+        table->SetTranslate(float3(-0.5f, -10.0f, 0.0f));
     }
     //---------------------------------------------------------------------------------
     // 部屋の生成
@@ -1655,6 +1659,33 @@ bool InGameScene::Init()
     }
 
     //---------------------------------------------------------------------------------
+    // マスのモデル(バトル中表示用)の生成
+    //---------------------------------------------------------------------------------
+    constexpr float SQUARE_SIZE = 1.0f;    //マスの一辺の長さ
+    constexpr int   RANK_MAX_   = 8;
+    constexpr int   FILE_MAX_   = 8;
+    constexpr float RANK_HALF_  = RANK_MAX_ / 2;
+    constexpr float FILE_HALF_  = FILE_MAX_ / 2;
+    for(int f = 0; f < FILE_MAX_; f++) {
+        for(int r = 0; r < RANK_MAX_; r++) {
+            auto square = Scene::Object::Create<Object>();
+            //ファイルとランクの合計値が偶数なら黒
+            bool             is_black   = ((f + r) % 2) == 0;
+            std::string_view model_path = "data/AutoChess/Model/Square/WhiteSquare.mv1";
+            if(is_black) {
+                model_path = "data/AutoChess/Model/Square/BlackSquare.mv1";
+            }
+            square->AddComponent<ComponentModel>(model_path);
+            square->SetScaleAxisXYZ(float3(0.05f, 0.05f, 0.05f));
+            float  x = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
+            float  z = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
+            float3 p = float3(x, -0.1f, z);
+            square->SetTranslate(p);
+            squares_[f][r] = square;
+        }
+    }
+
+    //---------------------------------------------------------------------------------
     // チュートリアル開始処理
     //---------------------------------------------------------------------------------
     tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
@@ -1768,20 +1799,20 @@ void InGameScene::Draw()
     //---------------------------------------------------------------------------------
     if(game_state_ == GameState::Battle) {
         //ボードを描画
-        for(int f = 0; f < 8; f++) {
-            for(int r = 0; r < 8; r++) {
-                int color = GetColor(0, 0, 0);
-                //ファイルとランクの合計値が偶数なら白に
-                if(((f + r) % 2) == 0) {
-                    color = GetColor(255, 255, 255);
-                }
-                float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
-                float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
-                float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
-                float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
-                DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
-            }
-        }
+        //for(int f = 0; f < 8; f++) {
+        //    for(int r = 0; r < 8; r++) {
+        //        int color = GetColor(0, 0, 0);
+        //        //ファイルとランクの合計値が偶数なら白に
+        //        if(((f + r) % 2) == 0) {
+        //            color = GetColor(255, 255, 255);
+        //        }
+        //        float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+        //        float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+        //        float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
+        //        float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
+        //        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+        //    }
+        //}
     }
 }
 

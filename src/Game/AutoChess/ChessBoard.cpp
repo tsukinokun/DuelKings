@@ -57,22 +57,22 @@ void ChessBoard::Draw()
     __super::Draw();
     for(int f = 0; f < FILE_HALF_; f++) {
         for(int r = 0; r < RANK_MAX_; r++) {
-            int color = GetColor(0, 0, 0);
-            //ファイルとランクの合計値が偶数なら白に
-            if(((f + r) % 2) == 0) {
-                color = GetColor(255, 255, 255);
-            }
-            //レイに当たっていたら緑にしておく
+            //int color = GetColor(0, 0, 0);
+            ////ファイルとランクの合計値が偶数なら白に
+            //if(((f + r) % 2) == 0) {
+            //    color = GetColor(255, 255, 255);
+            //}
+            //レイに当たっていたら緑で描画
             if(auto square = squares_[f][r].lock()) {
                 if(square->IsRayHit()) {
-                    color = GetColor(0, 255, 0);
+                    int    color = GetColor(0, 255, 0);
+                    float  x     = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
+                    float  z     = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
+                    float3 p1    = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
+                    float3 p2    = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
+                    DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
                 }
             }
-            float  x  = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
-            float  z  = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
-            float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
-            float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
-            DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
         }
     }
     DxLib::SetUseLighting(TRUE);
@@ -94,6 +94,9 @@ void ChessBoard::CreateSquare()
     for(int f = 0; f < FILE_HALF_; f++) {
         for(int r = 0; r < RANK_MAX_; r++) {
             auto square = Scene::Object::Create<Square>();
+            //ファイルとランクの合計値が偶数なら黒
+            bool is_black = ((f + r) % 2) == 0;
+            square->AddModelComponentWithColor(is_black);
             square->SetOwner(owner_);
             float  x = (r * SQUARE_SIZE) - RANK_HALF_ * (SQUARE_SIZE);
             float  z = (f * SQUARE_SIZE) - (FILE_HALF_ * SQUARE_SIZE);
