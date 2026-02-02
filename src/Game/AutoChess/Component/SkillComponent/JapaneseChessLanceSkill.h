@@ -28,7 +28,7 @@ public:
 
 private:
     const std::array<int, 3> DAMAGE_VALUES_      = {50, 75, 100};    //ダメージ量
-    const float              DURATION_OF_EFFECT_ = 3.0f;             //効果時間
+    const float              DURATION_OF_EFFECT_ = 1.5f;             //効果時間
     float                    effect_timer_       = 0.0f;             //効果時間タイマー
     std::vector<Piece*>      hit_pieces_;                            //当たったピースのリスト
 };

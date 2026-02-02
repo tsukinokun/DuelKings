@@ -54,21 +54,21 @@ bool PieceStand::Init()
 //---------------------------------------------------------------------------------
 void PieceStand::Draw()
 {
-    DxLib::SetUseLighting(FALSE);
+    //DxLib::SetUseLighting(FALSE);
     __super::Draw();
-    for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
-        int color = GetColor(255, 255, 255);
-        //インデックスが偶数なら色を白に変える
-        if((s % 2) == 0) {
-            color = GetColor(0, 0, 0);
-        }
-        float3 curr_translate = GetTranslate();    //現在のポジションを取得
-        float  x              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
-        float3 p1             = float3(x + -SQUARE_HALF, -0.1f, -SQUARE_HALF) + curr_translate;
-        float3 p2             = float3(x + SQUARE_HALF, 0.1f, SQUARE_HALF) + curr_translate;
-        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
-    }
-    DxLib::SetUseLighting(TRUE);
+    //for(int s = 0; s < STAND_SQUARE_MAX_; s++) {
+    //    int color = GetColor(255, 255, 255);
+    //    //インデックスが偶数なら色を白に変える
+    //    if((s % 2) == 0) {
+    //        color = GetColor(0, 0, 0);
+    //    }
+    //    float3 curr_translate = GetTranslate();    //現在のポジションを取得
+    //    float  x              = (s * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE);
+    //    float3 p1             = float3(x + -SQUARE_HALF, -0.1f, -SQUARE_HALF) + curr_translate;
+    //    float3 p2             = float3(x + SQUARE_HALF, 0.1f, SQUARE_HALF) + curr_translate;
+    //    DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+    //}
+    //DxLib::SetUseLighting(TRUE);
 }
 
 //---------------------------------------------------------------------------------
@@ -345,6 +345,9 @@ void PieceStand::CreateSquare()
 {
     for(int i = 0; i < STAND_SQUARE_MAX_; i++) {
         auto square = Scene::Object::Create<Square>();
+        //奇数なら黒
+        bool is_black = (i % 2) == 1;
+        square->AddModelComponentWithColor(is_black);
         square->SetOwner(owner_);
         square->SetTranslate(float3((i * SQUARE_SIZE) - STAND_SQUARE_HALF_ * (SQUARE_SIZE), 0.0f, 0.0f) + GetTranslate());
         squares_[i] = square;

@@ -144,7 +144,9 @@ void JapaneseChessLanceSkill::Activate()
                 charge_vector = target_pos - owner_pos;
             }
             // 移動ストラテジーを突進ストラテジーへ変更
-            piece_mover->SetMoveStrategy(std::make_unique<MoveChargeStrategy>(charge_vector));
+            // ベクトルの倍率
+            float magnitude = 1.5f;
+            piece_mover->SetMoveStrategy(std::make_unique<MoveChargeStrategy>(magnitude));
         }
     }
 }
