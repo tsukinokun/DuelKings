@@ -156,6 +156,7 @@ PS_OUTPUT main(PS_INPUT_MODEL input)
     float4 textureColor = DiffuseTexture.Sample(DiffuseSampler, uv);
 
 	// テクスチャは sRGB → Linearに変換
+    //float3 albedo = pow(saturate(textureColor.rgb), 2.2); // 材質の反射率 ≒ 物体の色
     float3 albedo = pow(saturate(textureColor.rgb), 2.2); // 材質の反射率 ≒ 物体の色
 	
     float roughness = 0.5f; // ラフさ(粗さ)	0:つるつる ～ 1:ざらざら
@@ -177,7 +178,7 @@ PS_OUTPUT main(PS_INPUT_MODEL input)
 
 	
     float3 L = normalize(float3(1, 1, -1)); // 光源の方向
-    float3 lightColor = float3(1, 1, 1) * 24;
+    float3 lightColor = float3(1, 1, 1) * 12;
 	
     float3 H = normalize(L + V);
 

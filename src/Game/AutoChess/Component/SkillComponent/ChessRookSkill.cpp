@@ -11,6 +11,7 @@
 #include <Game/AutoChess/Component/MoveStrategy/MoveToNearestEnemyStrategy.h>
 #include <Game/AutoChess/Component/PieceMover.h>
 #include <random>
+#include <System/Component/ComponentCollisionCapsule.h>
 //---------------------------------------------------------
 //! @brief コンストラクタ
 //---------------------------------------------------------
@@ -35,6 +36,12 @@ void ChessRookSkill::Init()
                 // 移動ストラテジを元に戻す
                 if(auto piece_mover = owner->GetComponent<PieceMover>()) {
                     piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                }
+                //---------------------------------------------------------
+                // オーナーコリジョンをオーバーラップ解除
+                //---------------------------------------------------------
+                if(auto col_comp = owner->GetComponent<ComponentCollisionCapsule>()) {
+                    col_comp->SetOverlapCollisionGroup(static_cast<u32>(0));
                 }
                 is_tracking_  = false;                                    // 追跡中フラグを下ろす
                 attack_count_ = ATTACK_NUM_.at(owner->GetLevel() - 1);    // 攻撃回数を設定
@@ -117,6 +124,12 @@ void ChessRookSkill::Activate()
             float                           angle = dist(mt);    // 0〜360度のランダムな角度
             //1.0fの半径でランダムなオフセットを計算
             float3 offset = float3(cosf(D2R(angle)), 0.0f, sinf(D2R(angle)));
+            //---------------------------------------------------------
+            // オーナーコリジョンをオーバーラップに設定
+            //---------------------------------------------------------
+            if(auto col_comp = owner->GetComponent<ComponentCollisionCapsule>()) {
+                col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+            }
             piece_mover->SetMoveStrategy(std::make_unique<MoveTrackingStrategy>(target_piece, offset, SPEED_RATE_));    // 追跡ストラテジに変更
             offset_       = offset;                                                                                     // オフセットを保存
             target_piece_ = target_piece;                                                                               // 追跡対象ピースを保存

@@ -33,6 +33,7 @@ void ImageBuffer::Init()
     image_buffer_["help4"]                      = DxLib::LoadGraph("data/AutoChess/Image/Help/Help4.png");                 // ヘルプの4番目
     image_buffer_["help_right_button"]          = DxLib::LoadGraph("data/AutoChess/Image/Help/RightButton.png");           // ヘルプ右ボタン画像
     image_buffer_["help_left_button"]           = DxLib::LoadGraph("data/AutoChess/Image/Help/LeftButton.png");            // ヘルプ左ボタン画像
+    image_buffer_["help_close_button"]          = DxLib::LoadGraph("data/AutoChess/Image/Help/CloseButton.png");           // ヘルプ閉じるボタン画像
     image_buffer_["japanese_chess_synergy_icon"] =
         DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/JapaneseChessSynergyIcon.png");                              // 将棋シナジーアイコン画像
     image_buffer_["chess_synergy_icon"] = DxLib::LoadGraph("data/AutoChess/Image/SynergyIcons/ChessSynergyIcon.png");    // チェスシナジーアイコン画像
