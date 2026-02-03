@@ -13,6 +13,7 @@
 #include <Game/AutoChess/Component/MoveStrategy/MoveTrackingStrategy.h>
 #include <Game/AutoChess/Component/MoveStrategy/MoveToNearestEnemyStrategy.h>
 #include <random>
+#include <System/Component/ComponentCollisionCapsule.h>
 //---------------------------------------------------------
 // コンストラクタ
 //---------------------------------------------------------
@@ -56,6 +57,12 @@ void ChaturangaAsvaSkill::Init()
                 if(is_enemy_found) {
                     if(auto piece_mover = owner->GetComponent<PieceMover>()) {
                         piece_mover->SetMoveStrategy(std::make_unique<MoveToNearestEnemyStrategy>());
+                    }
+                    //---------------------------------------------------------
+                    // オーナーコリジョンをオーバーラップ解除
+                    //---------------------------------------------------------
+                    if(auto col_comp = owner->GetComponent<ComponentCollisionCapsule>()) {
+                        col_comp->SetOverlapCollisionGroup(static_cast<u32>(0));
                     }
                     is_tracking_ = false;    // 追跡中フラグを下ろす
                 }
@@ -156,6 +163,12 @@ void ChaturangaAsvaSkill::Activate()
             target_piece_    = target_piece;    //ターゲットピースを保存
             hit_pieces_.clear();                //当たったピースリストをクリア
             piece_mover->SetMoveStrategy(std::make_unique<MoveTrackingStrategy>(target_piece, offset_, TRACKING_SPEED_RATE_));
+            //---------------------------------------------------------
+            // オーナーコリジョンをオーバーラップに設定
+            //---------------------------------------------------------
+            if(auto col_comp = owner->GetComponent<ComponentCollisionCapsule>()) {
+                col_comp->SetOverlapCollisionGroup(static_cast<u32>(ComponentCollision::CollisionGroup::ETC));
+            }
             //---------------------------------------------------------
             // エフェクトのオブジェクトを生成
             //---------------------------------------------------------

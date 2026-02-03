@@ -6,7 +6,7 @@
 #include "ChaturangaPadati.h"
 #include <Game/AutoChess/system/GameConst.h>
 #include <System/Component/ComponentModel.h>
-#include <Game/AutoChess/Component/SkillComponent/ChaturangaAsvaSkill.h>
+#include <Game/AutoChess/Component/SkillComponent/ChaturangaPadatiSkill.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -19,6 +19,6 @@ bool ChaturangaPadati::Init()
     //---------------------------------------------------------------------------------
     // スキルコンポーネントを追加
     //---------------------------------------------------------------------------------
-    AddComponent<ChaturangaAsvaSkill>();
+    AddComponent<ChaturangaPadatiSkill>();
     return true;
 }

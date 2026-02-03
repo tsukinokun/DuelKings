@@ -15,12 +15,14 @@
 #include <Game/AutoChess/UIObject/UIImage.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <System/Component/ComponentFilterFade.h>
+#include <System2/Shadowmap.h>
 //---------------------------------------------------------------------------
 //! @brief 初期化
 //---------------------------------------------------------------------------
 bool TitleScene::Init()
 {
     __super::Init();
+    Scene::Object::Create<Shadowmap>("Shadowmap");    // シャドウマップ
     //---------------------------------------------------------------------------
     // カメラを生成
     //---------------------------------------------------------------------------

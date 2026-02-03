@@ -208,8 +208,8 @@ void HelpManager::Init()
         float y = 100.0f;
         close_button->SetTranslate(float3(x, y, 0.0f));    //位置を右上あたりに設定
         //close_button->SetImage(ImageBuffer::GetImageHandle("help_close_button"));    //閉じるボタン画像を設定
-        close_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //閉じるボタン画像を設定
-        close_button->SetScaleAxisXYZ(0.3f);                            //左右反転
+        close_button->SetImage(ImageBuffer::GetImageHandle("help_close_button"));    //閉じるボタン画像を設定
+        close_button->SetScaleAxisXYZ(0.3f);                                         //左右反転
         //---------------------------------------------------------------------------------
         // 描画順序を遅くする(上に描画したいから)
         //---------------------------------------------------------------------------------

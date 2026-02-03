@@ -159,9 +159,11 @@ private:
 
     struct CameraInfo
     {
-        matrix mat_view_;        //!< ビュー行列
-        matrix mat_proj_;        //!< 投影行列
-        float3 eye_position_;    //!< カメラの位置
+        matrix mat_view_;          //!< ビュー行列
+        matrix mat_proj_;          //!< 投影行列
+        float3 eye_position_;      //!< カメラの位置
+        matrix mat_light_view_;    //!< Shadowmap用の光源からのカメラ(ビュー行列)
+        matrix mat_light_proj_;    //!< Shadowmap用の光源からのカメラ(投影行列)
     };
 
     int cb_camera_info_ = -1;    //!< [DxLib] カメラ情報定数バッファハンドル

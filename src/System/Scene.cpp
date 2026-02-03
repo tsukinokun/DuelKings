@@ -1138,11 +1138,22 @@ void Scene::Draw()
     if(!current_scene_)
         return;
 
+    //----------------------------------------------------------
+    // 影, GBuffer, 照明計算を先に実行する
+    //----------------------------------------------------------
+    current_scene_->GetSignals(ProcTiming::Shadow)();
+    current_scene_->GetSignals(ProcTiming::Gbuffer)();
+    current_scene_->GetSignals(ProcTiming::Light)();
+
+    //----------------------------------------------------------
     // シーンPreDrawの実行
+    //----------------------------------------------------------
     current_scene_->PreDraw();
     current_scene_->GetSignals(ProcTiming::PreDraw)();
 
+    //----------------------------------------------------------
     // シーンDrawの実行
+    //----------------------------------------------------------
     current_scene_->Draw();
 
     current_scene_->GetSignals(ProcTiming::Draw)();
@@ -1153,9 +1164,7 @@ void Scene::Draw()
     current_scene_->PostDraw();
     current_scene_->GetSignals(ProcTiming::PostDraw)();
 
-    current_scene_->GetSignals(ProcTiming::Shadow)();
-    current_scene_->GetSignals(ProcTiming::Gbuffer)();
-    current_scene_->GetSignals(ProcTiming::Light)();
+    //----------------------------------------------------------
     current_scene_->GetSignals(ProcTiming::HDR)();
     current_scene_->GetSignals(ProcTiming::Filter)();
     current_scene_->GetSignals(ProcTiming::UI)();

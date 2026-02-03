@@ -165,8 +165,20 @@ void SetRenderTarget(const TargetDesc& desc)
     //----------------------------------------------------------
     {
         // RenderTargetの解像度を取得
-        u32 w = desc.color_targets_[0]->width();
-        u32 h = desc.color_targets_[0]->height();
+        u32 w = 0;
+        u32 h = 0;
+
+        // RenderTargetの解像度を取得
+
+        //カラー or デプスで有効なテクスチャから高さと幅を取得
+        if(desc.color_targets_[0]) {
+            w = desc.color_targets_[0]->width();
+            h = desc.color_targets_[0]->height();
+        }
+        else if(desc.depth_stencil_) {
+            w = desc.depth_stencil_->width();
+            h = desc.depth_stencil_->height();
+        }
 
         D3D11_VIEWPORT viewport{0, 0, static_cast<f32>(w), static_cast<f32>(h), 0.0f, 1.0f};
         GetD3DDeviceContext()->RSSetViewports(1, &viewport);

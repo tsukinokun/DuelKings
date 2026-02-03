@@ -58,12 +58,14 @@
 #include <Game/AutoChess/system/DXLibUtils.h>
 #include <Game/AutoChess/UIObject/UIObject.h>
 #include <Game/AutoChess/Component/Manager/HelpManager.h>
+#include <System2/Shadowmap.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
 bool InGameScene::Init()
 {
     __super::Init();
+    Scene::Object::Create<Shadowmap>("Shadowmap");    // シャドウマップ
     //コンテナにイベントバスを登録(シングルトン)
     di_container_.registerType<TsukinoEventBus::EventBus, TsukinoEventBus::EventBus>(TsukinoDIContainer::Lifecycle::Singleton);
     // リポジトリを読み込み、初期化する
