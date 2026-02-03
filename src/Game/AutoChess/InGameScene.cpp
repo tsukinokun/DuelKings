@@ -49,6 +49,7 @@
 #include <Game/AutoChess/Events/LoseEvent.h>
 #include <Game/AutoChess/Events/WinEvent.h>
 #include <Game/AutoChess/Events/HelpClickEvent.h>
+#include <Game/AutoChess/Events/BattleStartEvent.h>
 #include <System/Component/ComponentFilterFade.h>
 #include <Game/AutoChess/system/SoundManager.h>
 #include <Game/AutoChess/ResultScene.h>
@@ -1622,6 +1623,16 @@ bool InGameScene::Init()
         };
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
+        //---------------------------------------------------------------------------------
+        // バトル開始イベントを登録
+        //---------------------------------------------------------------------------------
+        auto battle_start_event = [center_message_ui, &center_message_hide_timer, this](const BattleStartEvent& e) {
+            center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);    //表示する
+            center_message_ui->SetText(std::format("Round {}", turn_count_));
+            center_message_hide_timer = 0.0f;
+        };
+        auto battle_start_event_handle = event_bus->subscribe<BattleStartEvent>(battle_start_event, 0);
+        event_handles_.push_back(std::move(battle_start_event_handle));
     }
     //---------------------------------------------------------------------------------
     // ヘルプボタンの作成
@@ -1739,6 +1750,11 @@ void InGameScene::Update()
                 chess_board->SetBoardProcessEnable(false);
             }
             CreatePiecesForBattlePhase();    //バトルフェーズ用に駒を生成する
+            //---------------------------------------------------------------------------------
+            // バトルフェーズ開始イベントを発行
+            //---------------------------------------------------------------------------------
+            auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+            event_bus->publish(BattleStartEvent());    //バトルフェーズ開始イベントを発行
         }
         break;
 
