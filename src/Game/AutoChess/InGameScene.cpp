@@ -76,9 +76,47 @@ bool InGameScene::Init()
     PieceFactory::SetPieceRepository(&game_context_.GetPieceRepository());
     PieceFactory::SetSkillRepository(&game_context_.GetSkillRepository());
     PiecePool::Init(game_context_.GetPieceRepository());    //駒プールの初期化
-    Scene::Object::Create<Camera>();                        //カメラ
     auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
-    auto player    = Scene::Object::Create<Player>();    //プレイヤー
+    //---------------------------------------------------------------------------------
+    // カメラの設定
+    //---------------------------------------------------------------------------------
+    {
+        auto   camera      = Scene::Object::Create<Camera>();    //カメラ
+        float  shake_timer = -0.000001f;                         //揺れのタイマー、float誤差回避のために0未満で初期化
+        float3 default_pos = camera->GetTranslate();
+        //---------------------------------------------------------------------------------
+        // 更新処理の登録
+        //---------------------------------------------------------------------------------
+        auto update_proc = [camera, &shake_timer, default_pos]() {
+            //揺れ
+            if(shake_timer > 0.0f) {
+                shake_timer -= GetDeltaTime();
+                //メルセンヌ・ツイスタ法による乱数生成器
+                static std::mt19937                          mt{std::random_device{}()};
+                static std::uniform_real_distribution<float> dist(-0.5f, 0.5f);
+                //揺れのオフセットを生成
+                float3 offset = float3(dist(mt), dist(mt), dist(mt));
+                //揺らす
+                camera->SetTranslate(default_pos + offset);
+            }
+            else {
+                shake_timer = 0.0f;
+                //元の位置に戻す
+                camera->SetTranslate(default_pos);
+            }
+        };
+        camera->SetProc("InGameCameraShakeProc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // 敗北時にカメラを揺らす処理の登録
+        //---------------------------------------------------------------------------------
+        auto shake_proc = [camera, &shake_timer](const LoseEvent& e) {
+            float shake_duration = 1.0f;              //揺れ続ける時間(秒)
+            shake_timer          = shake_duration;    //タイマーをセット
+        };
+        auto lose_event_handle = event_bus->subscribe<LoseEvent>(shake_proc, 0);
+        event_handles_.push_back(std::move(lose_event_handle));
+    }
+    auto player = Scene::Object::Create<Player>();    //プレイヤー
     player->SetSynergySystemRepository(&game_context_.GetSynergyRepository(), &game_context_.GetPieceRepository());
     player->SetEventBus(event_bus.get());                 //イベントバスのポインタを設定
     player->SetIsPurchaseOpenFlag(&is_purchase_open_);    //ピース購入画面が開いているかのフラグを設定
@@ -1696,6 +1734,44 @@ bool InGameScene::Init()
             square->SetTranslate(p);
             squares_[f][r] = square;
         }
+    }
+
+    //---------------------------------------------------------------------------------
+    // ダメージを受けた際の赤色フィルターを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto damage_filter = Scene::Object::Create<UIImage>();
+        damage_filter->SetName("DamageFilter");
+        damage_filter->SetImage(ImageBuffer::GetImageHandle("damage_filter"));
+        damage_filter->SetScaleAxisXYZ(15.0f);    //大きさを画面全体に設定
+        static int alpha = 0;                     //この空間に透明度を定義しておく
+        damage_filter->SetAlpha(alpha);           //透明度を0からにしておく
+        //---------------------------------------------------------------------------------
+        // 描画順序を遅くする(上に描画したいから)
+        //---------------------------------------------------------------------------------
+        if(auto image_comp = damage_filter->GetComponent<ComponentImage>()) {
+            image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
+        }
+        //---------------------------------------------------------------------------------
+        // 更新処理登録
+        //---------------------------------------------------------------------------------
+        auto damage_filter_fade_proc = [damage_filter]() {
+            if(alpha > 0) {
+                constexpr int FADE_SPEED  = 5;
+                alpha                    -= FADE_SPEED;            //徐々に透明にする
+                alpha                     = std::max(alpha, 0);    //0未満にならないようにする
+            }
+            damage_filter->SetAlpha(alpha);    //透明度を設定
+        };
+        damage_filter->SetProc("damage_filter_fade_proc", damage_filter_fade_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        //---------------------------------------------------------------------------------
+        // 敗北時イベント登録
+        //---------------------------------------------------------------------------------
+        auto lose_event = [](const LoseEvent& e) {
+            alpha = 200;    //透明度を一気に上げる
+        };
+        auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
+        event_handles_.push_back(std::move(lose_event_handle));
     }
 
     //---------------------------------------------------------------------------------
