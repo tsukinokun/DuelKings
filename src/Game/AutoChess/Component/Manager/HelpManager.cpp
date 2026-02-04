@@ -20,6 +20,47 @@ void HelpManager::Init()
     // イベントとUIを作成していく
     //---------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------
+    // ヘルプ画面のフィルタを作成する
+    //---------------------------------------------------------------------------------
+    {
+        auto help_window_filter = Scene::Object::Create<UIImage>();        //フィルターの宣言
+        help_window_filter->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+        help_window_filter->SetScaleAxisXYZ(15.0f);                        //大きさを画面全体に設定
+        help_window_filter->SetAlpha(168);                                 //透明度を設定
+        float x = WINDOW_W * 0.5f;
+        float y = WINDOW_H * 0.5f;
+        help_window_filter->SetTranslate(float3(x, y, 0.0f));
+        auto image_comp = help_window_filter->GetComponent<ComponentImage>();
+        //---------------------------------------------------------------------------------
+        // 描画順序を遅くする(上に描画したいから)
+        //---------------------------------------------------------------------------------
+        if(auto image_comp = help_window_filter->GetComponent<ComponentImage>()) {
+            image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
+        }
+        //---------------------------------------------------------------------------------
+        // ヘルプ画面を表示する処理登録
+        //---------------------------------------------------------------------------------
+        auto help_filter_show_proc = [help_window_filter](const HelpClickEvent& e) {
+            help_window_filter->SetStatus(Object::StatusBit::NoDraw, false);    //表示する
+        };
+        if(auto event_bus = event_bus_.lock()) {
+            auto help_event_handle = event_bus->subscribe<HelpClickEvent>(help_filter_show_proc, 0);
+            event_handles_.push_back(std::move(help_event_handle));
+        }
+        //--------------------------------------------------------------------------------
+        // ヘルプを閉じた際に非表示にする処理登録
+        //--------------------------------------------------------------------------------
+        {
+            auto help_filter_close_proc = [help_window_filter](const HelpCloseEvent& e) {
+                help_window_filter->SetStatus(Object::StatusBit::NoDraw, true);    //非表示にする
+            };
+            if(auto event_bus = event_bus_.lock()) {
+                auto help_event_handle = event_bus->subscribe<HelpCloseEvent>(help_filter_close_proc, 0);
+                event_handles_.push_back(std::move(help_event_handle));
+            }
+        }
+    }
+    //---------------------------------------------------------------------------------
     // ヘルプ画面の作成
     //---------------------------------------------------------------------------------
     auto help_screen = Scene::Object::Create<UIImage>();

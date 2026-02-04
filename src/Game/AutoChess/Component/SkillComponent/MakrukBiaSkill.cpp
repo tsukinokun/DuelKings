@@ -46,6 +46,7 @@ void MakrukBiaSkill::Activate()
             // ノックバック処理
             //---------------------------------------------------------
             float3 direction        = normalize(target->GetTranslate() - owner->GetTranslate());
+            direction.y             = 0.0f;    // 水平方向のみにノックバック
             float3 knockback_vector = direction * KNOCKBACK_STRENGTH_;
             target->AddComponent<KnockbackStatus>(knockback_vector, KNOCKBACK_TIME_);
             //---------------------------------------------------------
