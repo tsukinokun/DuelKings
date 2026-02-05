@@ -40,7 +40,12 @@ void HelpManager::Init()
         //---------------------------------------------------------------------------------
         // ヘルプ画面を表示する処理登録
         //---------------------------------------------------------------------------------
-        auto help_filter_show_proc = [help_window_filter](const HelpClickEvent& e) {
+        std::weak_ptr<UIImage> weak_help_window_filter = help_window_filter;
+        auto                   help_filter_show_proc   = [weak_help_window_filter](const HelpClickEvent& e) {
+            std::shared_ptr<UIImage> help_window_filter = weak_help_window_filter.lock();
+            if(!help_window_filter)
+                return;
+
             help_window_filter->SetStatus(Object::StatusBit::NoDraw, false);    //表示する
         };
         if(auto event_bus = event_bus_.lock()) {
@@ -51,7 +56,11 @@ void HelpManager::Init()
         // ヘルプを閉じた際に非表示にする処理登録
         //--------------------------------------------------------------------------------
         {
-            auto help_filter_close_proc = [help_window_filter](const HelpCloseEvent& e) {
+            auto help_filter_close_proc = [weak_help_window_filter](const HelpCloseEvent& e) {
+                std::shared_ptr<UIImage> help_window_filter = weak_help_window_filter.lock();
+                if(!help_window_filter)
+                    return;
+
                 help_window_filter->SetStatus(Object::StatusBit::NoDraw, true);    //非表示にする
             };
             if(auto event_bus = event_bus_.lock()) {
@@ -77,7 +86,12 @@ void HelpManager::Init()
     //---------------------------------------------------------------------------------
     // ヘルプ画面を表示する処理登録
     //---------------------------------------------------------------------------------
-    auto help_screen_show_proc = [help_screen, this](const HelpClickEvent& e) {
+    std::weak_ptr<UIImage> weak_help_screen      = help_screen;
+    auto                   help_screen_show_proc = [weak_help_screen, this](const HelpClickEvent& e) {
+        std::shared_ptr<UIImage> help_screen = weak_help_screen.lock();
+        if(!help_screen)
+            return;
+
         help_screen->SetStatus(Object::StatusBit::NoDraw, false);       //表示する
         help_num_ = 1;                                                  //ヘルプ番号を初期化
         help_screen->SetImage(ImageBuffer::GetImageHandle("help1"));    //ヘルプ1画像を設定
@@ -90,7 +104,11 @@ void HelpManager::Init()
     // ヘルプを閉じた際に非表示にする処理登録
     //--------------------------------------------------------------------------------
     {
-        auto help_screen_close_proc = [help_screen](const HelpCloseEvent& e) {
+        auto help_screen_close_proc = [weak_help_screen](const HelpCloseEvent& e) {
+            std::shared_ptr<UIImage> help_screen = weak_help_screen.lock();
+            if(!help_screen)
+                return;
+
             help_screen->SetStatus(Object::StatusBit::NoDraw, true);    //非表示にする
         };
         if(auto event_bus = event_bus_.lock()) {
@@ -116,11 +134,16 @@ void HelpManager::Init()
         if(auto image_comp = right_button->GetComponent<ComponentImage>()) {
             image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
         }
+        std::weak_ptr<UIButton> weak_right_button = right_button;    //弱参照を作成
         //--------------------------------------------------------------------------------
         // 右ボタンを左右へ動かすアニメーション登録
         //--------------------------------------------------------------------------------
         {
-            auto update_proc = [right_button, x]() {
+            auto update_proc = [weak_right_button, x]() {
+                auto right_button = weak_right_button.lock();
+                if(!right_button)
+                    return;
+
                 //線形補間でx座標を動かす
                 static float angle  = 0.0f;
                 angle              += 0.05f;
@@ -136,7 +159,12 @@ void HelpManager::Init()
         //--------------------------------------------------------------------------------
         // 右ボタンがクリックされた時の処理登録
         //--------------------------------------------------------------------------------
-        auto right_button_click_proc = [this, help_screen]() {
+        std::weak_ptr<UIImage> weak_help_screen        = help_screen;
+        auto                   right_button_click_proc = [this, weak_help_screen]() {
+            auto help_screen = weak_help_screen.lock();
+            if(!help_screen)
+                return;
+
             help_num_++;
             if(help_num_ > max_help_num_) {
                 help_num_ = 1;
@@ -148,7 +176,11 @@ void HelpManager::Init()
         //--------------------------------------------------------------------------------
         // ヘルプがクリックされたら表示にする処理登録
         //--------------------------------------------------------------------------------
-        auto help_screen_click_proc = [right_button](const HelpClickEvent& e) {
+        auto help_screen_click_proc = [weak_right_button](const HelpClickEvent& e) {
+            auto right_button = weak_right_button.lock();
+            if(!right_button)
+                return;
+
             right_button->SetStatus(Object::StatusBit::NoDraw, false);    //表示にする
         };
         if(auto event_bus = event_bus_.lock()) {
@@ -159,7 +191,11 @@ void HelpManager::Init()
         // ヘルプを閉じた際に非表示にする処理登録
         //--------------------------------------------------------------------------------
         {
-            auto help_screen_close_proc = [right_button](const HelpCloseEvent& e) {
+            auto help_screen_close_proc = [weak_right_button](const HelpCloseEvent& e) {
+                auto right_button = weak_right_button.lock();
+                if(!right_button)
+                    return;
+
                 right_button->SetStatus(Object::StatusBit::NoDraw, true);    //非表示にする
             };
             if(auto event_bus = event_bus_.lock()) {
@@ -186,11 +222,16 @@ void HelpManager::Init()
         if(auto image_comp = left_button->GetComponent<ComponentImage>()) {
             image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
         }
+        std::weak_ptr<UIButton> weak_left_button = left_button;    //弱参照を作成
         //--------------------------------------------------------------------------------
         // 左ボタンを左右へ動かすアニメーション登録
         //--------------------------------------------------------------------------------
         {
-            auto update_proc = [left_button, x]() {
+            auto update_proc = [weak_left_button, x]() {
+                auto left_button = weak_left_button.lock();
+                if(!left_button)
+                    return;
+
                 //線形補間でx座標を動かす
                 static float angle  = 0.0f;
                 angle              -= 0.05f;
@@ -206,7 +247,11 @@ void HelpManager::Init()
         //--------------------------------------------------------------------------------
         // 左ボタンがクリックされた時の処理登録
         //--------------------------------------------------------------------------------
-        auto left_button_click_proc = [this, help_screen]() {
+        auto left_button_click_proc = [this, weak_help_screen]() {
+            auto help_screen = weak_help_screen.lock();
+            if(!help_screen)
+                return;
+
             help_num_--;
             if(help_num_ < 1) {
                 help_num_ = max_help_num_;
@@ -218,7 +263,11 @@ void HelpManager::Init()
         //--------------------------------------------------------------------------------
         // ヘルプがクリックされたら表示にする処理登録
         //--------------------------------------------------------------------------------
-        auto help_screen_click_proc = [left_button](const HelpClickEvent& e) {
+        auto help_screen_click_proc = [weak_left_button](const HelpClickEvent& e) {
+            auto left_button = weak_left_button.lock();
+            if(!left_button)
+                return;
+
             left_button->SetStatus(Object::StatusBit::NoDraw, false);    //表示にする
         };
         if(auto event_bus = event_bus_.lock()) {
@@ -229,7 +278,11 @@ void HelpManager::Init()
         // ヘルプを閉じた際に非表示にする処理登録
         //--------------------------------------------------------------------------------
         {
-            auto help_screen_close_proc = [left_button](const HelpCloseEvent& e) {
+            auto help_screen_close_proc = [weak_left_button](const HelpCloseEvent& e) {
+                auto left_button = weak_left_button.lock();
+                if(!left_button)
+                    return;
+
                 left_button->SetStatus(Object::StatusBit::NoDraw, true);    //非表示にする
             };
             if(auto event_bus = event_bus_.lock()) {
@@ -257,11 +310,16 @@ void HelpManager::Init()
         if(auto image_comp = close_button->GetComponent<ComponentImage>()) {
             image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::LOW);
         }
+        std::weak_ptr<UIButton> weak_close_button = close_button;    //弱参照を作成
         //---------------------------------------------------------------------------------
         // ヘルプが空いたら表示にする処理登録
         //---------------------------------------------------------------------------------
         {
-            auto help_screen_click_proc = [close_button](const HelpClickEvent& e) {
+            auto help_screen_click_proc = [weak_close_button](const HelpClickEvent& e) {
+                std::shared_ptr<UIButton> close_button = weak_close_button.lock();
+                if(!close_button)
+                    return;
+
                 close_button->SetStatus(Object::StatusBit::NoDraw, false);    //表示にする
             };
             if(auto event_bus = event_bus_.lock()) {
@@ -272,7 +330,11 @@ void HelpManager::Init()
         //--------------------------------------------------------------------------------
         // 閉じるボタンがクリックされた時の処理登録
         //--------------------------------------------------------------------------------
-        auto close_button_click_proc = [this, close_button](void) {
+        auto close_button_click_proc = [this, weak_close_button](void) {
+            auto close_button = weak_close_button.lock();
+            if(!close_button)
+                return;
+
             close_button->SetStatus(Object::StatusBit::NoDraw, true);    //閉じるボタンを非表示にする
             if(auto event_bus = event_bus_.lock()) {
                 event_bus->publish(HelpCloseEvent());    //ヘルプ画面を閉じるイベントを発行

@@ -81,37 +81,18 @@ bool InGameScene::Init()
     // カメラの設定
     //---------------------------------------------------------------------------------
     {
-        auto   camera      = Scene::Object::Create<Camera>();    //カメラ
-        float  shake_timer = -0.000001f;                         //揺れのタイマー、float誤差回避のために0未満で初期化
-        float3 default_pos = camera->GetTranslate();
-        //---------------------------------------------------------------------------------
-        // 更新処理の登録
-        //---------------------------------------------------------------------------------
-        auto update_proc = [camera, &shake_timer, default_pos]() {
-            //揺れ
-            if(shake_timer > 0.0f) {
-                shake_timer -= GetDeltaTime();
-                //メルセンヌ・ツイスタ法による乱数生成器
-                static std::mt19937                          mt{std::random_device{}()};
-                static std::uniform_real_distribution<float> dist(-0.5f, 0.5f);
-                //揺れのオフセットを生成
-                float3 offset = float3(dist(mt), dist(mt), dist(mt));
-                //揺らす
-                camera->SetTranslate(default_pos + offset);
-            }
-            else {
-                shake_timer = 0.0f;
-                //元の位置に戻す
-                camera->SetTranslate(default_pos);
-            }
-        };
-        camera->SetProc("InGameCameraShakeProc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        auto                  camera      = Scene::Object::Create<Camera>();    //カメラ
+        std::weak_ptr<Camera> weak_camera = camera;
         //---------------------------------------------------------------------------------
         // 敗北時にカメラを揺らす処理の登録
         //---------------------------------------------------------------------------------
-        auto shake_proc = [camera, &shake_timer](const LoseEvent& e) {
-            float shake_duration = 1.0f;              //揺れ続ける時間(秒)
-            shake_timer          = shake_duration;    //タイマーをセット
+        auto shake_proc = [weak_camera](const LoseEvent& e) {
+            std::shared_ptr<Camera> camera = weak_camera.lock();
+            if(!camera)
+                return;
+
+            constexpr float shake_duration = 1.0f;    //揺れ続ける時間(秒)
+            camera->StartShake(shake_duration);       //タイマーをセット
         };
         auto lose_event_handle = event_bus->subscribe<LoseEvent>(shake_proc, 0);
         event_handles_.push_back(std::move(lose_event_handle));
@@ -202,7 +183,12 @@ bool InGameScene::Init()
             curr_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
             curr_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
             //更新処理
-            auto set_text_proc = [curr_exp_ui]() {
+            std::weak_ptr<UIText> weak_curr_exp_ui = curr_exp_ui;
+            auto                  set_text_proc    = [weak_curr_exp_ui]() {
+                auto curr_exp_ui = weak_curr_exp_ui.lock();
+                if(!curr_exp_ui)
+                    return;
+
                 auto player      = Scene::Object::Get<Player>();
                 int  current_exp = player->GetCurrentExp();    //現在の経験値を取得
                 //必要な経験値を表示
@@ -225,7 +211,11 @@ bool InGameScene::Init()
             next_exp_ui->SetFontSize(30);                                               //フォントサイズ設定
             next_exp_ui->SetColor(GetColor(128, 128, 128), GetColor(255, 255, 255));    //文字色設定
             //更新処理
-            auto set_next_text_proc = [next_exp_ui]() {
+            std::weak_ptr<UIText> weak_next_exp_ui   = next_exp_ui;
+            auto                  set_next_text_proc = [weak_next_exp_ui]() {
+                auto next_exp_ui = weak_next_exp_ui.lock();
+                if(!next_exp_ui)
+                    return;
                 auto player         = Scene::Object::Get<Player>();
                 int  next_level_exp = player->GetNextLevelExp();    //次のレベルまでに必要な経験値を取得
                 //必要な経験値を表示
@@ -235,7 +225,16 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             // ピース購入画面を開くボタンを押したときに、経験値UIを非表示にする処理を登録
             //---------------------------------------------------------------------------------
-            auto exp_button_hide_proc = [exp_button, curr_exp_ui, line_ui, next_exp_ui](const PiecePurchaseOpenClickEvent& e) {
+            std::weak_ptr<UIButton> weak_exp_button = exp_button;
+            std::weak_ptr<UIText>   weak_line_ui    = line_ui;
+            auto exp_button_hide_proc = [weak_exp_button, weak_curr_exp_ui, weak_line_ui, weak_next_exp_ui](const PiecePurchaseOpenClickEvent& e) {
+                auto exp_button  = weak_exp_button.lock();
+                auto curr_exp_ui = weak_curr_exp_ui.lock();
+                auto line_ui     = weak_line_ui.lock();
+                auto next_exp_ui = weak_next_exp_ui.lock();
+                if(!exp_button || !curr_exp_ui || !line_ui || !next_exp_ui)
+                    return;
+
                 if(e.is_open_) {
                     exp_button->SetStatus(Object::StatusBit::NoDraw, true);     //ピース購入画面が開いているなら非表示にする
                     curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
@@ -266,7 +265,12 @@ bool InGameScene::Init()
         //左クリックを促す
         sell_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
-        auto click_func = [player]() {
+        std::weak_ptr<Player> weak_player = player;
+        auto                  click_func  = [weak_player]() {
+            auto player = weak_player.lock();
+            if(!player)
+                return;
+
             if(auto select_piece = player->GetSelectedPiece()) {
                 int sell_piece_price = select_piece->GetPrice();    //売却価格を取得
                 PiecePool::ReturnPieceToPool(select_piece->GetNameDefault().data(), select_piece->GetLevel());
@@ -279,7 +283,12 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // ピース購入画面を開くボタンを押したときに、売却ボタンを非表示にする処理を登録
         //---------------------------------------------------------------------------------
-        auto sell_button_hide_proc = [sell_button](const PiecePurchaseOpenClickEvent& e) {
+        std::weak_ptr<UIButton> weak_sell_button      = sell_button;
+        auto                    sell_button_hide_proc = [weak_sell_button](const PiecePurchaseOpenClickEvent& e) {
+            auto sell_button = weak_sell_button.lock();
+            if(!sell_button)
+                return;
+
             if(e.is_open_) {
                 sell_button->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
             }
@@ -291,7 +300,7 @@ bool InGameScene::Init()
         event_handles_.push_back(std::move(event_handle));
     }
     //ボード制限に関するUIをベクターへ保管
-    std::vector<std::shared_ptr<UIObject>> board_limit_vector;
+    std::vector<std::weak_ptr<UIObject>> board_limit_vector;
     //---------------------------------------------------------------------------------
     //  駒数UI
     //---------------------------------------------------------------------------------
@@ -300,9 +309,14 @@ bool InGameScene::Init()
         piece_num_ui->SetFontSize(80);                                         //フォントサイズ設定
         piece_num_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
         //更新処理
-        auto set_text_proc = [piece_num_ui]() {
-            auto player    = Scene::Object::Get<Player>();
-            int  piece_num = player->GetPlacedPieceNum();    //置かれているピースの数を取得
+        std::weak_ptr<UIText> weak_piece_num_ui = piece_num_ui;
+        auto                  set_text_proc     = [weak_piece_num_ui]() {
+            auto player       = Scene::Object::Get<Player>();
+            auto piece_num_ui = weak_piece_num_ui.lock();
+            if(!piece_num_ui)
+                return;
+
+            int piece_num = player->GetPlacedPieceNum();    //置かれているピースの数を取得
             //駒数を表示
             piece_num_ui->SetText(std::to_string(piece_num));
             int piece_max_num = player->GetAgentLevel();
@@ -344,9 +358,14 @@ bool InGameScene::Init()
         piece_max_ui->SetFontSize(80);                                         //フォントサイズ設定
         piece_max_ui->SetColor(GetColor(0, 0, 0), GetColor(255, 255, 255));    //文字色設定
         //更新処理
-        auto set_text_proc = [piece_max_ui]() {
-            auto player = Scene::Object::Get<Player>();
-            int  level  = player->GetAgentLevel();
+        std::weak_ptr<UIText> weak_piece_max_ui = piece_max_ui;
+        auto                  set_text_proc     = [weak_piece_max_ui]() {
+            auto player       = Scene::Object::Get<Player>();
+            auto piece_max_ui = weak_piece_max_ui.lock();
+            if(!piece_max_ui)
+                return;
+
+            int level = player->GetAgentLevel();
             piece_max_ui->SetText(std::to_string(level));
         };
         piece_max_ui->SetProc("set_level", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
@@ -358,8 +377,12 @@ bool InGameScene::Init()
     // 駒関係UIはバトルフェーズに非表示にする処理を登録
     //---------------------------------------------------------------------------------
     {
-        for(auto& ui_object : board_limit_vector) {
-            auto board_limit_update_proc = [this, ui_object]() {
+        for(auto& weak_ui_object : board_limit_vector) {
+            auto board_limit_update_proc = [this, weak_ui_object]() {
+                auto ui_object = weak_ui_object.lock();
+                if(!ui_object)
+                    return;
+
                 if(game_state_ == GameState::Battle) {
                     ui_object->SetStatus(Object::StatusBit::NoDraw, true);    //バトルフェーズなら非表示にする
                 }
@@ -367,6 +390,9 @@ bool InGameScene::Init()
                     ui_object->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
                 }
             };
+            auto ui_object = weak_ui_object.lock();
+            if(!ui_object)
+                continue;
             ui_object->SetProc("board_limit_update", board_limit_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         };
     }
@@ -380,7 +406,14 @@ bool InGameScene::Init()
         turn_ui->SetTranslate(float3(100.0f, 100.0f, 0.0f));                     //位置を左上部に設定
         turn_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //左上寄せに設定
         //更新処理
-        auto set_text_proc = [this, turn_ui]() { turn_ui->SetText("Turn: " + std::to_string(turn_count_)); };
+        std::weak_ptr<UIText> weak_turn_ui  = turn_ui;
+        auto                  set_text_proc = [this, weak_turn_ui]() {
+            std::shared_ptr<UIText> turn_ui = weak_turn_ui.lock();
+            if(!turn_ui)
+                return;
+
+            turn_ui->SetText("Turn: " + std::to_string(turn_count_));
+        };
         turn_ui->SetProc("set_turn", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
@@ -394,7 +427,12 @@ bool InGameScene::Init()
         phase_timer_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央寄せに設定
         phase_timer_ui->SetText("Time : ∞");
         //更新処理
-        auto set_text_proc = [this, phase_timer_ui]() {
+        std::weak_ptr<UIText> weak_phase_timer_ui = phase_timer_ui;
+        auto                  set_text_proc       = [this, weak_phase_timer_ui]() {
+            std::shared_ptr<UIText> phase_timer_ui = weak_phase_timer_ui.lock();
+            if(!phase_timer_ui)
+                return;
+
             if(tutorial_active_) {
                 return;    // チュートリアル中はタイマーを更新しない
             }
@@ -423,7 +461,12 @@ bool InGameScene::Init()
         phase_ui->SetTranslate(float3(1000.0f, 100.0f, 0.0f));                    //位置を上部に設定
         phase_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //右上寄せに設定
         //更新処理
-        auto set_text_proc = [this, phase_ui]() {
+        std::weak_ptr<UIText> weak_phase_ui = phase_ui;
+        auto                  set_text_proc = [this, weak_phase_ui]() {
+            std::shared_ptr<UIText> phase_ui = weak_phase_ui.lock();
+            if(!phase_ui)
+                return;
+
             switch(game_state_) {
             case GameState::Setup:
                 phase_ui->SetText("Setup Phase");
@@ -446,6 +489,7 @@ bool InGameScene::Init()
         std::vector<std::shared_ptr<Object>> agent_ui_objects;    //Agent情報のUI群
         for(auto& agent : agents) {
             agent_count++;
+            std::weak_ptr<Agent> weak_agent = agent;
             //---------------------------------------------------------------------------------
             // 名前表示UI
             //---------------------------------------------------------------------------------
@@ -473,7 +517,13 @@ bool InGameScene::Init()
             gold_ui->SetTranslate(float3(170.0f, 100.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             gold_ui->SetAlignment(ComponentTransformUI::Alignment::UpperLeft);              //左上寄せに設定
             //更新処理
-            auto set_text_proc = [agent, gold_ui]() {
+            std::weak_ptr<UIText> weak_gold_ui  = gold_ui;
+            auto                  set_text_proc = [weak_agent, weak_gold_ui]() {
+                auto agent   = weak_agent.lock();
+                auto gold_ui = weak_gold_ui.lock();
+                if(!agent || !gold_ui)
+                    return;
+
                 gold_ui->SetText(std::to_string(agent->GetGold()));    //所持ゴールドを表示
             };
             gold_ui->SetProc("set_gold", set_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
@@ -485,7 +535,13 @@ bool InGameScene::Init()
             hp_gauge->SetTranslate(float3(280.0f, 115.0f + (agent_count * 40.0f), 0.0f));    //位置を左上あたりに設定
             hp_gauge->SetGaugeSize(int2(100, 20));                                           //ゲージサイズ設定
             //更新処理
-            auto set_gauge_proc = [agent, hp_gauge]() {
+            std::weak_ptr<UIGauge> weak_hp_gauge  = hp_gauge;
+            auto                   set_gauge_proc = [weak_agent, weak_hp_gauge]() {
+                auto agent    = weak_agent.lock();
+                auto hp_gauge = weak_hp_gauge.lock();
+                if(!agent || !hp_gauge)
+                    return;
+
                 float hp_ratio = static_cast<float>(agent->GetHP()) / static_cast<float>(MAX_AGENT_HP);
                 hp_gauge->SetGaugeRate(hp_ratio);
             };
@@ -505,7 +561,14 @@ bool InGameScene::Init()
         // プレイヤーがピースを選択中でないならエージェント情報を表示する
         //---------------------------------------------------------------------------------
         for(auto& obj : agent_ui_objects) {
-            auto agent_ui_update_proc = [obj, player]() {
+            std::weak_ptr<Object> weak_obj             = obj;
+            std::weak_ptr<Player> weak_player          = player;
+            auto                  agent_ui_update_proc = [weak_obj, weak_player]() {
+                std::shared_ptr<Object> obj    = weak_obj.lock();
+                std::shared_ptr<Player> player = weak_player.lock();
+                if(!obj || !player)
+                    return;
+
                 bool is_visible = player->IsSelectingPiece();
                 //エージェント情報UI群の表示・非表示を切り替え
                 obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
@@ -544,7 +607,14 @@ bool InGameScene::Init()
             piece_name_ui->SetFontSize(20);                                         //フォントサイズ設定
             piece_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             piece_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            auto update_proc = [piece_name_ui, piece_repository, player]() {
+            std::weak_ptr<UIText> weak_piece_name_ui = piece_name_ui;
+            std::weak_ptr<Player> weak_player        = player;
+            auto                  update_proc        = [weak_piece_name_ui, piece_repository, weak_player]() {
+                auto player        = weak_player.lock();
+                auto piece_name_ui = weak_piece_name_ui.lock();
+                if(!player || !piece_name_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -563,7 +633,14 @@ bool InGameScene::Init()
             piece_level_ui->SetTranslate(float3(170.0f, 180.0f, 0.0f));
             piece_level_ui->SetScaleAxisXYZ(0.1f);    //大きさを少し小さく設定
             piece_level_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            auto update_proc = [piece_level_ui, piece_repository, player]() {
+            std::weak_ptr<Player>  weak_player         = player;
+            std::weak_ptr<UIImage> weak_piece_level_ui = piece_level_ui;
+            auto                   update_proc         = [weak_piece_level_ui, piece_repository, weak_player]() {
+                auto player         = weak_player.lock();
+                auto piece_level_ui = weak_piece_level_ui.lock();
+                if(!player || !piece_level_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピースのレベルを取得
@@ -583,7 +660,13 @@ bool InGameScene::Init()
             piece_icon_ui->SetTranslate(float3(90.0f, 200.0f, 0.0f));
             piece_icon_ui->SetScaleAxisXYZ(0.3f);    //大きさを少し小さく設定
             piece_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            auto update_proc = [piece_icon_ui, piece_repository, player]() {
+            std::weak_ptr<Player>  weak_player        = player;
+            std::weak_ptr<UIImage> weak_piece_icon_ui = piece_icon_ui;
+            auto                   update_proc        = [piece_icon_ui, piece_repository, weak_player]() {
+                auto player = weak_player.lock();
+                if(!player)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -602,7 +685,14 @@ bool InGameScene::Init()
             auto piece_hp_ui = Scene::Object::Create<UIGauge>();
             piece_hp_ui->SetTranslate(float3(210.0f, 220.0f, 0.0f));    //位置を左中央あたりに設定
             piece_hp_ui->SetGaugeSize(int2(150, 20));                   //ゲージサイズ設定
-            auto update_proc = [piece_hp_ui, piece_repository, player]() {
+            std::weak_ptr<Player>  weak_player      = player;
+            std::weak_ptr<UIGauge> weak_piece_hp_ui = piece_hp_ui;
+            auto                   update_proc      = [weak_piece_hp_ui, piece_repository, weak_player]() {
+                auto player      = weak_player.lock();
+                auto piece_hp_ui = weak_piece_hp_ui.lock();
+                if(!player || !piece_hp_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -637,7 +727,14 @@ bool InGameScene::Init()
             attack_power_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             attack_power_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             attack_power_ui->SetFontSize(26);                                         //少しだけ大きく
-            auto update_proc = [attack_power_ui, piece_repository, player]() {
+            std::weak_ptr<Player> weak_player          = player;
+            std::weak_ptr<UIText> weak_attack_power_ui = attack_power_ui;
+            auto                  update_proc          = [weak_attack_power_ui, piece_repository, weak_player]() {
+                auto player          = weak_player.lock();
+                auto attack_power_ui = weak_attack_power_ui.lock();
+                if(!player || !attack_power_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -671,7 +768,14 @@ bool InGameScene::Init()
             attack_interval_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             attack_interval_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             attack_interval_ui->SetFontSize(26);                                         //少しだけ大きく
-            auto update_proc = [attack_interval_ui, piece_repository, player]() {
+            std::weak_ptr<Player> weak_player             = player;
+            std::weak_ptr<UIText> weak_attack_interval_ui = attack_interval_ui;
+            auto                  update_proc             = [weak_attack_interval_ui, piece_repository, weak_player]() {
+                auto player             = weak_player.lock();
+                auto attack_interval_ui = weak_attack_interval_ui.lock();
+                if(!player || !attack_interval_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -702,7 +806,14 @@ bool InGameScene::Init()
             attack_range_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             attack_range_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             attack_range_ui->SetFontSize(26);                                         //少しだけ大きく
-            auto update_proc = [attack_range_ui, piece_repository, player]() {
+            std::weak_ptr<Player> weak_player          = player;
+            std::weak_ptr<UIText> weak_attack_range_ui = attack_range_ui;
+            auto                  update_proc          = [weak_attack_range_ui, piece_repository, weak_player]() {
+                auto player          = weak_player.lock();
+                auto attack_range_ui = weak_attack_range_ui.lock();
+                if(!player || !attack_range_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -733,7 +844,14 @@ bool InGameScene::Init()
             physical_defense_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             physical_defense_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             physical_defense_ui->SetFontSize(26);                                         //少しだけ大きく
-            auto update_proc = [physical_defense_ui, piece_repository, player]() {
+            std::weak_ptr<Player> weak_player              = player;
+            std::weak_ptr<UIText> weak_physical_defense_ui = physical_defense_ui;
+            auto                  update_proc              = [weak_physical_defense_ui, piece_repository, weak_player]() {
+                auto player              = weak_player.lock();
+                auto physical_defense_ui = weak_physical_defense_ui.lock();
+                if(!player || !physical_defense_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -764,7 +882,14 @@ bool InGameScene::Init()
             magic_defense_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
             magic_defense_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             magic_defense_ui->SetFontSize(26);                                         //少しだけ大きく
-            auto update_proc = [magic_defense_ui, piece_repository, player]() {
+            std::weak_ptr<Player> weak_player           = player;
+            std::weak_ptr<UIText> weak_magic_defense_ui = magic_defense_ui;
+            auto                  update_proc           = [weak_magic_defense_ui, piece_repository, weak_player]() {
+                auto player           = weak_player.lock();
+                auto magic_defense_ui = weak_magic_defense_ui.lock();
+                if(!player || !magic_defense_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     //ピース情報UIに情報を設定
@@ -783,7 +908,14 @@ bool InGameScene::Init()
             skill_icon_ui->SetTranslate(float3(170.0f, 410.0f, 0.0f));
             skill_icon_ui->SetScaleAxisXYZ(0.4f);    //大きさを少し小さく設定
             skill_icon_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            auto update_proc = [skill_icon_ui, piece_repository, player]() {
+            std::weak_ptr<Player>   weak_player        = player;
+            std::weak_ptr<UIButton> weak_skill_icon_ui = skill_icon_ui;
+            auto                    update_proc        = [weak_skill_icon_ui, piece_repository, weak_player]() {
+                auto player        = weak_player.lock();
+                auto skill_icon_ui = weak_skill_icon_ui.lock();
+                if(!player || !skill_icon_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
@@ -797,7 +929,11 @@ bool InGameScene::Init()
             skill_icon_ui->SetProc("update_piece_detail", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
             piece_ditail_ui_objects.push_back(skill_icon_ui);
             //クリック時の処理を設定
-            auto click_func = [event_bus, player]() {
+            auto click_func = [event_bus, weak_player]() {
+                auto player = weak_player.lock();
+                if(!player)
+                    return;
+
                 auto select_piece = player->GetSelectedPiece();
                 if(auto skill_comp = select_piece->GetComponent<ComponentActiveSkill>()) {
                     auto skill_data = skill_comp->GetMasterData();
@@ -816,7 +952,14 @@ bool InGameScene::Init()
             skill_name_ui->SetFontSize(25);                                         //フォントサイズ設定
             skill_name_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
             skill_name_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-            auto update_proc = [skill_name_ui, piece_repository, player]() {
+            std::weak_ptr<UIText> weak_skill_name_ui = skill_name_ui;
+            std::weak_ptr<Player> weak_player        = player;
+            auto                  update_proc        = [weak_skill_name_ui, piece_repository, weak_player]() {
+                auto player        = weak_player.lock();
+                auto skill_name_ui = weak_skill_name_ui.lock();
+                if(!player || !skill_name_ui)
+                    return;
+
                 //選択されているピースを取得
                 if(auto piece = player->GetSelectedPiece()) {
                     if(auto skill_comp = piece->GetComponent<ComponentActiveSkill>()) {
@@ -832,7 +975,14 @@ bool InGameScene::Init()
         // プレイヤーがピースを選択中ならエージェント情報を表示する
         //---------------------------------------------------------------------------------
         for(auto& obj : piece_ditail_ui_objects) {
-            auto agent_ui_update_proc = [obj, player]() {
+            std::weak_ptr<Object> weak_obj             = obj;
+            std::weak_ptr<Player> weak_player          = player;
+            auto                  agent_ui_update_proc = [weak_obj, weak_player]() {
+                std::shared_ptr<Object> obj    = weak_obj.lock();
+                std::shared_ptr<Player> player = weak_player.lock();
+                if(!obj || !player)
+                    return;
+
                 bool is_visible = !player->IsSelectingPiece();
                 //エージェント情報UI群の表示・非表示を切り替え
                 obj->SetStatus(Object::StatusBit::NoDraw, is_visible);
@@ -841,7 +991,7 @@ bool InGameScene::Init()
             obj->SetProc("agent_ui_update_proc", agent_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
         }
     }
-    std::vector<std::shared_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
+    std::vector<std::weak_ptr<Object>> purchase_window_objects;    //購入画面のウィンドウ群
     //---------------------------------------------------------------------------------
     //  購入画面のフィルター
     //---------------------------------------------------------------------------------
@@ -868,13 +1018,19 @@ bool InGameScene::Init()
             float x_pos = 300.0f + (i * 165.0f);    //X位置を設定
             piece_purchase_button->SetTranslate(float3(x_pos, 300.0f, 0.0f));
             piece_purchase_button->SetCustomSize(float2(100.0f, 200.0f));
-            auto texture = std::make_shared<Texture>(300, 300, DXGI_FORMAT_R8G8B8A8_UNORM);
+            auto texture          = std::make_shared<Texture>(300, 300, DXGI_FORMAT_R8G8B8A8_UNORM);
+            purchase_textures_[i] = texture;    //テクスチャを保存しておく
             //int screen_buff = MakeScreen(100, 200, false);                           //スクリーンバッファを作成
             piece_purchase_button->SetImage(ImageBuffer::GetImageHandle("deff"));    //仮で空の画像を設定
             //---------------------------------------------------------------------------------
             //  クリック時処理の設定
             //---------------------------------------------------------------------------------
-            auto click_func = [i, player]() {
+            std::weak_ptr<Player> weak_player = player;
+            auto                  click_func  = [i, weak_player]() {
+                auto player = weak_player.lock();
+                if(!player)
+                    return;
+
                 //ピーズスタンドが満タンなら購入できないようにする
                 if(auto piece_stand = Scene::Object::Get<PieceStand>()) {
                     if(piece_stand->IsFull()) {
@@ -901,11 +1057,19 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             //  ターゲットをうつす処理を入れ込む。
             //---------------------------------------------------------------------------------
-            auto draw_target = [piece_purchase_button, texture, i]() {
+            std::weak_ptr<UIButton> weak_piece_purchase_button = piece_purchase_button;
+            std::weak_ptr<Texture>  weak_texture               = texture;
+            auto                    draw_target                = [weak_piece_purchase_button, weak_texture, i]() {
+                auto piece_purchase_button = weak_piece_purchase_button.lock();
+                auto texture               = weak_texture.lock();
+                if(!piece_purchase_button || !texture)
+                    return;
+
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     DxLib::SetLightEnable(TRUE);                       //ライトを有効化
-                    SetRenderTarget(texture.get(), nullptr);           //レンダーターゲットを変更
+                    DxLib::SetUseLighting(TRUE);
+                    SetRenderTarget(texture.get(), nullptr);    //レンダーターゲットを変更
                     ClearColor(texture.get(), float4(0.0f, 0.0f, 0.0f, 0.0f));
                     MATRIX prev_mat      = GetCameraViewMatrix();
                     MATRIX prev_proj_mat = GetCameraProjectionMatrix();
@@ -953,7 +1117,12 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             //  更新処理の設定
             //---------------------------------------------------------------------------------
-            auto update_func = [piece_name_text, piece_repository, i]() {
+            std::weak_ptr<UIText> weak_piece_name_text = piece_name_text;
+            auto                  update_func          = [weak_piece_name_text, piece_repository, i]() {
+                auto piece_name_text = weak_piece_name_text.lock();
+                if(!piece_name_text)
+                    return;
+
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     if(auto piece = shop_pieces[i].lock()) {
@@ -988,7 +1157,12 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             //  更新処理の設定
             //---------------------------------------------------------------------------------
-            auto update_func = [gold_icon_ui, i]() {
+            std::weak_ptr<UIImage> weak_gold_icon_ui = gold_icon_ui;
+            auto                   update_func       = [weak_gold_icon_ui, i]() {
+                std::shared_ptr<UIImage> gold_icon_ui = weak_gold_icon_ui.lock();
+                if(!gold_icon_ui)
+                    return;
+
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     if(auto piece = shop_pieces[i].lock()) {
@@ -1022,7 +1196,12 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             //  更新処理の設定
             //---------------------------------------------------------------------------------
-            auto update_func = [piece_price_text, piece_repository, i]() {
+            std::weak_ptr<UIText> weak_piece_price_text = piece_price_text;
+            auto                  update_func           = [weak_piece_price_text, piece_repository, i]() {
+                auto piece_price_text = weak_piece_price_text.lock();
+                if(!piece_price_text)
+                    return;
+
                 if(auto shop_stand = Scene::Object::Get<ShopStand>()) {
                     auto shop_pieces = shop_stand->GetShopPieces();    //ショップのピースを取得
                     if(auto piece = shop_pieces[i].lock()) {
@@ -1053,7 +1232,12 @@ bool InGameScene::Init()
         //左クリックを促す
         reroll_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
-        auto click_func = [player]() {
+        std::weak_ptr<Player> weak_player = player;
+        auto                  click_func  = [weak_player]() {
+            auto player = weak_player.lock();
+            if(!player)
+                return;
+
             //ショップがロックされていなければリロール可能
             if(!player->IsShopLocked()) {
                 //ピースリロールに2ゴールド消費する
@@ -1077,7 +1261,14 @@ bool InGameScene::Init()
         //左クリックを促す
         lock_button->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
-        auto click_func = [player, lock_button]() {
+        std::weak_ptr<UIButton> weak_lock_button = lock_button;
+        std::weak_ptr<Player>   weak_player      = player;
+        auto                    click_func       = [weak_player, weak_lock_button]() {
+            std::shared_ptr<Player>   player      = weak_player.lock();
+            std::shared_ptr<UIButton> lock_button = weak_lock_button.lock();
+            if(!player || !lock_button)
+                return;
+
             player->ToggleShopLockState();    //ショップのロックを切り替える
             //ロック状態に応じてボタンの見た目を変える
             if(player->IsShopLocked()) {
@@ -1098,14 +1289,14 @@ bool InGameScene::Init()
         auto click_func                 = [this, purchase_window_objects, event_bus]() {
             is_purchase_open_ = !is_purchase_open_;    //ピース購入画面の開閉を切り替え
             //ウィンドウ群に対して開閉処理を行う
-            if(is_purchase_open_) {
-                for(auto& obj : purchase_window_objects) {
+            for(auto& weak_obj : purchase_window_objects) {
+                std::shared_ptr<Object> obj = weak_obj.lock();
+
+                if(is_purchase_open_) {
                     obj->SetStatus(Object::StatusBit::NoDraw, false);      //描画する
                     obj->SetStatus(Object::StatusBit::NoUpdate, false);    //更新する
                 }
-            }
-            else {
-                for(auto& obj : purchase_window_objects) {
+                else {
                     obj->SetStatus(Object::StatusBit::NoDraw, true);      //描画しない
                     obj->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
                 }
@@ -1117,8 +1308,13 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // ピース購入ボタンを押したときにシナジーアイコン群を非表示にする処理登録
         //---------------------------------------------------------------------------------
-        auto synergy_hide_proc = [piece_purchase_open_button](const PiecePurchaseOpenClickEvent& e) {
-            auto synergy_icons = Scene::Object::GetArray<UISynergy>();
+        std::weak_ptr<PiecePurchaseOpenButton> weak_piece_purchase_open_button = piece_purchase_open_button;
+        auto                                   synergy_hide_proc               = [weak_piece_purchase_open_button](const PiecePurchaseOpenClickEvent& e) {
+            auto                                     synergy_icons              = Scene::Object::GetArray<UISynergy>();
+            std::shared_ptr<PiecePurchaseOpenButton> piece_purchase_open_button = weak_piece_purchase_open_button.lock();
+            if(!piece_purchase_open_button)
+                return;
+
             for(auto& icon : synergy_icons) {
                 if(e.is_open_) {
                     //購入画面が開かれたらシナジーアイコンを非表示にする
@@ -1200,7 +1396,12 @@ bool InGameScene::Init()
         // スキル詳細UIの非表示
         //---------------------------------------------------------------------------------
         for(auto& obj : skill_detail_ui_objects) {
-            auto skill_ui_update_proc = [obj, player]() {
+            std::weak_ptr<Object> weak_obj             = obj;
+            auto                  skill_ui_update_proc = [weak_obj]() {
+                std::shared_ptr<Object> obj = weak_obj.lock();
+                if(!obj)
+                    return;
+
                 //左クリックであれば
                 if(IsMouseOn(MOUSE_INPUT_LEFT)) {
                     if(!UIHitManager::IsMouseHitUIFilter()) {
@@ -1215,32 +1416,45 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // クリックイベントの登録
         //---------------------------------------------------------------------------------
-        auto skill_click_event = [skill_detail_back, skill_icon_ui, skill_name_ui, skill_cooltime_ui, skill_description_ui](const SkillClickEvent& e) {
-            //---------------------------------------------------------------------------------
-            // 背景画像の表示
-            //---------------------------------------------------------------------------------
-            skill_detail_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
-            //---------------------------------------------------------------------------------
-            // スキルアイコンのUI
-            //---------------------------------------------------------------------------------
-            skill_icon_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキルアイコンUIを表示する
-            skill_icon_ui->SetImage(ImageBuffer::GetImageHandle(e.skill_data_.skill_icon_key_));
-            //---------------------------------------------------------------------------------
-            // スキルの名前UI
-            //---------------------------------------------------------------------------------
-            skill_name_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキル名UIを表示する
-            skill_name_ui->SetText(e.skill_data_.skill_name_);
-            //---------------------------------------------------------------------------------
-            // クールタイム表示UI
-            //---------------------------------------------------------------------------------
-            skill_cooltime_ui->SetStatus(Object::StatusBit::NoDraw, false);    //クールタイムUIを表示する
-            skill_cooltime_ui->SetText(std::format("クールタイム: {:.1f}秒", e.skill_data_.max_cool_doen_time_));
-            //---------------------------------------------------------------------------------
-            // スキルの説明文UI
-            //---------------------------------------------------------------------------------
-            skill_description_ui->SetStatus(Object::StatusBit::NoDraw, false);
-            skill_description_ui->SetText(e.skill_data_.skill_description_);
-        };
+        std::weak_ptr<UIImage> weak_skill_detail_back    = skill_detail_back;
+        std::weak_ptr<UIImage> weak_skill_icon_ui        = skill_icon_ui;
+        std::weak_ptr<UIText>  weak_skill_name_ui        = skill_name_ui;
+        std::weak_ptr<UIText>  weak_skill_cooltime_ui    = skill_cooltime_ui;
+        std::weak_ptr<UIText>  weak_skill_description_ui = skill_description_ui;
+        auto                   skill_click_event =
+            [weak_skill_detail_back, weak_skill_icon_ui, weak_skill_name_ui, weak_skill_cooltime_ui, weak_skill_description_ui](const SkillClickEvent& e) {
+                auto skill_detail_back    = weak_skill_detail_back.lock();
+                auto skill_icon_ui        = weak_skill_icon_ui.lock();
+                auto skill_name_ui        = weak_skill_name_ui.lock();
+                auto skill_cooltime_ui    = weak_skill_cooltime_ui.lock();
+                auto skill_description_ui = weak_skill_description_ui.lock();
+                if(!skill_detail_back || !skill_icon_ui || !skill_name_ui || !skill_cooltime_ui || !skill_description_ui)
+                    return;
+                //---------------------------------------------------------------------------------
+                // 背景画像の表示
+                //---------------------------------------------------------------------------------
+                skill_detail_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
+                //---------------------------------------------------------------------------------
+                // スキルアイコンのUI
+                //---------------------------------------------------------------------------------
+                skill_icon_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキルアイコンUIを表示する
+                skill_icon_ui->SetImage(ImageBuffer::GetImageHandle(e.skill_data_.skill_icon_key_));
+                //---------------------------------------------------------------------------------
+                // スキルの名前UI
+                //---------------------------------------------------------------------------------
+                skill_name_ui->SetStatus(Object::StatusBit::NoDraw, false);    //スキル名UIを表示する
+                skill_name_ui->SetText(e.skill_data_.skill_name_);
+                //---------------------------------------------------------------------------------
+                // クールタイム表示UI
+                //---------------------------------------------------------------------------------
+                skill_cooltime_ui->SetStatus(Object::StatusBit::NoDraw, false);    //クールタイムUIを表示する
+                skill_cooltime_ui->SetText(std::format("クールタイム: {:.1f}秒", e.skill_data_.max_cool_doen_time_));
+                //---------------------------------------------------------------------------------
+                // スキルの説明文UI
+                //---------------------------------------------------------------------------------
+                skill_description_ui->SetStatus(Object::StatusBit::NoDraw, false);
+                skill_description_ui->SetText(e.skill_data_.skill_description_);
+            };
         auto skill_click_event_handle = event_bus->subscribe<SkillClickEvent>(skill_click_event, 0);
         event_handles_.push_back(std::move(skill_click_event_handle));
     }
@@ -1299,7 +1513,14 @@ bool InGameScene::Init()
         // シナジー情報更新処理の登録
         //---------------------------------------------------------------------------------
         for(auto& obj : synergy_ui_objects) {
-            auto skill_ui_update_proc = [obj, player, this]() {
+            std::weak_ptr<Object> weak_obj             = obj;
+            std::weak_ptr<Player> weak_player          = player;
+            auto                  skill_ui_update_proc = [weak_obj, weak_player, this]() {
+                std::shared_ptr<Object> obj    = weak_obj.lock();
+                auto                    player = weak_player.lock();
+                if(!obj || !player)
+                    return;
+
                 //左クリックであれば
                 if(IsMouseOn(MOUSE_INPUT_LEFT)) {
                     if(!UIHitManager::IsMouseHitUIFilter()) {
@@ -1321,40 +1542,51 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // シナジーUIクリック時の処理登録
         //---------------------------------------------------------------------------------
-        auto synergy_ui_click_event = [synergy_info_back, synergy_info_text, synergy_info_image, synergy_info_description](const SynergyClickEvent& e) {
-            //---------------------------------------------------------------------------------
-            //シナジーアイコン群の非表示
-            //---------------------------------------------------------------------------------
-            auto synergies = Scene::Object::GetArray<UISynergy>();
-            for(auto synergie : synergies) {
-                synergie->SetStatus(Object::StatusBit::NoDraw, true);
-            }
-            //---------------------------------------------------------------------------------
-            // シナジー情報背景UIの表示
-            //---------------------------------------------------------------------------------
-            synergy_info_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
-            //---------------------------------------------------------------------------------
-            // シナジーの名前テキストUIの表示
-            //---------------------------------------------------------------------------------
-            synergy_info_text->SetStatus(Object::StatusBit::NoDraw, false);
-            synergy_info_text->SetText(e.synergy_data_->name_);
-            //---------------------------------------------------------------------------------
-            // シナジーの画像UIの表示
-            //---------------------------------------------------------------------------------
-            synergy_info_image->SetStatus(Object::StatusBit::NoDraw, false);
-            synergy_info_image->SetImage(ImageBuffer::GetImageHandle(e.synergy_data_->icon_path_));
-            //---------------------------------------------------------------------------------
-            // 説明文の作成
-            //---------------------------------------------------------------------------------
-            auto level_thresholds = e.synergy_data_->level_thresholds_;
-            synergy_info_description->SetStatus(Object::StatusBit::NoDraw, false);
-            std::string description;
-            for(int i = 0; i < level_thresholds.size(); i++) {
-                std::string level_description  = std::format("{}:{}", level_thresholds[i], (e.synergy_data_->descriptions_.at(i) + "\n"));
-                description                   += level_description;
-            }
-            synergy_info_description->SetText(description);
-        };
+        std::weak_ptr<UIImage> weak_synergy_info_back        = synergy_info_back;
+        std::weak_ptr<UIText>  weak_synergy_info_text        = synergy_info_text;
+        std::weak_ptr<UIImage> weak_synergy_info_image       = synergy_info_image;
+        std::weak_ptr<UIText>  weak_synergy_info_description = synergy_info_description;
+        auto                   synergy_ui_click_event =
+            [weak_synergy_info_back, weak_synergy_info_text, weak_synergy_info_image, weak_synergy_info_description](const SynergyClickEvent& e) {
+                std::shared_ptr<UIImage> synergy_info_back        = weak_synergy_info_back.lock();
+                std::shared_ptr<UIText>  synergy_info_text        = weak_synergy_info_text.lock();
+                std::shared_ptr<UIImage> synergy_info_image       = weak_synergy_info_image.lock();
+                std::shared_ptr<UIText>  synergy_info_description = weak_synergy_info_description.lock();
+                if(!synergy_info_back || !synergy_info_text || !synergy_info_image || !synergy_info_description)
+                    return;
+                //---------------------------------------------------------------------------------
+                //シナジーアイコン群の非表示
+                //---------------------------------------------------------------------------------
+                auto synergies = Scene::Object::GetArray<UISynergy>();
+                for(auto synergie : synergies) {
+                    synergie->SetStatus(Object::StatusBit::NoDraw, true);
+                }
+                //---------------------------------------------------------------------------------
+                // シナジー情報背景UIの表示
+                //---------------------------------------------------------------------------------
+                synergy_info_back->SetStatus(Object::StatusBit::NoDraw, false);    //背景画像を表示する
+                //---------------------------------------------------------------------------------
+                // シナジーの名前テキストUIの表示
+                //---------------------------------------------------------------------------------
+                synergy_info_text->SetStatus(Object::StatusBit::NoDraw, false);
+                synergy_info_text->SetText(e.synergy_data_->name_);
+                //---------------------------------------------------------------------------------
+                // シナジーの画像UIの表示
+                //---------------------------------------------------------------------------------
+                synergy_info_image->SetStatus(Object::StatusBit::NoDraw, false);
+                synergy_info_image->SetImage(ImageBuffer::GetImageHandle(e.synergy_data_->icon_path_));
+                //---------------------------------------------------------------------------------
+                // 説明文の作成
+                //---------------------------------------------------------------------------------
+                auto level_thresholds = e.synergy_data_->level_thresholds_;
+                synergy_info_description->SetStatus(Object::StatusBit::NoDraw, false);
+                std::string description;
+                for(int i = 0; i < level_thresholds.size(); i++) {
+                    std::string level_description  = std::format("{}:{}", level_thresholds[i], (e.synergy_data_->descriptions_.at(i) + "\n"));
+                    description                   += level_description;
+                }
+                synergy_info_description->SetText(description);
+            };
         auto synergy_click_event_handle = event_bus->subscribe<SynergyClickEvent>(synergy_ui_click_event, 0);
         event_handles_.push_back(std::move(synergy_click_event_handle));
     }
@@ -1389,7 +1621,14 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // 購入画面を押したときにGoldUIを非表示にする処理登録
         //---------------------------------------------------------------------------------
-        auto gold_ui_hide_proc = [gold_ui, gold_text_ui](const PiecePurchaseOpenClickEvent& e) {
+        std::weak_ptr<UIButton> weak_gold_ui      = gold_ui;
+        std::weak_ptr<UIText>   weak_gold_text_ui = gold_text_ui;
+        auto                    gold_ui_hide_proc = [weak_gold_ui, weak_gold_text_ui](const PiecePurchaseOpenClickEvent& e) {
+            std::shared_ptr<UIButton> gold_ui      = weak_gold_ui.lock();
+            std::shared_ptr<UIText>   gold_text_ui = weak_gold_text_ui.lock();
+            if(!gold_ui || !gold_text_ui)
+                return;
+
             if(e.is_open_) {
                 //購入画面が開かれたらGoldUIを非表示にする
                 gold_ui->SetStatus(Object::StatusBit::NoDraw, true);
@@ -1408,7 +1647,7 @@ bool InGameScene::Init()
     // Gold説明UI
     //---------------------------------------------------------------------------------
     {
-        std::vector<std::shared_ptr<UIObject>> gold_info_ui_objects;    //gold説明UIオブジェクト群
+        std::vector<std::weak_ptr<UIObject>> gold_info_ui_objects;    //gold説明UIオブジェクト群
         //説明の背景テキストUI
         auto gold_info_back = Scene::Object::Create<UIImage>();
         gold_info_back->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
@@ -1466,7 +1705,15 @@ bool InGameScene::Init()
         interest_income_detail_text->SetFontSize(16);          //フォントサイズ設定
         interest_income_detail_text->SetColor(GetColor(255, 255, 255));
         interest_income_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
-        auto interest_income_update_proc = [interest_income_detail_text, player]() {
+        //利子収益の更新処理登録
+        std::weak_ptr<UIText> weak_interest_income_detail_text = interest_income_detail_text;
+        std::weak_ptr<Player> weak_player                      = player;
+        auto                  interest_income_update_proc      = [weak_interest_income_detail_text, weak_player]() {
+            auto interest_income_detail_text = weak_interest_income_detail_text.lock();
+            auto player                      = weak_player.lock();
+            if(!interest_income_detail_text || !player)
+                return;
+
             int player_gold     = player->GetGold();
             int interest_income = std::min(player_gold / 10, 5);
             interest_income_detail_text->SetText(std::format("+{}", interest_income));
@@ -1513,7 +1760,13 @@ bool InGameScene::Init()
         win_streak_bonus_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
         gold_info_ui_objects.push_back(win_streak_bonus_detail_text);
         //更新処理の登録
-        auto win_streak_income_update_proc = [win_streak_bonus_detail_text, player]() {
+        std::weak_ptr<UIText> weak_win_streak_bonus_detail_text = win_streak_bonus_detail_text;
+        auto                  win_streak_income_update_proc     = [weak_win_streak_bonus_detail_text, weak_player]() {
+            auto win_streak_bonus_detail_text = weak_win_streak_bonus_detail_text.lock();
+            auto player                       = weak_player.lock();
+            if(!win_streak_bonus_detail_text || !player)
+                return;
+
             int win_streak = player->GetWinStreak();
             int bonus      = 0;
             if(win_streak >= 3) {
@@ -1543,7 +1796,13 @@ bool InGameScene::Init()
         loss_streak_bonus_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
         gold_info_ui_objects.push_back(loss_streak_bonus_detail_text);
         //更新処理の登録
-        auto loss_streak_income_update_proc = [loss_streak_bonus_detail_text, player]() {
+        std::weak_ptr<UIText> weak_loss_streak_bonus_detail_text = loss_streak_bonus_detail_text;
+        auto                  loss_streak_income_update_proc     = [weak_loss_streak_bonus_detail_text, weak_player]() {
+            auto loss_streak_bonus_detail_text = weak_loss_streak_bonus_detail_text.lock();
+            auto player                        = weak_player.lock();
+            if(!loss_streak_bonus_detail_text || !player)
+                return;
+
             int loss_streak = player->GetLoseStreak();
             int bonus       = 0;
             if(loss_streak >= 3) {
@@ -1565,8 +1824,12 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // goldUI群の非表示処理登録
         //---------------------------------------------------------------------------------
-        for(auto& obj : gold_info_ui_objects) {
-            auto skill_ui_update_proc = [obj, player]() {
+        for(auto& weak_obj : gold_info_ui_objects) {
+            auto skill_ui_update_proc = [weak_obj]() {
+                std::shared_ptr<Object> obj = weak_obj.lock();
+                if(!obj)
+                    return;
+
                 //左クリックであれば
                 if(IsMouseOn(MOUSE_INPUT_LEFT)) {
                     if(!UIHitManager::IsMouseHitUIFilter()) {
@@ -1576,13 +1839,20 @@ bool InGameScene::Init()
                 }
             };
             // 処理を登録
+            std::shared_ptr<Object> obj = weak_obj.lock();
+            if(!obj)
+                continue;
             obj->SetProc("skill_ui_update_proc", skill_ui_update_proc, ProcTiming::PreUpdate, ProcPriority::NORMAL);
         }
         //---------------------------------------------------------------------------------
         // Gold説明UIの表示処理登録
         //---------------------------------------------------------------------------------
         auto gold_click_proc = [gold_info_ui_objects, this](const GoldClickEvent& e) {
-            for(auto& obj : gold_info_ui_objects) {
+            for(auto& weak_obj : gold_info_ui_objects) {
+                std::shared_ptr<Object> obj = weak_obj.lock();
+                if(!obj)
+                    continue;
+
                 obj->SetStatus(Object::StatusBit::NoDraw, false);
             }
         };
@@ -1599,16 +1869,20 @@ bool InGameScene::Init()
         center_message_ui->SetFontSize(60);                                           //サイズを設定
         center_message_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));      //文字色設定
         center_message_ui->SetFontName("游明朝");                                     //フォントを設定
-        float center_message_hide_timer = 0.0f;                                       //非表示タイマー
         //---------------------------------------------------------------------------------
         // 非表示処理の登録
         //---------------------------------------------------------------------------------
-        auto center_message_hide_proc = [center_message_ui, &center_message_hide_timer]() {
+        std::weak_ptr<UIText> weak_center_message_ui   = center_message_ui;
+        auto                  center_message_hide_proc = [weak_center_message_ui, this]() {
+            auto center_message_ui = weak_center_message_ui.lock();
+            if(!center_message_ui)
+                return;
+
             if(!center_message_ui->GetStatus(Object::StatusBit::NoDraw)) {
-                center_message_hide_timer += GetDeltaTime();
-                if(center_message_hide_timer >= 3.0f) {
+                center_message_hide_timer_ += GetDeltaTime();
+                if(center_message_hide_timer_ >= 3.0f) {
                     center_message_ui->SetStatus(Object::StatusBit::NoDraw, true);
-                    center_message_hide_timer = 0.0f;
+                    center_message_hide_timer_ = 0.0f;
                 }
             }
         };
@@ -1623,16 +1897,20 @@ bool InGameScene::Init()
             lose_damage_ui->SetFontSize(20);                                                    //サイズを設定
             lose_damage_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));               //文字色設定
             lose_damage_ui->SetFontName("游明朝");                                              //フォントを設定
-            float lose_damage_hide_timer = 0.0f;
             //---------------------------------------------------------------------------------
             // 非表示処理の登録
             //---------------------------------------------------------------------------------
-            auto hide_proc = [lose_damage_ui, &lose_damage_hide_timer]() {
+            std::weak_ptr<UIText> weak_lose_damage_ui = lose_damage_ui;
+            auto                  hide_proc           = [weak_lose_damage_ui, this]() {
+                auto lose_damage_ui = weak_lose_damage_ui.lock();
+                if(!lose_damage_ui)
+                    return;
+
                 if(!lose_damage_ui->GetStatus(Object::StatusBit::NoDraw)) {
-                    lose_damage_hide_timer += GetDeltaTime();
-                    if(lose_damage_hide_timer >= 3.0f) {
+                    lose_damage_hide_timer_ += GetDeltaTime();
+                    if(lose_damage_hide_timer_ >= 3.0f) {
                         lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, true);
-                        lose_damage_hide_timer = 0.0f;
+                        lose_damage_hide_timer_ = 0.0f;
                     }
                 }
             };
@@ -1640,13 +1918,18 @@ bool InGameScene::Init()
             //---------------------------------------------------------------------------------
             // 敗北時のイベントを登録
             //---------------------------------------------------------------------------------
-            auto lose_event = [lose_damage_ui, center_message_ui, &center_message_hide_timer, &lose_damage_hide_timer](const LoseEvent& e) {
+            auto lose_event = [weak_lose_damage_ui, weak_center_message_ui, this](const LoseEvent& e) {
+                std::shared_ptr<UIText> lose_damage_ui    = weak_lose_damage_ui.lock();
+                std::shared_ptr<UIText> center_message_ui = weak_center_message_ui.lock();
+                if(!lose_damage_ui || !center_message_ui)
+                    return;
+
                 lose_damage_ui->SetStatus(Object::StatusBit::NoDraw, false);
                 lose_damage_ui->SetText(std::format("\n被ダメージ:{}", e.agent_damage_amount_));
                 center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
                 center_message_ui->SetText("敗北");
-                center_message_hide_timer = 0.0f;
-                lose_damage_hide_timer    = 0.0f;
+                center_message_hide_timer_ = 0.0f;
+                lose_damage_hide_timer_    = 0.0f;
             };
             auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 0);
             event_handles_.push_back(std::move(lose_event_handle));
@@ -1654,20 +1937,28 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // 勝利時のイベントを登録
         //---------------------------------------------------------------------------------
-        auto win_event = [center_message_ui, &center_message_hide_timer](const WinEvent& e) {
+        auto win_event = [weak_center_message_ui, this](const WinEvent& e) {
+            std::shared_ptr<UIText> center_message_ui = weak_center_message_ui.lock();
+            if(!center_message_ui)
+                return;
+
             center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
             center_message_ui->SetText("勝利");
-            center_message_hide_timer = 0.0f;
+            center_message_hide_timer_ = 0.0f;
         };
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
         //---------------------------------------------------------------------------------
         // バトル開始イベントを登録
         //---------------------------------------------------------------------------------
-        auto battle_start_event = [center_message_ui, &center_message_hide_timer, this](const BattleStartEvent& e) {
+        auto battle_start_event = [weak_center_message_ui, this](const BattleStartEvent& e) {
+            std::shared_ptr<UIText> center_message_ui = weak_center_message_ui.lock();
+            if(!center_message_ui)
+                return;
+
             center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);    //表示する
             center_message_ui->SetText(std::format("Round {}", turn_count_));
-            center_message_hide_timer = 0.0f;
+            center_message_hide_timer_ = 0.0f;
         };
         auto battle_start_event_handle = event_bus->subscribe<BattleStartEvent>(battle_start_event, 0);
         event_handles_.push_back(std::move(battle_start_event_handle));
@@ -1685,12 +1976,24 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // クリックをしたときの処理登録
         //---------------------------------------------------------------------------------
-        auto help_click_func = [event_bus]() { event_bus->publish(HelpClickEvent()); };
+        std::weak_ptr<TsukinoEventBus::EventBus> weak_event_bus  = event_bus;
+        auto                                     help_click_func = [weak_event_bus]() {
+            auto event_bus = weak_event_bus.lock();
+            if(!event_bus)
+                return;
+
+            event_bus->publish(HelpClickEvent());
+        };
         help_button->SetClickFunc(help_click_func);
         //---------------------------------------------------------------------------------
         //購入ボタンオープンでヘルプボタンを非表示にする処理登録
         //---------------------------------------------------------------------------------
-        auto help_button_hide_proc = [help_button](const PiecePurchaseOpenClickEvent& e) {
+        std::weak_ptr<UIButton> weak_help_button      = help_button;
+        auto                    help_button_hide_proc = [weak_help_button](const PiecePurchaseOpenClickEvent& e) {
+            std::shared_ptr<UIButton> help_button = weak_help_button.lock();
+            if(!help_button)
+                return;
+
             if(e.is_open_) {
                 help_button->SetStatus(Object::StatusBit::NoDraw, true);
             }
@@ -1706,7 +2009,7 @@ bool InGameScene::Init()
     //---------------------------------------------------------------------------------
     {
         auto help_manager = Scene::Object::Create<Object>();
-        help_manager->AddComponent<HelpManager>(event_bus);    //
+        help_manager->AddComponent<HelpManager>(event_bus);    //ヘルプマネージャーコンポーネントを追加
     }
 
     //---------------------------------------------------------------------------------
@@ -1755,7 +2058,12 @@ bool InGameScene::Init()
         //---------------------------------------------------------------------------------
         // 更新処理登録
         //---------------------------------------------------------------------------------
-        auto damage_filter_fade_proc = [damage_filter]() {
+        std::weak_ptr<UIImage> weak_damage_filter      = damage_filter;
+        auto                   damage_filter_fade_proc = [weak_damage_filter]() {
+            auto damage_filter = weak_damage_filter.lock();
+            if(!damage_filter)
+                return;
+
             if(alpha > 0) {
                 constexpr int FADE_SPEED  = 5;
                 alpha                    -= FADE_SPEED;            //徐々に透明にする
@@ -1891,23 +2199,23 @@ void InGameScene::Draw()
     //---------------------------------------------------------------------------------
     //バトルフェーズはバトル用の描画処理を行う
     //---------------------------------------------------------------------------------
-    if(game_state_ == GameState::Battle) {
-        //ボードを描画
-        //for(int f = 0; f < 8; f++) {
-        //    for(int r = 0; r < 8; r++) {
-        //        int color = GetColor(0, 0, 0);
-        //        //ファイルとランクの合計値が偶数なら白に
-        //        if(((f + r) % 2) == 0) {
-        //            color = GetColor(255, 255, 255);
-        //        }
-        //        float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
-        //        float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
-        //        float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
-        //        float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
-        //        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
-        //    }
-        //}
-    }
+    //if(game_state_ == GameState::Battle) {
+    //    //ボードを描画
+    //    //for(int f = 0; f < 8; f++) {
+    //    //    for(int r = 0; r < 8; r++) {
+    //    //        int color = GetColor(0, 0, 0);
+    //    //        //ファイルとランクの合計値が偶数なら白に
+    //    //        if(((f + r) % 2) == 0) {
+    //    //            color = GetColor(255, 255, 255);
+    //    //        }
+    //    //        float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
+    //    //        float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
+    //    //        float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
+    //    //        float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
+    //    //        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
+    //    //    }
+    //    //}
+    //}
 }
 
 //---------------------------------------------------------------------------------
@@ -1915,6 +2223,14 @@ void InGameScene::Draw()
 //---------------------------------------------------------------------------------
 void InGameScene::Exit()
 {
+    //---------------------------------------------------------------------------------
+    // イベントハンドルの破棄
+    //---------------------------------------------------------------------------------
+    event_handles_.clear();
+    //---------------------------------------------------------------------------------
+    // テクスチャをクリア
+    //---------------------------------------------------------------------------------
+    purchase_textures_.fill(nullptr);
     __super::Exit();
 }
 

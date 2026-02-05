@@ -25,11 +25,16 @@ JapaneseChessLanceSkill::JapaneseChessLanceSkill()
 void JapaneseChessLanceSkill::Init()
 {
     __super::Init();
-    auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    auto                 owner      = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    std::weak_ptr<Piece> weak_owner = owner;
     //---------------------------------------------------------
     // 更新処理
     //---------------------------------------------------------
-    auto update_proc = [owner, this]() {
+    auto update_proc = [weak_owner, this]() {
+        std::shared_ptr<Piece> owner = weak_owner.lock();
+        if(!owner)
+            return;
+
         //タイマーが0.0fより大きければ
         if(effect_timer_ > 0.0f) {
             //タイマーを進める

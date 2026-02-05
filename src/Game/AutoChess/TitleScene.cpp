@@ -56,7 +56,11 @@ bool TitleScene::Init()
         //---------------------------------------------------------------------------------
         // 駒に回転させたい
         //---------------------------------------------------------------------------------
-        auto update_proc = [piece]() { piece->AddRotationAxisXYZ(float3(0.0f, 0.2f, 0.0f)); };
+        std::weak_ptr<Object> weak_piece  = piece;
+        auto                  update_proc = [weak_piece]() {
+            std::shared_ptr<Object> piece = weak_piece.lock();
+            piece->AddRotationAxisXYZ(float3(0.0f, 0.2f, 0.0f));
+        };
         piece->SetProc("update_proc", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
     }
     //---------------------------------------------------------------------------------
@@ -69,7 +73,12 @@ bool TitleScene::Init()
         click_text->SetColor(GetColor(255, 255, 255));
         click_text->SetFontSize(60);
         //透明度がゆっくりと変化
-        auto update_proc = [click_text, this]() {
+        std::weak_ptr<UIText> weak_click_text = click_text;
+        auto                  update_proc     = [weak_click_text, this]() {
+            std::shared_ptr<UIText> click_text = weak_click_text.lock();
+            if(!click_text)
+                return;
+
             click_text_rad_         += 0.03f;                                  //ラジアン値を増加
             float t                  = sinf(click_text_rad_) * 0.5f + 0.5f;    //0.0f~1.0fの範囲で指定
             float click_text_alpha_  = (256 - 0) * t;                          //線形補間の計算
