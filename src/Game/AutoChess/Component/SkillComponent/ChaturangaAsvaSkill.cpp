@@ -27,11 +27,18 @@ ChaturangaAsvaSkill::ChaturangaAsvaSkill()
 void ChaturangaAsvaSkill::Init()
 {
     __super::Init();
-    auto owner = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    auto                 owner      = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    std::weak_ptr<Piece> owner_weak = owner;
     //---------------------------------------------------------
     // 更新処理の登録
     //---------------------------------------------------------
-    auto update_proc = [this, owner]() {
+    auto update_proc = [this, owner_weak]() {
+        // オーナーピースを取得
+        auto owner = owner_weak.lock();
+        // オーナーがいなければ処理を抜ける
+        if(!owner)
+            return;
+
         //---------------------------------------------------------
         // 追跡中ならば、目的地に到達したことを感知して移動ストラテジを戻す
         //---------------------------------------------------------

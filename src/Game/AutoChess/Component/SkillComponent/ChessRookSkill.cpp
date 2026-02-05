@@ -26,8 +26,12 @@ ChessRookSkill::ChessRookSkill()
 void ChessRookSkill::Init()
 {
     __super::Init();
-    auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
-    auto update_proc = [this, owner]() {
+    auto                 owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    std::weak_ptr<Piece> weak_owner  = owner;
+    auto                 update_proc = [this, weak_owner]() {
+        auto owner = weak_owner.lock();
+        if(!owner)
+            return;
         //---------------------------------------------------------
         // 追跡中ならば、目的地に到達したことを感知して移動を戻す
         //---------------------------------------------------------

@@ -42,8 +42,13 @@ bool Piece::Init()
         image_comp->SetPriority("UIDraw", ProcTiming::UI, ProcPriority::HIGH);
 
         //画像を小さくする
-        std::weak_ptr<Piece> weak_piece  = std::dynamic_pointer_cast<Piece>(shared_from_this());    // 自分の弱参照を取得
-        auto                 update_proc = [level_image, this, weak_piece]() {
+        std::weak_ptr<UIImage> weak_level_image = level_image;
+        std::weak_ptr<Piece>   weak_piece       = std::dynamic_pointer_cast<Piece>(shared_from_this());    // 自分の弱参照を取得
+        auto                   update_proc      = [weak_level_image, this, weak_piece]() {
+            auto level_image = weak_level_image.lock();
+            if(!level_image)
+                return;
+
             //---------------------------------------------------------------------------------
             // ピースが生きているかを確認
             //---------------------------------------------------------------------------------

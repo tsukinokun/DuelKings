@@ -20,11 +20,9 @@ void DrawBezierCurve3D(const std::vector<float3>& control_points, int num_segmen
         bezier_points.push_back(Bezier3D(control_points, t));
     }
 
-    DxLib::SetUseLighting(FALSE);
     for(int i = 0; i < num_segments; ++i) {
         DrawLine3D(cast(bezier_points[i]), cast(bezier_points[i + 1]), color);
     }
-    DxLib::SetUseLighting(TRUE);
 }
 
 //---------------------------------------------------------------------------------
@@ -66,7 +64,6 @@ void drawArrow(const float3& position, const float3& direction, int color, float
     float3 p3 = arrow_tail + dir_x - dir_y;    // 右下    |      |
     float3 p4 = arrow_tail - dir_x - dir_y;    // 左下  p4+------+p3
 
-    DxLib::SetLightEnable(FALSE);
     // 矢印の先端部分を描画
     DxLib::DrawLine3D(cast(p1), cast(p2), color);    // 上辺
     DxLib::DrawLine3D(cast(p2), cast(p3), color);    // 右辺
@@ -77,7 +74,6 @@ void drawArrow(const float3& position, const float3& direction, int color, float
     DxLib::DrawLine3D(cast(p2), cast(e), color);    // 右上から矢印の先端へ
     DxLib::DrawLine3D(cast(p3), cast(e), color);    // 右下から矢印の先端へ
     DxLib::DrawLine3D(cast(p4), cast(e), color);    // 左下から矢印の先端へ
-    DxLib::SetLightEnable(TRUE);
 }
 
 //--------------------------------------------------------------------------------

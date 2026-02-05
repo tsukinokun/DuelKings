@@ -207,4 +207,7 @@ private:
     std::vector<TsukinoEventBus::SubscriptionHandle>    event_handles_;                          //イベントハンドル群
     TutorialStep                                        tutorial_step_   = TutorialStep::PurchaseOpen;
     bool                                                tutorial_active_ = true;
+    std::array<std::shared_ptr<Texture>, 5>             purchase_textures_;                   // 購入ボタン用テクスチャ
+    float                                               center_message_hide_timer_ = 0.0f;    //非表示タイマー
+    float                                               lose_damage_hide_timer_    = 0.0f;
 };

@@ -21,8 +21,13 @@ JapaneseChessPawnSkill::JapaneseChessPawnSkill()
 void JapaneseChessPawnSkill::Init()
 {
     __super::Init();
-    auto owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
-    auto update_proc = [owner, this]() {
+    auto                 owner       = dynamic_pointer_cast<Piece>(GetOwnerPtr());
+    std::weak_ptr<Piece> owner_weak  = owner;
+    auto                 update_proc = [owner_weak, this]() {
+        auto owner = owner_weak.lock();
+        if(!owner)
+            return;
+
         //タイマーが0.0fより大きければ
         if(effect_timer_ > 0.0f) {
             //タイマーを進める
