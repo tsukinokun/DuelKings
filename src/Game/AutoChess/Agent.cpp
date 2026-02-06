@@ -351,9 +351,9 @@ std::vector<Synergy> Agent::GetActiveSynergy() const
 //---------------------------------------------------------------------------
 //! @brief  勝敗結果を更新する関数
 //---------------------------------------------------------------------------
-void Agent::UpdateResult(bool isWin)
+void Agent::UpdateResult(Result result)
 {
-    agent_info_.UpdateResult(isWin);
+    agent_info_.UpdateResult(result);
 }
 
 //-----------------------------------------------------------

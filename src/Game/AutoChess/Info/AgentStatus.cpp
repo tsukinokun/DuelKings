@@ -50,19 +50,25 @@ int AgentStatus::GetHP() const
 //---------------------------------------------------------------------------
 //!  勝敗結果を更新する関数
 //---------------------------------------------------------------------------
-void AgentStatus::UpdateResult(bool isWin)
+void AgentStatus::UpdateResult(Result result)
 {
     // 連勝・連敗数を更新
-    if(isWin) {
+    switch(result) {
+    case Result::WIN:
         win_streak_++;
         lose_streak_ = 0;
-    }
-    else {
+        break;
+    case Result::LOSE:
         lose_streak_++;
         win_streak_ = 0;
+        break;
+    case Result::DRAW:
+        win_streak_  = 0;
+        lose_streak_ = 0;
+        break;
     }
     // 結果を更新
-    last_result_ = isWin;
+    last_result_ = result;
 }
 
 //---------------------------------------------------------------------------
@@ -84,7 +90,7 @@ int AgentStatus::GetLoseStreak() const
 //---------------------------------------------------------------------------
 //! 前回が勝ちかどうかを取得する関数
 //---------------------------------------------------------------------------
-bool AgentStatus::WasLastResultWin() const
+Result AgentStatus::WasLastResultWin() const
 {
     return last_result_;
 }

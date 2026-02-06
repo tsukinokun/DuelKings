@@ -48,6 +48,7 @@
 #include <Game/AutoChess/Events/GoldClickEvent.h>
 #include <Game/AutoChess/Events/LoseEvent.h>
 #include <Game/AutoChess/Events/WinEvent.h>
+#include <Game/AutoChess/Events/DrawEvent.h>
 #include <Game/AutoChess/Events/HelpClickEvent.h>
 #include <Game/AutoChess/Events/BattleStartEvent.h>
 #include <System/Component/ComponentFilterFade.h>
@@ -1949,6 +1950,20 @@ bool InGameScene::Init()
         auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 0);
         event_handles_.push_back(std::move(win_event_handle));
         //---------------------------------------------------------------------------------
+        // 引き分け時のイベントを登録
+        //---------------------------------------------------------------------------------
+        auto draw_event = [weak_center_message_ui, this](const DrawEvent& e) {
+            std::shared_ptr<UIText> center_message_ui = weak_center_message_ui.lock();
+            if(!center_message_ui)
+                return;
+            center_message_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            center_message_ui->SetText("引き分け");
+            center_message_hide_timer_ = 0.0f;
+        };
+        auto draw_event_handle = event_bus->subscribe<DrawEvent>(draw_event, 0);
+        event_handles_.push_back(std::move(draw_event_handle));
+
+        //---------------------------------------------------------------------------------
         // バトル開始イベントを登録
         //---------------------------------------------------------------------------------
         auto battle_start_event = [weak_center_message_ui, this](const BattleStartEvent& e) {
@@ -2148,7 +2163,31 @@ void InGameScene::Update()
             TransitionTo(GameState::Setup);
             auto sound_manager = SoundManager::instance();
             sound_manager->StopBGM("battle");    //BGMを停止する
-            DestroyPiecesAfterBattlePhase();     //バトルフェーズ用に生成した駒を破棄する
+            //---------------------------------------------------------------------------------
+            // このタイミングでバトル終了していなかったら、強制的に引き分け処理を行う
+            //---------------------------------------------------------------------------------
+            if(!has_battle_ended_) {
+                //----------------------------------------------------------------------
+                // 引き分け時の処理
+                //----------------------------------------------------------------------
+                //プレイヤー
+                if(auto player = Scene::Object::Get<Player>()) {
+                    player->UpdateResult(Result::DRAW);
+                    int goldain = CalculateRoundGold(player, Result::DRAW);
+                    player->AddGold(goldain);    //ゴールドを増やす
+                }
+                //NPC
+                if(auto battle_npc = battle_agent_.lock()) {
+                    battle_npc->UpdateResult(Result::DRAW);
+                    int goldain = CalculateRoundGold(battle_npc, Result::DRAW);
+                    battle_npc->AddGold(goldain);    //ゴールドを増やす
+                }
+
+                auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                event_bus->publish(DrawEvent());    //引き分けイベントを発行
+            }
+
+            DestroyPiecesAfterBattlePhase();    //バトルフェーズ用に生成した駒を破棄する
             //---------------------------------------------------------------------------------
             //  各エージェントに処理
             //---------------------------------------------------------------------------------
@@ -2597,6 +2636,7 @@ void InGameScene::UpdateBattlePhase()
         if(auto battle_npc = battle_agent_.lock()) {
             npc_alive_piece_count = GetAlivePieceCountForAgent(battle_npc);
         }
+
         //どちらかの駒数が0になったらバトル終了
         if(player_alive_piece_count == 0 || npc_alive_piece_count == 0) {
             //----------------------------------------------------------------------
@@ -2606,105 +2646,136 @@ void InGameScene::UpdateBattlePhase()
                 Scene::Object::Release(skill_obj);
             }
 
-            has_battle_ended_      = true;                            //バトル終了フラグを立てる
-            bool is_player_victory = (npc_alive_piece_count == 0);    //プレイヤーの勝利判定
-            //ダメージ処理
-            if(auto battle_npc = battle_agent_.lock()) {
-                if(is_player_victory) {
-                    //----------------------------------------------------------------------
-                    // 勝利SEを再生
-                    //----------------------------------------------------------------------
-                    if(!sound_manager->IsPlayingSE("win")) {
-                        sound_manager->PlaySE("win");
-                    }
-
-                    //----------------------------------------------------------------------
-                    //NPCの駒が全滅したら、NPCがダメージを受ける
-                    //----------------------------------------------------------------------
-                    if(auto battle_npc = battle_agent_.lock()) {
-                        int damage = player_alive_piece_count * 2;
-                        battle_npc->ApplyDamage(damage);
-                        //HPの数値UIを更新
-                        if(auto hp_ui = Scene::Object::Get<UIText>(std::string(battle_npc->GetName()) + "HPText")) {
-                            int hp = battle_npc->GetHP();
-                            if(hp > 0) {
-                                //HPが0以下でなければ表示
-                                hp_ui->SetText(std::to_string(hp));
-                            }
-                            else {
-                                //0以下なら、敗北と表示
-                                hp_ui->SetFontName("游明朝");
-                                hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
-                                hp_ui->SetText("敗北");
-                                //NPCをシーンから削除
-                                Scene::Object::Release(battle_npc);
-                            }
-                            // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
-                            float hp_ratio         = static_cast<float>(battle_npc->GetHP()) / static_cast<float>(MAX_AGENT_HP);
-                            int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
-                            hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
-                        }
-                    }
-                    auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
-                    event_bus->publish(WinEvent());
-                }
-                else if(player_alive_piece_count == 0) {
-                    //----------------------------------------------------------------------
-                    // 敗北SEを再生
-                    //----------------------------------------------------------------------
-                    if(!sound_manager->IsPlayingSE("lose")) {
-                        sound_manager->PlaySE("lose");
-                    }
-
-                    //----------------------------------------------------------------------
-                    //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
-                    //----------------------------------------------------------------------
-                    int damage = npc_alive_piece_count * 2;
-                    if(auto player = Scene::Object::Get<Player>()) {
-                        player->ApplyDamage(damage);
-                        //HPの数値UIを更新
-                        if(auto hp_ui = Scene::Object::Get<UIText>(std::string(player->GetName()) + "HPText")) {
-                            int hp = player->GetHP();
-                            if(hp > 0) {
-                                //HPが0以下でなければ表示
-                                hp_ui->SetText(std::to_string(hp));
-                            }
-                            else {
-                                //0以下なら、敗北と表示
-                                hp_ui->SetFontName("游明朝");
-                                hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
-                                hp_ui->SetText("敗北");
-                            }
-                            // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
-                            float hp_ratio         = static_cast<float>(player->GetHP()) / static_cast<float>(MAX_AGENT_HP);
-                            int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
-                            hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
-                        }
-                    }
-                    auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
-                    event_bus->publish(LoseEvent(damage));
-                }
+            has_battle_ended_ = true;    //バトル終了フラグを立てる
+            if(player_alive_piece_count == 0 && npc_alive_piece_count == 0) {
                 //----------------------------------------------------------------------
-                // 内部的な勝ち負けを更新してゴールドを付与
+                // 引き分け時の処理
                 //----------------------------------------------------------------------
                 //プレイヤー
                 if(auto player = Scene::Object::Get<Player>()) {
-                    player->UpdateResult(is_player_victory);
-                    int goldain = CalculateRoundGold(player, is_player_victory);
-                    player->AddGold(goldain);    //ゴールドを5増やす
+                    player->UpdateResult(Result::DRAW);
+                    int goldain = CalculateRoundGold(player, Result::DRAW);
+                    player->AddGold(goldain);    //ゴールドを増やす
                 }
                 //NPC
                 if(auto battle_npc = battle_agent_.lock()) {
-                    battle_npc->UpdateResult(!is_player_victory);
-                    int goldain = CalculateRoundGold(battle_npc, !is_player_victory);
-                    battle_npc->AddGold(goldain);    //ゴールドを5増やす
+                    battle_npc->UpdateResult(Result::DRAW);
+                    int goldain = CalculateRoundGold(battle_npc, Result::DRAW);
+                    battle_npc->AddGold(goldain);    //ゴールドを増やす
                 }
-                //----------------------------------------------------------------------
-                // 移動ストラテジを勝利へ
-                //----------------------------------------------------------------------
-                for(auto& piece : Scene::Object::GetArray<Piece>()) {
-                    if(auto piece_mover = piece->GetComponent<PieceMover>()) {
-                        piece_mover->SetMoveStrategy(std::make_unique<MoveWinStrategy>());
+                auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                event_bus->publish(DrawEvent());
+            }
+            else {
+                bool is_player_victory = (npc_alive_piece_count == 0);    //プレイヤーの勝利判定
+                //ダメージ処理
+                if(auto battle_npc = battle_agent_.lock()) {
+                    if(is_player_victory) {
+                        //----------------------------------------------------------------------
+                        // 勝利SEを再生
+                        //----------------------------------------------------------------------
+                        if(!sound_manager->IsPlayingSE("win")) {
+                            sound_manager->PlaySE("win");
+                        }
+
+                        //----------------------------------------------------------------------
+                        //NPCの駒が全滅したら、NPCがダメージを受ける
+                        //----------------------------------------------------------------------
+                        if(auto battle_npc = battle_agent_.lock()) {
+                            int damage = player_alive_piece_count * 2;
+                            battle_npc->ApplyDamage(damage);
+                            //HPの数値UIを更新
+                            if(auto hp_ui = Scene::Object::Get<UIText>(std::string(battle_npc->GetName()) + "HPText")) {
+                                int hp = battle_npc->GetHP();
+                                if(hp > 0) {
+                                    //HPが0以下でなければ表示
+                                    hp_ui->SetText(std::to_string(hp));
+                                }
+                                else {
+                                    //0以下なら、敗北と表示
+                                    hp_ui->SetFontName("游明朝");
+                                    hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                                    hp_ui->SetText("敗北");
+                                    //NPCをシーンから削除
+                                    Scene::Object::Release(battle_npc);
+                                }
+                                // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                                float hp_ratio         = static_cast<float>(battle_npc->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                                int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                                hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                            }
+                        }
+                        auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                        event_bus->publish(WinEvent());
+                    }
+                    else if(player_alive_piece_count == 0) {
+                        //----------------------------------------------------------------------
+                        // 敗北SEを再生
+                        //----------------------------------------------------------------------
+                        if(!sound_manager->IsPlayingSE("lose")) {
+                            sound_manager->PlaySE("lose");
+                        }
+
+                        //----------------------------------------------------------------------
+                        //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
+                        //----------------------------------------------------------------------
+                        int damage = npc_alive_piece_count * 2;
+                        if(auto player = Scene::Object::Get<Player>()) {
+                            player->ApplyDamage(damage);
+                            //HPの数値UIを更新
+                            if(auto hp_ui = Scene::Object::Get<UIText>(std::string(player->GetName()) + "HPText")) {
+                                int hp = player->GetHP();
+                                if(hp > 0) {
+                                    //HPが0以下でなければ表示
+                                    hp_ui->SetText(std::to_string(hp));
+                                }
+                                else {
+                                    //0以下なら、敗北と表示
+                                    hp_ui->SetFontName("游明朝");
+                                    hp_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));
+                                    hp_ui->SetText("敗北");
+                                }
+                                // HPが減るほど白(255,255,255)から赤(255,0,0)へ変化
+                                float hp_ratio         = static_cast<float>(player->GetHP()) / static_cast<float>(MAX_AGENT_HP);
+                                int   green_blue_value = static_cast<int>(255.0f * hp_ratio);
+                                hp_ui->SetColor(GetColor(255, green_blue_value, green_blue_value), GetColor(0, 0, 0));
+                            }
+                        }
+                        auto event_bus = di_container_.resolve<TsukinoEventBus::EventBus>();
+                        event_bus->publish(LoseEvent(damage));
+                    }
+                    //----------------------------------------------------------------------
+                    // 内部的な勝ち負けを更新してゴールドを付与
+                    //----------------------------------------------------------------------
+                    Result player_result = Result::DRAW;
+                    Result npc_result    = Result::DRAW;
+                    if(is_player_victory) {
+                        player_result = Result::WIN;
+                        npc_result    = Result::LOSE;
+                    }
+                    else {
+                        player_result = Result::LOSE;
+                        npc_result    = Result::WIN;
+                    }
+                    //プレイヤー
+                    if(auto player = Scene::Object::Get<Player>()) {
+                        player->UpdateResult(player_result);
+                        int goldain = CalculateRoundGold(player, player_result);
+                        player->AddGold(goldain);    //ゴールドを5増やす
+                    }
+                    //NPC
+                    if(auto battle_npc = battle_agent_.lock()) {
+                        battle_npc->UpdateResult(npc_result);
+                        int goldain = CalculateRoundGold(battle_npc, npc_result);
+                        battle_npc->AddGold(goldain);    //ゴールドを5増やす
+                    }
+                    //----------------------------------------------------------------------
+                    // 移動ストラテジを勝利へ
+                    //----------------------------------------------------------------------
+                    for(auto& piece : Scene::Object::GetArray<Piece>()) {
+                        if(auto piece_mover = piece->GetComponent<PieceMover>()) {
+                            piece_mover->SetMoveStrategy(std::make_unique<MoveWinStrategy>());
+                        }
                     }
                 }
             }
@@ -2740,13 +2811,13 @@ void InGameScene::SimulateNpcBattle()
             if(total_pieces == 0) {
                 //両者とも駒がいない場合は引き分け
                 {
-                    agent1->UpdateResult(false);    //引き分けは敗北を与える
-                    int goldain = CalculateRoundGold(agent1, false);
+                    agent1->UpdateResult(Result::DRAW);    //引き分け
+                    int goldain = CalculateRoundGold(agent1, Result::DRAW);
                     agent1->AddGold(goldain);    //ゴールドを増やす
                 }
                 {
-                    agent2->UpdateResult(false);    //引き分けは敗北を与える
-                    int goldain = CalculateRoundGold(agent2, false);
+                    agent2->UpdateResult(Result::DRAW);    //引き分け
+                    int goldain = CalculateRoundGold(agent2, Result::DRAW);
                     agent2->AddGold(goldain);    //ゴールドを増やす
                 }
                 continue;
@@ -2759,11 +2830,22 @@ void InGameScene::SimulateNpcBattle()
             std::uniform_real_distribution<float> dist(0.0f, 1.0f);
             float                                 random_value   = dist(mt);
             bool                                  agent1_victory = (random_value < agent1_win_probability);
+            Result                                agent1_result  = Result::DRAW;
+            Result                                agent2_result  = Result::DRAW;
+            if(agent1_victory) {
+                agent1_result = Result::WIN;
+                agent2_result = Result::LOSE;
+            }
+            else {
+                agent1_result = Result::LOSE;
+                agent2_result = Result::WIN;
+            }
+
             //------------------------------------------------------
             //エージェント1の勝敗更新
             //------------------------------------------------------
-            agent1->UpdateResult(agent1_victory);
-            int goldain1 = CalculateRoundGold(agent1, agent1_victory);
+            agent1->UpdateResult(agent1_result);
+            int goldain1 = CalculateRoundGold(agent1, agent1_result);
             agent1->AddGold(goldain1);    //ゴールドを増やす
 
             //------------------------------------------------------
@@ -2797,8 +2879,8 @@ void InGameScene::SimulateNpcBattle()
             //ゴースト戦でなければエージェント2の勝敗更新
             //------------------------------------------------------
             if(!match_info.is_ghost_2_) {
-                agent2->UpdateResult(!agent1_victory);
-                int goldain2 = CalculateRoundGold(agent2, !agent1_victory);
+                agent2->UpdateResult(agent2_result);
+                int goldain2 = CalculateRoundGold(agent2, agent2_result);
                 agent2->AddGold(goldain2);    //ゴールドを増やす
             }
             //------------------------------------------------------
