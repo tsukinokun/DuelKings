@@ -10,6 +10,7 @@
 #include <Game/AutoChess/Info/PieceStandInfo.h>
 #include <Game/AutoChess/Info/AgentStatus.h>
 #include <Game/AutoChess/Synergy/SynergySystem.h>
+#include <Game/AutoChess/system/Result.h>
 class PieceInfo;
 USING_PTR(Agent);
 class Agent : public Object
@@ -213,9 +214,9 @@ public:
 
     //---------------------------------------------------------------------------
     //  勝敗結果を更新する関数
-    //! @param isWin [in] 今回の勝敗結果(true:勝ち)
+    //! @param result [in] 勝敗結果
     //---------------------------------------------------------------------------
-    void UpdateResult(bool isWin);
+    void UpdateResult(Result result);
 
     //-----------------------------------------------------------
     // 勝利数を取得する関数

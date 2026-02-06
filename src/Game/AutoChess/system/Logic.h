@@ -7,6 +7,7 @@
 #include <System/Scene.h>
 #include <Game/AutoChess/system/GameConst.h>
 #include <Game/AutoChess/Info/PieceStatus.h>
+#include <Game/AutoChess/system/Result.h>
 class Agent;    // 前方宣言
 //---------------------------------------------------------------------------
 //	ラウンド終了時の所持金計算関数
@@ -15,7 +16,7 @@ class Agent;    // 前方宣言
 //! @retval ラウンド終了時の所持金増加量
 //! @note 勝利ボーナス、連勝・連敗ボーナス、利子を含む
 //---------------------------------------------------------------------------
-int CalculateRoundGold(const std::shared_ptr<Agent>& agent, bool isWin);
+int CalculateRoundGold(const std::shared_ptr<Agent>& agent, Result result);
 
 //---------------------------------------------------------------------------
 // マナ回復量を計算する

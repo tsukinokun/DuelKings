@@ -7,6 +7,7 @@
 #include <System/Scene.h>
 #include "PieceInfo.h"
 #include <Game/AutoChess/system/GameConst.h>
+#include <Game/AutoChess/system/Result.h>
 // 前方宣言
 class AgentStatus
 {
@@ -45,9 +46,9 @@ public:
 
     //---------------------------------------------------------------------------
     //  勝敗結果を更新する関数
-    //! @param isWin [in] 今回の勝敗結果(true:勝ち)
+    //! @param result [in] 勝敗結果
     //---------------------------------------------------------------------------
-    void UpdateResult(bool isWin);
+    void UpdateResult(Result result);
 
     //---------------------------------------------------------------------------
     //  連勝数を取得する関数
@@ -63,9 +64,9 @@ public:
 
     //---------------------------------------------------------------------------
     // 前回が勝ちかどうかを取得する関数
-    //! @retval true:勝ち、false:負け
+    //! @retval 前回の勝ち負け結果
     //---------------------------------------------------------------------------
-    bool WasLastResultWin() const;
+    Result WasLastResultWin() const;
 
     //---------------------------------------------------------------------------
     //  体力を減らす関数
@@ -76,9 +77,9 @@ public:
     //@}
 
 private:
-    int  win_streak_  = 0;               // 連勝数
-    int  lose_streak_ = 0;               // 連敗数
-    bool last_result_ = false;           // 前回の勝敗結果(true:勝ち、false:負け)
-    int  gold_        = 0;               // エージェントの所持金
-    int  hp_          = MAX_AGENT_HP;    //エージェントの体力
+    int    win_streak_  = 0;               // 連勝数
+    int    lose_streak_ = 0;               // 連敗数
+    Result last_result_ = Result::DRAW;    // 前回の勝敗結果
+    int    gold_        = 0;               // エージェントの所持金
+    int    hp_          = MAX_AGENT_HP;    //エージェントの体力
 };

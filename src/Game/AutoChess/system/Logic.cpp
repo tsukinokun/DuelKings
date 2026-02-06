@@ -8,21 +8,27 @@
 //---------------------------------------------------------------------------
 //! @brief	ラウンド終了時の所持金計算関数
 //---------------------------------------------------------------------------
-int CalculateRoundGold(const std::shared_ptr<Agent>& agent, bool isWin)
+int CalculateRoundGold(const std::shared_ptr<Agent>& agent, Result result)
 {
     int gold_gain = 5;    // 基本収入
 
-    if(isWin)
+    switch(result) {
+    case Result::WIN:
         gold_gain += 1;    // 勝利ボーナス
-
-    // 連勝ボーナス
-    if(agent->GetWinStreak() >= 3) {
-        gold_gain += std::min(3, agent->GetWinStreak() / 2);
-    }
-
-    // 連敗ボーナス
-    if(agent->GetLoseStreak() >= 3) {
-        gold_gain += std::min(3, agent->GetLoseStreak() / 2);
+        // 連勝ボーナス
+        if(agent->GetWinStreak() >= 3) {
+            gold_gain += std::min(3, agent->GetWinStreak() / 2);
+        }
+        break;
+    case Result::LOSE:
+        // 連敗ボーナス
+        if(agent->GetLoseStreak() >= 3) {
+            gold_gain += std::min(3, agent->GetLoseStreak() / 2);
+        }
+        break;
+    case Result::DRAW:
+        // 引き分けの場合は特にボーナスなし
+        break;
     }
 
     // 利子
