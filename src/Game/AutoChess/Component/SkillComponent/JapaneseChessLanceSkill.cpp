@@ -151,7 +151,7 @@ void JapaneseChessLanceSkill::Activate()
             // 移動ストラテジーを突進ストラテジーへ変更
             // ベクトルの倍率
             float magnitude = 1.5f;
-            piece_mover->SetMoveStrategy(std::make_unique<MoveChargeStrategy>(magnitude));
+            piece_mover->SetMoveStrategy(std::make_unique<MoveChargeStrategy>(charge_vector * magnitude));
         }
     }
 }
