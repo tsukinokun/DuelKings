@@ -2098,6 +2098,156 @@ bool InGameScene::Init()
     }
 
     //---------------------------------------------------------------------------------
+    // 獲得ゴールドテキストUIの作成
+    //---------------------------------------------------------------------------------
+    {
+        auto gold_gain_ui = Scene::Object::Create<UIText>();
+        gold_gain_ui->SetName("GoldGainUI");
+        gold_gain_ui->SetStatus(Object::StatusBit::NoDraw, true);    //初めは非表示にしておく
+        gold_gain_ui->SetTranslate(float3(WINDOW_W / 2, 435.0f, 0.0f));
+        gold_gain_ui->SetFontSize(22);                                         //サイズを設定
+        gold_gain_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
+        gold_gain_ui->SetFontName("游明朝");                                   //フォントを設定
+        //---------------------------------------------------------------------------------
+        // 更新処理を登録
+        //---------------------------------------------------------------------------------
+        std::weak_ptr<UIText> weak_gold_gain_ui        = gold_gain_ui;
+        auto                  gold_gain_ui_update_proc = [weak_gold_gain_ui, this]() {
+            auto gold_gain_ui = weak_gold_gain_ui.lock();
+            if(!gold_gain_ui)
+                return;
+
+            //非表示状態でなければ
+            if(!gold_gain_ui->GetStatus(Object::StatusBit::NoDraw)) {
+                gold_gain_hide_timer_            += GetDeltaTime();
+                constexpr float DISPLAY_DURATION  = 3.0f;
+                if(gold_gain_hide_timer_ >= DISPLAY_DURATION) {
+                    gold_gain_ui->SetStatus(Object::StatusBit::NoDraw, true);
+                    gold_gain_hide_timer_ = 0.0f;
+                }
+            }
+        };
+        gold_gain_ui->SetProc("gold_gain_ui_update_proc", gold_gain_ui_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+
+        //---------------------------------------------------------------------------------
+        // 勝利時イベント登録
+        //---------------------------------------------------------------------------------
+
+        auto win_event = [weak_gold_gain_ui, this](const WinEvent& e) {
+            auto gold_gain_ui = weak_gold_gain_ui.lock();
+            if(!gold_gain_ui)
+                return;
+
+            gold_gain_hide_timer_ = 0.0f;
+            gold_gain_ui->SetStatus(Object::StatusBit::NoDraw, false);
+
+            auto player = Scene::Object::Get<Player>();
+            if(!player)
+                return;
+
+            //---------------------------------------------------------------------------------
+            // それぞれの収益量を計算して文字列に足していく
+            //---------------------------------------------------------------------------------
+            int basic_income = 5;    //基礎収益
+            //文字列を設定
+            std::string text = std::format("+基礎収益{}G ", basic_income);
+
+            int win_bonus  = 1;    //勝利ボーナス
+            text          += std::format("+勝利ボーナス{}G ", win_bonus);
+
+            int win_streak       = player->GetWinStreak();
+            int win_streak_bonus = 0;    //連勝ボーナス
+            if(win_streak >= 3) {
+                win_streak_bonus = win_streak;
+            }
+
+            //収益があればメッセージに入れる
+            if(win_streak_bonus > 0) {
+                text += std::format("+連勝ボーナス{}G ", win_streak_bonus);
+            }
+
+            //収益があればメッセージに入れる
+            int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
+            if(interest_income > 0) {
+                text += std::format("+利子州益{}G ", interest_income);
+            }
+
+            gold_gain_ui->SetText(text);
+        };
+        auto win_event_handle = event_bus->subscribe<WinEvent>(win_event, 1);
+        event_handles_.push_back(std::move(win_event_handle));
+
+        //---------------------------------------------------------------------------------
+        // 引き分け時イベント登録
+        //---------------------------------------------------------------------------------
+        auto draw_event = [weak_gold_gain_ui, this](const DrawEvent& e) {
+            auto gold_gain_ui = weak_gold_gain_ui.lock();
+            if(!gold_gain_ui)
+                return;
+            gold_gain_hide_timer_ = 0.0f;
+            gold_gain_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            auto player = Scene::Object::Get<Player>();
+            if(!player)
+                return;
+
+            //---------------------------------------------------------------------------------
+            // それぞれの収益量を計算して文字列に足していく
+            //---------------------------------------------------------------------------------
+            int basic_income = 5;    //基礎収益
+            //文字列を設定
+            std::string text = std::format("+基礎収益{}G ", basic_income);
+
+            int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
+            //収益があればメッセージに入れる
+            if(interest_income > 0) {
+                text += std::format("+利子州益{}G ", interest_income);
+            }
+            gold_gain_ui->SetText(text);
+        };
+        auto draw_event_handle = event_bus->subscribe<DrawEvent>(draw_event, 1);
+        event_handles_.push_back(std::move(draw_event_handle));
+
+        //---------------------------------------------------------------------------------
+        // 敗北時イベント登録
+        //---------------------------------------------------------------------------------
+        auto lose_event = [weak_gold_gain_ui, this](const LoseEvent& e) {
+            auto gold_gain_ui = weak_gold_gain_ui.lock();
+            if(!gold_gain_ui)
+                return;
+            gold_gain_hide_timer_ = 0.0f;
+            gold_gain_ui->SetStatus(Object::StatusBit::NoDraw, false);
+            auto player = Scene::Object::Get<Player>();
+            if(!player)
+                return;
+            //---------------------------------------------------------------------------------
+            // それぞれの収益量を計算して文字列に足していく
+            //---------------------------------------------------------------------------------
+            int basic_income = 5;    //基礎収益
+            //文字列を設定
+            std::string text = std::format("+基礎収益{}G ", basic_income);
+
+            int loss_streak       = player->GetLoseStreak();
+            int loss_streak_bonus = 0;    //連敗ボーナス
+            if(loss_streak >= 3) {
+                loss_streak_bonus = loss_streak;
+            }
+            //収益があればメッセージに入れる
+            if(loss_streak_bonus > 0) {
+                text += std::format("+連敗ボーナス{}G ", loss_streak_bonus);
+            }
+
+            int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
+            //収益があればメッセージに入れる
+            if(interest_income > 0) {
+                text += std::format("+利子州益{}G ", interest_income);
+            }
+            gold_gain_ui->SetText(text);
+        };
+        auto lose_event_handle = event_bus->subscribe<LoseEvent>(lose_event, 1);
+        event_handles_.push_back(std::move(lose_event_handle));
+    }
+
+    //---------------------------------------------------------------------------------
     // チュートリアル開始処理
     //---------------------------------------------------------------------------------
     tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
