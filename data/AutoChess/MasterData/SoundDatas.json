@@ -32,6 +32,18 @@
       {
         "key": "paper",
         "value": "data/AutoChess/Sound/paper.mp3"
+      },
+      {
+        "key": "lock",
+        "value": "data/AutoChess/Sound/lock.mp3"
+      },
+      {
+        "key": "reroll",
+        "value": "data/AutoChess/Sound/reroll.mp3"
+      },
+      {
+        "key": "no_money",
+        "value": "data/AutoChess/Sound/no_money.mp3"
       }
     ],
     "bgm": [
