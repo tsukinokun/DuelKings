@@ -10,6 +10,8 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/Events/HelpClickEvent.h>
 #include <Game/AutoChess/Events/HelpCloseEvent.h>
+#include <Game/AutoChess/Events/FlipHelpPageEvent.h>
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------
 //! 初期化
 //---------------------------------------------------------
@@ -171,6 +173,12 @@ void HelpManager::Init()
             }
             //ヘルプ番号を進める
             help_screen->SetImage(ImageBuffer::GetImageHandle("help" + std::to_string(help_num_)));
+            //--------------------------------------------------------------------------------
+            // イベント発行
+            //--------------------------------------------------------------------------------
+            if(auto event_bus = event_bus_.lock()) {
+                event_bus->publish(FlipHelpPageEvent());    //ヘルプページめくりイベントを発行
+            }
         };
         right_button->SetClickFunc(right_button_click_proc);    //クリック関数を設定
         //--------------------------------------------------------------------------------
@@ -258,6 +266,12 @@ void HelpManager::Init()
             }
             //ヘルプ番号を戻す
             help_screen->SetImage(ImageBuffer::GetImageHandle("help" + std::to_string(help_num_)));
+            //--------------------------------------------------------------------------------
+            // イベント発行
+            //--------------------------------------------------------------------------------
+            if(auto event_bus = event_bus_.lock()) {
+                event_bus->publish(FlipHelpPageEvent());    //ヘルプページめくりイベントを発行
+            }
         };
         left_button->SetClickFunc(left_button_click_proc);    //クリック関数を設定
         //--------------------------------------------------------------------------------
@@ -342,6 +356,10 @@ void HelpManager::Init()
         };
         close_button->SetClickFunc(close_button_click_proc);    //クリック関数を設定
     }
+    //--------------------------------------------------------------------------------
+    // 効果音の初期化処理
+    //--------------------------------------------------------------------------------
+    SoundInit();
 }
 
 //---------------------------------------------------------------------------
@@ -351,4 +369,41 @@ void HelpManager::Construct(ObjectPtr owner, const std::shared_ptr<TsukinoEventB
 {
     __super::Construct(owner);
     event_bus_ = event_bus;
+}
+
+//---------------------------------------------------------------------------
+//! @brief 効果音の初期化処理
+//---------------------------------------------------------------------------
+void HelpManager::SoundInit()
+{
+    //---------------------------------------------------------------------------
+    // ヘルプを開いた時の効果音を登録
+    //---------------------------------------------------------------------------
+    {
+        auto help_open_sound_proc = [](const HelpClickEvent& e) { SoundManager::instance()->PlaySE("paper"); };
+        if(auto event_bus = event_bus_.lock()) {
+            auto help_event_handle = event_bus->subscribe<HelpClickEvent>(help_open_sound_proc, 0);
+            event_handles_.push_back(std::move(help_event_handle));
+        }
+    }
+    //---------------------------------------------------------------------------
+    // ヘルプを閉じた時の効果音を登録
+    //---------------------------------------------------------------------------
+    {
+        auto help_close_sound_proc = [](const HelpCloseEvent& e) { SoundManager::instance()->PlaySE("push_button"); };
+        if(auto event_bus = event_bus_.lock()) {
+            auto help_event_handle = event_bus->subscribe<HelpCloseEvent>(help_close_sound_proc, 0);
+            event_handles_.push_back(std::move(help_event_handle));
+        }
+    }
+    //---------------------------------------------------------------------------
+    // ヘルプをめくった時の効果音を登録
+    //---------------------------------------------------------------------------
+    {
+        auto help_flip_sound_proc = [](const FlipHelpPageEvent& e) { SoundManager::instance()->PlaySE("paper"); };
+        if(auto event_bus = event_bus_.lock()) {
+            auto help_event_handle = event_bus->subscribe<FlipHelpPageEvent>(help_flip_sound_proc, 0);
+            event_handles_.push_back(std::move(help_event_handle));
+        }
+    }
 }

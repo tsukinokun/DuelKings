@@ -168,6 +168,8 @@ bool InGameScene::Init()
                 if(player->GetGold() >= 4) {
                     player->AddExp(4);    //経験値を4増やす
                     player->SpendGold(4);
+                    // 効果音を鳴らす
+                    SoundManager::instance()->PlaySE("level_up");
                 }
             }
         };
