@@ -22,6 +22,11 @@ public:
     //---------------------------------------------------------------------------
     void Construct(ObjectPtr owner, const std::shared_ptr<TsukinoEventBus::EventBus> event_bus);
 
+    //---------------------------------------------------------------------------
+    // 効果音の初期化処理
+    //---------------------------------------------------------------------------
+    void SoundInit();
+
 private:
     std::weak_ptr<TsukinoEventBus::EventBus>         event_bus_;           //!< イベントバスのポインタ
     int                                              help_num_     = 1;    //!< ヘルプ番号

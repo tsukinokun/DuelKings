@@ -16,6 +16,22 @@
       {
         "key": "lose",
         "value": "data/AutoChess/Sound/lose.mp3"
+      },
+      {
+        "key": "gold",
+        "value": "data/AutoChess/Sound/gold.mp3"
+      },
+      {
+        "key": "push_button",
+        "value": "data/AutoChess/Sound/push_button.mp3"
+      },
+      {
+        "key": "level_up",
+        "value": "data/AutoChess/Sound/levelup.mp3"
+      },
+      {
+        "key": "paper",
+        "value": "data/AutoChess/Sound/paper.mp3"
       }
     ],
     "bgm": [

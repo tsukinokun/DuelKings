@@ -17,6 +17,7 @@
 #include <Game/AutoChess/system/ImageBuffer.h>
 #include <Game/AutoChess/system/UIHitManager.h>
 #include <Game/AutoChess/Events/SynergyClickEvent.h>
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -277,10 +278,14 @@ void Player::UpdateSynergysUI()
         auto synergy_data = synergy_system_.GetSynergyData(synergy_id);
         auto synergy_ui   = Scene::Object::Create<UISynergy>();
         synergy_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);              //右上寄せに設定
-        synergy_ui->SetTranslate(float3(800.0f + (synergy_index * 100.0f), 200.0f, 0.0f));    //位置を右上あたりに設定
+        synergy_ui->SetTranslate(float3(935.0f + (synergy_index * 100.0f), 270.0f, 0.0f));    //位置を右上あたりに設定
         synergy_ui->SetSynergyImage(ImageBuffer::GetImageHandle(synergy_data->icon_path_));
         synergy_ui->SetSynergyData(synergy_data);
-        auto synergy_click_func = [synergy_data, this]() { event_bus_->publish(SynergyClickEvent(synergy_data)); };
+        auto synergy_click_func = [synergy_data, this]() {
+            //音を鳴らす
+            SoundManager::instance()->PlaySE("push_button");
+            event_bus_->publish(SynergyClickEvent(synergy_data));
+        };
         synergy_ui->SetClickFunc(synergy_click_func);
         synergy_ui->SetScaleAxisXYZ(0.7f);
         //シナジーの数を取得

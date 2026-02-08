@@ -168,6 +168,8 @@ bool InGameScene::Init()
                 if(player->GetGold() >= 4) {
                     player->AddExp(4);    //経験値を4増やす
                     player->SpendGold(4);
+                    // 効果音を鳴らす
+                    SoundManager::instance()->PlaySE("level_up");
                 }
             }
         };
@@ -278,6 +280,8 @@ bool InGameScene::Init()
                 Scene::Object::Release(select_piece);    //選択されているオブジェクトを解放する
                 player->ReleaseSelectedPiece();          //選択中のピースをクリアする
                 player->AddGold(sell_piece_price);       //ゴールドを加算する(売却値の分)
+                //ゴールド取得音を鳴らす
+                SoundManager::instance()->PlaySE("gold");
             }
         };
         sell_button->SetClickFunc(click_func);
@@ -1049,6 +1053,8 @@ bool InGameScene::Init()
                                 piece_stand->AddPiece(std::move(purchase_piece));    //ピースを購入する
                                 shop_stand->InvalidateShopPiece(i);                  //購入したピースをショップから無効化する
                                 player->InvalidateShopPiece(i);                      //プレイヤー側のショップ情報も無効化する
+                                //購入音を再生
+                                SoundManager::instance()->PlaySE("gold");
                             }
                         }
                     }
@@ -1292,6 +1298,8 @@ bool InGameScene::Init()
             //ウィンドウ群に対して開閉処理を行う
             for(auto& weak_obj : purchase_window_objects) {
                 std::shared_ptr<Object> obj = weak_obj.lock();
+                if(!obj)
+                    continue;
 
                 if(is_purchase_open_) {
                     obj->SetStatus(Object::StatusBit::NoDraw, false);      //描画する
@@ -1304,6 +1312,8 @@ bool InGameScene::Init()
             }
             //購入クリックイベントを発行
             event_bus->publish(PiecePurchaseOpenClickEvent(is_purchase_open_));
+            // サウンドを鳴らす
+            SoundManager::instance()->PlaySE("push_button");
         };
         piece_purchase_open_button->SetClickFunc(click_func);    //クリック時の処理を設定
         //---------------------------------------------------------------------------------
@@ -1325,7 +1335,7 @@ bool InGameScene::Init()
                     //購入画面が閉じられたらシナジーアイコンを表示する
                     icon->SetStatus(Object::StatusBit::NoDraw, false);
                 }
-            };
+            }
         };
         auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(synergy_hide_proc, 0);
         event_handles_.push_back(std::move(event_handle));
@@ -1603,7 +1613,17 @@ bool InGameScene::Init()
         gold_ui->SetScaleAxisXYZ(0.2f);    //大きさ
         gold_ui->SetOverInformation(ComponentButton::OverInformation::LEFT_CLICK);
         //クリック時の処理
-        auto gold_click_func = [event_bus]() { event_bus->publish(GoldClickEvent()); };
+        std::weak_ptr<TsukinoEventBus::EventBus> weak_event_bus  = event_bus;
+        auto                                     gold_click_func = [weak_event_bus]() {
+            auto event_bus = weak_event_bus.lock();
+            if(!event_bus)
+                return;
+
+            //ボタンクリック音を鳴らす
+            SoundManager::instance()->PlaySE("push_button");
+            //Goldクリックイベントを発行
+            event_bus->publish(GoldClickEvent());
+        };
         gold_ui->SetClickFunc(gold_click_func);
         //goldテキストUI
         auto gold_text_ui = Scene::Object::Create<UIText>();
@@ -1613,8 +1633,15 @@ bool InGameScene::Init()
         gold_text_ui->SetFontSize(24);                                         //フォントサイズ設定
         gold_text_ui->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));    //文字色設定
         gold_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);
-        //gold更新処理F
-        auto gold_update_proc = [gold_text_ui, player]() {
+        //gold更新処理
+        std::weak_ptr<UIText> weak_gold_text_ui = gold_text_ui;
+        std::weak_ptr<Player> weak_player       = player;
+        auto                  gold_update_proc  = [weak_gold_text_ui, weak_player]() {
+            std::shared_ptr<UIText> gold_text_ui = weak_gold_text_ui.lock();
+            std::shared_ptr<Player> player       = weak_player.lock();
+            if(!gold_text_ui || !player)
+                return;
+
             //gold情報UIに情報を設定
             gold_text_ui->SetText(std::format("{}", player->GetGold()));
         };
@@ -1623,7 +1650,6 @@ bool InGameScene::Init()
         // 購入画面を押したときにGoldUIを非表示にする処理登録
         //---------------------------------------------------------------------------------
         std::weak_ptr<UIButton> weak_gold_ui      = gold_ui;
-        std::weak_ptr<UIText>   weak_gold_text_ui = gold_text_ui;
         auto                    gold_ui_hide_proc = [weak_gold_ui, weak_gold_text_ui](const PiecePurchaseOpenClickEvent& e) {
             std::shared_ptr<UIButton> gold_ui      = weak_gold_ui.lock();
             std::shared_ptr<UIText>   gold_text_ui = weak_gold_text_ui.lock();
@@ -1685,8 +1711,8 @@ bool InGameScene::Init()
         base_income_detail_text->SetFontName("游明朝");    //フォントを設定
         base_income_detail_text->SetFontSize(16);          //フォントサイズ設定
         base_income_detail_text->SetColor(GetColor(255, 255, 255));
-        base_income_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //
-        base_income_detail_text->SetText("+2");
+        base_income_detail_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);
+        base_income_detail_text->SetText("+5");
         gold_info_ui_objects.push_back(base_income_detail_text);
         //利子収益テキストUI
         auto interest_income_text = Scene::Object::Create<UIText>();

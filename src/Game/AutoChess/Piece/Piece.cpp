@@ -14,6 +14,7 @@
 #include <Game/AutoChess/Component/SkillComponent/ComponentActiveSkill.h>
 #include <System/Component/ComponentCollisionCapsule.h>
 #include <system/UIComponent/ComponentImage.h>
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------------------------------
 //!	初期化
 //---------------------------------------------------------------------------------
@@ -246,6 +247,8 @@ void Piece::LevelUp()
         std::string image_name = "level" + std::to_string(status_.GetLevel()) + "_star";
         level_ui->SetImage(ImageBuffer::GetImageHandle(image_name));
     }
+    //レベルアップサウンドを鳴らす
+    SoundManager::instance()->PlaySE("level_up");
 }
 
 //----------------------------------------------------------
