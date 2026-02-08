@@ -171,6 +171,10 @@ bool InGameScene::Init()
                     // 効果音を鳴らす
                     SoundManager::instance()->PlaySE("level_up");
                 }
+                else {
+                    // お金が足りない場合の効果音を鳴らす
+                    SoundManager::instance()->PlaySE("no_money");
+                }
             }
         };
         exp_button->SetClickFunc(click_func);
@@ -225,32 +229,75 @@ bool InGameScene::Init()
                 next_exp_ui->SetText(std::to_string(next_level_exp));
             };
             next_exp_ui->SetProc("set_text", set_next_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
+
+            //---------------------------------------------------------------------------------
+            // ゴールドのUI画像を重ねる
+            //---------------------------------------------------------------------------------
+            auto exp_gold_ui = Scene::Object::Create<UIImage>();
+            exp_gold_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+            exp_gold_ui->SetScaleAxisXYZ(0.15f);                        //大きさを少し小さく設定
+            exp_gold_ui->SetTranslate(float3(135.0f, 660.0f, 0.0f));    //位置を設定
+
+            //---------------------------------------------------------------------------------
+            // ゴールドのテキストUIを重ねる
+            //---------------------------------------------------------------------------------
+            auto gold_text_ui = Scene::Object::Create<UIText>();
+            gold_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);    //左寄せに設定
+            gold_text_ui->SetTranslate(float3(160.0f, 660.0f, 0.0f));                   //位置を設定
+            gold_text_ui->SetFontSize(25);                                              //フォントサイズ設定
+            gold_text_ui->SetText("4");                                                 //必要ゴールド数を表示
+            gold_text_ui->SetColor(GetColor(255, 255, 255));                            //文字色設定
+
+            //---------------------------------------------------------------------------------
+            // 増えるexp量のテキストを重ねる
+            //---------------------------------------------------------------------------------
+            auto plus_exp_text_ui = Scene::Object::Create<UIText>();
+            plus_exp_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央寄せに設定
+            plus_exp_text_ui->SetTranslate(float3(150.0f, 550.0f, 0.0f));                     //位置を設定
+            plus_exp_text_ui->SetFontSize(24);                                                //フォントサイズ設定
+            plus_exp_text_ui->SetText("+4");                                                  //増える経験値量を表示
+            plus_exp_text_ui->SetColor(GetColor(255, 255, 0));
+
             //---------------------------------------------------------------------------------
             // ピース購入画面を開くボタンを押したときに、経験値UIを非表示にする処理を登録
             //---------------------------------------------------------------------------------
-            std::weak_ptr<UIButton> weak_exp_button = exp_button;
-            std::weak_ptr<UIText>   weak_line_ui    = line_ui;
-            auto exp_button_hide_proc = [weak_exp_button, weak_curr_exp_ui, weak_line_ui, weak_next_exp_ui](const PiecePurchaseOpenClickEvent& e) {
-                auto exp_button  = weak_exp_button.lock();
-                auto curr_exp_ui = weak_curr_exp_ui.lock();
-                auto line_ui     = weak_line_ui.lock();
-                auto next_exp_ui = weak_next_exp_ui.lock();
-                if(!exp_button || !curr_exp_ui || !line_ui || !next_exp_ui)
-                    return;
+            std::weak_ptr<UIButton> weak_exp_button       = exp_button;
+            std::weak_ptr<UIText>   weak_line_ui          = line_ui;
+            std::weak_ptr<UIImage>  weak_exp_gold_ui      = exp_gold_ui;
+            std::weak_ptr<UIText>   weak_exp_gold_text_ui = gold_text_ui;
+            std::weak_ptr<UIText>   weak_plus_exp_text_ui = plus_exp_text_ui;
+            auto                    exp_button_hide_proc =
+                [weak_exp_button, weak_curr_exp_ui, weak_line_ui, weak_next_exp_ui, weak_exp_gold_ui, weak_exp_gold_text_ui, weak_plus_exp_text_ui](
+                    const PiecePurchaseOpenClickEvent& e) {
+                    auto exp_button       = weak_exp_button.lock();
+                    auto curr_exp_ui      = weak_curr_exp_ui.lock();
+                    auto line_ui          = weak_line_ui.lock();
+                    auto next_exp_ui      = weak_next_exp_ui.lock();
+                    auto exp_gold_ui      = weak_exp_gold_ui.lock();
+                    auto exp_gold_text_ui = weak_exp_gold_text_ui.lock();
+                    auto plus_exp_text_ui = weak_plus_exp_text_ui.lock();
+                    if(!exp_button || !curr_exp_ui || !line_ui || !next_exp_ui || !exp_gold_ui || !exp_gold_text_ui || !plus_exp_text_ui)
+                        return;
 
-                if(e.is_open_) {
-                    exp_button->SetStatus(Object::StatusBit::NoDraw, true);     //ピース購入画面が開いているなら非表示にする
-                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
-                    line_ui->SetStatus(Object::StatusBit::NoDraw, true);        //ピース購入画面が開いているなら非表示にする
-                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
-                }
-                else {
-                    exp_button->SetStatus(Object::StatusBit::NoDraw, false);     //それ以外なら表示する
-                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
-                    line_ui->SetStatus(Object::StatusBit::NoDraw, false);        //それ以外なら表示する
-                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
-                }
-            };
+                    if(e.is_open_) {
+                        exp_button->SetStatus(Object::StatusBit::NoDraw, true);          //ピース購入画面が開いているなら非表示にする
+                        curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                        line_ui->SetStatus(Object::StatusBit::NoDraw, true);             //ピース購入画面が開いているなら非表示にする
+                        next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                        exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                        exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                        plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                    }
+                    else {
+                        exp_button->SetStatus(Object::StatusBit::NoDraw, false);          //それ以外なら表示する
+                        curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                        line_ui->SetStatus(Object::StatusBit::NoDraw, false);             //それ以外なら表示する
+                        next_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                        exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                        exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                        plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                    }
+                };
             auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(exp_button_hide_proc, 0);
             event_handles_.push_back(std::move(event_handle));
         }
@@ -1056,6 +1103,10 @@ bool InGameScene::Init()
                                 //購入音を再生
                                 SoundManager::instance()->PlaySE("gold");
                             }
+                            else {
+                                //ゴールド不足音を再生
+                                SoundManager::instance()->PlaySE("no_money");
+                            }
                         }
                     }
                 }
@@ -1250,14 +1301,47 @@ bool InGameScene::Init()
                 //ピースリロールに2ゴールド消費する
                 if(player->SpendGold(2)) {
                     player->RerollShopPieces();    //ショップのピースをリロールする
+                    // サウンドを鳴らす
+                    SoundManager::instance()->PlaySE("reroll");
+                }
+                else {
+                    // ゴールドが足りない場合の音
+                    SoundManager::instance()->PlaySE("no_money");
                 }
             }
         };
         reroll_button->SetClickFunc(click_func);
         purchase_window_objects.push_back(reroll_button);    //購入画面のウィンドウ群に追加
+
+        //---------------------------------------------------------------------------------
+        // リロールボタンの上にゴールドアイコンを表示する
+        //---------------------------------------------------------------------------------
+        {
+            auto gold_icon_ui = Scene::Object::Create<UIImage>();
+            gold_icon_ui->SetStatus(Object::StatusBit::NoDraw, true);      //初期状態では非表示にしておく
+            gold_icon_ui->SetStatus(Object::StatusBit::NoUpdate, true);    //更新しない
+            gold_icon_ui->SetTranslate(float3(1120.0f, 330.0f, 0.0f));
+            gold_icon_ui->SetScaleAxisXYZ(0.15f);    //大きさを少し小さく設定
+            gold_icon_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+            purchase_window_objects.push_back(gold_icon_ui);    //購入画面のウィンドウ群に追加
+        }
+        //---------------------------------------------------------------------------------
+        // リロールボタンの上に価格テキストを表示する
+        //---------------------------------------------------------------------------------
+        {
+            auto reroll_price_text = Scene::Object::Create<UIText>();
+            reroll_price_text->SetStatus(Object::StatusBit::NoDraw, true);    //初期状態では非表示にしておく
+            reroll_price_text->SetTranslate(float3(1170.0f, 330.0f, 0.0f));
+            reroll_price_text->SetFontSize(16);    //フォントサイズを設定
+            reroll_price_text->SetFontName("游明朝");
+            reroll_price_text->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));           //文字色設定
+            reroll_price_text->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    //中央揃えに設定
+            reroll_price_text->SetText("2g");                                                  //リロール価格は2ゴールド
+            purchase_window_objects.push_back(reroll_price_text);                              //購入画面のウィンドウ群に追加
+        }
     }
     //---------------------------------------------------------------------------------
-    //  ロックボタンボタン
+    //  ロックボタン
     //---------------------------------------------------------------------------------
     {
         auto lock_button = Scene::Object::Create<UIButton>();
@@ -1284,6 +1368,8 @@ bool InGameScene::Init()
             else {
                 lock_button->SetImage(ImageBuffer::GetImageHandle("unlocked_button"));
             }
+            // サウンドを鳴らす
+            SoundManager::instance()->PlaySE("lock");
         };
         lock_button->SetClickFunc(click_func);
         purchase_window_objects.push_back(lock_button);    //購入画面のウィンドウ群に追加
