@@ -2281,7 +2281,7 @@ bool InGameScene::Init()
             //収益があればメッセージに入れる
             int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
             if(interest_income > 0) {
-                text += std::format("+利子州益{}G ", interest_income);
+                text += std::format("+利子収益{}G ", interest_income);
             }
 
             gold_gain_ui->SetText(text);
@@ -2312,7 +2312,7 @@ bool InGameScene::Init()
             int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
             //収益があればメッセージに入れる
             if(interest_income > 0) {
-                text += std::format("+利子州益{}G ", interest_income);
+                text += std::format("+利子収益{}G ", interest_income);
             }
             gold_gain_ui->SetText(text);
         };
@@ -2351,7 +2351,7 @@ bool InGameScene::Init()
             int interest_income = std::min(player->GetGold() / 10, 5);    //利子収益
             //収益があればメッセージに入れる
             if(interest_income > 0) {
-                text += std::format("+利子州益{}G ", interest_income);
+                text += std::format("+利子収益{}G ", interest_income);
             }
             gold_gain_ui->SetText(text);
         };
@@ -2497,26 +2497,6 @@ void InGameScene::Draw()
     // チュートリアル描画
     //---------------------------------------------------------------------------------
     DrawTutorial();
-    //---------------------------------------------------------------------------------
-    //バトルフェーズはバトル用の描画処理を行う
-    //---------------------------------------------------------------------------------
-    //if(game_state_ == GameState::Battle) {
-    //    //ボードを描画
-    //    //for(int f = 0; f < 8; f++) {
-    //    //    for(int r = 0; r < 8; r++) {
-    //    //        int color = GetColor(0, 0, 0);
-    //    //        //ファイルとランクの合計値が偶数なら白に
-    //    //        if(((f + r) % 2) == 0) {
-    //    //            color = GetColor(255, 255, 255);
-    //    //        }
-    //    //        float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
-    //    //        float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
-    //    //        float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
-    //    //        float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
-    //    //        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
-    //    //    }
-    //    //}
-    //}
 }
 
 //---------------------------------------------------------------------------------
