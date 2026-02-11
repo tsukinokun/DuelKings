@@ -136,23 +136,6 @@ void ResultScene::Update()
 void ResultScene::Draw()
 {
     __super::Draw();
-    ////---------------------------------------------------------------------------
-    //// ボードをビタ描き
-    ////---------------------------------------------------------------------------
-    //for(int f = 0; f < 8; f++) {
-    //    for(int r = 0; r < 8; r++) {
-    //        int color = GetColor(0, 0, 0);
-    //        //ファイルとランクの合計値が偶数なら白に
-    //        if(((f + r) % 2) == 0) {
-    //            color = GetColor(255, 255, 255);
-    //        }
-    //        float  x  = (r * SQUARE_SIZE) - 4 * (SQUARE_SIZE);
-    //        float  z  = (f * SQUARE_SIZE) - (4 * SQUARE_SIZE);
-    //        float3 p1 = float3(x + -SQUARE_HALF, -0.1f, z + -SQUARE_HALF);
-    //        float3 p2 = float3(x + SQUARE_HALF, 0.1f, z + SQUARE_HALF);
-    //        DrawCube3D(cast(p1), cast(p2), color, color, TRUE);
-    //    }
-    //}
 }
 
 //---------------------------------------------------------------------------

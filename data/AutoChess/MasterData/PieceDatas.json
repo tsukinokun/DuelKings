@@ -136,8 +136,8 @@
             "description_": "•óÎƒ}ƒWƒVƒƒƒ“",
             "attack_interval_": 1.0,
             "attack_range_": 1.0,
-            "physical_defense_": -858993460,
-            "magical_defense_": -107374176.0,
+            "physical_defense_": 5,
+            "magical_defense_": 0.0,
             "price_": 3
         },
         {
@@ -164,8 +164,8 @@
             "description_": "‹Tæ‚è‚Ì’·˜V",
             "attack_interval_": 1.5,
             "attack_range_": 4.0,
-            "physical_defense_": -858993460,
-            "magical_defense_": -107374176.0,
+            "physical_defense_": 0,
+            "magical_defense_": 0.20000000298023225,
             "price_": 4
         },
         {
