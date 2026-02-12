@@ -44,6 +44,10 @@
       {
         "key": "no_money",
         "value": "data/AutoChess/Sound/no_money.mp3"
+      },
+      {
+        "key": "piece_put",
+        "value": "data/AutoChess/Sound/piece_put.mp3"
       }
     ],
     "bgm": [

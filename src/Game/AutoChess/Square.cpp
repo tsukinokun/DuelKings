@@ -9,7 +9,7 @@
 #include "Player.h"
 #include <System/Component/ComponentModel.h>
 #include <System/Component/ComponentCollisionModel.h>
-
+#include <Game/AutoChess/system/SoundManager.h>
 //---------------------------------------------------------------------------------
 //!	@brief 初期化
 //---------------------------------------------------------------------------------
@@ -75,6 +75,8 @@ void Square::OnHit(const ComponentCollision::HitInfo& hitInfo)
                             //お互いに変更されたことを設定
                             SetChanged();
                             square->SetChanged();    //選択を解除
+                            //ピースを置く音声を再生
+                            SoundManager::instance()->PlaySE("piece_put");
                         }
                     }
                 }
