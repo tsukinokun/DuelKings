@@ -6,9 +6,7 @@
 #pragma once
 
 #include <System/Component/Component.h>
-#include <TsukinoEventBus/TsukinoEventBus.hpp>
 USING_PTR(ShopPieceEffectManager);
-class Piece;    //前方宣言
 class ShopPieceEffectManager : public Component
 {
 public:

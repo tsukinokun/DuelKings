@@ -61,6 +61,7 @@
 #include <Game/AutoChess/UIObject/UIObject.h>
 #include <Game/AutoChess/Component/Manager/HelpManager.h>
 #include <Game/AutoChess/Component/Manager/ShopPieceEffectManager.h>
+#include <Game/AutoChess/Component/Manager/EffectManager2D.h>
 #include <System2/Shadowmap.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -2367,6 +2368,14 @@ bool InGameScene::Init()
     {
         auto shop_effect_manager = Scene::Object::Create<Object>();
         shop_effect_manager->AddComponent<ShopPieceEffectManager>();    //ショップエフェクト管理クラス
+    }
+
+    //---------------------------------------------------------------------------------
+    // 2Dエフェクトマネージャーを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto effect_2d_manager = Scene::Object::Create<Object>();
+        effect_2d_manager->AddComponent<EffectManager2D>(event_bus);    //2Dエフェクト管理クラス
     }
 
     //---------------------------------------------------------------------------------

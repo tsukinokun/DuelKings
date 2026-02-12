@@ -34,6 +34,7 @@ void ComponentAnimUI::Init()
     auto draw_ui = [this]() {
         auto   owner     = GetOwner();
         float3 translate = owner->GetTranslate();
+        SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha_);    // 透明度設定
         DrawRectRotaGraphF(translate.x,
                            translate.y,    // 描画位置
                            src_x_,
@@ -44,6 +45,7 @@ void ComponentAnimUI::Init()
                            0,
                            img_,
                            TRUE);
+        SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);    // ブレンドモードを元に戻す
     };
     SetProc("UIDraw", draw_ui, ProcTiming::UI, static_cast<ProcPriority>(NORMAL));
 }
@@ -87,6 +89,16 @@ std::shared_ptr<ComponentAnimUI> ComponentAnimUI::SetAnimStatus(int gh, int div_
     div_size_.y = size_.y;
     return dynamic_pointer_cast<ComponentAnimUI>(shared_from_this());
 }
+
+//--------------------------------------------------------------------
+//! @brief 透明度の設定
+//--------------------------------------------------------------------
+std::shared_ptr<ComponentAnimUI> ComponentAnimUI::SetAlpha(int alpha)
+{
+    alpha_ = alpha;
+    return dynamic_pointer_cast<ComponentAnimUI>(shared_from_this());
+}
+
 //---------------------------------------------------------------------------
 //! @brief	フレームとsrc_xのリセット、実質のアニメーションリセット
 //---------------------------------------------------------------------------
