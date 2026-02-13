@@ -1923,7 +1923,7 @@ bool InGameScene::Init()
             if(win_streak >= 3) {
                 bonus = win_streak;
             }
-            win_streak = std::min(win_streak, 5);
+            bonus = std::min(win_streak, 5);
             win_streak_bonus_detail_text->SetText(std::format("+{}", bonus));
         };
         win_streak_bonus_detail_text->SetProc("update_win_streak_income_ui", win_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
@@ -1959,7 +1959,7 @@ bool InGameScene::Init()
             if(loss_streak >= 3) {
                 bonus = loss_streak;
             }
-            loss_streak = std::min(loss_streak, 5);
+            bonus = std::min(loss_streak, 5);
             loss_streak_bonus_detail_text->SetText(std::format("+{}", bonus));
         };
         loss_streak_bonus_detail_text->SetProc("update_loss_streak_income_ui", loss_streak_income_update_proc, ProcTiming::Update, ProcPriority::NORMAL);
@@ -2303,7 +2303,7 @@ bool InGameScene::Init()
             if(win_streak >= 3) {
                 win_streak_bonus = win_streak;
             }
-
+            win_streak_bonus = std::min(win_streak_bonus, 5);    //連勝ボーナスは最大5まで
             //収益があればメッセージに入れる
             if(win_streak_bonus > 0) {
                 text += std::format("+連勝ボーナス{}G ", win_streak_bonus);
@@ -2374,6 +2374,7 @@ bool InGameScene::Init()
             if(loss_streak >= 3) {
                 loss_streak_bonus = loss_streak;
             }
+            loss_streak_bonus = std::min(loss_streak_bonus, 5);    //連敗ボーナスは最大5まで
             //収益があればメッセージに入れる
             if(loss_streak_bonus > 0) {
                 text += std::format("+連敗ボーナス{}G ", loss_streak_bonus);
