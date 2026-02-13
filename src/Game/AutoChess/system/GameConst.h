@@ -29,6 +29,9 @@ int constexpr MAX_AGENT_HP = 100;
 constexpr int RARITIES = 5;
 //ピーススタンドのサイズ
 constexpr int PIECE_STAND_SIZE = 8;
+//ダメージの値
+constexpr int DAMAGE_FOR_ONE_PIECE = 3;    //生きているピース1につき相手に与えダメージ
+
 //---------------------------------------------------------------------------
 //  駒提供割合の定数
 //  [レベル][コスト] = 出現率（%）
