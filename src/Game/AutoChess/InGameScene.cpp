@@ -60,6 +60,8 @@
 #include <Game/AutoChess/system/DXLibUtils.h>
 #include <Game/AutoChess/UIObject/UIObject.h>
 #include <Game/AutoChess/Component/Manager/HelpManager.h>
+#include <Game/AutoChess/Component/Manager/ShopPieceEffectManager.h>
+#include <Game/AutoChess/Component/Manager/EffectManager2D.h>
 #include <System2/Shadowmap.h>
 //---------------------------------------------------------------------------------
 //!	初期化
@@ -2131,13 +2133,6 @@ bool InGameScene::Init()
         auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(help_button_hide_proc, 0);
         event_handles_.push_back(std::move(event_handle));
     }
-    //---------------------------------------------------------------------------------
-    // ヘルプマネージャーを作成
-    //---------------------------------------------------------------------------------
-    {
-        auto help_manager = Scene::Object::Create<Object>();
-        help_manager->AddComponent<HelpManager>(event_bus);    //ヘルプマネージャーコンポーネントを追加
-    }
 
     //---------------------------------------------------------------------------------
     // マスのモデル(バトル中表示用)の生成
@@ -2360,10 +2355,35 @@ bool InGameScene::Init()
     }
 
     //---------------------------------------------------------------------------------
+    // ヘルプマネージャーを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto help_manager = Scene::Object::Create<Object>();
+        help_manager->AddComponent<HelpManager>(event_bus);    //ヘルプマネージャーコンポーネントを追加
+    }
+
+    //---------------------------------------------------------------------------------
+    // ショップエフェクトマネージャーを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto shop_effect_manager = Scene::Object::Create<Object>();
+        shop_effect_manager->AddComponent<ShopPieceEffectManager>();    //ショップエフェクト管理クラス
+    }
+
+    //---------------------------------------------------------------------------------
+    // 2Dエフェクトマネージャーを作成
+    //---------------------------------------------------------------------------------
+    {
+        auto effect_2d_manager = Scene::Object::Create<Object>();
+        effect_2d_manager->AddComponent<EffectManager2D>(event_bus);    //2Dエフェクト管理クラス
+    }
+
+    //---------------------------------------------------------------------------------
     // チュートリアル開始処理
     //---------------------------------------------------------------------------------
     tutorial_step_ = TutorialStep::PurchaseOpen;    //明示的に購入画面オープンから開始
     PurchaseOpenTutorialEnter();
+
     //---------------------------------------------------------------------------------
     //  フェードフィルター
     //---------------------------------------------------------------------------------

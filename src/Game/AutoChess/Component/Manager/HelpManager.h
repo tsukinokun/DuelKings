@@ -8,7 +8,6 @@
 #include <System/Component/Component.h>
 #include <TsukinoEventBus/TsukinoEventBus.hpp>
 USING_PTR(HelpManager);
-class Piece;    //前方宣言
 class HelpManager : public Component
 {
 public:

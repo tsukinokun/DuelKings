@@ -20,36 +20,6 @@ bool UIAnimation::Init()
     return true;
 }
 
-//---------------------------------------------------------------------------------
-//!	更新
-//---------------------------------------------------------------------------------
-void UIAnimation::Update()
-{
-    __super::Update();
-}
-
-//---------------------------------------------------------------------------------
-//!	描画
-//---------------------------------------------------------------------------------
-void UIAnimation::Draw()
-{
-    __super::Draw();
-}
-
-//---------------------------------------------------------------------------------
-//!	終了
-//---------------------------------------------------------------------------------
-void UIAnimation::Exit()
-{
-    __super::Exit();
-}
-
-//!GUI表示
-void UIAnimation::GUI()
-{
-    __super::GUI();
-}
-
 //---------------------------------------------------------------------------
 //! @brief	アニメーションステータスの設定
 //---------------------------------------------------------------------------
@@ -57,6 +27,17 @@ std::shared_ptr<UIAnimation> UIAnimation::SetAnimStatus(int gh, int div_num, flo
 {
     if(auto anim_comp = anim_component_.lock()) {
         anim_comp->SetAnimStatus(gh, div_num, ex_rate, update_frame);    // ステータス設定
+    }
+    return dynamic_pointer_cast<UIAnimation>(shared_from_this());
+}
+
+//--------------------------------------------------------------------
+//! @brief 透明度の設定
+//--------------------------------------------------------------------
+std::shared_ptr<UIAnimation> UIAnimation::SetAlpha(int alpha)
+{
+    if(auto anim_comp = anim_component_.lock()) {
+        anim_comp->SetAlpha(alpha);    // 透明度設定
     }
     return dynamic_pointer_cast<UIAnimation>(shared_from_this());
 }

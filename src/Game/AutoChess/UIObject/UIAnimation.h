@@ -15,19 +15,23 @@ public:
     BP_OBJECT_DECL(UIAnimation, u8"UIのアニメーションオブジェクト")
 
     //@}
-    bool Init() override;      //!< 初期化
-    void Update() override;    //!< 更新
-    void Draw() override;      //!< 描画
-    void Exit() override;      //!< 終了
-    void GUI() override;       //!< GUI表示
+    bool Init() override;    //!< 初期化
 
+    //---------------------------------------------------------------------------
     //アニメーションステータスの設定
     //! @param gh [in] スプライトのハンドル
     //! @param div_num [in] 分割数
     //! @param ex_rate [in] 拡大率
     //! @param update_frame [in] 何フレームに一回アニメーションの更新を行うか
     //! @retval 自身のポインタ
+    //---------------------------------------------------------------------------
     std::shared_ptr<UIAnimation> SetAnimStatus(int gh, int div_num, float ex_rate = 1.0f, int update_frame = 5);
+
+    //--------------------------------------------------------------------
+    // 透明度の設定
+    //! @param alpha [in] 透明度(0~255)
+    //--------------------------------------------------------------------
+    std::shared_ptr<UIAnimation> SetAlpha(int alpha);
 
 private:
     std::weak_ptr<ComponentAnimUI>
