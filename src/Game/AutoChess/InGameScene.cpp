@@ -1377,6 +1377,42 @@ bool InGameScene::Init()
         purchase_window_objects.push_back(lock_button);    //購入画面のウィンドウ群に追加
     }
     //---------------------------------------------------------------------------------
+    // ピース購入画面に表示するゴールドのUI画像
+    //---------------------------------------------------------------------------------
+    {
+        std::shared_ptr<UIImage> gold_icon_ui = Scene::Object::Create<UIImage>();
+        gold_icon_ui->SetStatus(Object::StatusBit::NoDraw, true);                   // 初期状態では非表示にしておく
+        gold_icon_ui->SetStatus(Object::StatusBit::NoUpdate, true);                 // 更新しない
+        gold_icon_ui->SetTranslate(float3(WINDOW_W / 2 - 100.0f, 120.0f, 0.0f));    // 位置を画面右中央あたりに設定
+        gold_icon_ui->SetScaleAxisXYZ(0.5f);                                        // 大きさを少し小さく設定
+        gold_icon_ui->SetImage(ImageBuffer::GetImageHandle("gold_icon"));
+        purchase_window_objects.push_back(gold_icon_ui);    //購入画面のウィンドウ群に追加
+    }
+    //---------------------------------------------------------------------------------
+    // ピース購入画面に表示するゴールドの残高テキスト
+    //---------------------------------------------------------------------------------
+    {
+        std::shared_ptr<UIText> gold_balance_text = Scene::Object::Create<UIText>();
+        gold_balance_text->SetStatus(Object::StatusBit::NoDraw, true);                   // 初期状態では非表示にしておく
+        gold_balance_text->SetTranslate(float3(WINDOW_W / 2 + 50.0f, 120.0f, 0.0f));     // 位置を画面右中央あたりに設定
+        gold_balance_text->SetFontSize(70);                                              // フォントサイズを設定
+        gold_balance_text->SetAlignment(ComponentTransformUI::Alignment::MiddleLeft);    // 左揃えに設定
+        gold_balance_text->SetColor(GetColor(255, 255, 255), GetColor(0, 0, 0));         //文字色設定
+        std::weak_ptr<UIText> weak_gold_balance_text = gold_balance_text;
+        std::weak_ptr<Player> weak_player            = player;
+        auto                  update_proc            = [weak_gold_balance_text, weak_player]() {
+            auto player            = weak_player.lock();
+            auto gold_balance_text = weak_gold_balance_text.lock();
+            if(!player || !gold_balance_text)
+                return;
+            //ゴールド残高を更新
+            gold_balance_text->SetText(std::to_string(player->GetGold()) + "g");
+        };
+        gold_balance_text->SetProc("update_gold_balance", update_proc, ProcTiming::Update, ProcPriority::NORMAL);
+        purchase_window_objects.push_back(gold_balance_text);    //購入画面のウィンドウ群に追加
+    }
+
+    //---------------------------------------------------------------------------------
     //  ピース購入画面を開けるボタン
     //---------------------------------------------------------------------------------
     {
@@ -2606,9 +2642,10 @@ void InGameScene::CreatePiecesForBattlePhase()
                         }
                         //レベルが1以上なら付与
                         if(synergy_level >= 1) {
-                            auto instance = SynergyModifierData::instance();
-                            auto mod_data = instance->GetModifierData(active_synergy.GetID());
-                            piece->AddComponent<ModifierStatus>(mod_data.at(synergy_level), 100.0f);    //応急処置で第二引数に大きい数を入れておく
+                            auto instance    = SynergyModifierData::instance();
+                            auto mod_data    = instance->GetModifierData(active_synergy.GetID());
+                            int  level_index = synergy_level - 1;                                     //レベルインデックスを計算
+                            piece->AddComponent<ModifierStatus>(mod_data.at(level_index), 100.0f);    //応急処置で第二引数に大きい数を入れておく
                         }
                     }
                     //---------------------------------------------------------------------------------
@@ -2739,6 +2776,24 @@ void InGameScene::CreatePiecesForBattlePhase()
                     // スキルを使用するコンポーネントを追加
                     //---------------------------------------------------------------------------------
                     piece->AddComponent<PieceSkillUser>();
+                    //---------------------------------------------------------------------------------
+                    // シナジーを付与
+                    //---------------------------------------------------------------------------------
+                    for(auto& active_synergy : npc->GetActiveSynergy()) {
+                        int synergy_count = active_synergy.GetSynergyCount();    //シナジーのカウントを取得
+                        int synergy_level = synergy_count / 2;                   //シナジーレベルを計算(2つでレベル1、4つでレベル2、6つでレベル3)
+                        //レベルは3まで
+                        if(synergy_level > 3) {
+                            synergy_level = 3;
+                        }
+                        //レベルが1以上なら付与
+                        if(synergy_level >= 1) {
+                            auto instance    = SynergyModifierData::instance();
+                            auto mod_data    = instance->GetModifierData(active_synergy.GetID());
+                            int  level_index = synergy_level - 1;                                     //レベルインデックスを計算
+                            piece->AddComponent<ModifierStatus>(mod_data.at(level_index), 100.0f);    //応急処置で第二引数に大きい数を入れておく
+                        }
+                    }
                     //---------------------------------------------------------------------------------
                     // コリジョンを入れる
                     //---------------------------------------------------------------------------------
@@ -2944,7 +2999,7 @@ void InGameScene::UpdateBattlePhase()
                         //NPCの駒が全滅したら、NPCがダメージを受ける
                         //----------------------------------------------------------------------
                         if(auto battle_npc = battle_agent_.lock()) {
-                            int damage = player_alive_piece_count * 2;
+                            int damage = player_alive_piece_count * DAMAGE_FOR_ONE_PIECE;
                             battle_npc->ApplyDamage(damage);
                             //HPの数値UIを更新
                             if(auto hp_ui = Scene::Object::Get<UIText>(std::string(battle_npc->GetName()) + "HPText")) {
@@ -2981,7 +3036,7 @@ void InGameScene::UpdateBattlePhase()
                         //----------------------------------------------------------------------
                         //プレイヤーの駒が全滅したら、NPCの残り駒数分ダメージを受ける
                         //----------------------------------------------------------------------
-                        int damage = npc_alive_piece_count * 2;
+                        int damage = npc_alive_piece_count * DAMAGE_FOR_ONE_PIECE;
                         if(auto player = Scene::Object::Get<Player>()) {
                             player->ApplyDamage(damage);
                             //HPの数値UIを更新
@@ -3114,7 +3169,7 @@ void InGameScene::SimulateNpcBattle()
             // ゴースト戦でなければエージェント2にダメージを与える
             //------------------------------------------------------
             if(!match_info.is_ghost_2_ && agent1_victory) {
-                int damage = agent1_piece_count * 2;    //ダメージ概算
+                int damage = agent1_piece_count * DAMAGE_FOR_ONE_PIECE;    //ダメージ概算
                 agent2->ApplyDamage(damage);
                 //HPの数値UIを更新
                 if(auto hp_ui = Scene::Object::Get<UIText>(std::string(agent2->GetName()) + "HPText")) {
@@ -3149,7 +3204,7 @@ void InGameScene::SimulateNpcBattle()
             // エージェント1が負けたならダメージを与える
             //------------------------------------------------------
             if(!agent1_victory) {
-                int damage = agent2_piece_count * 2;    //ダメージ概算
+                int damage = agent2_piece_count * DAMAGE_FOR_ONE_PIECE;    //ダメージ概算
                 agent1->ApplyDamage(damage);
                 //HPの数値UIを更新
                 if(auto hp_ui = Scene::Object::Get<UIText>(std::string(agent1->GetName()) + "HPText")) {
