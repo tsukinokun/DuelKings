@@ -294,11 +294,14 @@ void Player::UpdateSynergysUI()
         int next_count = 0;                            // 次のレベルまでの必要数を計算
         for(int i = 0; i < synergy_data->level_thresholds_.size(); i++) {
             //現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入してループを抜ける
-            if(synergy_count < synergy_data->level_thresholds_[i]) {
+            bool is_max_index = (i == synergy_data->level_thresholds_.size() - 1);    //これが最後のレベルかどうか
+            // 最後のレベルであっても、現在のシナジー数が閾値を超えていなければ、次のレベルまでの必要数を代入する
+            if((synergy_count < synergy_data->level_thresholds_[i]) || is_max_index) {
                 next_count = synergy_data->level_thresholds_[i];
                 break;
             }
         }
+
         synergy_ui->SetNextCount(next_count);    //次のレベルまでの必要数を設定
         synergy_index++;
     }
