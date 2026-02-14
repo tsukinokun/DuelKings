@@ -261,6 +261,27 @@ bool InGameScene::Init()
             plus_exp_text_ui->SetColor(GetColor(255, 255, 0));
 
             //---------------------------------------------------------------------------------
+            // レベルテキストUIを重ねる
+            //---------------------------------------------------------------------------------
+            auto level_text_ui = Scene::Object::Create<UIText>();
+            level_text_ui->SetAlignment(ComponentTransformUI::Alignment::MiddleCenter);    // 中央寄せに設定
+            level_text_ui->SetTranslate(float3(150.0f, 700.0f, 0.0f));                     // 位置を設定
+            level_text_ui->SetFontSize(30);                                                // フォントサイズ設定
+            level_text_ui->SetColor(GetColor(255, 255, 255));                              // 文字色設定
+            // 更新処理
+            std::weak_ptr<UIText> weak_level_text_ui  = level_text_ui;
+            auto                  set_level_text_proc = [weak_level_text_ui]() {
+                auto level_text_ui = weak_level_text_ui.lock();
+                if(!level_text_ui)
+                    return;
+                auto player = Scene::Object::Get<Player>();
+                int  level  = player->GetAgentLevel();    //エージェントのレベルを取得
+                //レベルを表示
+                level_text_ui->SetText("Lv " + std::to_string(level));
+            };
+            level_text_ui->SetProc("set_text", set_level_text_proc, ProcTiming::Update, ProcPriority::NORMAL);
+
+            //---------------------------------------------------------------------------------
             // ピース購入画面を開くボタンを押したときに、経験値UIを非表示にする処理を登録
             //---------------------------------------------------------------------------------
             std::weak_ptr<UIButton> weak_exp_button       = exp_button;
@@ -268,38 +289,47 @@ bool InGameScene::Init()
             std::weak_ptr<UIImage>  weak_exp_gold_ui      = exp_gold_ui;
             std::weak_ptr<UIText>   weak_exp_gold_text_ui = gold_text_ui;
             std::weak_ptr<UIText>   weak_plus_exp_text_ui = plus_exp_text_ui;
-            auto                    exp_button_hide_proc =
-                [weak_exp_button, weak_curr_exp_ui, weak_line_ui, weak_next_exp_ui, weak_exp_gold_ui, weak_exp_gold_text_ui, weak_plus_exp_text_ui](
-                    const PiecePurchaseOpenClickEvent& e) {
-                    auto exp_button       = weak_exp_button.lock();
-                    auto curr_exp_ui      = weak_curr_exp_ui.lock();
-                    auto line_ui          = weak_line_ui.lock();
-                    auto next_exp_ui      = weak_next_exp_ui.lock();
-                    auto exp_gold_ui      = weak_exp_gold_ui.lock();
-                    auto exp_gold_text_ui = weak_exp_gold_text_ui.lock();
-                    auto plus_exp_text_ui = weak_plus_exp_text_ui.lock();
-                    if(!exp_button || !curr_exp_ui || !line_ui || !next_exp_ui || !exp_gold_ui || !exp_gold_text_ui || !plus_exp_text_ui)
-                        return;
+            std::weak_ptr<UIText>   weak_curr_level_ui    = level_text_ui;
+            auto                    exp_button_hide_proc  = [weak_exp_button,
+                                         weak_curr_exp_ui,
+                                         weak_line_ui,
+                                         weak_next_exp_ui,
+                                         weak_exp_gold_ui,
+                                         weak_exp_gold_text_ui,
+                                         weak_plus_exp_text_ui,
+                                         weak_curr_level_ui](const PiecePurchaseOpenClickEvent& e) {
+                auto exp_button       = weak_exp_button.lock();
+                auto curr_exp_ui      = weak_curr_exp_ui.lock();
+                auto line_ui          = weak_line_ui.lock();
+                auto next_exp_ui      = weak_next_exp_ui.lock();
+                auto exp_gold_ui      = weak_exp_gold_ui.lock();
+                auto exp_gold_text_ui = weak_exp_gold_text_ui.lock();
+                auto plus_exp_text_ui = weak_plus_exp_text_ui.lock();
+                auto curr_level_ui    = weak_curr_level_ui.lock();
+                if(!exp_button || !curr_exp_ui || !line_ui || !next_exp_ui || !exp_gold_ui || !exp_gold_text_ui || !plus_exp_text_ui || !curr_level_ui)
+                    return;
 
-                    if(e.is_open_) {
-                        exp_button->SetStatus(Object::StatusBit::NoDraw, true);          //ピース購入画面が開いているなら非表示にする
-                        curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
-                        line_ui->SetStatus(Object::StatusBit::NoDraw, true);             //ピース購入画面が開いているなら非表示にする
-                        next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
-                        exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
-                        exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
-                        plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
-                    }
-                    else {
-                        exp_button->SetStatus(Object::StatusBit::NoDraw, false);          //それ以外なら表示する
-                        curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
-                        line_ui->SetStatus(Object::StatusBit::NoDraw, false);             //それ以外なら表示する
-                        next_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
-                        exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
-                        exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
-                        plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
-                    }
-                };
+                if(e.is_open_) {
+                    exp_button->SetStatus(Object::StatusBit::NoDraw, true);          //ピース購入画面が開いているなら非表示にする
+                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                    line_ui->SetStatus(Object::StatusBit::NoDraw, true);             //ピース購入画面が開いているなら非表示にする
+                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                    exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, true);         //ピース購入画面が開いているなら非表示にする
+                    exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                    plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, true);    //ピース購入画面が開いているなら非表示にする
+                    curr_level_ui->SetStatus(Object::StatusBit::NoDraw, true);       //ピース購入画面が開いているなら非表示にする
+                }
+                else {
+                    exp_button->SetStatus(Object::StatusBit::NoDraw, false);          //それ以外なら表示する
+                    curr_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                    line_ui->SetStatus(Object::StatusBit::NoDraw, false);             //それ以外なら表示する
+                    next_exp_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                    exp_gold_ui->SetStatus(Object::StatusBit::NoDraw, false);         //それ以外なら表示する
+                    exp_gold_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                    plus_exp_text_ui->SetStatus(Object::StatusBit::NoDraw, false);    //それ以外なら表示する
+                    curr_level_ui->SetStatus(Object::StatusBit::NoDraw, false);       //ピース購入画面が開いているなら非表示にする
+                }
+            };
             auto event_handle = event_bus->subscribe<PiecePurchaseOpenClickEvent>(exp_button_hide_proc, 0);
             event_handles_.push_back(std::move(event_handle));
         }
