@@ -1,37 +1,26 @@
-# BaseProject2025
-## 概要
-### BaseProjectとは？
-DXライブラリを使用して3Dゲーム開発をするためのプロジェクトです。<br />
+# DuelKings
 
-## 使用環境
-- OS: Windows10, Windows11
-- IDE: VisualStudio2022
+<p align="center">
+  <img src="img/DuelKingsImage.png" width="480" alt="DuelKings Logo">
+</p>
 
-## 使い方
-### プロジェクトの起動方法:
+<p align="center">
+  <img src="https://img.shields.io/badge/C%2B%2B-20-blue.svg" alt="C++20">
+  <img src="https://img.shields.io/badge/DirectX-11-107C10.svg" alt="DirectX 11">
+  <img src="https://img.shields.io/badge/platform-Windows-0078D6.svg" alt="Platform: Windows">
+  <a href="https://qiita.com/tsukino_"><img src="https://img.shields.io/badge/Qiita-tsukino__-55C500?logo=qiita&logoColor=white" alt="Qiita"></a>
+</p>
 
-「＠open.cmd」ファイルをダブルクリックしてください。<br />
-自動的にVisualStudio2022でプロジェクトが開きます。<br />
-<b>注意事項: 2バイト文字が含まれているドライブまたはフォルダ上では正常にバッチが動作しません</b>
+駒を置くと、駒たちが自動でバトルを行う対戦ゲームです。
 
-### プロジェクトの終了方法
+## プレイ動画
 
-「＠cleanup.cmd」をダブルクリックしてください。<br />
-自動的に不要なファイルが削除されます。<br />
+[![Watch the video](https://img.youtube.com/vi/NSGq62q_s0Y/hqdefault.jpg)](https://youtu.be/NSGq62q_s0Y?si=DhnseHrMlKp7-YTB)
 
-### コードの評価
 
-「＠code_metrics.cmd」をダブルクリックしてください。<br />
-自動的に「src」フォルダ内のソースファイル全てが「cccc」によって評価されます。<br />
+## 作者
 
-### Doxygenの作成／修正
+**つきの**（山﨑 愛）
 
-「＠doxygen.cmd」をダブルクリックしてください。<br />
-自動的に「src」フォルダ内のソースファイル全てを解析してドキュメントを作成します。<br />
-<b>注意事項: Doxygen形式でのコメントの書き方をしていないとドキュメントに反映されません</b>
-
-### コード整形
-
-「src/.clang-format-reference」を「.clang-format」にリネームすることで自分好みのソースコードに整形が可能です。<br />
-また「＠open.cmd」を使用することで自動的にこのファイルを読み込み、コードを自分好みに整形してくれます。<br />
-<b>注意事項: 「＠code_format.cmd」を使うと元のコード整形に戻ります</b>
+- GitHub: [@tsukinokun](https://github.com/tsukinokun)
+- Qiita: [@tsukino_](https://qiita.com/tsukino_)
