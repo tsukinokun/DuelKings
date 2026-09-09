@@ -17,6 +17,17 @@
 
 [![Watch the video](https://img.youtube.com/vi/NSGq62q_s0Y/hqdefault.jpg)](https://youtu.be/NSGq62q_s0Y?si=DhnseHrMlKp7-YTB)
 
+### ダウンロード（実行ファイル）
+ビルドせずにすぐ遊びたい場合は、以下から実行ファイルを取得できます：
+
+Releases (github.com in Bing) ページへ移動
+
+最新の DuelKings.zip をダウンロード
+
+展開して DuelKings.exe を実行するだけでプレイできます
+
+ソースコードをビルドしなくても、すぐにゲームを試せます。
+
 
 ## 作者
 
